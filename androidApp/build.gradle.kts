@@ -30,7 +30,7 @@ kotlin {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation(project(":assesmentModel"))
+    implementation(project(":assessmentModel"))
 
     implementation("androidx.appcompat:appcompat:1.1.0")
 

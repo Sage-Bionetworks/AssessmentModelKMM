@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-group = "org.sagebionetworks.assesmentmodel"
+group = "org.sagebionetworks.assessmentmodel"
 version = 1.0
 
 android {
@@ -83,8 +83,8 @@ tasks.register("copyFramework") {
         copy {
             from(srcFile.parent)
             into(targetDir)
-            include( "assesmentModel.framework/**")
-            include("assesmentModel.framework.dSYM")
+            include( "assessmentModel.framework/**")
+            include("assessmentModel.framework.dSYM")
         }
     }
 }

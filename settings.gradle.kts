@@ -23,5 +23,5 @@ pluginManagement {
     }
 }
 
-include(":assesmentModel")
+include(":assessmentModel")
 include(":androidApp")

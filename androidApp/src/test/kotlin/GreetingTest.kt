@@ -1,6 +1,6 @@
-package org.sagebionetworks.assesmentmodel
+package org.sagebionetworks.assessmentmodel
 
-import org.sagebionetworks.assesmentmodel.Greeting
+import org.sagebionetworks.assessmentmodel.Greeting
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

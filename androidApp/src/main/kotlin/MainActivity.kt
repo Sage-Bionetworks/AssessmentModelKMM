@@ -1,10 +1,10 @@
-package org.sagebionetworks.assesmentmodel.sampleapp
+package org.sagebionetworks.assessmentmodel.sampleapp
 
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import org.sagebionetworks.assesmentmodel.Factory
+import org.sagebionetworks.assessmentmodel.Factory
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {

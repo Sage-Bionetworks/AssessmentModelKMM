@@ -1,4 +1,4 @@
-package org.sagebionetworks.assesmentmodel
+package org.sagebionetworks.assessmentmodel
 
 expect class Product {
     val user: String

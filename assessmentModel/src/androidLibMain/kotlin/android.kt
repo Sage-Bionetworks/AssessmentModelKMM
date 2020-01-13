@@ -1,4 +1,4 @@
-package org.sagebionetworks.assesmentmodel
+package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
 

@@ -1,4 +1,4 @@
-package org.sagebionetworks.assesmentmodel
+package org.sagebionetworks.assessmentmodel
 
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped

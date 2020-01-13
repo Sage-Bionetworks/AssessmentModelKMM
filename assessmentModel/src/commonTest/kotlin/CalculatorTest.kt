@@ -1,4 +1,4 @@
-package org.sagebionetworks.assesmentmodel
+package org.sagebionetworks.assessmentmodel
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
