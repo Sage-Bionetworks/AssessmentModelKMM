@@ -2,7 +2,7 @@ package org.sagebionetworks.assessmentmodel
 
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
- * model for an UI element.
+ * model for a UI element.
  */
 interface Button {
 
@@ -25,7 +25,7 @@ interface ButtonAction {
 }
 
 /**
- * A list of button actions defined within this module. These actions have special meaning that is used to support
+ * A list of button actions defined within this module. These actions have special meanings that are used to support
  * task navigation.
  */
 enum class NavigationButtonAction : ButtonAction {

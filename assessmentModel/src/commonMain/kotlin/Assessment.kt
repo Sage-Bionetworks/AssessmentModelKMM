@@ -145,10 +145,10 @@ interface Step : Node
  * A [Section] is used to define a logical subgrouping of nodes and asynchronous background actions such as a section 
  * in a longer survey or an active node that includes an instruction step, countdown step, and activity step.
  * 
- * A [Section] is different from an [Assessment] in that it *always* describes an a subgrouping of nodes that can be
+ * A [Section] is different from an [Assessment] in that it *always* describes a subgrouping of nodes that can be
  * displayed sequentially for platforms where the available screen real-estate does not support displaying the nodes
  * on a single view. A [Section] is also different from an [Assessment] in that it is a sub-node and does *not*
- * contain a measurement which, alone, is valuable to a a study designer.
+ * contain a measurement which, alone, is valuable to a study designer.
  */
 interface Section : NodeContainer
 
@@ -162,7 +162,7 @@ interface Section : NodeContainer
 interface Form : Step, NodeContainer
 
 /**
- * [AsyncActionConfiguration] defines general configuration for an asynchronous background action that should be run in
+ * [AsyncActionConfiguration] defines general configuration for an asynchronous action that should be run in
  * the background. Depending upon the parameters and how the action is set up, this could be something that is run
  * continuously or else is paused or reset based on a timeout interval.
  */
