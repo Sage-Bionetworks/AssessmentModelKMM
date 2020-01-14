@@ -1,7 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
 /**
- * The [ImageInfo] is used to define a placeholder for an image. This could refer to an drawable object as defined by
+ * The [ImageInfo] is used to define a placeholder for an image. This could refer to a drawable object as defined by
  * the platform, a url, or the name of an embedded resource. The [height] and [width], if defined, describe the image
  * size and can be defined in either pixels or points. The [imageIdentifier] is used to uniquely identify this image
  * (or set of images) so that the client platform can fetch the image data. The [label] may be displayed as a caption
