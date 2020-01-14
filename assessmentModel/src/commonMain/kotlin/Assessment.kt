@@ -83,6 +83,17 @@ interface Node : ResultMapElement {
      */
     val footnote: String?
         get() = null
+
+    /**
+     * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
+     * the button on screen.
+     */
+    val hideButtons: List<ButtonAction>
+
+    /**
+     * A mapping of a [ButtonAction] to a [Button].
+     */
+    val buttonMap: Map<ButtonAction, Button>
 }
 
 /**
@@ -170,4 +181,3 @@ interface AsyncActionContainer : Node {
      */
     val backgroundActions: List<AsyncActionConfiguration>
 }
-
