@@ -26,13 +26,13 @@ interface CollectionResult : Result {
      * [Assessment]. This will only include a subset that is the path defined at this level of the overall [Assessment]
      * hierarchy.
      */
-    var pathResults: List<Result>
+    var pathResults: MutableList<Result>
 
     /**
      * The [asyncActionResults] is a set that contains results that are recorded in parallel to the user-facing node
      * path.
      */
-    var asyncActionResults: Set<Result>?
+    var asyncActionResults: MutableSet<Result>
 }
 
 /**
