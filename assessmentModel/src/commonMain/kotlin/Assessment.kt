@@ -88,12 +88,12 @@ interface Node : ResultMapElement {
      * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
      * the button on screen.
      */
-    val hideButtons: List<ButtonAction>
+    val hideButtons: List<ButtonActionType>
 
     /**
-     * A mapping of a [ButtonAction] to a [Button].
+     * A mapping of a [ButtonActionType.name] to a [Button].
      */
-    val buttonMap: Map<ButtonAction, Button>
+    val buttonMap: Map<String, Button>
 }
 
 /**

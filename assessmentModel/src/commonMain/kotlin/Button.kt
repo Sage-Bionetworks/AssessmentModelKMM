@@ -1,5 +1,11 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
+import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnum
+import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnumSerializer
+import org.sagebionetworks.assessmentmodel.serialization.StringEnum
+
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
  * model for a UI element.
@@ -18,50 +24,52 @@ interface Button {
 }
 
 /**
- * [ButtonAction] is used to define the "action" of a button.
+ * The [ButtonActionType] is used to wrap a string keyword (extendable enum) that can be used to describe a mapping of
+ * UI buttons to the image and/or text that should be displayed on the button.
  */
-interface ButtonAction {
-    val name: String
-}
+interface ButtonActionType : StringEnum
+
+@Serializer(forClass = ButtonActionType::class)
+object ButtonActionTypeSerializer: ExtendableStringEnumSerializer<ButtonActionType>("ButtonActionType", ButtonAction)
 
 /**
- * A list of button actions defined within this module. These actions have special meanings that are used to support
- * task navigation.
+ * The [ButtonAction] enum describes standard navigation actions that are common to a given UI step. It is extendable
+ * using the custom field.
  */
-enum class NavigationButtonAction : ButtonAction {
+object ButtonAction : ExtendableStringEnum<ButtonActionType> {
 
     /**
-     * Navigate to the next step.
+     * A list of button actions defined within this module. These actions have special meaning that is used to support
+     * task navigation.
+     *
+     * - [GoForward]: Navigate to the next step.
+     * - [GoBackward]: Navigate to the previous step.
+     * - [Skip]: Skip the step and immediately go forward.
+     * - [Cancel]: Cancel the task.
+     * - [LearnMore]: Display additional information about the step.
+     * - [ReviewInstructions]: Go back in the navigation to review the instructions.
+     *
      */
-    goForward,
+    @Serializable
+    enum class Navigation : ButtonActionType {
+        GoForward,
+        GoBackward,
+        Skip,
+        Cancel,
+        LearnMore,
+        ReviewInstructions,
+        ;
+    }
 
-    /**
-     * Navigate to the previous step.
-     */
-    goBackward,
+    @Serializable(with = ButtonActionTypeSerializer::class)
+    data class Custom(override val name: String) : ButtonActionType
 
-    /**
-     * Skip the step and immediately go forward.
-     */
-    skip,
+    override fun standardValues(): Array<ButtonActionType> {
+        return Navigation.values() as Array<ButtonActionType>
+    }
 
-    /**
-     * Cancel the task.
-     */
-    cancel,
-
-    /**
-     * Display additional information about the step.
-     */
-    learnMore,
-
-    /**
-     * Go back in the navigation to review the instructions.
-     */
-    reviewInstructions
+    override fun custom(name: String): ButtonActionType {
+        return Custom(name)
+    }
 }
 
-/**
- * A custom button action that serves as a placeholder for the button name.
- */
-data class CustomButtonAction(override val name: String) : ButtonAction
