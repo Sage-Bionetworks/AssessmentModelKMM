@@ -22,11 +22,11 @@ interface Result {
 interface CollectionResult : Result {
 
     /**
-     * The [pathResults] includes the history of the [Node] results that were traversed as a part of running an
+     * The [pathHistoryResults] includes the history of the [Node] results that were traversed as a part of running an
      * [Assessment]. This will only include a subset that is the path defined at this level of the overall [Assessment]
      * hierarchy.
      */
-    var pathResults: MutableList<Result>
+    var pathHistoryResults: MutableList<Result>
 
     /**
      * The [asyncActionResults] is a set that contains results that are recorded in parallel to the user-facing node

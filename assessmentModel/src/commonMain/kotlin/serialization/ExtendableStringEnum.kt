@@ -3,13 +3,24 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 
+/**
+ * A string enum is an enum that uses a string as its raw value.
+ */
 interface StringEnum {
     val name: String
 }
 
+/**
+ * This framework considers string enums to be case insensitive. This is to allow for different languages to support
+ * different conventions.
+ */
 fun <T> Array<T>.matching(name: String) where T : StringEnum =
         this.firstOrNull { it.name.toLowerCase() == name.toLowerCase() }
 
+/**
+ * An extendable string enum defines an interface for extending a string enum to include an array of [standardValues]
+ * and also allow for [custom] string extensions.
+ */
 interface ExtendableStringEnum<T : StringEnum> {
     fun standardValues(): Array<T>
     fun custom(name: String): T

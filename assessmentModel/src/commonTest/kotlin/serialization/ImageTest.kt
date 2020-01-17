@@ -2,10 +2,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.ImageInfo
-import org.sagebionetworks.assessmentmodel.ImagePlacement
-import org.sagebionetworks.assessmentmodel.Size
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,8 +29,8 @@ open class ImageTest {
 
     @Test
     fun testFetchableImageWithValues() {
-        val image = FetchableImage("before", imagePlacement = ImagePlacement.Standard.BackgroundBefore, label = "Foo", imageSize = Size(width = 20, height = 40))
-        val inputString = """{"image":{"type":"fetchable","imageName":"before","label":"Foo","placementType":"BackgroundBefore","imageSize":{"width":20,"height":40}}}"""
+        val image = FetchableImage("before", imagePlacementType = ImagePlacement.Standard.BackgroundBefore, label = "Foo", size = Size(width = 20.0, height = 40.0))
+        val inputString = """{"image":{"type":"fetchable","imageName":"before","label":"Foo","placementType":"BackgroundBefore","size":{"width":20.0,"height":40.0}}}"""
 
         val original = TestImageWrapper(image)
         val jsonString = jsonCoder.stringify(TestImageWrapper.serializer(), original)
