@@ -30,7 +30,7 @@ interface AnimatedImageInfo : ImageInfo {
     /**
      * The list of image names for the images to include in this animation.
      */
-    val animationImageNames: List<String>
+    val imageNames: List<String>
 
     /**
      * The animation duration for the image animation.

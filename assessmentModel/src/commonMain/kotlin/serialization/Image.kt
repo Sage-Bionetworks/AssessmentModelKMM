@@ -25,16 +25,16 @@ data class FetchableImage(override val imageName: String,
 
 @Serializable
 @SerialName("animated")
-data class AnimatedImage(override val animationImageNames: List<String>,
+data class AnimatedImage(override val imageNames: List<String>,
                          override val animationDuration: Double,
-                         override val animationRepeatCount: Int?,
+                         override val animationRepeatCount: Int? = null,
                          override val label: String? = null,
                          @SerialName("placementType")
                          @Serializable(with=ImagePlacementTypeSerializer::class)
-                         override val imagePlacementType: ImagePlacementType,
+                         override val imagePlacementType: ImagePlacementType? = null,
                          override val size: Size? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String
-        get() = animationImageNames.first()
+        get() = imageNames.first()
 }
 
 /**
