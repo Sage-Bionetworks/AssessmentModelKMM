@@ -1,6 +1,8 @@
 package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
+import java.time.Instant
+import java.util.*
 
 actual class Platform actual constructor() {
     actual val platform: String = "Android"
@@ -19,4 +21,12 @@ actual object Factory {
         Product(config["user"]!!)
 
     actual val platform: String = "android"
+}
+
+actual object UUIDGenerator {
+    actual fun uuidString() : String = UUID.randomUUID().toString()
+}
+
+actual object DateGenerator {
+    actual fun nowString(): String = "TODO: Implement"
 }

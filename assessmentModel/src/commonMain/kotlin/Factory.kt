@@ -8,3 +8,11 @@ expect object Factory {
     fun create(config: Map<String, String>): Product
     val platform: String
 }
+
+expect object UUIDGenerator {
+    fun uuidString(): String
+}
+
+expect object DateGenerator {
+    fun nowString(): String
+}

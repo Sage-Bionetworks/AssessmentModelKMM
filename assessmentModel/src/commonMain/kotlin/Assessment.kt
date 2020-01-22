@@ -11,7 +11,7 @@ interface Assessment : NavigationNode {
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
      */
-    val versionString: String
+    val versionString: String?
 }
 
 /**
@@ -127,6 +127,21 @@ interface NavigationNode : Node {
  */
 interface Navigator {
 // TODO: syoung 01/10/2020 implement.
+}
+
+interface NodeNavigator : Navigator {
+
+    /**
+     * The children contained within this collection.
+     */
+    val children: List<Node>
+
+    /**
+     * A list of the [AsyncActionConfiguration] elements used to describe the configuration for background actions
+     * (such as a sensor recorder or web service) that should should be started when this [Node] in the [Assessment] is
+     * presented to the user.
+     */
+    val backgroundActions: List<AsyncActionConfiguration>
 }
 
 /**

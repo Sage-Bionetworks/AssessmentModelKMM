@@ -1,17 +1,21 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.json
+import kotlinx.serialization.modules.plus
+import org.sagebionetworks.assessmentmodel.BackButtonStyle
+import org.sagebionetworks.assessmentmodel.Button
 import org.sagebionetworks.assessmentmodel.ImageInfo
+import org.sagebionetworks.assessmentmodel.WebViewButton
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @Serializable
 data class TestImageWrapper(val image: ImageInfo)
-
-val jsonCoder = Json(context = imageSerializersModule)
 
 open class ImageTest {
 
@@ -116,4 +120,5 @@ open class ImageTest {
         assertEquals(20.0, sizeObject?.getPrimitiveOrNull("width")?.double)
         assertEquals(40.0, sizeObject?.getPrimitiveOrNull("height")?.double)
     }
+
 }
