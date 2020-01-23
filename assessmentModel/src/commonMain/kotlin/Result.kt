@@ -49,7 +49,7 @@ interface AssessmentResult : CollectionResult {
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer. This should map to the
      * [Assessment.versionString].
      */
-    val versionString: String
+    val versionString: String?
 
     /**
      * The start date timestamp for the result.

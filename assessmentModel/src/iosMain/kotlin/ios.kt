@@ -4,6 +4,8 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKString
+import platform.darwin.uuid_generate
+import platform.darwin.uuid_generate_random
 import platform.posix.uname
 import platform.posix.utsname
 
@@ -30,4 +32,16 @@ actual object Factory {
         Product(config["user"]!!)
 
     actual val platform: String = "ios"
+}
+
+actual object UUIDGenerator {
+    actual fun uuidString(): String = UUID().toString()
+}
+
+external class UUID {
+    constructor()
+}
+
+actual object DateGenerator {
+    actual fun nowString(): String = "TODO: Implement"
 }

@@ -1,7 +1,10 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.internal.EnumDescriptor
+import kotlinx.serialization.internal.SerialClassDescImpl
 import kotlinx.serialization.internal.StringDescriptor
+import kotlin.jvm.JvmOverloads
 
 /**
  * A string enum is an enum that uses a string as its raw value.
