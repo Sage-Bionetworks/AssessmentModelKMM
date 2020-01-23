@@ -1,11 +1,5 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.EnumDescriptor
-import kotlinx.serialization.internal.SerialClassDescImpl
-import kotlinx.serialization.internal.StringDescriptor
-import kotlin.jvm.JvmOverloads
-
 /**
  * A string enum is an enum that uses a string as its raw value.
  */
@@ -21,30 +15,14 @@ fun <T> Array<T>.matching(name: String) where T : StringEnum =
         this.firstOrNull { it.name.toLowerCase() == name.toLowerCase() }
 
 /**
- * An extendable string enum defines an interface for extending a string enum to include an array of [standardValues]
- * and also allow for [custom] string extensions.
+ * An interface for sealed classes to use to define "enum" behavior.
+ *
+ * This is a similar to Swift enum representation where the enum contains nested enums that are themselves
+ * `RawRepresentable` using a typealias of `String` and `CaseIterable` enumeration. We use this pattern to allow for
+ * describing more complex hierarchies of "type" and "category" classifications.
  */
-interface ExtendableStringEnum<T : StringEnum> {
-    fun standardValues(): Array<T>
-    fun custom(name: String): T
-
-    fun valueOf(name: String): T =
-            standardValues().matching(name) ?: custom(name)
-}
-
-open class ExtendableStringEnumSerializer<T : StringEnum>(
-        serialName: String,
-        val stringEnum: ExtendableStringEnum<T>)
-    : KSerializer<T> {
-
-    override val descriptor: SerialDescriptor
-            = StringDescriptor.withName(serialName)
-
-    override fun serialize(encoder: Encoder, obj: T) {
-        encoder.encodeString(obj.name)
-    }
-
-    override fun deserialize(decoder: Decoder): T {
-        return stringEnum.valueOf(decoder.decodeString())
-    }
+interface StringEnumCompanion<T : StringEnum> {
+    fun values(): Array<T>
+    fun valueOf(name: String): T? =
+            values().matching(name)
 }
