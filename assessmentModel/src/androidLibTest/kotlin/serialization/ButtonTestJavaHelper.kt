@@ -1,6 +1,4 @@
-package serialization
-
-import org.junit.Assert.*
+package org.sagebionetworks.assessmentmodel.serialization
 
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4

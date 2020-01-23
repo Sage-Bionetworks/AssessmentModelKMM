@@ -2,8 +2,8 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.sagebionetworks.assessmentmodel.BackButtonStyle
 import org.sagebionetworks.assessmentmodel.Button
+import org.sagebionetworks.assessmentmodel.ButtonStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -189,7 +189,7 @@ open class ButtonTest {
                 imageInfo = FetchableImage("fooImage"),
                 url = "learnMore",
                 closeButtonTitle = "Exit")
-        assertEquals(BackButtonStyle.Footer("Exit"), button.backButtonStyle)
+        assertEquals(ButtonStyle.Footer("Exit"), button.backButtonStyle)
     }
 
     @Test
@@ -198,7 +198,7 @@ open class ButtonTest {
                 imageInfo = FetchableImage("fooImage"),
                 url = "learnMore",
                 usesBackButton = true)
-        assertEquals(BackButtonStyle.Icon.BackArrow, buttonA.backButtonStyle)
+        assertEquals(ButtonStyle.NavigationHeader.Back, buttonA.backButtonStyle)
     }
 
 
@@ -208,7 +208,7 @@ open class ButtonTest {
                 imageInfo = FetchableImage("fooImage"),
                 url = "learnMore",
                 usesBackButton = false)
-        assertEquals(BackButtonStyle.Icon.CloseX, buttonA.backButtonStyle)
+        assertEquals(ButtonStyle.NavigationHeader.Close, buttonA.backButtonStyle)
     }
 
     @Test
