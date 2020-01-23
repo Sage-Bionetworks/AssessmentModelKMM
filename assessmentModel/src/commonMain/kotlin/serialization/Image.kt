@@ -21,7 +21,6 @@ val imageSerializersModule = SerializersModule {
 data class FetchableImage(override val imageName: String,
                           override val label: String? = null,
                           @SerialName("placementType")
-//                          @Serializable(with=ImagePlacementTypeSerializer::class)
                           override val imagePlacementType: ImagePlacementType? = null,
                           override val size: Size? = null) : ImageInfo, ImageTheme
 
@@ -32,7 +31,6 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val animationRepeatCount: Int? = null,
                          override val label: String? = null,
                          @SerialName("placementType")
-//                         @Serializable(with=ImagePlacementTypeSerializer::class)
                          override val imagePlacementType: ImagePlacementType? = null,
                          override val size: Size? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String

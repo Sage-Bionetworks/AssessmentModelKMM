@@ -53,11 +53,11 @@ data class WebViewButtonObject(override val buttonTitle: String? = null,
                                override val title: String? = null,
                                val usesBackButton: Boolean? = null,
                                val closeButtonTitle: String? = null) : WebViewButton {
-    override val backButtonStyle: BackButtonStyle
+    override val backButtonStyle: ButtonStyle
         get() = closeButtonTitle?.let {
-            return BackButtonStyle.Footer(it) }
+            return ButtonStyle.Footer(it) }
                 ?: usesBackButton?.let {
-                    return if (it) BackButtonStyle.Icon.BackArrow else BackButtonStyle.Icon.CloseX }
+                    return if (it) ButtonStyle.NavigationHeader.Back else ButtonStyle.NavigationHeader.Close }
                 ?: super.backButtonStyle
 }
 

@@ -4,6 +4,7 @@ import kotlinx.serialization.*
 import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnum
 import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnumSerializer
 import org.sagebionetworks.assessmentmodel.serialization.StringEnum
+import org.sagebionetworks.assessmentmodel.serialization.matching
 
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
@@ -70,8 +71,8 @@ interface ModalViewButton : Button {
      *
      * @Note: This is only applicable to devices that use a back button or close button. Otherwise, it is ignored.
      */
-    val backButtonStyle: BackButtonStyle
-        get() = BackButtonStyle.Icon.BackArrow
+    val backButtonStyle: ButtonStyle
+        get() = ButtonStyle.NavigationHeader.Close
 
     /**
      * The title to show in a title bar or header.
@@ -106,18 +107,29 @@ interface VideoViewButton : ModalViewButton {
 }
 
 /**
- * The [BackButtonStyle] defines a
+ * The [ButtonStyle] defines a general "style" for the button to close a modal view. If the design calls for a back
+ * button or a close button, then the style of the button is defined by the application. Whether or not to use text
+ * ("Back" or "Close") or an icon (back arrow or close X) should be consistent throughout the application. Additionally,
+ * whether or not a "close" button should be displayed on the left or the right of the header should also be defined
+ * to be consistent throughout the application and is therefore, not included here.
+ *
+ * @note: This is currently a sealed class which means that it acts like a Swift enum where the enum does *not* directly
+ * implement the `RawRepresentable` protocol, but can contain only those implementations defined by the framework and
+ * cannot be subclassed or extended.
  */
-sealed class BackButtonStyle {
-    sealed class Icon(val imageName: String) : BackButtonStyle() {
-        object BackArrow : Icon("back")
-        object CloseX : Icon("close")
+@Serializable
+sealed class ButtonStyle  {
+
+    @Serializable
+    @SerialName("header")
+    sealed class NavigationHeader(val name: String) : ButtonStyle() {
+        object Close: NavigationHeader("close")
+        object Back: NavigationHeader("back")
     }
-    sealed class Text(val buttonTitle: String) : BackButtonStyle() {
-        object Back: Text("\$back\$")
-        object Close: Text("\$close\$")
-    }
-    data class Footer(val buttonTitle: String) : BackButtonStyle()
+
+    @Serializable
+    @SerialName("footer")
+    data class Footer(val buttonTitle: String) : ButtonStyle()
 }
 
 /**
