@@ -8,6 +8,7 @@ import platform.darwin.uuid_generate
 import platform.darwin.uuid_generate_random
 import platform.posix.uname
 import platform.posix.utsname
+import platform.Foundation.NSUUID
 
 actual class Platform actual constructor() {
     actual val platform: String = "iOS"
@@ -35,11 +36,7 @@ actual object Factory {
 }
 
 actual object UUIDGenerator {
-    actual fun uuidString(): String = UUID().toString()
-}
-
-external class UUID {
-    constructor()
+    actual fun uuidString(): String = NSUUID.UUID().UUIDString
 }
 
 actual object DateGenerator {
