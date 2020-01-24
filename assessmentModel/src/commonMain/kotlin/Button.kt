@@ -1,10 +1,9 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
-//import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnum
-//import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnumSerializer
+import kotlinx.serialization.internal.StringDescriptor
 import org.sagebionetworks.assessmentmodel.serialization.StringEnum
-import org.sagebionetworks.assessmentmodel.serialization.matching
+import org.sagebionetworks.assessmentmodel.serialization.StringEnumCompanion
 
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
@@ -121,10 +120,14 @@ interface VideoViewButton : ModalViewButton {
 sealed class ButtonStyle  {
 
     @Serializable
-    @SerialName("header")
-    sealed class NavigationHeader(val name: String) : ButtonStyle() {
-        object Close: NavigationHeader("close")
-        object Back: NavigationHeader("back")
+    sealed class NavigationHeader() : ButtonStyle() {
+        @Serializable
+        @SerialName("header.close")
+        object Close: NavigationHeader()
+
+        @Serializable
+        @SerialName("header.back")
+        object Back: NavigationHeader()
     }
 
     @Serializable
@@ -133,75 +136,55 @@ sealed class ButtonStyle  {
 }
 
 /**
- * The [ButtonActionType] is used to wrap a string keyword (extendable enum) that can be used to describe a mapping of
+ * The [ButtonAction] is used to wrap a string keyword (extendable enum) that can be used to describe a mapping of
  * UI buttons to the image and/or text that should be displayed on the button.
  */
-interface ButtonActionType : StringEnum
-
-/**
- * A list of button actions defined within this module. These actions have special meaning that is used to support
- * task navigation.
- *
- * - [GoForward]: Navigate to the next step.
- * - [GoBackward]: Navigate to the previous step.
- * - [Skip]: Skip the step and immediately go forward.
- * - [Cancel]: Cancel the task.
- * - [LearnMore]: Display additional information about the step.
- * - [ReviewInstructions]: Go back in the navigation to review the instructions.
- *
- */
 @Serializable
-enum class Navigation : ButtonActionType {
-    GoForward,
-    GoBackward,
-    Skip,
-    Cancel,
-    LearnMore,
-    ReviewInstructions,
-    ;
+sealed class ButtonAction() : StringEnum {
+
+    /**
+     * A list of button actions defined within this module. These actions have special meaning that is used to support
+     * task navigation.
+     *
+     * - [GoForward]: Navigate to the next step.
+     * - [GoBackward]: Navigate to the previous step.
+     * - [Skip]: Skip the step and immediately go forward.
+     * - [Cancel]: Cancel the task.
+     * - [LearnMore]: Display additional information about the step.
+     * - [ReviewInstructions]: Go back in the navigation to review the instructions.
+     *
+     */
+    sealed class Navigation(override val name: String) : ButtonAction() {
+        object GoForward : Navigation("goForward")
+        object GoBackward : Navigation("goBackward")
+        object Skip : Navigation("skip")
+        object Cancel : Navigation("cancel")
+        object LearnMore : Navigation("learnMore")
+        object ReviewInstructions : Navigation("reviewInstructions")
+        companion object : StringEnumCompanion<Navigation> {
+            override fun values(): Array<Navigation>
+                    = arrayOf(GoForward, GoBackward, Skip, Cancel, LearnMore, ReviewInstructions)
+        }
+    }
+
+    data class Custom(override val name: String) : ButtonAction()
+
+    // TODO: syoung 01/23/2020 Keep an eye out for improvements to serialization of "inline" values. Currently Kotlin
+    //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the
+    //  implementation below.
+
+    @Serializer(forClass = ButtonAction::class)
+    companion object : KSerializer<ButtonAction> {
+        override val descriptor: SerialDescriptor
+                = StringDescriptor.withName("ButtonAction")
+        override fun deserialize(decoder: Decoder): ButtonAction {
+            val name = decoder.decodeString()
+            return valueOf(name)
+        }
+        override fun serialize(encoder: Encoder, obj: ButtonAction) {
+            encoder.encodeString(obj.name)
+        }
+        fun valueOf(name: String): ButtonAction
+                = Navigation.valueOf(name) ?: Custom(name)
+    }
 }
-
-//@Serializer(forClass = ButtonActionType::class)
-//object ButtonActionTypeSerializer: ExtendableStringEnumSerializer<ButtonActionType>("ButtonActionType", ButtonAction)
-//
-///**
-// * The [ButtonAction] enum describes standard navigation actions that are common to a given UI step. It is extendable
-// * using the custom field.
-// */
-//object ButtonAction : ExtendableStringEnum<ButtonActionType> {
-//
-//    /**
-//     * A list of button actions defined within this module. These actions have special meaning that is used to support
-//     * task navigation.
-//     *
-//     * - [GoForward]: Navigate to the next step.
-//     * - [GoBackward]: Navigate to the previous step.
-//     * - [Skip]: Skip the step and immediately go forward.
-//     * - [Cancel]: Cancel the task.
-//     * - [LearnMore]: Display additional information about the step.
-//     * - [ReviewInstructions]: Go back in the navigation to review the instructions.
-//     *
-//     */
-//    @Serializable
-//    enum class Navigation : ButtonActionType {
-//        GoForward,
-//        GoBackward,
-//        Skip,
-//        Cancel,
-//        LearnMore,
-//        ReviewInstructions,
-//        ;
-//    }
-//
-//    @Serializable(with = ButtonActionTypeSerializer::class)
-//    data class Custom(override val name: String) : ButtonActionType
-//
-//    override fun standardValues(): Array<ButtonActionType> {
-//        return Navigation.values() as Array<ButtonActionType>
-//    }
-//
-//    override fun custom(name: String): ButtonActionType {
-//        return Custom(name)
-//    }
-//}
-

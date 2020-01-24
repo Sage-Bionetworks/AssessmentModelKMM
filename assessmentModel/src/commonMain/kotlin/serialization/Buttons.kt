@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import org.sagebionetworks.assessmentmodel.*
 
 

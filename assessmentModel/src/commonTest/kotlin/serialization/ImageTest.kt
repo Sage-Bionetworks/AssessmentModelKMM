@@ -13,6 +13,8 @@ data class TestImagePlacementWrapper(val placement: ImagePlacement)
 
 open class ImageTest {
 
+    val jsonCoder = Serialization.JsonCoder.default
+
     @Test
     fun testFetchableImageWithDefaults() {
         val image = FetchableImage("before")

@@ -88,12 +88,16 @@ interface Node : ResultMapElement {
      * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
      * the button on screen.
      */
-    val hideButtons: List<ButtonActionType>
+    val hideButtons: List<ButtonAction>
 
     /**
-     * A mapping of a [ButtonActionType.name] to a [Button].
+     * A mapping of a [ButtonAction] to a [Button].
+     *
+     * For example, this mapping can be used to define the url for a [ButtonAction.Navigation.LearnMore] link or to
+     * customize the title of the [ButtonAction.Navigation.GoForward] button. It can also define the title, icon, etc.
+     * on a custom button as long as the application knows how to interpret the custom action.
      */
-    val buttonMap: Map<String, Button>
+    val buttonMap: Map<ButtonAction, Button>
 }
 
 /**
