@@ -2,8 +2,6 @@ package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
-import org.sagebionetworks.assessmentmodel.serialization.StringEnum
-import org.sagebionetworks.assessmentmodel.serialization.StringEnumCompanion
 
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view

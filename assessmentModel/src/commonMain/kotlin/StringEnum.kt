@@ -1,4 +1,4 @@
-package org.sagebionetworks.assessmentmodel.serialization
+package org.sagebionetworks.assessmentmodel
 
 /**
  * A string enum is an enum that uses a string as its raw value.

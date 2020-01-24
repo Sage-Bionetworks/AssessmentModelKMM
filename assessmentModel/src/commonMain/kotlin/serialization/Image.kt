@@ -110,7 +110,7 @@ sealed class ImagePlacement() : StringEnum {
         object TopMarginBackground : Standard("topMarginBackground")
         object BackgroundBefore : Standard("backgroundBefore")
         object BackgroundAfter : Standard("backgroundAfter")
-        companion object : StringEnumCompanion<Standard>{
+        companion object : StringEnumCompanion<Standard> {
             override fun values(): Array<Standard>
                     = arrayOf(IconBefore, IconAfter, FullSizeBackground, TopBackground, TopMarginBackground, BackgroundBefore, BackgroundAfter)
         }
