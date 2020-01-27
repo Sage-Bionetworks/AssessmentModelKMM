@@ -395,7 +395,7 @@ interface QuestionStep : Step {
 
 /**
  * An [InputField] describes a "part" of a [QuestionStep] representing a single answer. For example, if a question is
- * "what is your name" then the input fields may include "given name" and "family name" where there is a text field
+ * "what is your name" then the input fields may include "given name" and "family name" where separate text fields
  * is used to allow the participant to enter their first and last name, and the question may also include a list of
  * titles from which to choose.
  */
