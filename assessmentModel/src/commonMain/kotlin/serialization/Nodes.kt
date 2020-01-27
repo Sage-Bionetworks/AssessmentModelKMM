@@ -7,6 +7,8 @@ import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 
+// TODO: syoung 01/27/2020 Uncomment these one at a time once tests are created.
+
 //@Serializable
 //abstract class StepNodeObject(override val identifier: String,
 //                              override val resultIdentifier: String?,
