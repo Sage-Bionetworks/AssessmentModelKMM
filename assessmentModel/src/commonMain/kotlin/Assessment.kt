@@ -343,7 +343,7 @@ interface ActiveStep : Step {
 
 /**
  * A [CountdownStep] is a subtype of the [ActiveStep] that may only be displayed when showing the full instructions.
- * Typically, this type of step is shown using a label that displays a count down to displaying the [ActiveStep] that
+ * Typically, this type of step is shown using a label that displays a countdown to displaying the [ActiveStep] that
  * follows it.
  */
 interface CountdownStep : OptionalStep, ActiveStep
@@ -460,4 +460,3 @@ interface ResultSummaryStep : Step {
      */
     val scoringResultNodeIdentifier: NodeIdentifierPath?
 }
-
