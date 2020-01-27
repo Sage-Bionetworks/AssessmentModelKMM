@@ -3,4 +3,4 @@ package org.sagebionetworks.assessmentmodel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IdentifierLinkList(val identifier: String, val childNode: IdentifierLinkList? = null)
+data class NodeIdentifierPath(val identifier: String, val child: NodeIdentifierPath? = null)

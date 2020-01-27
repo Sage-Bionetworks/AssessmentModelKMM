@@ -458,6 +458,6 @@ interface ResultSummaryStep : Step {
      * answer to the result. If [null], then the application UI must define a custom presentation for showing the
      * result.
      */
-    val scoringResultIdentifier: IdentifierLinkList?
+    val scoringResultNodeIdentifier: NodeIdentifierPath?
 }
 
