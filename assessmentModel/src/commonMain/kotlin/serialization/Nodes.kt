@@ -1,29 +1,29 @@
+
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.Polymorphic
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
-import kotlinx.serialization.list
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 
 //@Serializable
-//abstract class NodeObject(override val identifier: String,
-//                          override val resultIdentifier: String? = null,
-//                          override val comment: String? = null,
-//                          override val title: String? = null,
-//                          override val label: String? = null,
-//                          @Serializable(with=ImageNameSerializer::class)
-//                          override val imageInfo: FetchableImage? = null,
-//                          override val detail: String? = null,
-//                          @SerialName("shouldHideActions")
-//                          @Serializable(with=ButtonActionTypeSerializer::class)
-//                          override val hideButtons: List<ButtonActionType> = listOf(),
-//                          @SerialName("actions")
-//                          override val buttonMap: Map<String, Button> = mapOf()): Node
-//
+//abstract class StepNodeObject(override val identifier: String,
+//                              override val resultIdentifier: String?,
+//                              override val comment: String?,
+//                              override val title: String?,
+//                              override val label: String?,
+//                              @Polymorphic
+//                              @SerialName("image")
+//                              override val imageInfo: ImageInfo?,
+//                              override val detail: String?,
+//                              override val footnote: String?,
+//                              override val hideButtons: List<ButtonAction>,
+//                              override val buttonMap: Map<ButtonAction, Button>): Node, Step
+
+
+
+
 //
 //@Serializable
 //@SerialName("assessment")
