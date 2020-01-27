@@ -1,5 +1,3 @@
-@file:UseSerializers(ImagePlacementTypeSerializer::class)
-
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
@@ -21,7 +19,7 @@ val imageSerializersModule = SerializersModule {
 data class FetchableImage(override val imageName: String,
                           override val label: String? = null,
                           @SerialName("placementType")
-                          override val imagePlacementType: ImagePlacementType? = null,
+                          override val imagePlacement: ImagePlacement? = null,
                           override val size: Size? = null) : ImageInfo, ImageTheme
 
 @Serializable
@@ -31,7 +29,7 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val animationRepeatCount: Int? = null,
                          override val label: String? = null,
                          @SerialName("placementType")
-                         override val imagePlacementType: ImagePlacementType? = null,
+                         override val imagePlacement: ImagePlacement? = null,
                          override val size: Size? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String
         get() = imageNames.first()
@@ -42,7 +40,7 @@ data class AnimatedImage(override val imageNames: List<String>,
  * layout is defined by the image placement and size (where applicable) rather than using specific image constraints.
  */
 interface ImageTheme : DrawableLayout {
-    val imagePlacementType: ImagePlacementType?
+    val imagePlacement: ImagePlacement?
     val size: Size?
 }
 
@@ -59,7 +57,7 @@ object ImageNameSerializer : KSerializer<FetchableImage> {
 }
 
 /**
- * An interface that is used to wrap the [name] keyword and allow for an extendable string enum used to give a hint to
+ * [ImagePlacement] is used to wrap the [name] keyword and allow for an extendable string enum used to give a hint to
  * an [Assessment] developer of the layout to use for a given image. Typically, this is included so that a developer can
  * reuse the same view class where the designer requires different layout constraints for the image depending upon what
  * the image is showing.
@@ -73,17 +71,8 @@ object ImageNameSerializer : KSerializer<FetchableImage> {
  * described using [ImagePlacement.Standard.IconBefore] or [ImagePlacement.Standard.IconAfter].
  *
  */
-interface ImagePlacementType : StringEnum
-
-@Serializer(forClass = ImagePlacementType::class)
-object ImagePlacementTypeSerializer:
-        ExtendableStringEnumSerializer<ImagePlacementType>("ImagePlacementType", ImagePlacement)
-
-/**
- * String wrapper for describing the image placement of an image. This is used to allow extending the
- * [ImagePlacement.Standard] enum to allow for custom placement typing.
- */
-object ImagePlacement : ExtendableStringEnum <ImagePlacementType> {
+@Serializable
+sealed class ImagePlacement() : StringEnum {
 
     /**
      * This class defines a set of image placements that are defined within this framework as standard.
@@ -113,27 +102,39 @@ object ImagePlacement : ExtendableStringEnum <ImagePlacementType> {
      *      [TopBackground], but in landscape for languages that read left to right, this would display on the *right*
      *      half of the view.
      */
-    @Serializable
-    enum class Standard : ImagePlacementType {
-        IconBefore,
-        IconAfter,
-        FullSizeBackground,
-        TopBackground,
-        TopMarginBackground,
-        BackgroundBefore,
-        BackgroundAfter,
-        ;
+    sealed class Standard(override val name: String) : ImagePlacement() {
+        object IconBefore : Standard("iconBefore")
+        object IconAfter : Standard("iconAfter")
+        object FullSizeBackground : Standard("fullSizeBackground")
+        object TopBackground : Standard("topBackground")
+        object TopMarginBackground : Standard("topMarginBackground")
+        object BackgroundBefore : Standard("backgroundBefore")
+        object BackgroundAfter : Standard("backgroundAfter")
+        companion object : StringEnumCompanion<Standard> {
+            override fun values(): Array<Standard>
+                    = arrayOf(IconBefore, IconAfter, FullSizeBackground, TopBackground, TopMarginBackground, BackgroundBefore, BackgroundAfter)
+        }
     }
 
-    @Serializable(with = ImagePlacementTypeSerializer::class)
-    data class Custom(override val name: String) : ImagePlacementType
+    data class Custom(override val name: String) : ImagePlacement()
 
-    override fun standardValues(): Array<ImagePlacementType> {
-        return Standard.values() as Array<ImagePlacementType>
-    }
+    // TODO: syoung 01/23/2020 Keep an eye out for improvements to serialization of "inline" values. Currently Kotlin
+    //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the
+    //  implementation below.
 
-    override fun custom(name: String): ImagePlacementType {
-        return Custom(name)
+    @Serializer(forClass = ImagePlacement::class)
+    companion object : KSerializer<ImagePlacement> {
+        override val descriptor: SerialDescriptor
+                = StringDescriptor.withName("ImagePlacement")
+        override fun deserialize(decoder: Decoder): ImagePlacement {
+            val name = decoder.decodeString()
+            return valueOf(name)
+        }
+        override fun serialize(encoder: Encoder, obj: ImagePlacement) {
+            encoder.encodeString(obj.name)
+        }
+        fun valueOf(name: String): ImagePlacement
+                = Standard.valueOf(name) ?: Custom(name)
     }
 }
 

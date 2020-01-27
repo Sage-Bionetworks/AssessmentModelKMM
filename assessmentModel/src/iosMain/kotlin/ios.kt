@@ -4,8 +4,7 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKString
-import platform.darwin.uuid_generate
-import platform.darwin.uuid_generate_random
+import platform.Foundation.*
 import platform.posix.uname
 import platform.posix.utsname
 
@@ -35,13 +34,17 @@ actual object Factory {
 }
 
 actual object UUIDGenerator {
-    actual fun uuidString(): String = UUID().toString()
-}
-
-external class UUID {
-    constructor()
+    actual fun uuidString(): String = NSUUID.UUID().UUIDString
 }
 
 actual object DateGenerator {
-    actual fun nowString(): String = "TODO: Implement"
+    actual fun nowString(): String = iso8601Formatter.stringFromDate(NSDate.now)
+
+    val iso8601Formatter = isoFormatter()
+    fun isoFormatter(): NSDateFormatter {
+        val formatter = NSDateFormatter.new()!!
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter.locale = NSLocale.localeWithLocaleIdentifier("en_US_POSIX")
+        return formatter
+    }
 }

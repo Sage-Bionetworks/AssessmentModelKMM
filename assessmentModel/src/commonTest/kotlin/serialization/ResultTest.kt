@@ -2,11 +2,16 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.sagebionetworks.assessmentmodel.ButtonAction
+import org.sagebionetworks.assessmentmodel.ButtonStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 open class ResultTest {
+
+    val jsonCoder = Serialization.JsonCoder.default
 
     @Test
     fun testCollectionResult() {
@@ -113,5 +118,4 @@ open class ResultTest {
         assertEquals("asyncResultA", ar1.getPrimitiveOrNull("identifier")?.content)
         assertEquals("base", ar1.getPrimitiveOrNull("type")?.content)
     }
-
 }

@@ -1,12 +1,5 @@
 package org.sagebionetworks.assessmentmodel
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
-import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnum
-import org.sagebionetworks.assessmentmodel.serialization.ExtendableStringEnumSerializer
-import org.sagebionetworks.assessmentmodel.serialization.StringEnum
-import org.sagebionetworks.assessmentmodel.serialization.matching
-
 /**
  * The [ImageInfo] is used to define a placeholder for an image. This could refer to a drawable object as defined by
  * the platform, a url, or the name of an embedded resource.
