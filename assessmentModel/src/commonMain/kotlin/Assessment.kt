@@ -380,7 +380,7 @@ interface QuestionStep : Step {
 
     /**
      * A question will always have at least one input field that is used to define the question. These fields will form
-     * a logic grouping for how the [QuestionStep] should be presented to the user. For example, the question may be
+     * a logical grouping for how the [QuestionStep] should be presented to the user. For example, the question may be
      * "what is your name" where the fields are given name, family name, title, and a checkbox that says "prefer not to
      * answer". How the fields interact may use a custom logic but they are presented together and do not make sense
      * independently of one another.
