@@ -426,7 +426,7 @@ interface InputField : Node {
     val placeholder: String?
 
     /**
-     * Can the input field be left blank.
+     * Can the input field be left blank?
      */
     val optional: Boolean
 
