@@ -213,7 +213,7 @@ interface Step : Node {
     /**
      * A mapping of the localized text that represents an instructional voice prompt to the time marker for speaking
      * the instruction. Time markers can be defined by a set of key words or as time intervals. Any step *could* include
-     * a time marker on the step, though typically, this will only apply to
+     * a time marker on the step, though typically, this will only apply to active steps.
      *
      * - Example:
      * ```
@@ -281,7 +281,7 @@ interface OptionalStep : Step {
 
 /**
  * An [InstructionStep] is a UI [Step] that includes detailed text with instructions. By design, there is *only* one
- * text label in an instruction step with the intension that the amount of text will be short enough to be readable on
+ * text label in an instruction step with the intention that the amount of text will be short enough to be readable on
  * a single screen.
  */
 interface InstructionStep : OptionalStep {
@@ -308,6 +308,26 @@ interface ActiveStep : Step {
      * the step such as playing a sound as well as whether or not to automatically start and finish the step.
      */
     val commands: Set<String> // TODO: syoung 01/27/2020 replace String with a data class
+
+    /**
+     * A mapping of the localized text shown in an instruction label to the time marker for when the instruction label
+     * should be set to the given text. Time markers can be defined by a set of key words or as time intervals.
+     *
+     * For example, an active step may show the user a progress indicator with text prompts that are timed to match
+     * a set of spoken instructions or add a prompt to tell the participant what to do.
+     *
+     * - Example:
+     * ```
+     * {
+     *      "start": "Walk forward",
+     *      "10": "Keep walking",
+     *      "halfway": "Turn around and walk back",
+     *      "20": "Almost done",
+     *      "end": "All done!"
+     * }
+     * ```
+     */
+    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String with a sealed class
 
     /**
      * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
