@@ -1,9 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.serialization.PolymorphicSerializer
 import org.sagebionetworks.assessmentmodel.*
 import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 open class NodeTest {
 
@@ -31,32 +33,30 @@ open class NodeTest {
                                   }
            }
            """
-        val original = InstructionStepObject(
-                identifier = "foo",
-                title = "Hello World!",
-                detail = "Some text. This is a test.",
-                footnote = "This is a footnote.",
-                fullInstructionsOnly = true,
-                hideButtons = listOf(ButtonAction.Navigation.GoBackward),
-                buttonMap = mapOf(
+        val original = InstructionStepObject("foo")
+        original.title = "Hello World!"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.fullInstructionsOnly = true
+        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
+        original.buttonMap = mapOf(
                         ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                        ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX"))),
-                imageInfo = AnimatedImage(
+                        ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+        original.imageInfo = AnimatedImage(
                         imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                         imagePlacement = ImagePlacement.Standard.TopBackground,
-                        animationDuration = 2.0),
-                spokenInstructions = mapOf(
-                        "start" to "Start now"
-                )
-        )
+                        animationDuration = 2.0)
+        original.spokenInstructions = mapOf("start" to "Start now")
 
-        val serializer = InstructionStepObject.serializer()
+        val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
         val restored = jsonCoder.parse(serializer, jsonString)
         val decoded = jsonCoder.parse(serializer, inputString)
 
+        assertTrue(decoded is InstructionStepObject)
         assertEqualOptionalStep(original, decoded)
         assertEquals(original.detail, decoded.detail)
+        assertTrue(restored is InstructionStepObject)
         assertEqualOptionalStep(original, restored)
         assertEquals(original.detail, restored.detail)
     }

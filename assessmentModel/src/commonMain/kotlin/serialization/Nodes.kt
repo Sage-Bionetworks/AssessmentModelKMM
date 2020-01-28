@@ -16,40 +16,34 @@ val nodeSerializersModule = SerializersModule {
 }
 
 @Serializable
-abstract class NodeObject(override val identifier: String,
-                          override val resultIdentifier: String?) : Node {
+abstract class NodeObject() : Node {
 
     override var comment: String? = null
     override var title: String? = null
     override var footnote: String? = null
     @SerialName("shouldHideActions")
-    override var hideButtons: List<ButtonAction> = mutableListOf()
+    override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
-    override var buttonMap: Map<ButtonAction, Button> = mutableMapOf()
+    override var buttonMap: Map<ButtonAction, Button> = mapOf()
 
     override fun createResult(): Result = ResultObject(resultIdentifier ?: identifier)
 }
 
 @Serializable
-@SerialName("instruction")
-data class InstructionStepObject(override val identifier: String,
-                                 override val resultIdentifier: String? = null,
-                                 override val comment: String? = null,
-                                 override val title: String? = null,
-                                 @SerialName("image")
-                                 override val imageInfo: ImageInfo? = null,
-                                 override val footnote: String? = null,
-                                 @SerialName("shouldHideActions")
-                                 override val hideButtons: List<ButtonAction> = listOf(),
-                                 @SerialName("actions")
-                                 override val buttonMap: Map<ButtonAction, Button> = mapOf(),
-                                 override val spokenInstructions: Map<String, String>? = null,
-                                 override val fullInstructionsOnly: Boolean = false,
-                                 @SerialName("text")
-                                 override val detail: String? = null) : InstructionStep {
-    override fun createResult(): Result = ResultObject(resultIdentifier ?: identifier)
+abstract class StepObject() : NodeObject(), Step {
+    override var spokenInstructions: Map<String, String>? = null
 }
 
+@Serializable
+@SerialName("instruction")
+class InstructionStepObject(override val identifier: String,
+                            override val resultIdentifier: String? = null) : StepObject(), InstructionStep {
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null
+    override var fullInstructionsOnly: Boolean = false
+    @SerialName("text")
+    override var detail: String? = null
+}
 
 //
 //@Serializable
