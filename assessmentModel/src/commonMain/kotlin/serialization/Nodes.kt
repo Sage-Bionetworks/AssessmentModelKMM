@@ -12,6 +12,7 @@ import org.sagebionetworks.assessmentmodel.*
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
         InstructionStepObject::class with InstructionStepObject.serializer()
+        SectionObject::class with SectionObject.serializer()
     }
 }
 
@@ -36,12 +37,25 @@ abstract class StepObject() : NodeObject(), Step {
 
 @Serializable
 @SerialName("instruction")
-class InstructionStepObject(override val identifier: String,
-                            override val resultIdentifier: String? = null) : StepObject(), InstructionStep {
+data class InstructionStepObject(override val identifier: String,
+                                 override val resultIdentifier: String? = null) : StepObject(), InstructionStep {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
     override var fullInstructionsOnly: Boolean = false
     @SerialName("text")
+    override var detail: String? = null
+}
+
+@Serializable
+@SerialName("section")
+data class SectionObject(override val identifier: String,
+                         @SerialName("steps")
+                         override val children: List<Node>,
+                         override val resultIdentifier: String? = null) : NodeObject(), Section {
+    @SerialName("icon")
+    @Serializable(ImageNameSerializer::class)
+    override var imageInfo: FetchableImage? = null
+    override var subtitle: String? = null
     override var detail: String? = null
 }
 
