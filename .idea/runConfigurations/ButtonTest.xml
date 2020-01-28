@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ButtonTest" type="JUnit" factoryName="JUnit">
+    <module name="assessmentModel" />
+    <option name="PACKAGE_NAME" value="serialization" />
+    <option name="MAIN_CLASS_NAME" value="org.sagebionetworks.assessmentmodel.serialization.ButtonTest" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <option name="PARAMETERS" value="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="bundleLibCompileDebugUnitTest" externalProjectPath="$PROJECT_DIR$/assessmentModel" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>
