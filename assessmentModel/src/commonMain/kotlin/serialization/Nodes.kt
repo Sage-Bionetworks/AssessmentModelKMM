@@ -9,21 +9,46 @@ import org.sagebionetworks.assessmentmodel.*
 
 // TODO: syoung 01/27/2020 Uncomment these one at a time once tests are created.
 
-//@Serializable
-//abstract class StepNodeObject(override val identifier: String,
-//                              override val resultIdentifier: String?,
-//                              override val comment: String?,
-//                              override val title: String?,
-//                              override val label: String?,
-//                              @Polymorphic
-//                              @SerialName("image")
-//                              override val imageInfo: ImageInfo?,
-//                              override val detail: String?,
-//                              override val footnote: String?,
-//                              override val hideButtons: List<ButtonAction>,
-//                              override val buttonMap: Map<ButtonAction, Button>): Node, Step
+val nodeSerializersModule = SerializersModule {
+    polymorphic(Node::class) {
+        InstructionStepObject::class with InstructionStepObject.serializer()
+    }
+}
 
+@Serializable
+abstract class NodeObject(override val identifier: String,
+                          override val resultIdentifier: String?) : Node {
 
+    override var comment: String? = null
+    override var title: String? = null
+    override var footnote: String? = null
+    @SerialName("shouldHideActions")
+    override var hideButtons: List<ButtonAction> = mutableListOf()
+    @SerialName("actions")
+    override var buttonMap: Map<ButtonAction, Button> = mutableMapOf()
+
+    override fun createResult(): Result = ResultObject(resultIdentifier ?: identifier)
+}
+
+@Serializable
+@SerialName("instruction")
+data class InstructionStepObject(override val identifier: String,
+                                 override val resultIdentifier: String? = null,
+                                 override val comment: String? = null,
+                                 override val title: String? = null,
+                                 @SerialName("image")
+                                 override val imageInfo: ImageInfo? = null,
+                                 override val footnote: String? = null,
+                                 @SerialName("shouldHideActions")
+                                 override val hideButtons: List<ButtonAction> = listOf(),
+                                 @SerialName("actions")
+                                 override val buttonMap: Map<ButtonAction, Button> = mapOf(),
+                                 override val spokenInstructions: Map<String, String>? = null,
+                                 override val fullInstructionsOnly: Boolean = false,
+                                 @SerialName("text")
+                                 override val detail: String? = null) : InstructionStep {
+    override fun createResult(): Result = ResultObject(resultIdentifier ?: identifier)
+}
 
 
 //

@@ -8,7 +8,8 @@ import kotlinx.serialization.modules.plus
  */
 object Serialization {
     object SerializersModule {
-        val default =   buttonSerializersModule +
+        val default =   nodeSerializersModule +
+                        buttonSerializersModule +
                         imageSerializersModule +
                         resultSerializersModule
     }
