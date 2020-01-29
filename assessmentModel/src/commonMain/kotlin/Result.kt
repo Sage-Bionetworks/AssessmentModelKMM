@@ -1,8 +1,12 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.Serializable
+import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
+
 /**
  * A [Result] is any data result that should be included with an [Assessment]. The base level interface only has an
- * [identifier] and does not include any other properties.
+ * [identifier] and does not include any other properties. The [identifier] in this case may be either the
+ * [ResultMapElement.resultIdentifier] *or* the [ResultMapElement.identifier] if the result identifier is undefined.
  *
  * TODO: syoung 01/10/2020 figure out a clean-ish way to encode the result and include in the base interface. In Swift, the `RSDResult` conforms to the `Encodable` protocol so it can be encoded to a JSON dictionary. Is there a Kotlin equivalent?
  *
@@ -41,9 +45,10 @@ interface CollectionResult : Result {
 interface AssessmentResult : CollectionResult {
 
     /**
-     * A unique identifier for this task run.
+     * A unique identifier for this run of the assessment. This property is defined as readwrite to allow the
+     * controller for the task to set this on the [AssessmentResult] children included in this run.
      */
-    var taskRunUUIDString: String
+    var runUUIDString: String
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer. This should map to the

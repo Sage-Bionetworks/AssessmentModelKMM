@@ -32,7 +32,7 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("asyncResults")
                                   override var asyncActionResults: MutableSet<Result> = mutableSetOf(),
                                   @SerialName("taskRunUUID")
-                                  override var taskRunUUIDString: String = UUIDGenerator.uuidString(),
+                                  override var runUUIDString: String = UUIDGenerator.uuidString(),
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")

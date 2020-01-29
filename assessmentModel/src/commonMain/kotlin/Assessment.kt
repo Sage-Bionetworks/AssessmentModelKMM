@@ -1,12 +1,33 @@
 package org.sagebionetworks.assessmentmodel
 
+import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
+import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
+import org.sagebionetworks.assessmentmodel.serialization.ResultObject
+
+/**
+ * A [Session] includes one or more [assessments] that are logically grouped together.
+ *
+ * The SageResearch equivalent is an `RSDTaskGroup`.
+ *
+ * TODO: syoung 01/28/2020 Flesh out the interface for a session including how to get its result.
+ */
+interface Session {
+    val assessments: List<Assessment>
+}
+
 /**
  * An [Assessment] is used to define the model information used to gather assessment (measurement) data needed for a
  * given study. It can include both the information needed to display a [Step] sequence to the participant as well as
  * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
  * used to inform the results.
  */
-interface Assessment : NavigationNode {
+interface Assessment : ContentNode {
+
+    /**
+     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the [NavigatorLoader]
+     * interface to allow for loading the navigator using a callback.
+     */
+    val navigator: Navigator?
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
@@ -14,21 +35,15 @@ interface Assessment : NavigationNode {
     val versionString: String?
 
     /**
-     * A [subtitle] to display for the node in a localized string.
-     */
-    val subtitle: String?
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
-
-    /**
-     * The estimated number of minutes that the task will take. If `0`, then it is assumed that this value is not
+     * The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not
      * defined. Where provided, it can be used by an application to indicate to the participant approximately how
      * long an assessment is expected to take to complete.
      */
     val estimatedMinutes: Int
+
+    // Override the default implementation to return an [AssessmentResult]
+    override fun createResult(): AssessmentResult
+            = AssessmentResultObject(resultIdentifier ?: identifier, versionString)
 }
 
 /**
@@ -54,7 +69,7 @@ interface ResultMapElement {
 
     /**
      * The [comment] is *not* intended to be user-facing and is a field that allows the [Assessment] designer to add
-     * explanatory text describing the purpose of the step, section, or background action.
+     * explanatory text describing the purpose of the assessment, section, step, or background action.
      */
     val comment: String?
 
@@ -62,6 +77,7 @@ interface ResultMapElement {
      * Create an appropriate instance of a *new* [Result] for this map element.
      */
     fun createResult(): Result
+        = ResultObject(resultIdentifier ?: identifier)
 }
 
 /**
@@ -71,9 +87,48 @@ interface ResultMapElement {
 interface Node : ResultMapElement {
 
     /**
+     * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
+     * the button on screen. This property can be defined at any level and will default to whichever is the lowest level
+     * for which this mapping is defined.
+     */
+    val hideButtons: List<ButtonAction>
+
+    /**
+     * A mapping of a [ButtonAction] to a [Button].
+     *
+     * For example, this mapping can be used to define the url for a [ButtonAction.Navigation.LearnMore] link or to
+     * customize the title of the [ButtonAction.Navigation.GoForward] button. It can also define the title, icon, etc.
+     * on a custom button as long as the application knows how to interpret the custom action.
+     *
+     * Finally, a mapping can be used to explicitly mark a button as "should display" even if the overall assessment or
+     * section includes the button action in the list of hidden buttons. For example, an assessment may define the
+     * skip button as hidden but a lower level step within that assessment's hierarchy can return a mapping for the
+     * skip button. The lower level mapping should be respected and the button should be displayed for that step only.
+     */
+    val buttonMap: Map<ButtonAction, Button>
+}
+
+/**
+ * A [ContentNode] contains additional content that may, under certain circumstances and where screen real estate
+ * allows, be displayed to the participant to help them understand the intended purpose of the part of the assessment
+ * described by this [Node].
+ */
+interface ContentNode : Node {
+
+    /**
      * The primary text to display for the node in a localized string. The UI should display this using a larger font.
      */
     val title: String?
+
+    /**
+     * A [subtitle] to display for the node in a localized string.
+     */
+    val subtitle: String?
+
+    /**
+     * Detail text to display for the node in a localized string.
+     */
+    val detail: String?
 
     /**
      * An image or animation to display with this node.
@@ -89,21 +144,7 @@ interface Node : ResultMapElement {
      * not distract from the main purpose of the [Step] or [Assessment].
      */
     val footnote: String?
-
-    /**
-     * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
-     * the button on screen.
-     */
-    val hideButtons: List<ButtonAction>
-
-    /**
-     * A mapping of a [ButtonAction] to a [Button].
-     *
-     * For example, this mapping can be used to define the url for a [ButtonAction.Navigation.LearnMore] link or to
-     * customize the title of the [ButtonAction.Navigation.GoForward] button. It can also define the title, icon, etc.
-     * on a custom button as long as the application knows how to interpret the custom action.
-     */
-    val buttonMap: Map<ButtonAction, Button>
+        get() = null
 }
 
 /**
@@ -118,40 +159,124 @@ interface NodeContainer : Node {
     val children: List<Node>
 }
 
-/**
- * A [NavigationNode] is a node that includes a step navigator that can be used to display a [Step] sequence.
- */
-interface NavigationNode : Node {
-
-    /**
-     * The step navigator for this task.
-     */
-    val navigator: Navigator
+interface NavigatorLoader : Assessment {
+    // TODO: syoung 01/28/2020 implement.
 }
+
+interface NodeState {
+    //TODO: syoung 01/29/2020 Implement.
+}
+
+/**
+ * The [NavigationPoint] is a tuple that allows the [Navigator] to return additional information about how to traverse
+ * the assessment.
+ *
+ * The [node] is the next node to move to in navigating the assessment.
+ *
+ * The [direction] returns the direction in which to travel the path where the desired navigation may be to go back up
+ * the path rather than moving forward down the path. This can be important for an assessment where the participant is directed to redo a step and the animation
+ * should move backwards to show the user that this is what is happening.
+ *
+ * The [result] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
+ * into the form that is required by the assessment [Navigator].
+ *
+ * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
+ * are permissions that are required to run an async action.
+ *
+ * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
+ *
+ * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
+ */
+data class NavigationPoint(val node: Node?,
+                           val result: Result,
+                           val direction: Direction = Direction.Forward,
+                           val requestedPermissions: List<Permission>,
+                           val startAsyncActions: List<AsyncActionConfiguration>? = null,
+                           val stopAsyncActions: List<AsyncActionConfiguration>? = null) {
+    enum class Direction {
+        /**
+         * Move forward through the assessment.
+         */
+        Forward,
+        /**
+         * Move backward through the assessment.
+         */
+        Backward,
+        /**
+         * Exit the assessment early. If this direction indicator is set, then the entire assessment run should end.
+         */
+        Exit,
+        ;
+    }
+}
+
+/**
+ * A marker to use to indicate progress through the assessment. This includes the [current] step, the [total] number of steps,
+ * and whether or not this progress [isEstimated].
+ */
+data class Progress(val current: Int, val total: Int, val isEstimated: Boolean)
 
 /**
  * The [Navigator] is used by the assessment view controller or fragment to determine the order of presentation of
  * the [Step] elements in an assessment as well as when to start/stop the asynchronous background actions defined by
  * the [AsyncActionConfiguration] elements. The navigator is responsible for determining navigation based on the input
  * model, results, and platform context.
+ *
+ * The most common implementation of a [Navigator] will include a list of child nodes and rules for navigating the list.
+ * However, the [Navigator] is defined more generally to allow for custom navigation that may not use a list of nodes.
+ * For example, data tracking assessments such as medication tracking do not neatly conform to sequential navigation and as
+ * such, use a different set of rules to navigate the assessment.
  */
 interface Navigator {
-// TODO: syoung 01/10/2020 implement.
-}
-
-interface NodeNavigator : Navigator {
 
     /**
-     * The children contained within this collection.
+     * Returns the [Node] associated with the given [identifier], if any. This is the [identifier] for the [Node] that
+     * is local to this level of the node tree.
      */
-    val children: List<Node>
+    fun node(identifier: String): Node?
 
     /**
-     * A list of the [AsyncActionConfiguration] elements used to describe the configuration for background actions
-     * (such as a sensor recorder or web service) that should should be started when this [Node] in the [Assessment] is
-     * presented to the user.
+     * Start the assessment. This should return the first [NavigationPoint] for this assessment. The [previousRunData] is assessment data
+     * from a previous run. What this is and how it is used by the navigator is up to the assessment designers and
+     * developers to determine.
      */
-    val backgroundActions: List<AsyncActionConfiguration>
+    fun start(previousRunData: Any? = null, state: NodeState? = null): NavigationPoint
+
+    /**
+     * The data to store for the assessment run described by the given [result]. While this can be any object, the navigator
+     * will need to return something that the application will know how to store.
+     */
+    fun runData(result: Result): Any?
+
+    /**
+     * Continue to the next node after the current node. This should return the next node (if any), the current
+     * result state for the assessment, as well as the direction and any async actions that should be started or stopped.
+     */
+    fun nodeAfter(node: Node, result: Result): NavigationPoint
+
+    /**
+     * The node to move *back* to if the participant taps the back button.
+     *
+     * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
+     * this return.
+     */
+    fun nodeBefore(node: Node, result: Result): NavigationPoint
+
+    /**
+     * Should the controller display a "Next" button or is the given button the last one in the assessment in which case the
+     * button to end the assessment should say "Done"?
+     */
+    fun hasNodeAfter(node: Node, result: Result): Boolean
+
+    /**
+     * Is backward navigation allowed from this [node] with the current [result]?
+     */
+    fun allowBackNavigation(node: Node, result: Result): Boolean
+
+    /**
+     * Returns the [Progress] of the assessment from the given [node] with the given [result].
+     */
+    fun progress(node: Node, result: Result): Progress
 }
 
 /**
@@ -175,7 +300,6 @@ interface AsyncActionContainer : Node {
     val backgroundActions: List<AsyncActionConfiguration>
 }
 
-
 /**
  * A [Section] is used to define a logical sub-grouping of nodes and asynchronous background actions such as a section
  * in a longer survey or an active node that includes an instruction step, countdown step, and activity step.
@@ -185,17 +309,10 @@ interface AsyncActionContainer : Node {
  * on a single view. A [Section] is also different from an [Assessment] in that it is a sub-node and does *not*
  * contain a measurement which, alone, is valuable to a study designer.
  */
-interface Section : NodeContainer {
-
-    /**
-     * A [subtitle] to display for the node in a localized string.
-     */
-    val subtitle: String?
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
+interface Section : NodeContainer, ContentNode {
+    // Override the default to return a collection result.
+    override fun createResult(): CollectionResult
+            = CollectionResultObject(resultIdentifier ?: identifier)
 }
 
 /**
@@ -203,7 +320,7 @@ interface Section : NodeContainer {
  *
  * This is the base interface for the steps that can compose an assessment for presentation using a controller
  * appropriate to the device and application. Each [Step] object represents one logical piece of data entry,
- * information, or activity in a larger task.
+ * information, or activity in a larger assessment.
  *
  * A step can be a question, an active test, or a simple instruction. It is typically paired with a step controller that
  * controls the actions of the [Step].
@@ -235,33 +352,37 @@ interface Step : Node {
 interface OverviewStep : StandardPermissionsStep {
 
     /**
-     * For an overview step, the title is readwrite.
-     */
-    override var title: String?
-
-    /**
      * Detail text to display for the node in a localized string. For an overview step, the detail is readwrite.
      */
-    var detail: String?
+    override var detail: String?
 
     /**
-     * The learn more button for the task that this overview step is describing. This is defined as readwrite so that
+     * The learn more button for the assessment that this overview step is describing. This is defined as readwrite so that
      * researchers who are using the [Assessment] as a part of their application can define a custom learn more action.
      */
     var learnMore: Button?
 
     /**
-     * The [icons] that are used to define the list of things you will need for an active task.
+     * The [icons] that are used to define the list of things you will need for an active assessment.
      */
     val icons: List<ImageInfo>?
 }
 
 /**
- * [StandardPermissionsStep] extends the [Step] to include information about an activity including what permissions are
- * required by this step or task. Without these preconditions, the [Assessment] cannot measure or collect the data
- * needed for this task.
+ * A generic configuration object with information about a given permission. The permission can be used by the
+ * app to handle gracefully requesting authorization from the user for access to sensors, services, and hardware
+ * required by the app.
  */
-interface StandardPermissionsStep : Step {
+interface Permission {
+    // TODO: syoung 01/27/2020 implement the class that describes permissions.
+}
+
+/**
+ * [StandardPermissionsStep] extends the [Step] to include information about an activity including what permissions are
+ * required by this step or assessment. Without these preconditions, the [Assessment] cannot measure or collect the data
+ * needed for this assessment.
+ */
+interface StandardPermissionsStep : Step, ContentNode {
     // TODO: syoung 01/27/2020 implement the class that describes permissions.
 }
 
@@ -284,13 +405,7 @@ interface OptionalStep : Step {
  * text label in an instruction step with the intention that the amount of text will be short enough to be readable on
  * a single screen.
  */
-interface InstructionStep : OptionalStep {
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
-}
+interface InstructionStep : OptionalStep, ContentNode
 
 /**
  * [ActiveStep] extends the [Step] to include a [duration] and [commands]. This is used for the case where a step has
@@ -327,7 +442,7 @@ interface ActiveStep : Step {
      * }
      * ```
      */
-    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String with a sealed class
+    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String key with a sealed class
 
     /**
      * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
@@ -336,7 +451,7 @@ interface ActiveStep : Step {
     val requiresBackgroundAudio: Boolean
 
     /**
-     * Should the task end early if the task is interrupted by a phone call?
+     * Should the assessment end early if the assessment is interrupted by a phone call?
      */
     val shouldEndOnInterrupt : Boolean
 }
@@ -355,10 +470,10 @@ interface CountdownStep : OptionalStep, ActiveStep
  * For example, a [FormStep] may describe entering a participant's demographics data where the study designer wants to
  * display height, weight, gender, and birth year on a single screen.
  */
-interface FormStep : Step, NodeContainer
+interface FormStep : Step, NodeContainer, ContentNode
 
 /**
- * A [QuestionStep] can either be a kind [FormStep] or can describe the drill-down to display for an [InputField].
+ * A [QuestionStep] can either be a [FormStep] or can describe the drill-down to display for an [InputField].
  */
 interface QuestionStep : Step {
 
@@ -436,12 +551,7 @@ interface InputField : Node {
 /**
  * A result summary step is used to display a result that is calculated or measured earlier in the [Assessment].
  */
-interface ResultSummaryStep : Step {
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
+interface ResultSummaryStep : Step, ContentNode {
 
     /**
      * Text to display as the title above the result.
