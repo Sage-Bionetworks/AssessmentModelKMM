@@ -1,12 +1,48 @@
 package org.sagebionetworks.assessmentmodel
 
 /**
+ * A [Session] includes one or more [tasks] that are logically grouped together.
+ *
+ * The SageResearch equivalent is an `RSDTaskGroup`.
+ *
+ * TODO: syoung 01/28/2020 Flush out the interface for a session including how to get its result.
+ */
+interface Session {
+    val tasks: List<Task>
+}
+
+/**
+ * A [Task] is a node that includes a step navigator that can be used to display a [Step] sequence. It is used to define
+ * a [Node] that *can* be the root node on a tree. This is different from an [Assessment] in that a [Task] can include
+ * a list of assessments or be a single [Assessment]. Running a task can include running multiple assessments but if
+ * that is the case, then the task will not necessarily include a result that has any scoring.
+ *
+ * For example, a researcher may measure a participant's hand tremor by having the participant hold their phone in each
+ * hand while a recorder is gathering motion sensor data. That is an [Assessment] with a measurable result of the sensor
+ * data. Before taking this measurement, the participant may be asked about their medications. That is a *different*
+ * [Assessment] with a measurable result of the medication timing and dosage. These two assessments are then grouped
+ * together using a [Task] parent node, but that parent node does *not* have a measurable result other than a shared
+ * task run uuid that can be used to determine the correlation between the medication timing and the tremor. In this
+ * example, the "task run" refers to performing *both* the medication timing assessment *and* the tremor assessment.
+ * While both assessments can be run independently as the root level [Task], they can also be combined into a series
+ * of screens that are displayed to the participant as a single task.
+ */
+interface Task : Node {
+
+    /**
+     * The [Navigator] for this task. If this is [null] then the [Task] will be need to implement the [NavigatorLoader]
+     * interface to allow for loading the navigator using a callback.
+     */
+    val navigator: Navigator?
+}
+
+/**
  * An [Assessment] is used to define the model information used to gather assessment (measurement) data needed for a
  * given study. It can include both the information needed to display a [Step] sequence to the participant as well as
  * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
  * used to inform the results.
  */
-interface Assessment : NavigationNode {
+interface Assessment : Task {
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
@@ -89,10 +125,12 @@ interface Node : ResultMapElement {
      * not distract from the main purpose of the [Step] or [Assessment].
      */
     val footnote: String?
+        get() = null
 
     /**
      * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
-     * the button on screen.
+     * the button on screen. This property can be defined at any level and will default to whichever is the lowest level
+     * for which this mapping is defined.
      */
     val hideButtons: List<ButtonAction>
 
@@ -102,6 +140,11 @@ interface Node : ResultMapElement {
      * For example, this mapping can be used to define the url for a [ButtonAction.Navigation.LearnMore] link or to
      * customize the title of the [ButtonAction.Navigation.GoForward] button. It can also define the title, icon, etc.
      * on a custom button as long as the application knows how to interpret the custom action.
+     *
+     * Finally, a mapping can be used to explicitly mark a button as "should display" even if the overall task or
+     * section includes the button action in the list of hidden buttons. For example, an assessment may define the
+     * skip button as hidden but a lower level step within that assessment's hierarchy can return a mapping for the
+     * skip button. The lower level mapping should be respected and the button should be displayed for that step only.
      */
     val buttonMap: Map<ButtonAction, Button>
 }
@@ -118,40 +161,114 @@ interface NodeContainer : Node {
     val children: List<Node>
 }
 
-/**
- * A [NavigationNode] is a node that includes a step navigator that can be used to display a [Step] sequence.
- */
-interface NavigationNode : Node {
-
-    /**
-     * The step navigator for this task.
-     */
-    val navigator: Navigator
+interface NavigatorLoader : Task {
+// TODO: syoung 01/28/2020 implement.
 }
+
+/**
+ * The [NavigationPoint] is a tuple that allows the [Navigator] to return additional information about how to traverse
+ * the task.
+ *
+ * The [node] is the next node to move to in navigating the task.
+ *
+ * The [direction] returns the direction in which to travel the path where the desired navigation may be to go back up
+ * the path rather than moving forward down the path. This can be important for an assessment where the participant is directed to redo a step and the animation
+ * should move backwards to show the user that this is what is happening.
+ *
+ * The [result] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
+ * into the form that is required by the task [Navigator].
+ *
+ * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
+ * are permissions that are required to run an async action.
+ *
+ * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
+ *
+ * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
+ */
+data class NavigationPoint(val node: Node?,
+                           val result: Result,
+                           val direction: Direction = Direction.Forward,
+                           val requestedPermissions: List<Permission>,
+                           val startAsyncActions: List<AsyncActionConfiguration>? = null,
+                           val stopAsyncActions: List<AsyncActionConfiguration>? = null) {
+    enum class Direction {
+        /**
+         * Move forward through the task.
+         */
+        Forward,
+        /**
+         * Move backward through the task.
+         */
+        Backward,
+        /**
+         * Exit the task early. If this direction indicator is set, then the entire task run should end.
+         */
+        Exit,
+        ;
+    }
+}
+
+/**
+ * A marker to use to indicate progress through the task. This includes the [current] step, the [total] number of steps,
+ * and whether or not this progress [isEstimated].
+ */
+data class Progress(val current: Int, val total: Int, val isEstimated: Boolean)
 
 /**
  * The [Navigator] is used by the assessment view controller or fragment to determine the order of presentation of
  * the [Step] elements in an assessment as well as when to start/stop the asynchronous background actions defined by
  * the [AsyncActionConfiguration] elements. The navigator is responsible for determining navigation based on the input
  * model, results, and platform context.
+ *
+ * The most common implementation of a [Navigator] will include a list of child nodes and rules for navigating the list.
+ * However, the [Navigator] is defined more generally to allow for custom navigation that may not use a list of nodes.
+ * For example, data tracking tasks such as medication tracking do not neatly conform to sequential navigation and as
+ * such, use a different set of rules to navigate the task.
  */
 interface Navigator {
-// TODO: syoung 01/10/2020 implement.
-}
-
-interface NodeNavigator : Navigator {
 
     /**
-     * The children contained within this collection.
+     * Returns the [Node] associated with the given [identifier], if any. This is the [identifier] for the [Node] that
+     * is local to this level of the node tree.
      */
-    val children: List<Node>
+    fun node(identifier: String): Node?
 
     /**
-     * A list of the [AsyncActionConfiguration] elements used to describe the configuration for background actions
-     * (such as a sensor recorder or web service) that should should be started when this [Node] in the [Assessment] is
-     * presented to the user.
+     * Start the task. This should return the first [NavigationPoint] for this task. The [previousRunData] is task data
+     * from a previous run. What this is and how it is used by the navigator is up to the assessment designers and
+     * developers to determine.
      */
-    val backgroundActions: List<AsyncActionConfiguration>
+    fun start(previousRunData: Any? = null): NavigationPoint
+
+    /**
+     * Continue to the next node after the current node. This should return the next node (if any), the current
+     * result state for the task, as well as the direction and any async actions that should be started or stopped.
+     */
+    fun nodeAfter(node: Node, result: Result): NavigationPoint
+
+    /**
+     * The node to move *back* to if the participant taps the back button.
+     *
+     * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
+     * this return.
+     */
+    fun nodeBefore(node: Node, result: Result): NavigationPoint
+
+    /**
+     * Should the controller display a "Next" button or is the given button the last one in the task in which case the
+     * button to end the task should say "Done"?
+     */
+    fun hasNodeAfter(node: Node, result: Result): Boolean
+
+    /**
+     * Is backward navigation allowed from this [node] with the current [result]?
+     */
+    fun allowBackNavigation(node: Node, result: Result): Boolean
+
+    /**
+     * Returns the [Progress] of the task from the given [node] with the given [result].
+     */
+    fun progress(node: Node, result: Result): Progress
 }
 
 /**
@@ -174,7 +291,6 @@ interface AsyncActionContainer : Node {
      */
     val backgroundActions: List<AsyncActionConfiguration>
 }
-
 
 /**
  * A [Section] is used to define a logical sub-grouping of nodes and asynchronous background actions such as a section
@@ -254,6 +370,13 @@ interface OverviewStep : StandardPermissionsStep {
      * The [icons] that are used to define the list of things you will need for an active task.
      */
     val icons: List<ImageInfo>?
+}
+
+/**
+ * A permission is the information required to request permission to access a sensor or service.
+ */
+interface Permission {
+    // TODO: syoung 01/27/2020 implement the class that describes permissions.
 }
 
 /**

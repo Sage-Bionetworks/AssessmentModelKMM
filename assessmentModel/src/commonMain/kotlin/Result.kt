@@ -1,8 +1,11 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.Serializable
+
 /**
  * A [Result] is any data result that should be included with an [Assessment]. The base level interface only has an
- * [identifier] and does not include any other properties.
+ * [identifier] and does not include any other properties. The [identifier] in this case may be either the
+ * [ResultMapElement.resultIdentifier] *or* the [ResultMapElement.identifier] if the result identifier is undefined.
  *
  * TODO: syoung 01/10/2020 figure out a clean-ish way to encode the result and include in the base interface. In Swift, the `RSDResult` conforms to the `Encodable` protocol so it can be encoded to a JSON dictionary. Is there a Kotlin equivalent?
  *
@@ -17,7 +20,7 @@ interface Result {
 }
 
 /**
- * A [CollectionResult] is used to describe the output of a [Section], [Form], or [Assessment].
+ * A [CollectionResult] is used to describe the output of a [Section], [Form], [Task], or [Assessment].
  */
 interface CollectionResult : Result {
 
@@ -36,14 +39,21 @@ interface CollectionResult : Result {
 }
 
 /**
- * An [AssessmentResult] is the top-level [Result] for an [Assessment].
+ * A [TaskResult] is the top-level [Result] for an [Task].
  */
-interface AssessmentResult : CollectionResult {
+interface TaskResult : CollectionResult {
 
     /**
-     * A unique identifier for this task run.
+     * A unique identifier for this task run. This property is defined as readwrite to allow the controller for the
+     * task to set this on the [TaskResult] children included in this task run.
      */
     var taskRunUUIDString: String
+}
+
+/**
+ * An [AssessmentResult] is the top-level [Result] for an [Assessment].
+ */
+interface AssessmentResult : TaskResult {
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer. This should map to the
