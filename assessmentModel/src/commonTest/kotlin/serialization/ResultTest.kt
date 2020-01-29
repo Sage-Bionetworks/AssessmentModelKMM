@@ -1,13 +1,9 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.sagebionetworks.assessmentmodel.ButtonAction
-import org.sagebionetworks.assessmentmodel.ButtonStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 open class ResultTest {
 
@@ -75,7 +71,7 @@ open class ResultTest {
         val original = AssessmentResultObject(identifier = "testResult",
                 pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
                 asyncActionResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")),
-                taskRunUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
+                runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
                 startDateString = "2020-01-21T12:00:00.000+7000",
                 endDateString = "2020-01-21T12:05:00.000+7000"
             )

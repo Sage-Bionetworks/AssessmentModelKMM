@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.Serializable
+import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
 
 /**
  * A [Result] is any data result that should be included with an [Assessment]. The base level interface only has an
@@ -20,7 +21,7 @@ interface Result {
 }
 
 /**
- * A [CollectionResult] is used to describe the output of a [Section], [Form], [Task], or [Assessment].
+ * A [CollectionResult] is used to describe the output of a [Section], [Form], or [Assessment].
  */
 interface CollectionResult : Result {
 
@@ -39,21 +40,15 @@ interface CollectionResult : Result {
 }
 
 /**
- * A [TaskResult] is the top-level [Result] for an [Task].
- */
-interface TaskResult : CollectionResult {
-
-    /**
-     * A unique identifier for this task run. This property is defined as readwrite to allow the controller for the
-     * task to set this on the [TaskResult] children included in this task run.
-     */
-    var taskRunUUIDString: String
-}
-
-/**
  * An [AssessmentResult] is the top-level [Result] for an [Assessment].
  */
-interface AssessmentResult : TaskResult {
+interface AssessmentResult : CollectionResult {
+
+    /**
+     * A unique identifier for this run of the assessment. This property is defined as readwrite to allow the
+     * controller for the task to set this on the [AssessmentResult] children included in this run.
+     */
+    var runUUIDString: String
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer. This should map to the

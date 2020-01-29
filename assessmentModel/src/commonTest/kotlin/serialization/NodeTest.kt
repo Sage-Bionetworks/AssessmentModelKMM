@@ -2,7 +2,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
 import org.sagebionetworks.assessmentmodel.*
-import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -91,7 +90,7 @@ open class NodeTest {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("foo", taskRunUUIDString = result.taskRunUUIDString)
+        val expected = AssessmentResultObject("foo", runUUIDString = result.runUUIDString)
         assertEquals(expected, result)
     }
 
@@ -104,7 +103,7 @@ open class NodeTest {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("bar", taskRunUUIDString = result.taskRunUUIDString)
+        val expected = AssessmentResultObject("bar", runUUIDString = result.runUUIDString)
         assertEquals(expected, result)
     }
 
