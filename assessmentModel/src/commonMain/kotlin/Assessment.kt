@@ -384,7 +384,9 @@ interface OverviewStep : StandardPermissionsStep {
 }
 
 /**
- * A permission is the information required to request permission to access a sensor or service.
+ * A generic configuration object with information about a given permission. The permission can be used by the
+ * app to handle gracefully requesting authorization from the user for access to sensors, services, and hardware
+ * required by the app.
  */
 interface Permission {
     // TODO: syoung 01/27/2020 implement the class that describes permissions.
