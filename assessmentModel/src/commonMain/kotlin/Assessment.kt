@@ -9,7 +9,7 @@ import org.sagebionetworks.assessmentmodel.serialization.ResultObject
  *
  * The SageResearch equivalent is an `RSDTaskGroup`.
  *
- * TODO: syoung 01/28/2020 Flush out the interface for a session including how to get its result.
+ * TODO: syoung 01/28/2020 Flesh out the interface for a session including how to get its result.
  */
 interface Session {
     val tasks: List<Task>
