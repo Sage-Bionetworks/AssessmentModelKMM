@@ -34,7 +34,7 @@ interface Session {
 interface Task : Node {
 
     /**
-     * The [Navigator] for this task. If this is [null] then the [Task] will be need to implement the [NavigatorLoader]
+     * The [Navigator] for this task. If this is [null] then the [Task] will need to implement the [NavigatorLoader]
      * interface to allow for loading the navigator using a callback.
      */
     val navigator: Navigator?
