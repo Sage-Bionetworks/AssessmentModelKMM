@@ -241,6 +241,12 @@ interface Navigator {
     fun start(previousRunData: Any? = null): NavigationPoint
 
     /**
+     * The data to store for the task run described by the given [result]. While this can be any object, the navigator
+     * will need to return something that the application will know how to store.
+     */
+    fun runData(result: Result): Any?
+
+    /**
      * Continue to the next node after the current node. This should return the next node (if any), the current
      * result state for the task, as well as the direction and any async actions that should be started or stopped.
      */
