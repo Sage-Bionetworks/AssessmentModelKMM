@@ -9,7 +9,106 @@ import kotlin.test.assertTrue
 
 open class NodeTest {
 
-    val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder = Serialization.JsonCoder.default
+
+    /* MARK: AssessmentObject tests */
+
+    @Test
+    fun testAssessment_Serialization() {
+        val inputString = """
+            {
+                "type": "assessment",
+                "identifier": "foo",
+                "versionString": "1.2.3",
+                "resultIdentifier":"bar",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "detail": "Some text. This is a test.",
+                "estimatedMinutes": 4,
+                "icon": "fooIcon",
+                "footnote": "This is a footnote.",
+                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+                "shouldHideActions": ["goBackward"],
+                "steps": [
+                    {
+                        "identifier": "step1",
+                        "type": "instruction",
+                        "title": "Step 1"
+                    },
+                    {
+                        "identifier": "step2",
+                        "type": "instruction",
+                        "title": "Step 2"
+                    }
+                ]
+            }
+            """
+
+        val original = AssessmentObject(
+                identifier = "foo",
+                resultIdentifier = "bar",
+                versionString = "1.2.3",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.detail = "Some text. This is a test."
+        original.estimatedMinutes = 4
+        original.footnote = "This is a footnote."
+        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
+        original.buttonMap = mapOf(
+                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+        original.imageInfo = FetchableImage("fooIcon")
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is AssessmentObject)
+        assertContainerNode(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertEquals(original.estimatedMinutes, decoded.estimatedMinutes)
+        assertEquals(original.versionString, decoded.versionString)
+
+        assertTrue(restored is AssessmentObject)
+        assertContainerNode(original, restored)
+        assertEqualContentNodes(original, restored)
+        assertEquals(original.estimatedMinutes, restored.estimatedMinutes)
+        assertEquals(original.versionString, restored.versionString)
+
+    }
+
+    @Test
+    fun testAssessment_Result_NullResultId() {
+        val original = AssessmentObject(
+                identifier = "foo",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        val result = original.createResult()
+        val expected = AssessmentResultObject("foo", taskRunUUIDString = result.taskRunUUIDString)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun testAssessment_Result_WithResultId() {
+        val original = AssessmentObject(
+                identifier = "foo",
+                resultIdentifier = "bar",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        val result = original.createResult()
+        val expected = AssessmentResultObject("bar", taskRunUUIDString = result.taskRunUUIDString)
+        assertEquals(expected, result)
+    }
+
+    /* MARK: InstructionStepObject tests */
 
     @Test
     fun testInstructionStep_Serialization() {
@@ -18,7 +117,7 @@ open class NodeTest {
                "identifier": "foo",
                "type": "instruction",
                "title": "Hello World!",
-               "text": "Some text. This is a test.",
+               "detail": "Some text. This is a test.",
                "footnote": "This is a footnote.",
                "fullInstructionsOnly": true,
                "spokenInstructions": {"start": "Start now"},
@@ -55,11 +154,29 @@ open class NodeTest {
 
         assertTrue(decoded is InstructionStepObject)
         assertEqualOptionalStep(original, decoded)
-        assertEquals(original.detail, decoded.detail)
+        assertEqualContentNodes(original, decoded)
         assertTrue(restored is InstructionStepObject)
         assertEqualOptionalStep(original, restored)
-        assertEquals(original.detail, restored.detail)
+        assertEqualContentNodes(original, restored)
     }
+
+    @Test
+    fun testInstructionStep_Result_NullResultId() {
+        val original = InstructionStepObject("foo")
+        val result = original.createResult()
+        val expected = ResultObject("foo")
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun testInstructionStep_Result_WithResultId() {
+        val original = InstructionStepObject("foo", resultIdentifier = "bar")
+        val result = original.createResult()
+        val expected = ResultObject("bar")
+        assertEquals(expected, result)
+    }
+
+    /* MARK: SectionObject tests */
 
     @Test
     fun testSection_Serialization() {
@@ -113,27 +230,56 @@ open class NodeTest {
 
         assertTrue(decoded is SectionObject)
         assertContainerNode(original, decoded)
-        assertEquals(original.subtitle, decoded.subtitle)
-        assertEquals(original.detail, decoded.detail)
-        assertEquals(original.footnote, decoded.footnote)
+        assertEqualContentNodes(original, decoded)
 
         assertTrue(restored is SectionObject)
         assertContainerNode(original, restored)
-        assertEquals(original.subtitle, restored.subtitle)
-        assertEquals(original.detail, restored.detail)
-        assertEquals(original.footnote, restored.footnote)
+        assertEqualContentNodes(original, restored)
     }
+
+    @Test
+    fun testSection_Result_NullResultId() {
+        val original = SectionObject(
+                identifier = "foo",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        val result = original.createResult()
+        val expected = CollectionResultObject("foo")
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun testSection_Result_WithResultId() {
+        val original = SectionObject(
+                identifier = "foo",
+                resultIdentifier = "bar",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        val result = original.createResult()
+        val expected = CollectionResultObject("bar")
+        assertEquals(expected, result)
+    }
+
+    /* MARK: Helper methods */
 
     fun assertEqualResultMapElement(expected: ResultMapElement, actual: ResultMapElement) {
         assertEquals(expected.identifier, actual.identifier)
         assertEquals(expected.resultIdentifier, actual.resultIdentifier)
         assertEquals(expected.comment, actual.comment)
-        assertEquals(expected.createResult(), actual.createResult())
     }
 
     fun assertEqualNodes(expected: Node, actual: Node) {
         assertEqualResultMapElement(expected, actual)
+        assertEquals(expected.hideButtons, actual.hideButtons)
+        assertEquals(expected.buttonMap, actual.buttonMap)
+    }
+
+    fun assertEqualContentNodes(expected: ContentNode, actual: ContentNode) {
         assertEquals(expected.title, actual.title)
+        assertEquals(expected.subtitle, actual.subtitle)
+        assertEquals(expected.detail, actual.detail)
         assertEquals(expected.imageInfo, actual.imageInfo)
         assertEquals(expected.footnote, actual.footnote)
         assertEquals(expected.hideButtons, actual.hideButtons)

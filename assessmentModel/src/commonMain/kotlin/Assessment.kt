@@ -1,5 +1,9 @@
 package org.sagebionetworks.assessmentmodel
 
+import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
+import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
+import org.sagebionetworks.assessmentmodel.serialization.ResultObject
+
 /**
  * A [Session] includes one or more [tasks] that are logically grouped together.
  *
@@ -42,7 +46,7 @@ interface Task : Node {
  * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
  * used to inform the results.
  */
-interface Assessment : Task {
+interface Assessment : Task, ContentNode {
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
@@ -50,21 +54,15 @@ interface Assessment : Task {
     val versionString: String?
 
     /**
-     * A [subtitle] to display for the node in a localized string.
-     */
-    val subtitle: String?
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
-
-    /**
      * The estimated number of minutes that the task will take. If `0`, then it is assumed that this value is not
      * defined. Where provided, it can be used by an application to indicate to the participant approximately how
      * long an assessment is expected to take to complete.
      */
     val estimatedMinutes: Int
+
+    // Override the default implementation to return an [AssessmentResult]
+    override fun createResult(): AssessmentResult
+            = AssessmentResultObject(resultIdentifier ?: identifier, versionString)
 }
 
 /**
@@ -90,7 +88,7 @@ interface ResultMapElement {
 
     /**
      * The [comment] is *not* intended to be user-facing and is a field that allows the [Assessment] designer to add
-     * explanatory text describing the purpose of the step, section, or background action.
+     * explanatory text describing the purpose of the assessment, section, step, or background action.
      */
     val comment: String?
 
@@ -98,6 +96,7 @@ interface ResultMapElement {
      * Create an appropriate instance of a *new* [Result] for this map element.
      */
     fun createResult(): Result
+        = ResultObject(resultIdentifier ?: identifier)
 }
 
 /**
@@ -105,27 +104,6 @@ interface ResultMapElement {
  * nodes. All nodes have an [identifier] string that can be used to uniquely identify the node.
  */
 interface Node : ResultMapElement {
-
-    /**
-     * The primary text to display for the node in a localized string. The UI should display this using a larger font.
-     */
-    val title: String?
-
-    /**
-     * An image or animation to display with this node.
-     */
-    val imageInfo: ImageInfo?
-
-    /**
-     *
-     * Additional text to display for the node in a localized string at the bottom of the view.
-     *
-     * The footnote is intended to be displayed in a smaller font at the bottom of the screen. It is intended to be
-     * used in order to include disclaimer, copyright, etc. that is important to display to the participant but should
-     * not distract from the main purpose of the [Step] or [Assessment].
-     */
-    val footnote: String?
-        get() = null
 
     /**
      * List of button actions that should be hidden for this node even if the node subtype typically supports displaying
@@ -147,6 +125,45 @@ interface Node : ResultMapElement {
      * skip button. The lower level mapping should be respected and the button should be displayed for that step only.
      */
     val buttonMap: Map<ButtonAction, Button>
+}
+
+/**
+ * A [ContentNode] contains additional content that may, under certain circumstances and where screen real estate
+ * allows, be displayed to the participant to help them understand the intended purpose of the part of the task
+ * described by this [Node].
+ */
+interface ContentNode : Node {
+
+    /**
+     * The primary text to display for the node in a localized string. The UI should display this using a larger font.
+     */
+    val title: String?
+
+    /**
+     * A [subtitle] to display for the node in a localized string.
+     */
+    val subtitle: String?
+
+    /**
+     * Detail text to display for the node in a localized string.
+     */
+    val detail: String?
+
+    /**
+     * An image or animation to display with this node.
+     */
+    val imageInfo: ImageInfo?
+
+    /**
+     *
+     * Additional text to display for the node in a localized string at the bottom of the view.
+     *
+     * The footnote is intended to be displayed in a smaller font at the bottom of the screen. It is intended to be
+     * used in order to include disclaimer, copyright, etc. that is important to display to the participant but should
+     * not distract from the main purpose of the [Step] or [Assessment].
+     */
+    val footnote: String?
+        get() = null
 }
 
 /**
@@ -307,17 +324,10 @@ interface AsyncActionContainer : Node {
  * on a single view. A [Section] is also different from an [Assessment] in that it is a sub-node and does *not*
  * contain a measurement which, alone, is valuable to a study designer.
  */
-interface Section : NodeContainer {
-
-    /**
-     * A [subtitle] to display for the node in a localized string.
-     */
-    val subtitle: String?
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
+interface Section : NodeContainer, ContentNode {
+    // Override the default to return a collection result.
+    override fun createResult(): CollectionResult
+            = CollectionResultObject(resultIdentifier ?: identifier)
 }
 
 /**
@@ -357,14 +367,9 @@ interface Step : Node {
 interface OverviewStep : StandardPermissionsStep {
 
     /**
-     * For an overview step, the title is readwrite.
-     */
-    override var title: String?
-
-    /**
      * Detail text to display for the node in a localized string. For an overview step, the detail is readwrite.
      */
-    var detail: String?
+    override var detail: String?
 
     /**
      * The learn more button for the task that this overview step is describing. This is defined as readwrite so that
@@ -390,7 +395,7 @@ interface Permission {
  * required by this step or task. Without these preconditions, the [Assessment] cannot measure or collect the data
  * needed for this task.
  */
-interface StandardPermissionsStep : Step {
+interface StandardPermissionsStep : Step, ContentNode {
     // TODO: syoung 01/27/2020 implement the class that describes permissions.
 }
 
@@ -413,13 +418,7 @@ interface OptionalStep : Step {
  * text label in an instruction step with the intention that the amount of text will be short enough to be readable on
  * a single screen.
  */
-interface InstructionStep : OptionalStep {
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
-}
+interface InstructionStep : OptionalStep, ContentNode
 
 /**
  * [ActiveStep] extends the [Step] to include a [duration] and [commands]. This is used for the case where a step has
@@ -456,7 +455,7 @@ interface ActiveStep : Step {
      * }
      * ```
      */
-    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String with a sealed class
+    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String key with a sealed class
 
     /**
      * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
@@ -484,10 +483,10 @@ interface CountdownStep : OptionalStep, ActiveStep
  * For example, a [FormStep] may describe entering a participant's demographics data where the study designer wants to
  * display height, weight, gender, and birth year on a single screen.
  */
-interface FormStep : Step, NodeContainer
+interface FormStep : Step, NodeContainer, ContentNode
 
 /**
- * A [QuestionStep] can either be a kind [FormStep] or can describe the drill-down to display for an [InputField].
+ * A [QuestionStep] can either be a [FormStep] or can describe the drill-down to display for an [InputField].
  */
 interface QuestionStep : Step {
 
@@ -565,12 +564,7 @@ interface InputField : Node {
 /**
  * A result summary step is used to display a result that is calculated or measured earlier in the [Assessment].
  */
-interface ResultSummaryStep : Step {
-
-    /**
-     * Detail text to display for the node in a localized string.
-     */
-    val detail: String?
+interface ResultSummaryStep : Step, ContentNode {
 
     /**
      * Text to display as the title above the result.
