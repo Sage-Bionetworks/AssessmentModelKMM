@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.AssessmentResult
+import org.sagebionetworks.assessmentmodel.CollectionResult
 import org.sagebionetworks.assessmentmodel.Node
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentObject
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
@@ -97,7 +98,7 @@ class NodeNavigatorTest {
 
         val point = navigator.nodeBefore(nodeList[2], result)
         assertEquals(nodeList[1], point.node)
-        assertEquals(NavigationPoint.Direction.Forward, point.direction)
+        assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.result)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
@@ -117,7 +118,7 @@ class NodeNavigatorTest {
 
         val point = navigator.nodeBefore(assessmentObject.children.first(), result)
         assertNull(point.node)
-        assertEquals(NavigationPoint.Direction.Forward, point.direction)
+        assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.result)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
@@ -137,6 +138,45 @@ class NodeNavigatorTest {
 
         val expected = Progress(2,5, false)
         assertEquals(expected, progress)
+    }
+
+    @Test
+    fun testProgress_AllNodes_BackToNode2_FlatLinearNavigation() {
+        val nodeList = buildNodeList(6, 1, "step").toList()
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
+        val navigator = assessmentObject.navigator
+        assertNotNull(navigator)
+        assertTrue(navigator is NodeNavigator)
+        val result = buildResult(assessmentObject, 4)
+        addResults(result, nodeList, 3, 2)
+        println("${result.pathHistoryResults}")
+        val progress = navigator.progress(nodeList[2], result)
+
+        val expected = Progress(2,6, false)
+        assertEquals(expected, progress)
+    }
+
+    @Test
+    fun testNodeBeforeProgress_BackToNode2_FlatLinearNavigation() {
+        val nodeList = buildNodeList(6, 1, "step").toList()
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
+        val navigator = assessmentObject.navigator
+        assertNotNull(navigator)
+        assertTrue(navigator is NodeNavigator)
+        val result = buildResult(assessmentObject, 4)
+        addResults(result, nodeList, 3, 2)
+
+        assertTrue(navigator.allowBackNavigation(nodeList[2], result))
+
+        val point = navigator.nodeBefore(nodeList[2], result)
+        assertEquals(nodeList[1], point.node)
+        assertEquals(NavigationPoint.Direction.Backward, point.direction)
+        assertEquals(result, point.result)
+        assertNull(point.requestedPermissions)
+        assertNull(point.startAsyncActions)
+        assertNull(point.stopAsyncActions)
     }
 
     @Test
@@ -182,12 +222,37 @@ class NodeNavigatorTest {
         assertNull(progress)
     }
 
+    @Test
+    fun testNodeAfter_Step_SectionNavigation() {
+        val nodeList = buildNodeList(5, 1, "step").toList()
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        val navigator = assessmentObject.navigator
+        assertNotNull(navigator)
+        assertTrue(navigator is NodeNavigator)
+        val result = buildResult(assessmentObject, 2)
+
+        assertTrue(navigator.hasNodeAfter(nodeList[2], result))
+
+        val point = navigator.nodeAfter(nodeList[2], result)
+        assertEquals(nodeList[3], point.node)
+        assertEquals(NavigationPoint.Direction.Forward, point.direction)
+        assertEquals(result, point.result)
+        assertNull(point.requestedPermissions)
+        assertNull(point.startAsyncActions)
+        assertNull(point.stopAsyncActions)
+    }
+
     fun buildResult(assessmentObject: AssessmentObject, toIndex: Int) : AssessmentResult {
         val result = assessmentObject.createResult()
-        (0..toIndex).forEach {
-            result.pathHistoryResults.add(assessmentObject.children[it].createResult())
-        }
+        addResults(result, assessmentObject.children, 0, toIndex)
         return result
+    }
+
+    fun addResults(result: CollectionResult, nodeList: List<Node>, fromIndex: Int, toIndex: Int) {
+        val range = if (fromIndex < toIndex) (fromIndex..toIndex) else (fromIndex downTo toIndex)
+        range.forEach {
+            result.pathHistoryResults.add(nodeList[it].createResult())
+        }
     }
 
     fun buildNodeList(nodeCount: Int, start: Int, prefix: String) : Sequence<InstructionStepObject>

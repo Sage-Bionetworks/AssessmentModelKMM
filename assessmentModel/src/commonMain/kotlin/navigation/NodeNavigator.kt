@@ -17,12 +17,12 @@ open class NodeNavigator(val rootNode: NodeContainer) : Navigator {
 
     override fun nodeAfter(node: Node, result: Result): NavigationPoint {
         val next = nextNode(node, result)
-        return NavigationPoint(node = next, result = result)
+        return NavigationPoint(node = next, result = result, direction = NavigationPoint.Direction.Forward)
     }
 
     override fun nodeBefore(node: Node, result: Result): NavigationPoint {
         val previous = previousNode(node, result)
-        return NavigationPoint(node = previous, result = result)
+        return NavigationPoint(node = previous, result = result, direction = NavigationPoint.Direction.Backward)
     }
 
     override fun hasNodeAfter(node: Node, result: Result): Boolean {
