@@ -30,6 +30,7 @@ open class NodeTest {
                             "cancel": { "type": "default", "iconName" : "closeX" }
                            },
                 "shouldHideActions": ["goBackward"],
+                "progressMarkers": ["step1","step2"],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -62,6 +63,7 @@ open class NodeTest {
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
                 ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
+        original.progressMarkers = listOf("step1","step2")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -192,6 +194,7 @@ open class NodeTest {
                             "cancel": { "type": "default", "iconName" : "closeX" }
                            },
                 "shouldHideActions": ["goBackward"],
+                "progressMarkers": ["step1","step2"],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -221,6 +224,7 @@ open class NodeTest {
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
                 ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
+        original.progressMarkers = listOf("step1","step2")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -287,6 +291,7 @@ open class NodeTest {
 
     fun assertContainerNode(expected: NodeContainer, actual: NodeContainer) {
         assertEqualNodes(expected, actual)
+        assertEquals(expected.progressMarkers, actual.progressMarkers)
         assertEquals(expected.children.count(), actual.children.count())
         actual.children.forEachIndexed { index, node ->
             assertEqualNodes(expected.children[index], node)
