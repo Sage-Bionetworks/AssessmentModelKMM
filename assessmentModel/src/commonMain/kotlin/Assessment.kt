@@ -176,6 +176,9 @@ interface NodeContainer : Node {
      * Convenience method for mapping the child nodes to their identifier.
      */
     fun allNodeIdentifiers(): List<String> = children.map { it.identifier }
+
+    override fun createResult(): CollectionResult
+        = CollectionResultObject(resultId())
 }
 
 interface NavigatorLoader : Assessment {
@@ -212,12 +215,7 @@ interface AsyncActionContainer : Node {
  * on a single view. A [Section] is also different from an [Assessment] in that it is a sub-node and does *not*
  * contain a measurement which, alone, is valuable to a study designer.
  */
-interface Section : NodeContainer, ContentNode {
-
-    // Override the default to return a collection result.
-    override fun createResult(): CollectionResult
-            = CollectionResultObject(resultIdentifier ?: identifier)
-}
+interface Section : NodeContainer, ContentNode
 
 /**
  * A user-interface step in an Assessment.

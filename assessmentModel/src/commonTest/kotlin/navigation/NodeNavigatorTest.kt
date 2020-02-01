@@ -36,7 +36,7 @@ class NodeNavigatorTest {
         val point = navigator.start()
         assertEquals(nodeList.first(), point.node)
         assertEquals(point.direction, NavigationPoint.Direction.Forward)
-        val result = point.result
+        val result = point.parentResult
         assertTrue(result is AssessmentResultObject)
         assertEquals(result.asyncActionResults.count(), 0)
         assertEquals(result.pathHistoryResults.count(), 0)
@@ -59,7 +59,7 @@ class NodeNavigatorTest {
         val point = navigator.nodeAfter(nodeList[2], result)
         assertEquals(nodeList[3], point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
-        assertEquals(result, point.result)
+        assertEquals(result, point.parentResult)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
         assertNull(point.stopAsyncActions)
@@ -79,7 +79,7 @@ class NodeNavigatorTest {
         val point = navigator.nodeAfter(nodeList.last(), result)
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
-        assertEquals(result, point.result)
+        assertEquals(result, point.parentResult)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
         assertNull(point.stopAsyncActions)
@@ -99,7 +99,7 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(nodeList[2], result)
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.result)
+        assertEquals(result, point.parentResult)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
         assertNull(point.stopAsyncActions)
@@ -119,7 +119,7 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(assessmentObject.children.first(), result)
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.result)
+        assertEquals(result, point.parentResult)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
         assertNull(point.stopAsyncActions)
@@ -173,7 +173,7 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(nodeList[2], result)
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.result)
+        assertEquals(result, point.parentResult)
         assertNull(point.requestedPermissions)
         assertNull(point.startAsyncActions)
         assertNull(point.stopAsyncActions)
@@ -220,26 +220,6 @@ class NodeNavigatorTest {
         val progress = navigator.progress(nodeList.last(), result)
         // Should not return a progress b/c the node is outside the progress marker range.
         assertNull(progress)
-    }
-
-    @Test
-    fun testNodeAfter_Step_SectionNavigation() {
-        val nodeList = buildNodeList(5, 1, "step").toList()
-        val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
-        assertNotNull(navigator)
-        assertTrue(navigator is NodeNavigator)
-        val result = buildResult(assessmentObject, 2)
-
-        assertTrue(navigator.hasNodeAfter(nodeList[2], result))
-
-        val point = navigator.nodeAfter(nodeList[2], result)
-        assertEquals(nodeList[3], point.node)
-        assertEquals(NavigationPoint.Direction.Forward, point.direction)
-        assertEquals(result, point.result)
-        assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
     }
 
     fun buildResult(assessmentObject: AssessmentObject, toIndex: Int) : AssessmentResult {

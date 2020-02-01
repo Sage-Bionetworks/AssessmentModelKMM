@@ -73,6 +73,8 @@ data class AssessmentObject(override val identifier: String,
 
     override var estimatedMinutes: Int = 0
 
+    override fun createResult(): AssessmentResult = super<Assessment>.createResult()
+
     @Transient
     private var _navigator: NodeNavigator? = null
     override val navigator: Navigator?

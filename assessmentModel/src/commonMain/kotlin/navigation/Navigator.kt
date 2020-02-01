@@ -32,44 +32,45 @@ interface Navigator {
     fun start(state: NodeState? = null): NavigationPoint
 
     /**
-     * The data to store for the assessment run described by the given [result]. While this can be any object, the
+     * The data to store for the assessment run described by the given [parentResult]. While this can be any object, the
      * navigator will need to return something that the application will know how to store.
      *
      * - Warning: If the [state] is retained by the navigator, the navigator is responsible for managing memory in a
      * way that is appropriate to the supported platforms.
      */
-    fun runData(result: Result): Any?
+    fun runData(parentResult: CollectionResult): Any?
 
     /**
      * Continue to the next node after the current node. This should return the next node (if any), the current
      * result state for the assessment, as well as the direction and any async actions that should be started or stopped.
      */
-    fun nodeAfter(node: Node, result: Result): NavigationPoint
+    fun nodeAfter(currentNode: Node, parentResult: CollectionResult): NavigationPoint
 
     /**
+     *
      * The node to move *back* to if the participant taps the back button.
      *
      * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
      * this return.
      */
-    fun nodeBefore(node: Node, result: Result): NavigationPoint
+    fun nodeBefore(currentNode: Node, parentResult: CollectionResult): NavigationPoint
 
     /**
      * Should the controller display a "Next" button or is the given button the last one in the assessment in which case the
      * button to end the assessment should say "Done"?
      */
-    fun hasNodeAfter(node: Node, result: Result): Boolean
+    fun hasNodeAfter(currentNode: Node, parentResult: CollectionResult): Boolean
 
     /**
-     * Is backward navigation allowed from this [node] with the current [result]?
+     * Is backward navigation allowed from this [currentNode] with the current [parentResult]?
      */
-    fun allowBackNavigation(node: Node, result: Result): Boolean
+    fun allowBackNavigation(currentNode: Node, parentResult: CollectionResult): Boolean
 
     /**
-     * Returns the [Progress] of the assessment from the given [node] with the given [result]. If [null] then progress
-     * should not be shown for this [node] of assessment.
+     * Returns the [Progress] of the assessment from the given [currentNode] with the given [parentResult]. If [null] then progress
+     * should not be shown for this [currentNode] of assessment.
      */
-    fun progress(node: Node, result: Result): Progress?
+    fun progress(currentNode: Node, parentResult: CollectionResult): Progress?
 }
 
 /**
@@ -82,7 +83,7 @@ interface Navigator {
  * the path rather than moving forward down the path. This can be important for an assessment where the participant is directed to redo a step and the animation
  * should move backwards to show the user that this is what is happening.
  *
- * The [result] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
+ * The [parentResult] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
  * into the form that is required by the assessment [Navigator].
  *
  * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
@@ -93,7 +94,7 @@ interface Navigator {
  * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
  */
 data class NavigationPoint(val node: Node?,
-                           val result: Result,
+                           val parentResult: CollectionResult,
                            val direction: Direction = Direction.Forward,
                            val requestedPermissions: List<Permission>? = null,
                            val startAsyncActions: List<AsyncActionConfiguration>? = null,
