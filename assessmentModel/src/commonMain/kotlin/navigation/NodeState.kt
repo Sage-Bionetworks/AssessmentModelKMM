@@ -1,22 +1,12 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.Node
+import org.sagebionetworks.assessmentmodel.Result
+import org.sagebionetworks.assessmentmodel.CollectionResult
 
-/**
- * This a simple interface for keeping track of node state.
- *
- * Typically, this is used to allow for fine-grain navigation through an [Assessment] where the UI/UX might require a
- * more involved design than the straight-forward sequential display typical of the task-step model. For example, the
- * state may be used to allow a question to show a modal flow when the participant taps on an input field that cannot
- * easily be answered inline, such as setting up a calendar-based schedule.
- *
- * - Note: syoung 01/30/2020 This may, at some point, be replaced by a concrete implementation, but early research into
- * Kotlin/Native suggests that memory management is less performant that it is for native implementations on iOS that
- * uses ARC (automatic reference counting) and that the behavior will differ from what an iOS app developer is expecting.
- * While the parent node *could* be implemented using a [WeakReference] and delegation, this apparently is not
- * translated directly into an Objective-C weak reference, meaning that the life cycle will not conform to the expected
- * retain/release patterns with which an Obj-c developer is familiar.
- */
+interface RootNodeController {
+}
+
 interface NodeState {
 
     /**
@@ -25,12 +15,42 @@ interface NodeState {
     val node: Node
 
     /**
-     * The [parentNode] (if any) for the node chain.
+     * The [parent] (if any) for the node chain.
      */
-    val parentNode: Node?
+    val parent: NodeState?
 
     /**
-     * The [previousRunData] is data stored by the application from a previous run of the same [Assessment].
+     * The [Result] associated with [node] for this component in the node chain. This is the result that is added to the
+     * path history
      */
-    val previousRunData: Any?
+    val currentResult: Result
+
+    /**
+     * Can this task go forward? If forward navigation is enabled, then the task isn't waiting for a result or a task
+     * fetch to enable forward navigation.
+     */
+    val isForwardEnabled : Boolean
+
+    /**
+     * Can the path navigate backward up the chain? This property should be set to [false] if the backwards navigation
+     * is blocked by this path component or its child path component.
+     */
+    val canNavigateBackward : Boolean
+
+    fun goForward()
+    fun goBackward()
+}
+
+interface ParentNodeState : NodeState {
+
+    /**
+     * The current child that defines the current navigation point. This
+     */
+    val currentChild: NodeState?
+
+    /**
+     * A parent node can have child nodes associated with it. The result will therefore always be a collection result.
+     */
+    val collectionResult: CollectionResult
+
 }
