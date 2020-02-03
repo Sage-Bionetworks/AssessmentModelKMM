@@ -1,5 +1,6 @@
-package org.sagebionetworks.assessmentmodel
+package org.sagebionetworks.assessmentmodel.navigation
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable

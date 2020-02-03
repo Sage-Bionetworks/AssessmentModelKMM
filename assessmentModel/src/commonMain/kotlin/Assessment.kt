@@ -1,5 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
+import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
+import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
 import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
 import org.sagebionetworks.assessmentmodel.serialization.ResultObject
@@ -77,7 +79,13 @@ interface ResultMapElement {
      * Create an appropriate instance of a *new* [Result] for this map element.
      */
     fun createResult(): Result
-        = ResultObject(resultIdentifier ?: identifier)
+            = ResultObject(resultId())
+
+    /**
+     * Convenience method for accessing the result identifier associated with a given node.
+     */
+    fun resultId() : String
+            = resultIdentifier ?: identifier
 }
 
 /**
@@ -157,126 +165,24 @@ interface NodeContainer : Node {
      * The children contained within this collection.
      */
     val children: List<Node>
+
+    /**
+     * A list of the node identifiers to include in showing progress through the section or assessment. This is used
+     * by a [NodeNavigator] to calculate progress.
+     */
+    val progressMarkers: List<String>?
+
+    /**
+     * Convenience method for mapping the child nodes to their identifier.
+     */
+    fun allNodeIdentifiers(): List<String> = children.map { it.identifier }
+
+    override fun createResult(): CollectionResult
+        = CollectionResultObject(resultId())
 }
 
 interface NavigatorLoader : Assessment {
     // TODO: syoung 01/28/2020 implement.
-}
-
-interface NodeState {
-    //TODO: syoung 01/29/2020 Implement.
-}
-
-/**
- * The [NavigationPoint] is a tuple that allows the [Navigator] to return additional information about how to traverse
- * the assessment.
- *
- * The [node] is the next node to move to in navigating the assessment.
- *
- * The [direction] returns the direction in which to travel the path where the desired navigation may be to go back up
- * the path rather than moving forward down the path. This can be important for an assessment where the participant is directed to redo a step and the animation
- * should move backwards to show the user that this is what is happening.
- *
- * The [result] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
- * into the form that is required by the assessment [Navigator].
- *
- * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
- * are permissions that are required to run an async action.
- *
- * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
- *
- * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
- */
-data class NavigationPoint(val node: Node?,
-                           val result: Result,
-                           val direction: Direction = Direction.Forward,
-                           val requestedPermissions: List<Permission>,
-                           val startAsyncActions: List<AsyncActionConfiguration>? = null,
-                           val stopAsyncActions: List<AsyncActionConfiguration>? = null) {
-    enum class Direction {
-        /**
-         * Move forward through the assessment.
-         */
-        Forward,
-        /**
-         * Move backward through the assessment.
-         */
-        Backward,
-        /**
-         * Exit the assessment early. If this direction indicator is set, then the entire assessment run should end.
-         */
-        Exit,
-        ;
-    }
-}
-
-/**
- * A marker to use to indicate progress through the assessment. This includes the [current] step, the [total] number of steps,
- * and whether or not this progress [isEstimated].
- */
-data class Progress(val current: Int, val total: Int, val isEstimated: Boolean)
-
-/**
- * The [Navigator] is used by the assessment view controller or fragment to determine the order of presentation of
- * the [Step] elements in an assessment as well as when to start/stop the asynchronous background actions defined by
- * the [AsyncActionConfiguration] elements. The navigator is responsible for determining navigation based on the input
- * model, results, and platform context.
- *
- * The most common implementation of a [Navigator] will include a list of child nodes and rules for navigating the list.
- * However, the [Navigator] is defined more generally to allow for custom navigation that may not use a list of nodes.
- * For example, data tracking assessments such as medication tracking do not neatly conform to sequential navigation and as
- * such, use a different set of rules to navigate the assessment.
- */
-interface Navigator {
-
-    /**
-     * Returns the [Node] associated with the given [identifier], if any. This is the [identifier] for the [Node] that
-     * is local to this level of the node tree.
-     */
-    fun node(identifier: String): Node?
-
-    /**
-     * Start the assessment. This should return the first [NavigationPoint] for this assessment. The [previousRunData] is assessment data
-     * from a previous run. What this is and how it is used by the navigator is up to the assessment designers and
-     * developers to determine.
-     */
-    fun start(previousRunData: Any? = null, state: NodeState? = null): NavigationPoint
-
-    /**
-     * The data to store for the assessment run described by the given [result]. While this can be any object, the navigator
-     * will need to return something that the application will know how to store.
-     */
-    fun runData(result: Result): Any?
-
-    /**
-     * Continue to the next node after the current node. This should return the next node (if any), the current
-     * result state for the assessment, as well as the direction and any async actions that should be started or stopped.
-     */
-    fun nodeAfter(node: Node, result: Result): NavigationPoint
-
-    /**
-     * The node to move *back* to if the participant taps the back button.
-     *
-     * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
-     * this return.
-     */
-    fun nodeBefore(node: Node, result: Result): NavigationPoint
-
-    /**
-     * Should the controller display a "Next" button or is the given button the last one in the assessment in which case the
-     * button to end the assessment should say "Done"?
-     */
-    fun hasNodeAfter(node: Node, result: Result): Boolean
-
-    /**
-     * Is backward navigation allowed from this [node] with the current [result]?
-     */
-    fun allowBackNavigation(node: Node, result: Result): Boolean
-
-    /**
-     * Returns the [Progress] of the assessment from the given [node] with the given [result].
-     */
-    fun progress(node: Node, result: Result): Progress
 }
 
 /**
@@ -309,11 +215,7 @@ interface AsyncActionContainer : Node {
  * on a single view. A [Section] is also different from an [Assessment] in that it is a sub-node and does *not*
  * contain a measurement which, alone, is valuable to a study designer.
  */
-interface Section : NodeContainer, ContentNode {
-    // Override the default to return a collection result.
-    override fun createResult(): CollectionResult
-            = CollectionResultObject(resultIdentifier ?: identifier)
-}
+interface Section : NodeContainer, ContentNode
 
 /**
  * A user-interface step in an Assessment.
