@@ -26,8 +26,8 @@ interface Session {
 interface Assessment : ContentNode {
 
     /**
-     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the [NavigatorLoader]
-     * interface to allow for loading the navigator using a callback.
+     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the
+     * [NavigatorLoader] interface to allow for loading the navigator using a callback.
      */
     val navigator: Navigator?
 
@@ -45,7 +45,7 @@ interface Assessment : ContentNode {
 
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult
-            = AssessmentResultObject(resultIdentifier ?: identifier, versionString)
+            = AssessmentResultObject(resultId(), versionString)
 }
 
 /**
@@ -218,7 +218,7 @@ interface AsyncActionContainer : Node {
 interface Section : NodeContainer, ContentNode
 
 /**
- * A user-interface step in an Assessment.
+ * A user-interface step in an [Assessment].
  *
  * This is the base interface for the steps that can compose an assessment for presentation using a controller
  * appropriate to the device and application. Each [Step] object represents one logical piece of data entry,
@@ -259,8 +259,9 @@ interface OverviewStep : StandardPermissionsStep {
     override var detail: String?
 
     /**
-     * The learn more button for the assessment that this overview step is describing. This is defined as readwrite so that
-     * researchers who are using the [Assessment] as a part of their application can define a custom learn more action.
+     * The learn more button for the assessment that this overview step is describing. This is defined as readwrite so
+     * that researchers who are using the [Assessment] as a part of their application can define a custom learn more
+     * action.
      */
     var learnMore: Button?
 

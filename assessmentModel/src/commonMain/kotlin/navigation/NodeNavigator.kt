@@ -8,13 +8,11 @@ open class NodeNavigator(val rootNode: NodeContainer) : Navigator {
     override fun node(identifier: String): Node?
         = rootNode.children.firstOrNull { it.identifier == identifier }
 
-    override fun start(state: NodeState?): NavigationPoint {
+    override fun start(): NavigationPoint {
         return NavigationPoint(
                 node = rootNode.children.firstOrNull(),
                 parentResult = rootNode.createResult())
      }
-
-    override fun runData(parentResult: CollectionResult): Any? = null
 
     override fun nodeAfter(node: Node, parentResult: CollectionResult): NavigationPoint {
         val next = nextNode(node, parentResult)
