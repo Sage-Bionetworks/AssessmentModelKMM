@@ -12,7 +12,7 @@ import org.sagebionetworks.assessmentmodel.Node
  *
  * - Note: syoung 01/30/2020 This may, at some point, be replaced by a concrete implementation, but early research into
  * Kotlin/Native suggests that memory management is less performant that it is for native implementations on iOS that
- * ARC (automatic reference counting) and that the behavior will differ from what an iOS app developer is expecting.
+ * uses ARC (automatic reference counting) and that the behavior will differ from what an iOS app developer is expecting.
  * While the parent node *could* be implemented using a [WeakReference] and delegation, this apparently is not
  * translated directly into an Objective-C weak reference, meaning that the life cycle will not conform to the expected
  * retain/release patterns with which an Obj-c developer is familiar.
