@@ -6,7 +6,7 @@ import org.sagebionetworks.assessmentmodel.Node
  * This a simple interface for keeping track of node state.
  *
  * Typically, this is used to allow for fine-grain navigation through an [Assessment] where the UI/UX might require a
- * more involved design that the straight-forward sequential display typical of the task-step model. For example, the
+ * more involved design than the straight-forward sequential display typical of the task-step model. For example, the
  * state may be used to allow a question to show a modal flow when the participant taps on an input field that cannot
  * easily be answered inline, such as setting up a calendar-based schedule.
  *
