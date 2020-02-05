@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel
 
 import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
+import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
 import org.sagebionetworks.assessmentmodel.serialization.BranchNodeResultObject
 import org.sagebionetworks.assessmentmodel.serialization.ResultObject
@@ -19,6 +20,11 @@ interface Session {
 
 interface BranchNode : Node {
 
+    /**
+     * The [Navigator] for this assessment.
+     */
+    fun getNavigator(): Navigator
+
     // Override the default implementation to return a [BranchNodeResult]
     override fun createResult(): BranchNodeResult
             = BranchNodeResultObject(resultId())
@@ -31,12 +37,6 @@ interface BranchNode : Node {
  * used to inform the results.
  */
 interface Assessment : BranchNode, ContentNode {
-
-    /**
-     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the
-     * [NavigatorLoader] interface to allow for loading the navigator using a callback.
-     */
-    val navigator: Navigator?
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
@@ -183,6 +183,8 @@ interface NodeContainer : BranchNode {
      * Convenience method for mapping the child nodes to their identifier.
      */
     fun allNodeIdentifiers(): List<String> = children.map { it.identifier }
+
+    override fun getNavigator(): Navigator = NodeNavigator(this)
 }
 
 interface NavigatorLoader : Assessment {
