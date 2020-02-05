@@ -2,41 +2,184 @@ package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
 
+open class StepNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
+    override var currentResult: Result
+        get() {
+            if (_currentResult == null) {
+                _currentResult = node.createResult()
+            }
+            return _currentResult!!
+        }
+        set(value) { _currentResult = value }
+    private var _currentResult: Result? = null
 
-open class NodeNavigator(val rootNode: NodeContainer) : Navigator {
+    override fun goForward(requestedPermissions: Set<Permission>?,
+                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        parent.goForward(requestedPermissions, asyncActionNavigations)
+    }
+
+    override fun goBackward(requestedPermissions: Set<Permission>?,
+                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        parent.goBackward(requestedPermissions, asyncActionNavigations)
+    }
+}
+
+abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? = null) : BranchNodeState {
+
+    abstract val navigator: Navigator
+
+    override var currentResult: BranchNodeResult
+        get() {
+            if (_currentResult == null) {
+                _currentResult = node.createResult()
+            }
+            return _currentResult!!
+        }
+        set(value) { _currentResult = value }
+    private var _currentResult: BranchNodeResult? = null
+
+    override var currentChild: NodeState? = null
+        protected set
+
+    override var rootNodeController: RootNodeController?
+        get() = parent?.rootNodeController ?: _rootNodeController
+        set(value) { _rootNodeController = value }
+    private var _rootNodeController: RootNodeController? = null
+
+    override fun goForward(requestedPermissions: Set<Permission>?,
+                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        val next = getNextNode()
+        unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
+        if (next.node != null) {
+            // Go to next node if it is not null.
+            moveTo(next)
+        } else {
+            handleFinished(next)
+        }
+    }
+
+    fun moveTo(navigationPoint: NavigationPoint) {
+        val controller = rootNodeController
+        controller?.nodeStateFor(navigationPoint, this)?.let { nodeState ->
+            // If the controller returns a node state then it is responsible for showing it. Just set the current
+            // child and hand off control to the root node controller.
+            currentChild = nodeState
+            controller.show(nodeState, navigationPoint)
+        } ?: run {
+            // Otherwise, see if we have a node to move to.
+            getBranchNodeState(navigationPoint)?.let { nodeState ->
+                currentChild = nodeState
+                nodeState.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+            } ?: run {
+                TODO("syoung 02/04/2020 Not implemented. Handle case where a step is skipped by the root controller.")
+            }
+        }
+    }
+
+    fun handleFinished(navigationPoint: NavigationPoint) {
+        if ((navigationPoint.direction == NavigationPoint.Direction.Exit) || (parent == null)) {
+            rootNodeController?.handleFinished(navigationPoint, this)
+        } else {
+            parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+        }
+    }
+
+    /**
+     * Get the next node to show after the current node.
+     */
+    fun getNextNode(): NavigationPoint {
+        appendChildResultIfNeeded()
+        val currentNode = currentChild?.node
+        return if (currentNode == null) navigator.start() else navigator.nodeAfter(currentNode, currentResult)
+    }
+
+    /**
+     * Look to see if the next node to move to is a navigation point that can return a branch node state. The base
+     * class looks for conformance to the [NodeContainer] interface and the [Assessment] interface in that order.
+     */
+    fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
+        return when (navigationPoint.node) {
+            is Section -> NodeNavigator(navigationPoint.node, this)
+            is NodeNavigationAssessment -> navigationPoint.node.navigatorWith(this)
+            is Assessment -> AssessmentNavigator(navigationPoint.node, this)
+            else -> null
+        }
+    }
+
+    /**
+     * Union the requested permissions and async actions with the returned navigation point.
+     */
+    fun unionNavigationSets(navigationPoint: NavigationPoint,
+                  requestedPermissions: Set<Permission>?,
+                  asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        if (requestedPermissions != null) {
+            TODO("syoung 02/05/2020 Add unit test")
+            navigationPoint.requestedPermissions = requestedPermissions.plus(navigationPoint.requestedPermissions ?: setOf())
+        }
+        if (asyncActionNavigations != null) {
+            TODO("syoung 02/05/2020 Add unit test")
+            navigationPoint.asyncActionNavigations = asyncActionNavigations.union(navigationPoint.asyncActionNavigations ?: setOf())
+        }
+    }
+
+    /**
+     * Add the current child result to the end of the path results for this [currentResult]. If the last result has the
+     * same identifier as the current child result then this should *not* append. The assumption is that the controller
+     * has added the *desired* result but not edited the current child result.
+     */
+    fun appendChildResultIfNeeded() {
+        currentChild?.currentResult?.let { childResult ->
+            if (currentResult.pathHistoryResults.lastOrNull()?.let { it.identifier != childResult.identifier } != false) {
+                currentResult.pathHistoryResults.add(childResult)
+            }
+        }
+    }
+
+    override fun goBackward(requestedPermissions: Set<Permission>?,
+                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        TODO("syoung 02/04/2020 Not implemented.")
+    }
+}
+
+open class AssessmentNavigator(override val node: Assessment, parent: BranchNodeState? = null) : BranchNodeStateImpl(parent) {
+    override val navigator: Navigator
+        get() = node.navigator!!
+}
+
+open class NodeNavigator(override val node: NodeContainer, parent: BranchNodeState? = null) : BranchNodeStateImpl(parent), NodeStateNavigator {
+    override val navigator: Navigator
+        get() = this
 
     override fun node(identifier: String): Node?
-        = rootNode.children.firstOrNull { it.identifier == identifier }
+        = node.children.firstOrNull { it.identifier == identifier }
 
-    override fun start(state: NodeState?): NavigationPoint {
+    override fun start(): NavigationPoint {
         return NavigationPoint(
-                node = rootNode.children.firstOrNull(),
-                parentResult = rootNode.createResult())
+                node = node.children.firstOrNull(),
+                branchResult = node.createResult())
      }
 
-    override fun runData(parentResult: CollectionResult): Any? = null
-
-    override fun nodeAfter(node: Node, parentResult: CollectionResult): NavigationPoint {
-        val next = nextNode(node, parentResult)
-        return NavigationPoint(node = next, parentResult = parentResult, direction = NavigationPoint.Direction.Forward)
+    override fun nodeAfter(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint {
+        val next = nextNode(currentNode, branchResult)
+        return NavigationPoint(node = next, branchResult = branchResult, direction = NavigationPoint.Direction.Forward)
     }
 
-    override fun nodeBefore(currentNode: Node, parentResult: CollectionResult): NavigationPoint {
-        val previous = previousNode(currentNode, parentResult)
-        return NavigationPoint(node = previous, parentResult = parentResult, direction = NavigationPoint.Direction.Backward)
+    override fun nodeBefore(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint {
+        val previous = previousNode(currentNode, branchResult)
+        return NavigationPoint(node = previous, branchResult = branchResult, direction = NavigationPoint.Direction.Backward)
     }
 
-    override fun hasNodeAfter(currentNode: Node, parentResult: CollectionResult): Boolean {
-        return nextNode(currentNode, parentResult) != null
+    override fun hasNodeAfter(currentNode: Node, branchResult: BranchNodeResult): Boolean {
+        return nextNode(currentNode, branchResult) != null
     }
 
-    override fun allowBackNavigation(currentNode: Node, parentResult: CollectionResult): Boolean {
-        return previousNode(currentNode, parentResult) != null
+    override fun allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult): Boolean {
+        return previousNode(currentNode, branchResult) != null
     }
 
-    override fun progress(currentNode: Node, parentResult: CollectionResult): Progress? {
-        val parentNode = rootNode
-        val children = rootNode.children
+    override fun progress(currentNode: Node, branchResult: BranchNodeResult): Progress? {
+        val parentNode = node
+        val children = node.children
         val isEstimated = false
 
         val progressMarkers = parentNode.progressMarkers ?: return null
@@ -61,13 +204,13 @@ open class NodeNavigator(val rootNode: NodeContainer) : Navigator {
      */
 
     private fun nextNode(currentNode: Node, parentResult: CollectionResult): Node? {
-        val children = rootNode.children
-        val idx = rootNode.children.indexOf(currentNode)
+        val children = node.children
+        val idx = node.children.indexOf(currentNode)
         return if ((idx >= 0) && (idx + 1 < children.count())) children[idx+1] else null
     }
 
     private fun previousNode(currentNode: Node, parentResult: CollectionResult): Node? {
-        val children = rootNode.children
+        val children = node.children
         val idx = children.indexOf(currentNode)
         return if (idx-1>=0) children[idx-1] else null
     }

@@ -248,7 +248,7 @@ open class NodeTest {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = CollectionResultObject("foo")
+        val expected = BranchNodeResultObject("foo")
         assertEquals(expected, result)
     }
 
@@ -261,7 +261,7 @@ open class NodeTest {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = CollectionResultObject("bar")
+        val expected = BranchNodeResultObject("bar")
         assertEquals(expected, result)
     }
 

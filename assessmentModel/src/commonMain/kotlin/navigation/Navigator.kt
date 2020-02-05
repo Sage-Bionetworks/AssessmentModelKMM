@@ -10,13 +10,8 @@ import org.sagebionetworks.assessmentmodel.*
  *
  * The most common implementation of a [Navigator] will include a list of child nodes and rules for navigating the list.
  * However, the [Navigator] is defined more generally to allow for custom navigation that may not use a list of nodes.
- * For example, data tracking assessments such as medication tracking do not neatly conform to sequential navigation and as
- * such, use a different set of rules to navigate the assessment.
- *
- * The input model and platform context can be provided by the [state] parameter passed into the [start] method. Since
- * this parameter is optional and defines only a very simple interface, the [Navigator] may need to be paired with a
- * custom state handler in which case it should fail gracefully if the [NodeState] is null or not of the subclass that
- * is required by the navigator.
+ * For example, data tracking assessments such as medication tracking do not neatly conform to sequential navigation and
+ * as such, use a different set of rules to navigate the assessment.
  */
 interface Navigator {
 
@@ -29,22 +24,13 @@ interface Navigator {
     /**
      * Start the assessment. This should return the first [NavigationPoint] for this assessment.
      */
-    fun start(state: NodeState? = null): NavigationPoint
-
-    /**
-     * The data to store for the assessment run described by the given [parentResult]. While this can be any object, the
-     * navigator will need to return something that the application will know how to store.
-     *
-     * - Warning: If the [state] is retained by the navigator, the navigator is responsible for managing memory in a
-     * way that is appropriate to the supported platforms.
-     */
-    fun runData(parentResult: CollectionResult): Any?
+    fun start(): NavigationPoint
 
     /**
      * Continue to the next node after the current node. This should return the next node (if any), the current
      * result state for the assessment, as well as the direction and any async actions that should be started or stopped.
      */
-    fun nodeAfter(currentNode: Node, parentResult: CollectionResult): NavigationPoint
+    fun nodeAfter(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint
 
     /**
      *
@@ -53,24 +39,24 @@ interface Navigator {
      * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
      * this return.
      */
-    fun nodeBefore(currentNode: Node, parentResult: CollectionResult): NavigationPoint
+    fun nodeBefore(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint
 
     /**
-     * Should the controller display a "Next" button or is the given button the last one in the assessment in which case the
-     * button to end the assessment should say "Done"?
+     * Should the controller display a "Next" button or is the given button the last one in the assessment in which case
+     * the button to end the assessment should say "Done"?
      */
-    fun hasNodeAfter(currentNode: Node, parentResult: CollectionResult): Boolean
+    fun hasNodeAfter(currentNode: Node, branchResult: BranchNodeResult): Boolean
 
     /**
-     * Is backward navigation allowed from this [currentNode] with the current [parentResult]?
+     * Is backward navigation allowed from this [currentNode] with the current [branchResult]?
      */
-    fun allowBackNavigation(currentNode: Node, parentResult: CollectionResult): Boolean
+    fun allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult): Boolean
 
     /**
-     * Returns the [Progress] of the assessment from the given [currentNode] with the given [parentResult]. If [null] then progress
-     * should not be shown for this [currentNode] of assessment.
+     * Returns the [Progress] of the assessment from the given [currentNode] with the given [branchResult]. If [null]
+     * then progress should not be shown for this [currentNode] of assessment.
      */
-    fun progress(currentNode: Node, parentResult: CollectionResult): Progress?
+    fun progress(currentNode: Node, branchResult: BranchNodeResult): Progress?
 }
 
 /**
@@ -80,25 +66,20 @@ interface Navigator {
  * The [node] is the next node to move to in navigating the assessment.
  *
  * The [direction] returns the direction in which to travel the path where the desired navigation may be to go back up
- * the path rather than moving forward down the path. This can be important for an assessment where the participant is directed to redo a step and the animation
- * should move backwards to show the user that this is what is happening.
+ * the path rather than moving forward down the path. This can be important for an assessment where the participant is
+ * directed to redo a step and the animation should move backwards to show the user that this is what is happening.
  *
- * The [parentResult] is the result set at this level of navigation. This allows for explicit mutation or copying of a result
- * into the form that is required by the assessment [Navigator].
+ * The [branchResult] is the result set at this level of navigation. This allows for explicit mutation or copying of a
+ * result into the form that is required by the assessment [Navigator].
  *
  * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
  * are permissions that are required to run an async action.
- *
- * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
- *
- * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
  */
 data class NavigationPoint(val node: Node?,
-                           val parentResult: CollectionResult,
+                           val branchResult: BranchNodeResult,
                            val direction: Direction = Direction.Forward,
-                           val requestedPermissions: List<Permission>? = null,
-                           val startAsyncActions: List<AsyncActionConfiguration>? = null,
-                           val stopAsyncActions: List<AsyncActionConfiguration>? = null) {
+                           var requestedPermissions: Set<Permission>? = null,
+                           var asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
     enum class Direction {
         /**
          * Move forward through the assessment.
@@ -114,6 +95,50 @@ data class NavigationPoint(val node: Node?,
         Exit,
         ;
     }
+}
+
+/**
+ * A container for the async actions to start/stop and any permissions to request.
+ *
+ * The [sectionIdentifier] is an optional identifier to allow for repeating a section with async actions on that
+ * section. This is an identifier that can be used organizationally to differentiate between recorders within an
+ * assessment. How it is used is up to the assessment developer.
+ *
+ * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
+ *
+ * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
+ */
+data class AsyncActionNavigation(val sectionIdentifier: String? = null,
+                                 val startAsyncActions: Set<AsyncActionConfiguration>? = null,
+                                 val stopAsyncActions: Set<AsyncActionConfiguration>? = null) {
+    fun isEmpty(): Boolean
+            = ((startAsyncActions == null) && (stopAsyncActions == null))
+}
+
+/**
+ * Merge the two sets together. The start actions are the previous start actions plus the new start actions minus the
+ * new stop actions (don't start it if the later navigation stops it). The stop actions are the previous stop actions
+ * plus the new stop actions minus the new start actions (don't stop it if the later navigation starts it).
+ */
+fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<AsyncActionNavigation> {
+    val ret = this.toMutableSet()
+    values.filter { !it.isEmpty() }.forEach { value ->
+        val existing = this.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
+        if (existing == null) {
+            ret.add(value)
+        } else {
+            val existingStart = existing.startAsyncActions ?: setOf()
+            val existingStop = existing.stopAsyncActions ?: setOf()
+            val valueStart = value.startAsyncActions ?: setOf()
+            val valueStop = value.stopAsyncActions ?: setOf()
+            val start = existingStart.plus(valueStart).minus(valueStop)
+            val stop = existingStop.plus(valueStop).minus(valueStart)
+            ret.add(AsyncActionNavigation(value.sectionIdentifier,
+                    if (start.count() > 0) start else null,
+                    if (stop.count() > 0) stop else null))
+        }
+    }
+    return ret
 }
 
 /**

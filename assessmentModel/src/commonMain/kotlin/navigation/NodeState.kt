@@ -1,36 +1,83 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
-import org.sagebionetworks.assessmentmodel.Node
+import org.sagebionetworks.assessmentmodel.*
 
-/**
- * This a simple interface for keeping track of node state.
- *
- * Typically, this is used to allow for fine-grain navigation through an [Assessment] where the UI/UX might require a
- * more involved design than the straight-forward sequential display typical of the task-step model. For example, the
- * state may be used to allow a question to show a modal flow when the participant taps on an input field that cannot
- * easily be answered inline, such as setting up a calendar-based schedule.
- *
- * - Note: syoung 01/30/2020 This may, at some point, be replaced by a concrete implementation, but early research into
- * Kotlin/Native suggests that memory management is less performant that it is for native implementations on iOS that
- * uses ARC (automatic reference counting) and that the behavior will differ from what an iOS app developer is expecting.
- * While the parent node *could* be implemented using a [WeakReference] and delegation, this apparently is not
- * translated directly into an Objective-C weak reference, meaning that the life cycle will not conform to the expected
- * retain/release patterns with which an Obj-c developer is familiar.
- */
+interface RootNodeController {
+    fun nodeStateFor(navigationPoint: NavigationPoint, parent: BranchNodeState): NodeState?
+    fun show(nodeState: NodeState, navigationPoint: NavigationPoint)
+    fun handleFinished(navigationPoint: NavigationPoint, parent: BranchNodeState)
+}
+
 interface NodeState {
 
     /**
-     * The [node] tied to this [NodeState].
+     * The [node] tied to *this* [NodeState]. For any given [NodeState], there is one and only one [Node] associated
+     * with that state.
      */
     val node: Node
 
     /**
-     * The [parentNode] (if any) for the node chain.
+     * The [parent] (if any) for the node chain.
      */
-    val parentNode: Node?
+    val parent: BranchNodeState?
 
     /**
-     * The [previousRunData] is data stored by the application from a previous run of the same [Assessment].
+     * The [Result] associated with [node] for this component in the node chain. This is the result that is added to the
+     * path history. Since this is a pointer to an object, that object might be mutable.
      */
-    val previousRunData: Any?
+    val currentResult: Result
+
+    /**
+     * Method to call when the participant taps the "Next" button or a timed step is completed. The [navigationPoint]
+     * carries information about the current state of the navigation.
+     */
+    fun goForward(requestedPermissions: Set<Permission>? = null,
+                  asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+
+    /**
+     * Method to call when the participant taps the "Back" button or the active step gets a signal to go back to the
+     * previous node in the navigation.
+     */
+    fun goBackward(requestedPermissions: Set<Permission>? = null,
+                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+}
+
+fun NodeState.goIn(direction: NavigationPoint.Direction,
+                   requestedPermissions: Set<Permission>?,
+                   asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    if (direction == NavigationPoint.Direction.Forward) {
+        goForward(requestedPermissions, asyncActionNavigations)
+    }
+    else {
+        goBackward(requestedPermissions, asyncActionNavigations)
+    }
+}
+
+interface BranchNodeState : NodeState {
+
+    /**
+     * The controller for running the full flow of steps and nodes.
+     */
+    var rootNodeController: RootNodeController?
+
+    /**
+     * Override the [node] to require return of a [BranchNode].
+     */
+    override val node: BranchNode
+
+    /**
+     * The current child that defines the current navigation state.
+     */
+    val currentChild: NodeState?
+
+    /**
+     * Override the [currentResult] to require return of a [BranchNodeResult]
+     */
+    override val currentResult: BranchNodeResult
+}
+
+interface NodeStateNavigator: Navigator, BranchNodeState
+
+interface NodeNavigationAssessment : Assessment {
+    fun navigatorWith(parent: BranchNodeState?): NodeStateNavigator
 }

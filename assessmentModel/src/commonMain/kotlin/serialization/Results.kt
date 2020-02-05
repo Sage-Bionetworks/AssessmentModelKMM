@@ -7,22 +7,25 @@ import org.sagebionetworks.assessmentmodel.*
 
 val resultSerializersModule = SerializersModule {
     polymorphic(Result::class) {
-        CollectionResultObject::class with CollectionResultObject.serializer()
+        BranchNodeResultObject::class with BranchNodeResultObject.serializer()
         AssessmentResultObject::class with AssessmentResultObject.serializer()
+        CollectionResultObject::class with CollectionResultObject.serializer()
         ResultObject::class with ResultObject.serializer()
-        WebViewButtonObject::class with WebViewButtonObject.serializer()
-        VideoViewButtonObject::class with VideoViewButtonObject.serializer()
     }
 }
-
 
 @Serializable
 @SerialName("collection")
 data class CollectionResultObject(override val identifier: String,
+                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : CollectionResult
+
+@Serializable
+@SerialName("task")
+data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("stepHistory")
                                   override var pathHistoryResults: MutableList<Result> = mutableListOf(),
                                   @SerialName("asyncResults")
-                                  override var asyncActionResults: MutableSet<Result> = mutableSetOf()) : CollectionResult
+                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : BranchNodeResult
 @Serializable
 @SerialName("assessment")
 data class AssessmentResultObject(override val identifier: String,
@@ -30,7 +33,7 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("stepHistory")
                                   override var pathHistoryResults: MutableList<Result> = mutableListOf(),
                                   @SerialName("asyncResults")
-                                  override var asyncActionResults: MutableSet<Result> = mutableSetOf(),
+                                  override var inputResults: MutableSet<Result> = mutableSetOf(),
                                   @SerialName("taskRunUUID")
                                   override var runUUIDString: String = UUIDGenerator.uuidString(),
                                   @SerialName("startDate")

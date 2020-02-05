@@ -10,17 +10,16 @@ open class ResultTest {
     val jsonCoder = Serialization.JsonCoder.default
 
     @Test
-    fun testCollectionResult() {
+    fun testParentNodeResult() {
         val result1 = ResultObject("result1")
         val result2 = ResultObject("result2")
-        val result3 = CollectionResultObject(identifier = "result3",
+        val result3 = BranchNodeResultObject(identifier = "result3",
                 pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
-                asyncActionResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
+                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
         val result4 = CollectionResultObject(identifier = "result4",
-                pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
-                asyncActionResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
+                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
 
-        val original = CollectionResultObject("testResult", pathHistoryResults = mutableListOf(result1, result2, result3, result4))
+        val original = BranchNodeResultObject("testResult", pathHistoryResults = mutableListOf(result1, result2, result3, result4))
         val inputString = """
             {
                 "identifier": "testResult",
@@ -29,23 +28,22 @@ open class ResultTest {
                     {"identifier": "result2","type": "base"},
                     {
                         "identifier": "result3",
-                        "type": "collection",
+                        "type": "task",
                         "stepHistory": [{"identifier": "resultA","type": "base"},{"identifier": "resultB","type": "base"}],
                         "asyncResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
                     },
                     {
                         "identifier": "result4",
                         "type": "collection",
-                        "stepHistory": [{"identifier": "resultA","type": "base"},{"identifier": "resultB","type": "base"}],
-                        "asyncResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
+                        "inputResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
                     }
                 ]
             }   
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(CollectionResultObject.serializer(), original)
-        val restored = jsonCoder.parse(CollectionResultObject.serializer(), jsonString)
-        val decoded = jsonCoder.parse(CollectionResultObject.serializer(), inputString)
+        val jsonString = jsonCoder.stringify(BranchNodeResultObject.serializer(), original)
+        val restored = jsonCoder.parse(BranchNodeResultObject.serializer(), jsonString)
+        val decoded = jsonCoder.parse(BranchNodeResultObject.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -70,7 +68,7 @@ open class ResultTest {
     fun testAssessmentResult() {
         val original = AssessmentResultObject(identifier = "testResult",
                 pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
-                asyncActionResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")),
+                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")),
                 runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
                 startDateString = "2020-01-21T12:00:00.000+7000",
                 endDateString = "2020-01-21T12:05:00.000+7000"

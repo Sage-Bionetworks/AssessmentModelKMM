@@ -3,7 +3,7 @@ package org.sagebionetworks.assessmentmodel
 import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
-import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
+import org.sagebionetworks.assessmentmodel.serialization.BranchNodeResultObject
 import org.sagebionetworks.assessmentmodel.serialization.ResultObject
 
 /**
@@ -17,17 +17,24 @@ interface Session {
     val assessments: List<Assessment>
 }
 
+interface BranchNode : Node {
+
+    // Override the default implementation to return a [BranchNodeResult]
+    override fun createResult(): BranchNodeResult
+            = BranchNodeResultObject(resultId())
+}
+
 /**
  * An [Assessment] is used to define the model information used to gather assessment (measurement) data needed for a
  * given study. It can include both the information needed to display a [Step] sequence to the participant as well as
  * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
  * used to inform the results.
  */
-interface Assessment : ContentNode {
+interface Assessment : BranchNode, ContentNode {
 
     /**
-     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the [NavigatorLoader]
-     * interface to allow for loading the navigator using a callback.
+     * The [Navigator] for this assessment. If this is [null] then the [Assessment] will need to implement the
+     * [NavigatorLoader] interface to allow for loading the navigator using a callback.
      */
     val navigator: Navigator?
 
@@ -45,7 +52,7 @@ interface Assessment : ContentNode {
 
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult
-            = AssessmentResultObject(resultIdentifier ?: identifier, versionString)
+            = AssessmentResultObject(resultId(), versionString)
 }
 
 /**
@@ -159,7 +166,7 @@ interface ContentNode : Node {
  * A [NodeContainer] has a collection of child nodes defined by the [children]. Whether or not these child nodes are
  * presented in a single screen will depend upon the platform and the UI/UX defined by the [Assesment] designers.
  */
-interface NodeContainer : Node {
+interface NodeContainer : BranchNode {
 
     /**
      * The children contained within this collection.
@@ -176,9 +183,6 @@ interface NodeContainer : Node {
      * Convenience method for mapping the child nodes to their identifier.
      */
     fun allNodeIdentifiers(): List<String> = children.map { it.identifier }
-
-    override fun createResult(): CollectionResult
-        = CollectionResultObject(resultId())
 }
 
 interface NavigatorLoader : Assessment {
@@ -218,7 +222,7 @@ interface AsyncActionContainer : Node {
 interface Section : NodeContainer, ContentNode
 
 /**
- * A user-interface step in an Assessment.
+ * A user-interface step in an [Assessment].
  *
  * This is the base interface for the steps that can compose an assessment for presentation using a controller
  * appropriate to the device and application. Each [Step] object represents one logical piece of data entry,
@@ -259,8 +263,9 @@ interface OverviewStep : StandardPermissionsStep {
     override var detail: String?
 
     /**
-     * The learn more button for the assessment that this overview step is describing. This is defined as readwrite so that
-     * researchers who are using the [Assessment] as a part of their application can define a custom learn more action.
+     * The learn more button for the assessment that this overview step is describing. This is defined as readwrite so
+     * that researchers who are using the [Assessment] as a part of their application can define a custom learn more
+     * action.
      */
     var learnMore: Button?
 
