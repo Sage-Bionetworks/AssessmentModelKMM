@@ -1,8 +1,5 @@
 package org.sagebionetworks.assessmentmodel
 
-import kotlinx.serialization.Serializable
-import org.sagebionetworks.assessmentmodel.serialization.CollectionResultObject
-
 /**
  * A [Result] is any data result that should be included with an [Assessment]. The base level interface only has an
  * [identifier] and does not include any other properties. The [identifier] in this case may be either the
@@ -26,23 +23,32 @@ interface Result {
 interface CollectionResult : Result {
 
     /**
+     * The [inputResults] is a set that contains results that are recorded in parallel to the user-facing node
+     * path. This can be the async results of a sensor recorder, a response to a service call, or the results from a
+     * form where all the fields are displayed together and the results do not represent a linear path. The results
+     * within this set should each have a unique identifier.
+     */
+    var inputResults: MutableSet<Result>
+}
+
+/**
+ * The [BranchNodeResult] is the result created for a a given level of navigation of a node tree. The
+ * [pathHistoryResults] is additive where each time a node is traversed, it is added to the list.
+ */
+interface BranchNodeResult : CollectionResult {
+
+    /**
      * The [pathHistoryResults] includes the history of the [Node] results that were traversed as a part of running an
      * [Assessment]. This will only include a subset that is the path defined at this level of the overall [Assessment]
      * hierarchy.
      */
     var pathHistoryResults: MutableList<Result>
-
-    /**
-     * The [asyncActionResults] is a set that contains results that are recorded in parallel to the user-facing node
-     * path.
-     */
-    var asyncActionResults: MutableSet<Result>
 }
 
 /**
  * An [AssessmentResult] is the top-level [Result] for an [Assessment].
  */
-interface AssessmentResult : CollectionResult {
+interface AssessmentResult : BranchNodeResult {
 
     /**
      * A unique identifier for this run of the assessment. This property is defined as readwrite to allow the

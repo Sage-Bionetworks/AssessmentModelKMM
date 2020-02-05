@@ -1,8 +1,8 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.AssessmentResult
-import org.sagebionetworks.assessmentmodel.CollectionResult
 import org.sagebionetworks.assessmentmodel.Node
+import org.sagebionetworks.assessmentmodel.BranchNodeResult
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentObject
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
 import org.sagebionetworks.assessmentmodel.serialization.InstructionStepObject
@@ -36,13 +36,12 @@ class NodeNavigatorTest {
         val point = navigator.start()
         assertEquals(nodeList.first(), point.node)
         assertEquals(point.direction, NavigationPoint.Direction.Forward)
-        val result = point.parentResult
+        val result = point.branchResult
         assertTrue(result is AssessmentResultObject)
-        assertEquals(result.asyncActionResults.count(), 0)
+        assertEquals(result.inputResults.count(), 0)
         assertEquals(result.pathHistoryResults.count(), 0)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -59,10 +58,9 @@ class NodeNavigatorTest {
         val point = navigator.nodeAfter(nodeList[2], result)
         assertEquals(nodeList[3], point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
-        assertEquals(result, point.parentResult)
+        assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -79,10 +77,9 @@ class NodeNavigatorTest {
         val point = navigator.nodeAfter(nodeList.last(), result)
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
-        assertEquals(result, point.parentResult)
+        assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -99,10 +96,9 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(nodeList[2], result)
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.parentResult)
+        assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -119,10 +115,9 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(assessmentObject.children.first(), result)
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.parentResult)
+        assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -173,10 +168,9 @@ class NodeNavigatorTest {
         val point = navigator.nodeBefore(nodeList[2], result)
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
-        assertEquals(result, point.parentResult)
+        assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
-        assertNull(point.startAsyncActions)
-        assertNull(point.stopAsyncActions)
+        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -228,7 +222,7 @@ class NodeNavigatorTest {
         return result
     }
 
-    fun addResults(result: CollectionResult, nodeList: List<Node>, fromIndex: Int, toIndex: Int) {
+    fun addResults(result: BranchNodeResult, nodeList: List<Node>, fromIndex: Int, toIndex: Int) {
         val range = if (fromIndex < toIndex) (fromIndex..toIndex) else (fromIndex downTo toIndex)
         range.forEach {
             result.pathHistoryResults.add(nodeList[it].createResult())

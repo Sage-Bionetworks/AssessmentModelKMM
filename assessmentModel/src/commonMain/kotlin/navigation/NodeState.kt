@@ -1,47 +1,58 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
-import org.sagebionetworks.assessmentmodel.Node
-import org.sagebionetworks.assessmentmodel.Result
-import org.sagebionetworks.assessmentmodel.CollectionResult
+import org.sagebionetworks.assessmentmodel.*
 
 interface RootNodeController {
+    fun nodeStateFor(navigationPoint: NavigationPoint, parent: BranchNodeState): NodeState?
+    fun show(nodeState: NodeState, navigationPoint: NavigationPoint)
+    fun handleFinished(navigationPoint: NavigationPoint, parent: BranchNodeState)
 }
 
 interface NodeState {
 
     /**
-     * The [node] tied to this [NodeState].
+     * The [node] tied to *this* [NodeState]. For any given [NodeState], there is one and only one [Node] associated
+     * with that state.
      */
     val node: Node
 
     /**
      * The [parent] (if any) for the node chain.
      */
-    val parent: NodeState?
+    val parent: BranchNodeState?
 
     /**
      * The [Result] associated with [node] for this component in the node chain. This is the result that is added to the
-     * path history
+     * path history. Since this is a pointer to an object, that object might be mutable.
      */
     val currentResult: Result
 
     /**
-     * Can this task go forward? If forward navigation is enabled, then the task isn't waiting for a result or a task
-     * fetch to enable forward navigation.
+     * Method to call when the participant taps the "Next" button or a timed step is completed. The [navigationPoint]
+     * carries information about the current state of the navigation.
      */
-    val isForwardEnabled : Boolean
+    fun goForwardWith(requestedPermissions: Set<Permission>? = null,
+                      asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
-     * Can the path navigate backward up the chain? This property should be set to [false] if the backwards navigation
-     * is blocked by this path component or its child path component.
+     * Method to call when the participant taps the "Back" button or the active step gets a signal to go back to the
+     * previous node in the navigation.
      */
-    val canNavigateBackward : Boolean
-
-    fun goForward()
-    fun goBackward()
+    fun goBackwardWith(requestedPermissions: Set<Permission>? = null,
+                       asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 }
 
-interface ParentNodeState : NodeState {
+interface BranchNodeState : NodeState {
+
+    /**
+     * The controller for running the full flow of steps and nodes.
+     */
+    var rootNodeController: RootNodeController?
+
+    /**
+     * Override the [node] to require return of a [BranchNode].
+     */
+    override val node: BranchNode
 
     /**
      * The current child that defines the current navigation point. This
@@ -49,8 +60,7 @@ interface ParentNodeState : NodeState {
     val currentChild: NodeState?
 
     /**
-     * A parent node can have child nodes associated with it. The result will therefore always be a collection result.
+     * Override the [currentResult] to require return of a [BranchNodeResult]
      */
-    val collectionResult: CollectionResult
-
+    override val currentResult: BranchNodeResult
 }
