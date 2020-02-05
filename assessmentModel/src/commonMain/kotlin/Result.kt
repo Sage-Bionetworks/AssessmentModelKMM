@@ -32,7 +32,7 @@ interface CollectionResult : Result {
 }
 
 /**
- * The [BranchNodeResult] is the result created for a a given level of navigation of a node tree. The
+ * The [BranchNodeResult] is the result created for a given level of navigation of a node tree. The
  * [pathHistoryResults] is additive where each time a node is traversed, it is added to the list.
  */
 interface BranchNodeResult : CollectionResult {
