@@ -42,6 +42,17 @@ interface NodeState {
                    asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 }
 
+fun NodeState.goIn(direction: NavigationPoint.Direction,
+                   requestedPermissions: Set<Permission>?,
+                   asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    if (direction == NavigationPoint.Direction.Forward) {
+        goForward(requestedPermissions, asyncActionNavigations)
+    }
+    else {
+        goBackward(requestedPermissions, asyncActionNavigations)
+    }
+}
+
 interface BranchNodeState : NodeState {
 
     /**
@@ -55,7 +66,7 @@ interface BranchNodeState : NodeState {
     override val node: BranchNode
 
     /**
-     * The current child that defines the current navigation point. This
+     * The current child that defines the current navigation state.
      */
     val currentChild: NodeState?
 
@@ -63,4 +74,10 @@ interface BranchNodeState : NodeState {
      * Override the [currentResult] to require return of a [BranchNodeResult]
      */
     override val currentResult: BranchNodeResult
+}
+
+interface NodeStateNavigator: Navigator, BranchNodeState
+
+interface NodeNavigationAssessment : Assessment {
+    fun navigatorWith(parent: BranchNodeState?): NodeStateNavigator
 }

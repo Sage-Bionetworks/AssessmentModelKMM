@@ -4,8 +4,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.*
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
-import org.sagebionetworks.assessmentmodel.navigation.Navigator
+import org.sagebionetworks.assessmentmodel.navigation.*
 
 // TODO: syoung 01/28/2020 Deprecate the `text` property in the `RSDUIStep` protocol and decoding. Replace with "detail" or "subtitle" as appropriate.
 
@@ -69,14 +68,22 @@ data class AssessmentObject(override val identifier: String,
                             @SerialName("steps")
                             override val children: List<Node>,
                             override val versionString: String? = null,
-                            override val resultIdentifier: String? = null) : NodeContainerObject(), Assessment {
+                            override val resultIdentifier: String? = null) : NodeContainerObject(), NodeNavigationAssessment {
 
     override var estimatedMinutes: Int = 0
 
-    override fun createResult(): AssessmentResult = super<Assessment>.createResult()
+    override fun createResult(): AssessmentResult = super<NodeNavigationAssessment>.createResult()
 
     @Transient
     private var _navigator: NodeNavigator? = null
+
+    override fun navigatorWith(parent: BranchNodeState?): NodeStateNavigator {
+        if ((_navigator == null) || (_navigator!!.parent != parent)) {
+            _navigator = NodeNavigator(this, parent)
+        }
+        return _navigator!!
+    }
+
     override val navigator: Navigator?
         get() {
             if (_navigator == null) {

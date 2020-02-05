@@ -19,7 +19,7 @@ interface Session {
 
 interface BranchNode : Node {
 
-    // Override the default implementation to return an [ParentNodeResult]
+    // Override the default implementation to return a [BranchNodeResult]
     override fun createResult(): BranchNodeResult
             = BranchNodeResultObject(resultId())
 }

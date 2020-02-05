@@ -1,13 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
-import org.sagebionetworks.assessmentmodel.AssessmentResult
-import org.sagebionetworks.assessmentmodel.Node
-import org.sagebionetworks.assessmentmodel.BranchNodeResult
-import org.sagebionetworks.assessmentmodel.Step
-import org.sagebionetworks.assessmentmodel.serialization.AssessmentObject
-import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
-import org.sagebionetworks.assessmentmodel.serialization.InstructionStepObject
-import org.sagebionetworks.assessmentmodel.serialization.SectionObject
+import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.serialization.*
 import kotlin.test.*
 
 class NodeNavigatorTest {
@@ -404,9 +398,61 @@ class NodeNavigatorTest {
         assertNull(testRootNodeController.finished_navigationPoint?.node)
     }
 
+    @Test
+    fun testAppendChildResultIfNeeded_DoNotReplaceUniqueLastResult() {
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val navigator = NodeNavigator(assessmentObject)
+        val rootNodeController = TestRootNodeController(null, 999)
+        navigator.rootNodeController = rootNodeController
+        navigator.goForward()
+        val testResult = TestResult("step1", "magoo")
+        navigator.currentResult.pathHistoryResults.add(testResult)
+
+        // The expected behavior is that b/c the controller has added a result that does not match the state step
+        // result, *that* result should be honored.
+        navigator.goForward()
+
+        val expectedPathResults = listOf<Result>(testResult)
+        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+    }
+
+    @Test
+    fun testAppendChildResultIfNeeded_IncludeEqualStepResult() {
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val navigator = NodeNavigator(assessmentObject)
+        val rootNodeController = TestRootNodeController(null, 999)
+        navigator.rootNodeController = rootNodeController
+        navigator.goForward()
+        val testResult = ResultObject("step1")
+        navigator.currentResult.pathHistoryResults.add(testResult)
+        // The expected behavior is that the step result should only be included *once*.
+        navigator.goForward()
+
+        val expectedPathResults = listOf<Result>(testResult)
+        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+    }
+
+
+    @Test
+    fun testAppendChildResultIfNeeded_StepNotAddedResult() {
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val navigator = NodeNavigator(assessmentObject)
+        val rootNodeController = TestRootNodeController(null, 999)
+        navigator.rootNodeController = rootNodeController
+        navigator.goForward()
+        val testResult = ResultObject("step1")
+        // The expected behavior is that the step result should be added.
+        navigator.goForward()
+
+        val expectedPathResults = listOf<Result>(testResult)
+        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+    }
+
     /**
      * Helper methods
      */
+
+    data class TestResult(override val identifier: String, val answer: String) : Result
 
     class TestRootNodeController(val stepTo: String?, val expectedCount: Int) : RootNodeController {
 

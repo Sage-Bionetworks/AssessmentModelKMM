@@ -53,8 +53,7 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
         if (next.node != null) {
             // Go to next node if it is not null.
             moveTo(next)
-        }
-        else {
+        } else {
             handleFinished(next)
         }
     }
@@ -70,14 +69,9 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
             // Otherwise, see if we have a node to move to.
             getBranchNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
-                if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
-                    nodeState.goForward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
-                }
-                else {
-                    nodeState.goBackward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
-                }
+                nodeState.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
             } ?: run {
-                TODO("not implemented") // syoung 02/04/2020 Implement for the case where a step is skipped by the root controller.
+                TODO("syoung 02/04/2020 Not implemented. Handle case where a step is skipped by the root controller.")
             }
         }
     }
@@ -85,14 +79,8 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
     fun handleFinished(navigationPoint: NavigationPoint) {
         if ((navigationPoint.direction == NavigationPoint.Direction.Exit) || (parent == null)) {
             rootNodeController?.handleFinished(navigationPoint, this)
-        }
-        else {
-            if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
-                parent.goForward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
-            }
-            else {
-                parent.goBackward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
-            }
+        } else {
+            parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
         }
     }
 
@@ -111,7 +99,8 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
      */
     fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return when (navigationPoint.node) {
-            is NodeContainer -> NodeNavigator(navigationPoint.node, this)
+            is Section -> NodeNavigator(navigationPoint.node, this)
+            is NodeNavigationAssessment -> navigationPoint.node.navigatorWith(this)
             is Assessment -> AssessmentNavigator(navigationPoint.node, this)
             else -> null
         }
@@ -124,31 +113,23 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
                   requestedPermissions: Set<Permission>?,
                   asyncActionNavigations: Set<AsyncActionNavigation>?) {
         if (requestedPermissions != null) {
+            TODO("syoung 02/05/2020 Add unit test")
             navigationPoint.requestedPermissions = requestedPermissions.plus(navigationPoint.requestedPermissions ?: setOf())
         }
         if (asyncActionNavigations != null) {
+            TODO("syoung 02/05/2020 Add unit test")
             navigationPoint.asyncActionNavigations = asyncActionNavigations.union(navigationPoint.asyncActionNavigations ?: setOf())
         }
     }
 
     /**
-     * Add the current child result to the end of the path results for this [currentResult]. If the last result in the
-     * path history at this level has the same result identifier as the current child result, then that last result is
-     * *replaced* with the new current child result.
+     * Add the current child result to the end of the path results for this [currentResult]. If the last result has the
+     * same identifier as the current child result then this should *not* append. The assumption is that the controller
+     * has added the *desired* result but not edited the current child result.
      */
     fun appendChildResultIfNeeded() {
-        val childResult = currentChild?.currentResult
-        childResult?.let {
-            val lastResult = currentResult.pathHistoryResults.lastOrNull()
-            if ((lastResult == null) || (lastResult.identifier != childResult.identifier)) {
-                currentResult.pathHistoryResults.add(childResult)
-            }
-            else if (lastResult == childResult) {
-                // Do nothing
-            }
-            else {
-                // Replace the last result with the new last result
-                currentResult.pathHistoryResults.remove(lastResult)
+        currentChild?.currentResult?.let { childResult ->
+            if (currentResult.pathHistoryResults.lastOrNull()?.let { it.identifier != childResult.identifier } != false) {
                 currentResult.pathHistoryResults.add(childResult)
             }
         }
@@ -156,7 +137,7 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
 
     override fun goBackward(requestedPermissions: Set<Permission>?,
                             asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        TODO("not implemented") // syoung 02/04/2020
+        TODO("syoung 02/04/2020 Not implemented.")
     }
 }
 
@@ -165,7 +146,7 @@ open class AssessmentNavigator(override val node: Assessment, parent: BranchNode
         get() = node.navigator!!
 }
 
-open class NodeNavigator(override val node: NodeContainer, parent: BranchNodeState? = null) : BranchNodeStateImpl(parent), Navigator {
+open class NodeNavigator(override val node: NodeContainer, parent: BranchNodeState? = null) : BranchNodeStateImpl(parent), NodeStateNavigator {
     override val navigator: Navigator
         get() = this
 

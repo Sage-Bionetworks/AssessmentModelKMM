@@ -12,11 +12,6 @@ import org.sagebionetworks.assessmentmodel.*
  * However, the [Navigator] is defined more generally to allow for custom navigation that may not use a list of nodes.
  * For example, data tracking assessments such as medication tracking do not neatly conform to sequential navigation and
  * as such, use a different set of rules to navigate the assessment.
- *
- * The input model and platform context can be provided by the [state] parameter passed into the [start] method. Since
- * this parameter is optional and defines only a very simple interface, the [Navigator] may need to be paired with a
- * custom state handler in which case it should fail gracefully if the [NodeState] is null or not of the subclass that
- * is required by the navigator.
  */
 interface Navigator {
 
@@ -100,9 +95,6 @@ data class NavigationPoint(val node: Node?,
         Exit,
         ;
     }
-
-    fun isEmpty(): Boolean
-            = ((node == null) && (requestedPermissions == null) && (asyncActionNavigations?.isEmpty() ?: true))
 }
 
 /**
@@ -125,13 +117,16 @@ data class AsyncActionNavigation(val sectionIdentifier: String? = null,
 
 /**
  * Merge the two sets together. The start actions are the previous start actions plus the new start actions minus the
- * new stop actions (don't start it if the later navigation
+ * new stop actions (don't start it if the later navigation stops it). The stop actions are the previous stop actions
+ * plus the new stop actions minus the new start actions (don't stop it if the later navigation starts it).
  */
 fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<AsyncActionNavigation> {
     val ret = this.toMutableSet()
     values.filter { !it.isEmpty() }.forEach { value ->
         val existing = this.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
-        if (existing != null) {
+        if (existing == null) {
+            ret.add(value)
+        } else {
             val existingStart = existing.startAsyncActions ?: setOf()
             val existingStop = existing.stopAsyncActions ?: setOf()
             val valueStart = value.startAsyncActions ?: setOf()
@@ -141,9 +136,6 @@ fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<As
             ret.add(AsyncActionNavigation(value.sectionIdentifier,
                     if (start.count() > 0) start else null,
                     if (stop.count() > 0) stop else null))
-        }
-        else {
-            ret.add(value)
         }
     }
     return ret
