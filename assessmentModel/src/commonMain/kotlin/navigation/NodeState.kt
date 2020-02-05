@@ -31,15 +31,15 @@ interface NodeState {
      * Method to call when the participant taps the "Next" button or a timed step is completed. The [navigationPoint]
      * carries information about the current state of the navigation.
      */
-    fun goForwardWith(requestedPermissions: Set<Permission>? = null,
-                      asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun goForward(requestedPermissions: Set<Permission>? = null,
+                  asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
      * Method to call when the participant taps the "Back" button or the active step gets a signal to go back to the
      * previous node in the navigation.
      */
-    fun goBackwardWith(requestedPermissions: Set<Permission>? = null,
-                       asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun goBackward(requestedPermissions: Set<Permission>? = null,
+                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 }
 
 interface BranchNodeState : NodeState {

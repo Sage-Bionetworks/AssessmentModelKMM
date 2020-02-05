@@ -3,32 +3,51 @@ package org.sagebionetworks.assessmentmodel.navigation
 import org.sagebionetworks.assessmentmodel.*
 
 open class StepNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
-    override var currentResult: Result = node.createResult()
+    override var currentResult: Result
+        get() {
+            if (_currentResult == null) {
+                _currentResult = node.createResult()
+            }
+            return _currentResult!!
+        }
+        set(value) { _currentResult = value }
+    private var _currentResult: Result? = null
 
-    override fun goForwardWith(requestedPermissions: Set<Permission>?,
-                               asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goForwardWith(requestedPermissions, asyncActionNavigations)
+    override fun goForward(requestedPermissions: Set<Permission>?,
+                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        parent.goForward(requestedPermissions, asyncActionNavigations)
     }
 
-    override fun goBackwardWith(requestedPermissions: Set<Permission>?,
-                                asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goBackwardWith(requestedPermissions, asyncActionNavigations)
+    override fun goBackward(requestedPermissions: Set<Permission>?,
+                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        parent.goBackward(requestedPermissions, asyncActionNavigations)
     }
 }
 
 abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? = null) : BranchNodeState {
-    override var currentResult: BranchNodeResult = node.createResult()
+
+    abstract val navigator: Navigator
+
+    override var currentResult: BranchNodeResult
+        get() {
+            if (_currentResult == null) {
+                _currentResult = node.createResult()
+            }
+            return _currentResult!!
+        }
+        set(value) { _currentResult = value }
+    private var _currentResult: BranchNodeResult? = null
 
     override var currentChild: NodeState? = null
         protected set
 
-    abstract val navigator: Navigator
+    override var rootNodeController: RootNodeController?
+        get() = parent?.rootNodeController ?: _rootNodeController
+        set(value) { _rootNodeController = value }
+    private var _rootNodeController: RootNodeController? = null
 
-    override var rootNodeController: RootNodeController? = null
-        get() = parent?.rootNodeController ?: this.rootNodeController
-
-    override fun goForwardWith(requestedPermissions: Set<Permission>?,
-                               asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun goForward(requestedPermissions: Set<Permission>?,
+                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
         val next = getNextNode()
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
         if (next.node != null) {
@@ -52,10 +71,10 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
             getBranchNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
                 if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
-                    nodeState.goForwardWith(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                    nodeState.goForward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
                 }
                 else {
-                    nodeState.goBackwardWith(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                    nodeState.goBackward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
                 }
             } ?: run {
                 TODO("not implemented") // syoung 02/04/2020 Implement for the case where a step is skipped by the root controller.
@@ -69,10 +88,10 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
         }
         else {
             if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
-                parent.goForwardWith(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                parent.goForward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
             }
             else {
-                parent.goBackwardWith(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                parent.goBackward(navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
             }
         }
     }
@@ -135,8 +154,8 @@ abstract class BranchNodeStateImpl(final override val parent: BranchNodeState? =
         }
     }
 
-    override fun goBackwardWith(requestedPermissions: Set<Permission>?,
-                                asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun goBackward(requestedPermissions: Set<Permission>?,
+                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
         TODO("not implemented") // syoung 02/04/2020
     }
 }
