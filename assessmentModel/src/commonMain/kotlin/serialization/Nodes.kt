@@ -68,27 +68,7 @@ data class AssessmentObject(override val identifier: String,
                             @SerialName("steps")
                             override val children: List<Node>,
                             override val versionString: String? = null,
-                            override val resultIdentifier: String? = null) : NodeContainerObject(), NodeNavigationAssessment {
-
+                            override val resultIdentifier: String? = null) : NodeContainerObject(), Assessment {
     override var estimatedMinutes: Int = 0
-
-    override fun createResult(): AssessmentResult = super<NodeNavigationAssessment>.createResult()
-
-    @Transient
-    private var _navigator: NodeNavigator? = null
-
-    override fun navigatorWith(parent: BranchNodeState?): NodeStateNavigator {
-        if ((_navigator == null) || (_navigator!!.parent != parent)) {
-            _navigator = NodeNavigator(this, parent)
-        }
-        return _navigator!!
-    }
-
-    override val navigator: Navigator?
-        get() {
-            if (_navigator == null) {
-                _navigator = NodeNavigator(this)
-            }
-            return _navigator
-        }
+    override fun createResult(): AssessmentResult = super<Assessment>.createResult()
 }

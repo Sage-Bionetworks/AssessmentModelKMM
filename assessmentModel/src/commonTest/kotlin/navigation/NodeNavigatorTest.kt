@@ -9,7 +9,7 @@ class NodeNavigatorTest {
     @Test
     fun testNodeWithIdentifier() {
         val assessmentObject = AssessmentObject("foo", buildNodeList(5, 1, "step").toList())
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
 
@@ -25,7 +25,7 @@ class NodeNavigatorTest {
     fun testStart_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
 
@@ -44,7 +44,7 @@ class NodeNavigatorTest {
     fun testNodeAfter_Node2_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -63,7 +63,7 @@ class NodeNavigatorTest {
     fun testNodeAfter_LastNode_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -82,7 +82,7 @@ class NodeNavigatorTest {
     fun testNodeBefore_Node2_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -101,7 +101,7 @@ class NodeNavigatorTest {
     fun testNodeBefore_FirstNode_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 0)
@@ -121,7 +121,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -136,7 +136,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(6, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -153,7 +153,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(6, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -174,7 +174,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -189,7 +189,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = assessmentObject.createResult()
@@ -203,7 +203,7 @@ class NodeNavigatorTest {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.navigator
+        val navigator = assessmentObject.getNavigator()
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = assessmentObject.createResult()
@@ -216,19 +216,18 @@ class NodeNavigatorTest {
     fun testGoForward_Step3_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
-        assertTrue(navigator is BranchNodeState)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
 
         val testRootNodeController = TestRootNodeController("step3", 3)
         val expectedIdentifiers = listOf<String>("step1", "step2", "step3")
 
-        navigator.rootNodeController = testRootNodeController
-        navigator.goForward()
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
 
         assertFalse(testRootNodeController.infiniteLoop)
         assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
 
-        val topResult = navigator.currentResult
+        val topResult = nodeState.currentResult
         // The path history should be up to but not including the current result
         assertEquals(expectedIdentifiers.dropLast(1), topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
@@ -247,19 +246,18 @@ class NodeNavigatorTest {
     fun testGoForward_Last_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.navigator
-        assertTrue(navigator is BranchNodeState)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
 
         val testRootNodeController = TestRootNodeController("end", 5)
         val expectedIdentifiers = listOf<String>("step1", "step2", "step3", "step4", "step5")
 
-        navigator.rootNodeController = testRootNodeController
-        navigator.goForward()
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
 
         assertFalse(testRootNodeController.infiniteLoop)
         assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
 
-        val topResult = navigator.currentResult
+        val topResult = nodeState.currentResult
         // The path history should include the last one bc the finished should be called.
         assertEquals(expectedIdentifiers, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
@@ -272,7 +270,7 @@ class NodeNavigatorTest {
         assertEquals(lastPoint.branchResult, topResult)
 
         assertTrue(testRootNodeController.finished_called)
-        assertEquals(navigator, testRootNodeController.finished_parent)
+        assertEquals(nodeState, testRootNodeController.finished_parent)
         assertNotNull(testRootNodeController.finished_navigationPoint)
         assertNull(testRootNodeController.finished_navigationPoint?.node)
     }
@@ -286,22 +284,21 @@ class NodeNavigatorTest {
         val nodeC = SectionObject("stepC", nodeListC)
         val nodeD = InstructionStepObject("stepD")
         val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
-        val navigator = assessmentObject.navigator
-        assertTrue(navigator is BranchNodeState)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
 
         val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3")
         val expectedResult = listOf("stepA")
         val testRootNodeController = TestRootNodeController("stepB3", expectedChain.count())
 
-        navigator.rootNodeController = testRootNodeController
-        navigator.goForward()
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
 
         assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
         assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
 
-        val topResult = navigator.currentResult
+        val topResult = nodeState.currentResult
         // The path history should be up to but not including the current node
-        assertEquals(nodeB, navigator.currentChild?.node)
+        assertEquals(nodeB, nodeState.currentChild?.node)
         assertEquals(expectedResult, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
@@ -324,8 +321,7 @@ class NodeNavigatorTest {
         val nodeC = SectionObject("stepC", nodeListC)
         val nodeD = InstructionStepObject("stepD")
         val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
-        val navigator = assessmentObject.navigator
-        assertTrue(navigator is BranchNodeState)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
 
         val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3", "stepB4", "stepB5", "stepC1", "stepC2")
         val expectedResults = listOf("stepA", "stepB")
@@ -333,15 +329,15 @@ class NodeNavigatorTest {
         val expectedCurrentNode = nodeC
         val testRootNodeController = TestRootNodeController("stepC2", expectedChain.count())
 
-        navigator.rootNodeController = testRootNodeController
-        navigator.goForward()
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
 
         assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
         assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
 
-        val topResult = navigator.currentResult
+        val topResult = nodeState.currentResult
         // The path history should be up to but not including the current node
-        assertEquals(expectedCurrentNode, navigator.currentChild?.node)
+        assertEquals(expectedCurrentNode, nodeState.currentChild?.node)
         assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
@@ -364,8 +360,7 @@ class NodeNavigatorTest {
         val nodeC = SectionObject("stepC", nodeListC)
         val nodeD = InstructionStepObject("stepD")
         val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
-        val navigator = assessmentObject.navigator
-        assertTrue(navigator is BranchNodeState)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
 
         val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3", "stepB4", "stepB5", "stepC1", "stepC2", "stepC3", "stepD")
         val expectedResults = listOf("stepA", "stepB", "stepC", "stepD")
@@ -373,15 +368,15 @@ class NodeNavigatorTest {
         val expectedCurrentNode = nodeD
         val testRootNodeController = TestRootNodeController("end", expectedChain.count())
 
-        navigator.rootNodeController = testRootNodeController
-        navigator.goForward()
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
 
         assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
         assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
 
-        val topResult = navigator.currentResult
+        val topResult = nodeState.currentResult
         // The path history should be up to but not including the current node
-        assertEquals(expectedCurrentNode, navigator.currentChild?.node)
+        assertEquals(expectedCurrentNode, nodeState.currentChild?.node)
         assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
@@ -393,7 +388,7 @@ class NodeNavigatorTest {
         assertEquals(expectedLastPointResultIdentifier, lastPoint.branchResult.identifier)
 
         assertTrue(testRootNodeController.finished_called)
-        assertEquals(navigator, testRootNodeController.finished_parent)
+        assertEquals(nodeState, testRootNodeController.finished_parent)
         assertNotNull(testRootNodeController.finished_navigationPoint)
         assertNull(testRootNodeController.finished_navigationPoint?.node)
     }
@@ -403,17 +398,18 @@ class NodeNavigatorTest {
         val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
-        navigator.rootNodeController = rootNodeController
-        navigator.goForward()
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+        nodeState.rootNodeController = rootNodeController
+        nodeState.goForward()
         val testResult = TestResult("step1", "magoo")
-        navigator.currentResult.pathHistoryResults.add(testResult)
+        nodeState.currentResult.pathHistoryResults.add(testResult)
 
         // The expected behavior is that b/c the controller has added a result that does not match the state step
         // result, *that* result should be honored.
-        navigator.goForward()
+        nodeState.goForward()
 
         val expectedPathResults = listOf<Result>(testResult)
-        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+        assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
     }
 
     @Test
@@ -421,31 +417,32 @@ class NodeNavigatorTest {
         val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
-        navigator.rootNodeController = rootNodeController
-        navigator.goForward()
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+        nodeState.rootNodeController = rootNodeController
+        nodeState.goForward()
         val testResult = ResultObject("step1")
-        navigator.currentResult.pathHistoryResults.add(testResult)
+        nodeState.currentResult.pathHistoryResults.add(testResult)
         // The expected behavior is that the step result should only be included *once*.
-        navigator.goForward()
+        nodeState.goForward()
 
         val expectedPathResults = listOf<Result>(testResult)
-        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+        assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
     }
-
 
     @Test
     fun testAppendChildResultIfNeeded_StepNotAddedResult() {
         val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
-        navigator.rootNodeController = rootNodeController
-        navigator.goForward()
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+        nodeState.rootNodeController = rootNodeController
+        nodeState.goForward()
         val testResult = ResultObject("step1")
         // The expected behavior is that the step result should be added.
-        navigator.goForward()
+        nodeState.goForward()
 
         val expectedPathResults = listOf<Result>(testResult)
-        assertEquals(expectedPathResults, navigator.currentResult.pathHistoryResults)
+        assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
     }
 
     /**
