@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-open class NodeTest {
+open class NodeTest : NodeSerializationTestHelper() {
 
     private val jsonCoder = Serialization.JsonCoder.default
 
@@ -63,7 +63,7 @@ open class NodeTest {
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
                 ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
-        original.progressMarkers = listOf("step1","step2")
+        original.progressMarkers = listOf("step1", "step2")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -224,7 +224,7 @@ open class NodeTest {
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
                 ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
-        original.progressMarkers = listOf("step1","step2")
+        original.progressMarkers = listOf("step1", "step2")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -264,7 +264,9 @@ open class NodeTest {
         val expected = BranchNodeResultObject("bar")
         assertEquals(expected, result)
     }
+}
 
+open class NodeSerializationTestHelper {
     /* MARK: Helper methods */
 
     fun assertEqualResultMapElement(expected: ResultMapElement, actual: ResultMapElement) {
