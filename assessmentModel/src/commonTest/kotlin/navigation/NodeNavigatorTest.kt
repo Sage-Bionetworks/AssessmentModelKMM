@@ -232,12 +232,6 @@ class NodeNavigatorTest {
         assertEquals(expectedIdentifiers.dropLast(1), topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedIdentifiers, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
-        assertEquals(expectedIdentifiers, testRootNodeController.pointChain.map { it.node?.identifier ?: "null" }, "${testRootNodeController.pointChain}")
-        testRootNodeController.pointChain.forEach {
-            assertEquals(it.direction, NavigationPoint.Direction.Forward)
-        }
-        val lastPoint = testRootNodeController.pointChain.last()
-        assertEquals(lastPoint.branchResult, topResult)
 
         assertFalse(testRootNodeController.finished_called)
     }
@@ -262,17 +256,9 @@ class NodeNavigatorTest {
         assertEquals(expectedIdentifiers, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedIdentifiers, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
-        assertEquals(expectedIdentifiers, testRootNodeController.pointChain.map { it.node?.identifier ?: "null" }, "${testRootNodeController.pointChain}")
-        testRootNodeController.pointChain.forEach {
-            assertEquals(it.direction, NavigationPoint.Direction.Forward)
-        }
-        val lastPoint = testRootNodeController.pointChain.last()
-        assertEquals(lastPoint.branchResult, topResult)
 
         assertTrue(testRootNodeController.finished_called)
-        assertEquals(nodeState, testRootNodeController.finished_parent)
-        assertNotNull(testRootNodeController.finished_navigationPoint)
-        assertNull(testRootNodeController.finished_navigationPoint?.node)
+        assertEquals(nodeState, testRootNodeController.finished_nodeState)
     }
 
     @Test
@@ -302,12 +288,6 @@ class NodeNavigatorTest {
         assertEquals(expectedResult, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
-        assertEquals(expectedChain, testRootNodeController.pointChain.map { it.node?.identifier ?: "null" }, "${testRootNodeController.pointChain}")
-        testRootNodeController.pointChain.forEach {
-            assertEquals(it.direction, NavigationPoint.Direction.Forward)
-        }
-        val lastPoint = testRootNodeController.pointChain.last()
-        assertEquals(lastPoint.branchResult.identifier, "stepB")
 
         assertFalse(testRootNodeController.finished_called)
     }
@@ -341,12 +321,6 @@ class NodeNavigatorTest {
         assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
-        assertEquals(expectedChain, testRootNodeController.pointChain.map { it.node?.identifier ?: "null" }, "${testRootNodeController.pointChain}")
-        testRootNodeController.pointChain.forEach {
-            assertEquals(NavigationPoint.Direction.Forward, it.direction)
-        }
-        val lastPoint = testRootNodeController.pointChain.last()
-        assertEquals(expectedLastPointResultIdentifier, lastPoint.branchResult.identifier)
 
         assertFalse(testRootNodeController.finished_called)
     }
@@ -380,17 +354,9 @@ class NodeNavigatorTest {
         assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
         // The node chains should include each node in the list to the testRootNodeController.stepTo value.
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
-        assertEquals(expectedChain, testRootNodeController.pointChain.map { it.node?.identifier ?: "null" }, "${testRootNodeController.pointChain}")
-        testRootNodeController.pointChain.forEach {
-            assertEquals(NavigationPoint.Direction.Forward, it.direction)
-        }
-        val lastPoint = testRootNodeController.pointChain.last()
-        assertEquals(expectedLastPointResultIdentifier, lastPoint.branchResult.identifier)
 
         assertTrue(testRootNodeController.finished_called)
-        assertEquals(nodeState, testRootNodeController.finished_parent)
-        assertNotNull(testRootNodeController.finished_navigationPoint)
-        assertNull(testRootNodeController.finished_navigationPoint?.node)
+        assertEquals(nodeState, testRootNodeController.finished_nodeState)
     }
 
     @Test
@@ -455,31 +421,36 @@ class NodeNavigatorTest {
 
         var infiniteLoop = false
         var nodeChain: MutableList<NodeState> = mutableListOf()
-        var pointChain: MutableList<NavigationPoint> = mutableListOf()
         var finished_called = false
-        var finished_navigationPoint: NavigationPoint? = null
-        var finished_parent: BranchNodeState? = null
+        var finished_nodeState: NodeState? = null
+        var finished_reason: FinishedReason? = null
 
-        override fun nodeStateFor(navigationPoint: NavigationPoint, parent: BranchNodeState): NodeState? {
-            val node = navigationPoint.node
-            return if (node is Step) StepNodeStateImpl(node, parent) else null
+        override fun canHandle(node: Node): Boolean {
+            return (node is Step)
         }
 
-        override fun show(nodeState: NodeState, navigationPoint: NavigationPoint) {
+        override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+            show(nodeState, NavigationPoint.Direction.Backward)
+        }
+
+        override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+            show(nodeState, NavigationPoint.Direction.Forward)
+        }
+
+        fun show(nodeState: NodeState, direction: NavigationPoint.Direction) {
             nodeChain.add(nodeState)
-            pointChain.add(navigationPoint)
             if (nodeChain.count() > expectedCount) {
                 infiniteLoop = true
             }
             else if ((stepTo != null) && (nodeState.node.identifier != stepTo)) {
-                nodeState.goForward()
+                nodeState.goIn(direction)
             }
         }
 
-        override fun handleFinished(navigationPoint: NavigationPoint, parent: BranchNodeState) {
+        override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
             finished_called = true
-            finished_navigationPoint = navigationPoint
-            finished_parent = parent
+            finished_nodeState = nodeState
+            finished_reason = reason
         }
     }
 

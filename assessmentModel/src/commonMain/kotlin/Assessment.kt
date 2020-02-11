@@ -164,7 +164,7 @@ interface ContentNode : Node {
 
 /**
  * A [NodeContainer] has a collection of child nodes defined by the [children]. Whether or not these child nodes are
- * presented in a single screen will depend upon the platform and the UI/UX defined by the [Assesment] designers.
+ * presented in a single screen will depend upon the platform and the UI/UX defined by the [Assessment] designers.
  */
 interface NodeContainer : BranchNode {
 

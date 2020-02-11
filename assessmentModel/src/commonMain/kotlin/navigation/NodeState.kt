@@ -2,10 +2,48 @@ package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
 
+/**
+ * The [RootNodeController] is a platform-specific implementation of the UI that is described by the [Assessment] model.
+ */
 interface RootNodeController {
-    fun nodeStateFor(navigationPoint: NavigationPoint, parent: BranchNodeState): NodeState?
-    fun show(nodeState: NodeState, navigationPoint: NavigationPoint)
-    fun handleFinished(navigationPoint: NavigationPoint, parent: BranchNodeState)
+
+    /**
+     * Does this controller know how to handle the given node?
+     *
+     * A node may be used to define UI that is not applicable on all platforms. For example, showing a section of a
+     * survey on the same screen on a tablet, but across a sequence of screens on a phone where the available space
+     * is limited.
+     */
+    fun canHandle(node: Node): Boolean
+
+    /**
+     * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
+     * a node state that blocks forward progress until a login service call is returned.
+     */
+    fun customNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
+
+    /**
+     * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
+     */
+    fun handleGoForward(nodeState: NodeState,
+                        requestedPermissions: Set<Permission>? = null,
+                        asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+
+    /**
+     * Handle going back to the given [nodeState] with appropriate UI, View, and animations.
+     */
+    fun handleGoBack(nodeState: NodeState,
+                     requestedPermissions: Set<Permission>? = null,
+                     asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+
+    /**
+     * Handle finishing the [Assessment]. Save state and dismiss the view.
+     */
+    fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error? = null)
+}
+
+enum class FinishedReason {
+    Complete, Error, EarlyExit, Discarded, SaveProgress
 }
 
 interface NodeState {
@@ -28,8 +66,7 @@ interface NodeState {
     val currentResult: Result
 
     /**
-     * Method to call when the participant taps the "Next" button or a timed step is completed. The [navigationPoint]
-     * carries information about the current state of the navigation.
+     * Method to call when the participant taps the "Next" button or a timed step is completed.
      */
     fun goForward(requestedPermissions: Set<Permission>? = null,
                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
@@ -43,14 +80,22 @@ interface NodeState {
 }
 
 fun NodeState.goIn(direction: NavigationPoint.Direction,
-                   requestedPermissions: Set<Permission>?,
-                   asyncActionNavigations: Set<AsyncActionNavigation>?) {
+                   requestedPermissions: Set<Permission>? = null,
+                   asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
     if (direction == NavigationPoint.Direction.Forward) {
         goForward(requestedPermissions, asyncActionNavigations)
     }
     else {
         goBackward(requestedPermissions, asyncActionNavigations)
     }
+}
+
+fun NodeState.root() :  NodeState {
+    var thisPath: NodeState = this
+    while (thisPath.parent != null) {
+        thisPath = thisPath.parent!!
+    }
+    return thisPath
 }
 
 interface BranchNodeState : NodeState {
@@ -76,7 +121,7 @@ interface BranchNodeState : NodeState {
     override val currentResult: BranchNodeResult
 }
 
-open class StepNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
+open class LeafNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
     override var currentResult: Result
         get() {
             if (_currentResult == null) {
@@ -98,10 +143,10 @@ open class StepNodeStateImpl(override val node: Node, override val parent: Branc
     }
 }
 
-open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
+open class BranchNodeStateImpl(final override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
 
     override var currentResult: BranchNodeResult = node.createResult()
-    private val navigator: Navigator = node.getNavigator()
+    private var navigator: Navigator = node.getNavigator()
 
     override var currentChild: NodeState? = null
         protected set
@@ -119,18 +164,32 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             // Go to next node if it is not null.
             moveTo(next)
         } else {
-            handleFinished(next)
+            finish(next)
         }
     }
 
+    /**
+     * Move to the given node.
+     *
+     * Throws: [NullPointerException] if the [NavigationPoint.node] or [rootNodeController] are null.
+     */
     open fun moveTo(navigationPoint: NavigationPoint) {
-        val controller = rootNodeController
-        controller?.nodeStateFor(navigationPoint, this)?.let { nodeState ->
-            // If the controller returns a node state then it is responsible for showing it. Just set the current
+        val controller = rootNodeController ?: throw NullPointerException("Unexpected null rootNodeController")
+        val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
+        if (controller.canHandle(node)) {
+            // If the controller can handle the node state then it is responsible for showing it. Just set the current
             // child and hand off control to the root node controller.
-            currentChild = nodeState
-            controller.show(nodeState, navigationPoint)
-        } ?: run {
+            getLeafNodeState(navigationPoint)?.let { nodeState ->
+                currentChild = nodeState
+                if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
+                    controller.handleGoForward(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                } else {
+                    controller.handleGoBack(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                }
+            } ?: run {
+                TODO("syoung 02/10/2020 Not implemented. Handle case where a step is skipped by the branch state.")
+            }
+        } else {
             // Otherwise, see if we have a node to move to.
             getBranchNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
@@ -141,11 +200,18 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         }
     }
 
-    open fun handleFinished(navigationPoint: NavigationPoint) {
-        if ((navigationPoint.direction == NavigationPoint.Direction.Exit) || (parent == null)) {
-            rootNodeController?.handleFinished(navigationPoint, this)
-        } else {
-            parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+    /**
+     * Finish any navigation required at this level. This will check to see if the returned navigation point requires
+     * exiting the entire run or just that this section is finished.
+     */
+    open fun finish(navigationPoint: NavigationPoint) {
+        when {
+            navigationPoint.direction == NavigationPoint.Direction.Exit ->
+                rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
+            parent == null ->
+                rootNodeController?.handleFinished(FinishedReason.Complete, this)
+            else ->
+                parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
         }
     }
 
@@ -156,6 +222,15 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         appendChildResultIfNeeded()
         val currentNode = currentChild?.node
         return if (currentNode == null) navigator.start() else navigator.nodeAfter(currentNode, currentResult)
+    }
+
+    /**
+     * Get the leaf node for the given [navigationPoint]. This method assumes that the [NavigationPoint.node] is not
+     * null.
+     */
+    open fun getLeafNodeState(navigationPoint: NavigationPoint): NodeState? {
+        val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
+        return rootNodeController?.customNodeStateFor(node, this) ?: LeafNodeStateImpl(node, this)
     }
 
     /**
