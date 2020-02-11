@@ -180,8 +180,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         if (controller.canHandle(node)) {
             // If the controller can handle the node state then it is responsible for showing it. Just set the current
             // child and hand off control to the root node controller.
-            val nodeState = controller.customNodeStateFor(node, this) ?: LeafNodeStateImpl(node, this)
-            getLeafNodeState(navigationPoint)?.let {
+            getLeafNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
                 if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
                     controller.handleGoForward(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
@@ -208,9 +207,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun finish(navigationPoint: NavigationPoint) {
         when {
-            (navigationPoint.direction == NavigationPoint.Direction.Exit) ->
+            navigationPoint.direction == NavigationPoint.Direction.Exit ->
                 rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
-            (parent == null) ->
+            parent == null ->
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
             else ->
                 parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
