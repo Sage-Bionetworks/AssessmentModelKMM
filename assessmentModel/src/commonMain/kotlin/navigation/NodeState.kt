@@ -66,8 +66,7 @@ interface NodeState {
     val currentResult: Result
 
     /**
-     * Method to call when the participant taps the "Next" button or a timed step is completed. The [navigationPoint]
-     * carries information about the current state of the navigation.
+     * Method to call when the participant taps the "Next" button or a timed step is completed.
      */
     fun goForward(requestedPermissions: Set<Permission>? = null,
                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
@@ -144,10 +143,10 @@ open class LeafNodeStateImpl(override val node: Node, override val parent: Branc
     }
 }
 
-open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
+open class BranchNodeStateImpl(final override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
 
     override var currentResult: BranchNodeResult = node.createResult()
-    private val navigator: Navigator = node.getNavigator()
+    private var navigator: Navigator = node.getNavigator()
 
     override var currentChild: NodeState? = null
         protected set
