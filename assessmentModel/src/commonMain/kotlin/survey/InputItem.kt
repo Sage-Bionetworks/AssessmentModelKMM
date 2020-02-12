@@ -1,8 +1,10 @@
 package org.sagebionetworks.assessmentmodel.forms
 
+import kotlinx.serialization.PrimitiveKind
 import kotlinx.serialization.SerialKind
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.Question
+import org.sagebionetworks.assessmentmodel.survey.QuestionState
 
 /**
  * An [InputItem] describes a "part" of a [Question] representing a single answer.
@@ -19,7 +21,7 @@ interface InputItem {
     /**
      * The result identifier is an optional value that can be used to help in building the serializable answer result
      * from this [InputItem]. If null, then it is assumed that the [Question] that holds this [InputItem] has some
-     * custom serialization strategy and this property can be ignored.
+     * custom serialization strategy or only contains a single answer and this property can be ignored.
      */
     val resultIdentifier: String?
 
@@ -60,26 +62,28 @@ interface InputItem {
     val optional: Boolean
 
     /**
-     * The kind of object to expect for the serialization of this [InputItem].
+     * Does filling in or selecting this [InputItem] mean that the other [InputItem] objects that as a collectively
+     * define the [Question] should be deselected or disabled?
+     *
+     * For example, if the [Question] asks "When were you diagnosed?" with a text field for entering the year and a
+     * checkbox that says "I don't remember", then the UI should disable the year field or otherwise indicate to the
+     * user when they check the box that the year field is ignored.
+     *
+     * In another example, this can be used in a multiple selection question to allow for a "none of the above" input
+     * item that is exclusive to the other items.
      */
-    val answerKind: SerialKind
-}
-
-/**
- * A [PickerInputItem] extends the input field for the case where the participant will enter data using a picker to
- * select the answer.
- */
-interface PickerInputItem : InputItem {
+    val exclusive: Boolean
 
     /**
-     * A [PickerInputItem] maps to a ui hint subtype of [UIHint.Picker].
+     * The kind of object to expect for the serialization of the answer associated with this [InputItem]. Typically,
+     * this will be a [PrimitiveKind] of some type, but it is possible for the [InputItem] to translate to an object
+     * rather than a primitive.
+     *
+     * For example, the question could be about blood pressure where the participant answers the question with a string
+     * of "120/70" but the [QuestionState] is responsible for translating that into a data class with systolic and
+     * diastolic as properties that are themselves numbers.
      */
-    override val uiHint: UIHint.Picker
-        get() = UIHint.Picker
-
-    // TODO: syoung 01/27/2020 Complete the properties for describing a picker input field.
-//    /// Optional picker source for a picker or multiple selection input field.
-//    var pickerSource: RSDPickerDataSource
+    val answerKind: SerialKind
 }
 
 /**
@@ -110,6 +114,9 @@ interface TextKeyboardInputItem : InputItem {
 //    /// A range used by dates and numbers for setting up a picker wheel, slider, or providing text field
 //    /// input validation. If not applicable, it will be ignored.
 //    var range: RSDRange? { get }
+//
+//    /// Optional picker source for a picker or multiple selection input field.
+//    var pickerSource: RSDPickerDataSource
 }
 
 /**
@@ -121,15 +128,11 @@ interface ChoiceInputItem : InputItem {
     // TODO: syoung 02/11/2020 Flesh out the choice input item and what it might need.
 
     /**
-     * For a multiple choice option, is this choice mutually exclusive? For example, "none of the above".
-     */
-    val exclusive: Boolean
-
-    /**
      * A [JsonPrimitive] wraps a String, Boolean, Number, or Null. This is the JSON serializable element selected as
      * one of the possible answers for a [Question]. For certain special cases, the value may depend upon whether or
-     * not the item is selected. Since this is used to show fields with a selection state, the value may toggle
-     * depending upon whether or not it is selected.
+     * not the item is selected. For example, a boolean [Question] may be displayed using choice items of "Yes" and
+     * "No" in a list. The choices would both be [exclusive] and the [jsonValue] for "Yes" could be `true` if [selected]
+     * and `null` if not while for the "No", it could be `false` if [selected] and `null` if not.
      */
     fun jsonValue(selected: Boolean): JsonPrimitive
 

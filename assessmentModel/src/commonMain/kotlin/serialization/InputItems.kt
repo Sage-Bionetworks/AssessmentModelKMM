@@ -29,6 +29,7 @@ data class StringInputItemObject(
         override val resultIdentifier: String? = null) : InputItemObject(), TextKeyboardInputItem {
     override var uiHint: UIHint.TextField = UIHint.TextField.Default
     override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject()
+    override var exclusive: Boolean = false
     override val answerKind: SerialKind
         get() = PrimitiveKind.STRING
 }
