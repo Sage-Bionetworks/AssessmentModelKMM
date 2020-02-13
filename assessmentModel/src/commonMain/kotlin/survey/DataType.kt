@@ -258,7 +258,7 @@ sealed class DataType() : StringEnum {
      * The `DateRangeType` is used to simplify transforming classes on Android.
      *
      * Android has different classes for the common date components that may be of interest when asking the participant
-     * about a "date". Because of this, for many cases, that platform does not need to define an `RSDDateRange` to
+     * about a "date". Because of this, for many cases, that platform does not need to define an [DateRange] to
      * differentiate between *which* subset of date components should be requested. This form data type is used to
      * differentiate between these different types. While on iOS, this requires some custom handling in the data source,
      * it greatly simplifies decoding on Android and is thus supported here.

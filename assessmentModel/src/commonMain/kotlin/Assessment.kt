@@ -391,7 +391,7 @@ interface FormStep : Step, NodeContainer, ContentNode
  * well to keep the title short and put the additional content in the [subtitle] property.
  *
  * Similarly, the [detail] is text to display at the top of the screen in a smaller font to further explain the
- * instructions for the question included on the screen shown to the participant. For example, "Select all that apply".
+ * instructions for the question included on the screen shown to the participant --for example, "Select all that apply".
  */
 interface Question : ContentNode {
 

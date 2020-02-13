@@ -104,16 +104,6 @@ interface TextKeyboardInputItem : InputItem {
     val textFieldOptions: TextFieldOptions
 
     // TODO: syoung 01/27/2020 Complete the properties for describing a text field input field.
-//    /// A formatter that is appropriate to the data type. If `nil`, the format will be determined by the UI.
-//    /// This is the formatter used to display a previously entered answer to the user or to convert an
-//    /// answer entered in a text field into the appropriate value type.
-//    ///
-//    /// - seealso: `RSDAnswerResultType.BaseType` and `RSDFormStepDataSource`
-//    var formatter: Formatter? { get }
-//
-//    /// A range used by dates and numbers for setting up a picker wheel, slider, or providing text field
-//    /// input validation. If not applicable, it will be ignored.
-//    var range: RSDRange? { get }
 //
 //    /// Optional picker source for a picker or multiple selection input field.
 //    var pickerSource: RSDPickerDataSource
