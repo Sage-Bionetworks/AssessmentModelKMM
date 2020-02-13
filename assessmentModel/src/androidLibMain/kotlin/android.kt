@@ -31,5 +31,3 @@ actual object UUIDGenerator {
 actual object DateGenerator {
     actual fun nowString(): String = "TODO: Implement"
 }
-
-actual fun <T : Any> KClass<T>.klassName(): String? = this.simpleName

@@ -49,5 +49,3 @@ actual object DateGenerator {
         return formatter
     }
 }
-
-actual fun <T : Any> KClass<T>.klassName(): String? = this.simpleName

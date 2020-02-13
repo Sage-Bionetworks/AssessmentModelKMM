@@ -1,8 +1,7 @@
-package org.sagebionetworks.assessmentmodel.survey
+package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import org.sagebionetworks.assessmentmodel.forms.DataType
-import org.sagebionetworks.assessmentmodel.serialization.Serialization
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -103,7 +103,8 @@ enum class KeyboardType : StringEnum {
     DecimalPad,
     Twitter,
     WebSearch,
-    AsciiCapableNumberPad;
+    AsciiCapableNumberPad,
+    ;
 
     @Serializer(forClass = KeyboardType::class)
     companion object : KSerializer<KeyboardType>{
@@ -117,64 +118,3 @@ enum class KeyboardType : StringEnum {
         }
     }
 }
-
-// TODO: syoung 02/06/2020 Figure out what the patten is for including information about why an input is not valid.
-//
-//
-///// A custom text validator that can be used to validate a string.
-//var textValidator: RSDTextValidator? { get }
-//
-///// The localized message presented to the user when invalid input is received.
-//var invalidMessage: String? { get }
-//
-//public protocol RSDTextValidator {
-//
-//    /// Whether or not the text is considered valid.
-//    /// - returns: `true` if the string is valid. Otherwise, returns `false`.
-//    /// - throws: Error if the regular expression cannot be instantiated.
-//    func isValid(_ string: String) throws -> Bool
-//}
-//
-//public protocol RSDRegExMatchValidator : RSDTextValidator {
-//
-//    /// A localized custom regular expression that can be used to validate a string.
-//    /// - returns: The regular expression to use in validation.
-//    /// - throws: Error if the regular expression cannot be instantiated.
-//    func regularExpression() throws -> NSRegularExpression
-//}
-//
-//public protocol RSDCodableRegExMatchValidator : RSDRegExMatchValidator {
-//
-//    /// The regular expression pattern used to create the `NSRegularExpression` object.
-//    var regExPattern: String { get }
-//}
-//
-//extension RSDCodableRegExMatchValidator {
-//
-//    /// A localized custom regular expression that can be used to validate a string.
-//    public func regularExpression() throws -> NSRegularExpression {
-//        return try NSRegularExpression(pattern: regExPattern, options: [])
-//        }
-//}
-//
-//extension RSDRegExMatchValidator {
-//
-//    /// Method for evaluating a string against the `validationRegex` for a match.
-//    /// - paramater string: The string to evaluate.
-//    /// - returns: The number of matches found.
-//    /// - throws: If the regular expression cannot be created.
-//    public func regExMatches(_ string: String) throws -> Int {
-//        let expression = try regularExpression()
-//        return expression.numberOfMatches(in: string, options: [], range: NSRange(string.startIndex..., in: string))
-//    }
-//
-//    /// Test the string against the validation regular expression and return `true` if there is one or more
-//    /// matches to the given string.
-//    /// - paramater string: The string to evaluate.
-//    /// - returns: Whether or not the string is valid.
-//    /// - throws: If the regular expression cannot be created.
-//    public func isValid(_ string: String) throws -> Bool {
-//        let count = try self.regExMatches(string)
-//        return count > 0
-//    }
-//}
