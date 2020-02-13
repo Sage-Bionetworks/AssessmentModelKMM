@@ -6,7 +6,7 @@ plugins {
 android {
     compileSdkVersion(29)
     defaultConfig {
-        applicationId = "org.konan.multiplatform"
+        applicationId = "org.sagebionetworks.assessmentmodel.sampleapp"
         minSdkVersion(15)
         targetSdkVersion(29)
         versionCode = 1
@@ -33,6 +33,8 @@ dependencies {
     implementation(project(":assessmentModel"))
 
     implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
     testImplementation("junit:junit:4.12")
 }
