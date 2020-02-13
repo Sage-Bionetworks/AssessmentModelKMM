@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.list
 import kotlinx.serialization.modules.SerializersModule
+import kotlin.reflect.KClass
 
 expect class Platform() {
     val platform: String
@@ -45,3 +46,5 @@ class Greeting {
     }
 
 }
+
+expect fun <T : Any> KClass<T>.klassName(): String?

@@ -3,6 +3,7 @@ package org.sagebionetworks.assessmentmodel
 import android.os.Build
 import java.time.Instant
 import java.util.*
+import kotlin.reflect.KClass
 
 actual class Platform actual constructor() {
     actual val platform: String = "Android"
@@ -30,3 +31,5 @@ actual object UUIDGenerator {
 actual object DateGenerator {
     actual fun nowString(): String = "TODO: Implement"
 }
+
+actual fun <T : Any> KClass<T>.klassName(): String? = this.simpleName

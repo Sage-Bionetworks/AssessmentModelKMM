@@ -7,6 +7,7 @@ import kotlinx.cinterop.toKString
 import platform.Foundation.*
 import platform.posix.uname
 import platform.posix.utsname
+import kotlin.reflect.KClass
 
 actual class Platform actual constructor() {
     actual val platform: String = "iOS"
@@ -48,3 +49,5 @@ actual object DateGenerator {
         return formatter
     }
 }
+
+actual fun <T : Any> KClass<T>.klassName(): String? = this.simpleName

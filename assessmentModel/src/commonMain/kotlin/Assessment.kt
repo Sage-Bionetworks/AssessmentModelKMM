@@ -1,5 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
+import org.sagebionetworks.assessmentmodel.forms.DataType
+import org.sagebionetworks.assessmentmodel.forms.InputItem
 import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
@@ -382,79 +384,34 @@ interface CountdownStep : OptionalStep, ActiveStep
 interface FormStep : Step, NodeContainer, ContentNode
 
 /**
- * A [QuestionStep] can either be a [FormStep] or can describe the drill-down to display for an [InputField].
+ * A [Question] can be a node in a [FormStep] or [Section] or it might be a stand-alone question.
+ *
+ * When defining a [Question], the [subtitle] is roughly equivalent to what is often described as a "prompt". It
+ * is additional text displayed in a smaller font below [title]. If you need to display a long question, it can work
+ * well to keep the title short and put the additional content in the [subtitle] property.
+ *
+ * Similarly, the [detail] is text to display at the top of the screen in a smaller font to further explain the
+ * instructions for the question included on the screen shown to the participant --for example, "Select all that apply".
  */
-interface QuestionStep : Step {
-
-    /**
-     * Additional text to display for the [FormStep] in a localized string.
-     *
-     * The additional text is often displayed in a smaller font below [title]. If you need to display a long question,
-     * it can work well to keep the title short and put the additional content in the [prompt] property.
-     */
-    val prompt: String?
-
-    /**
-     * Additional text to display at the top of the screen in a smaller font to further explain the instructions for the
-     * questions included on the screen shown to the participant.
-     *
-     * For example, "Select all that apply".
-     */
-    val promptDetail: String?
-
-    /**
-     * A question will always have at least one input field that is used to define the question. These fields will form
-     * a logical grouping for how the [QuestionStep] should be presented to the user. For example, the question may be
-     * "what is your name" where the fields are given name, family name, title, and a checkbox that says "prefer not to
-     * answer". How the fields interact may use custom logic, but they are presented together and do not make sense
-     * independently of one another.
-     */
-    val inputFields: List<InputField>
+interface Question : ContentNode {
 
     /**
      * Can the question be skipped?
      */
     val optional: Boolean
-}
-
-/**
- * An [InputField] describes a "part" of a [QuestionStep] representing a single answer. For example, if a question is
- * "what is your name" then the input fields may include "given name" and "family name" where separate text fields
- * are used to allow the participant to enter their first and last name, and the question may also include a list of
- * titles from which to choose.
- */
-interface InputField : Node {
 
     /**
-     * The data type for this input field. The data type can have an associated ui hint.
-     */
-    val dataType: String    // TODO: syoung 01/27/2020 replace String with a sealed class
-
-    /**
-     * A UI hint for how the study would prefer that the input field is displayed to the user.
-     */
-    val inputUIHint: String? // TODO: syoung 01/27/2020 replace String with a sealed class
-
-    /**
-     * A localized string that displays a short text offering a hint to the user of the data to be entered for this
-     * field.
-     */
-    val fieldLabel: String?
-
-    /**
-     * A localized string that displays placeholder information for the input field.
+     * A question will always have at least one [InputItem] that is used to define the question. These fields will form
+     * a logical grouping for how the [Question] should be presented to the user. For example, the [Question] may be
+     * "what is your name" where the fields are given name, family name, title, and a checkbox that says "prefer not to
+     * answer". How the fields interact may use custom logic, but they are presented together and do not make sense
+     * independently of one another.
      *
-     * You can display placeholder text in a text field or text area to help users understand how to answer the item's
-     * question.
+     * Typically, the [getInputItems] function for a [Question] will either be serialized as the same object
+     * (returns self) or a list of elements of type [InputItem]. It is defined here as a function to allow for
+     * flexibility in how it is stored and displayed.
      */
-    val placeholder: String?
-
-    /**
-     * Can the input field be left blank?
-     */
-    val optional: Boolean
-
-    // TODO: syoung 01/27/2020 Complete the properties for describing an input field. See `RSDInputField`
+    fun getInputItems(): List<InputItem>
 }
 
 /**

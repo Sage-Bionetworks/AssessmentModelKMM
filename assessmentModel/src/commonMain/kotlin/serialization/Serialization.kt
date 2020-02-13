@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
+import kotlin.reflect.KClass
 
 /**
  * Singleton for the default serializers.
@@ -11,12 +12,22 @@ object Serialization {
         val default =   nodeSerializersModule +
                         buttonSerializersModule +
                         imageSerializersModule +
-                        resultSerializersModule
+                        resultSerializersModule +
+                        inputItemSerializersModule
     }
     object JsonCoder {
         val default = Json(context = Serialization.SerializersModule.default)
     }
 }
 
-
+/**
+ * syoung 02/07/2020 Notes on serialization
+ *
+ * `configuration = JsonConfiguration.Stable.copy(classDiscriminator = "classType")` - This will set the field that
+ * determines the class "type" to "classType" instead of "type".
+ *
+ *
+ *
+ *
+ */
 

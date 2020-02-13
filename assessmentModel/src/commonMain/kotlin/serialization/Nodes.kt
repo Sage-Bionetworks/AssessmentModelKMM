@@ -48,10 +48,14 @@ data class InstructionStepObject(override val identifier: String,
 }
 
 @Serializable
-abstract class NodeContainerObject() : NodeObject(), NodeContainer {
+abstract class IconNodeObject() : NodeObject() {
     @SerialName("icon")
     @Serializable(ImageNameSerializer::class)
     override var imageInfo: FetchableImage? = null
+}
+
+@Serializable
+abstract class NodeContainerObject() : IconNodeObject(), NodeContainer {
     override var progressMarkers: List<String>? = null
 }
 
