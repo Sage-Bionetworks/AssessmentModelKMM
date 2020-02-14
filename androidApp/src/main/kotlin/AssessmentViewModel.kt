@@ -33,7 +33,7 @@ class AssessmentViewModel(val assesmentIdentifier: String, val assessmentProvide
     }
 
     fun goforward() {
-        assessmentNodeState.goForward(null, null)
+        assessmentNodeState.goForward()
     }
 
     override fun canHandle(node: Node): Boolean {
