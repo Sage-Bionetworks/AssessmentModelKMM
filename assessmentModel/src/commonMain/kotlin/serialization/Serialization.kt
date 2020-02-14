@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.plus
 import kotlin.reflect.KClass
 
@@ -16,7 +17,7 @@ object Serialization {
                         inputItemSerializersModule
     }
     object JsonCoder {
-        val default = Json(context = Serialization.SerializersModule.default)
+        val default = Json(context = Serialization.SerializersModule.default, configuration = JsonConfiguration.Stable.copy(strictMode = false))
     }
 }
 
