@@ -20,7 +20,7 @@ interface TextValidator<T> {
 }
 
 /**
- * An [InvalidMessage] is used to describe the a user-facing message about why the input is not valid. Currently, this
+ * An [InvalidMessage] is used to describe a user-facing message about why the input is not valid. Currently, this
  * implements the [toString] method to surface a localized message.
  *
  * TODO: syoung 02/12/2020 Figure out interface for Android which requires the context to access resources and locale.
@@ -53,4 +53,3 @@ data class InvalidMessageObject(val string: String) : InvalidMessage {
         }
     }
 }
-
