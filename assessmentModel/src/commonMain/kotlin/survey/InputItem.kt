@@ -5,6 +5,7 @@ import kotlinx.serialization.SerialKind
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.Question
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
+import org.sagebionetworks.assessmentmodel.survey.TextValidator
 
 /**
  * An [InputItem] describes a "part" of a [Question] representing a single answer.
@@ -50,7 +51,7 @@ interface InputItem {
      * [Question] can be described as a composite of [InputItem] results.
      *
      * For example, if the designer wants to ask "What year did you first start having symptoms?", the participant may
-     * be allowed to enter a number in a text field that conforms to the [TextKeyboardInputItem] interface *or* select
+     * be allowed to enter a number in a text field that conforms to the [KeyboardTextInputItem] interface *or* select
      * a checkbox that says "I don't know" which conforms to the [ChoiceInputItem] interface where the
      * [ChoiceInputItem.uiHint] equals [UIHint.Choice.Checkmark], then the [Question.getInputItems] method will
      * return 2 input items. Both of those input items are [optional] but the union of them is not.
@@ -87,13 +88,13 @@ interface InputItem {
 }
 
 /**
- * A [TextKeyboardInputItem] extends the input field for the case where the participant will enter data into a text
+ * A [KeyboardTextInputItem] extends the input field for the case where the participant will enter data into a text
  * field.
  */
-interface TextKeyboardInputItem : InputItem {
+interface KeyboardTextInputItem<T> : InputItem {
 
     /**
-     * A [TextKeyboardInputItem] maps to a ui hint subtype of [UIHint.TextField].
+     * A [KeyboardTextInputItem] maps to a ui hint subtype of [UIHint.TextField].
      */
     override val uiHint: UIHint.TextField
 
@@ -102,6 +103,11 @@ interface TextKeyboardInputItem : InputItem {
      * not applicable, it will be ignored.
      */
     val textFieldOptions: TextFieldOptions
+
+    /**
+     * This can be used to return a class used to format and/or validate the text input.
+     */
+    fun getTextValidator(): TextValidator<T>?
 
     // TODO: syoung 01/27/2020 Complete the properties for describing a text field input field.
 //

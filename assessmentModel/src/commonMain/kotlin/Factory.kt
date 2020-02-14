@@ -9,10 +9,3 @@ expect object Factory {
     val platform: String
 }
 
-expect object UUIDGenerator {
-    fun uuidString(): String
-}
-
-expect object DateGenerator {
-    fun nowString(): String
-}
