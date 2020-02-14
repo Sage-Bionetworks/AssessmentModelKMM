@@ -34,7 +34,7 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
     override var invalidMessage: InvalidMessageObject = InvalidMessageObject("The number entered is not valid.")
 
     /**
-     * Hint to to use for the formatter.
+     * Hint to use for the formatter.
      */
     @Serializable
     enum class Style : StringEnum {
@@ -96,4 +96,3 @@ data class DoubleFormatOptions(override val numberStyle: Style = Style.Decimal,
 }
 
 expect class DoubleFormatter(formatOptions: NumberFormatOptions<Double>) : NumberFormatter<Double>
-
