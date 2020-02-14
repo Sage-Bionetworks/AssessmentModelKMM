@@ -177,6 +177,64 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEquals(expected, result)
     }
 
+
+    /* MARK: QuestionObject tests */
+
+    @Test
+    fun testQuestion_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "question",
+               "title": "Hello World!",
+               "subtitle": "Question subtitle",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2
+                                  },
+                "optional": false,
+                "inputItems":[
+                {"type" : "string"},
+                {"type" : "year"},
+                {"type" : "integer"},
+                {"type" : "decimal"}
+                ]
+           }
+           """
+        val original = QuestionObject(
+                identifier = "foo",
+                inputItems = listOf(
+                    StringTextInputItemObject(),
+                    YearTextInputItemObject(),
+                    IntegerTextInputItemObject(),
+                    DecimalTextInputItemObject()),
+                optional = false)
+        original.title = "Hello World!"
+        original.subtitle = "Question subtitle"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.imageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is QuestionObject)
+        assertEqualStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertTrue(restored is QuestionObject)
+        assertEqualStep(original, restored)
+        assertEqualContentNodes(original, restored)
+    }
+
+
     /* MARK: SectionObject tests */
 
     @Test
