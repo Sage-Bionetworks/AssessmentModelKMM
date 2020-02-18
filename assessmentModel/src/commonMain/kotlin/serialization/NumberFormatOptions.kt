@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
+import org.sagebionetworks.assessmentmodel.DateGenerator
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -64,14 +65,39 @@ expect abstract class NumberFormatter<T>(formatOptions: NumberFormatOptions<T>)
     : TextValidator<T> where T : Comparable<T>, T : Number
 
 @Serializable
-@SerialName("integer")
 data class IntFormatOptions(override val numberStyle: Style = Style.None,
-                            override val usesGroupingSeparator: Boolean = true) : NumberFormatOptions<Int>() {
-    override var stepInterval: Int? = null
-    override var minimumValue: Int? = null
-    override var maximumValue: Int? = null
-
+                            override val usesGroupingSeparator: Boolean = true,
+                            override var minimumValue: Int? = null,
+                            override var maximumValue: Int? = null,
+                            override var stepInterval: Int? = 1) : NumberFormatOptions<Int>() {
     // For an Int, this value is always 0.
+    override val maximumFractionDigits: Int
+        get() = 0
+
+    override val numberType: NumberType
+        get() = NumberType.INT
+}
+
+@Serializable
+data class YearFormatOptions(var allowFuture: Boolean = true,
+                             var allowPast: Boolean = true,
+                             var minimumYear: Int? = null,
+                             var maximumYear: Int? = null) : NumberFormatOptions<Int>() {
+
+    override val minimumValue: Int?
+        get() = minimumYear ?: if (allowPast) 1000 else _currentYear    // Require the year to be yyyy
+
+    override val maximumValue: Int?
+        get() = maximumYear ?: if (allowFuture) null else _currentYear
+
+    private val _currentYear = DateGenerator.currentYear()
+
+    override val stepInterval: Int?
+        get() = 1
+    override val usesGroupingSeparator: Boolean
+        get() = false
+    override val numberStyle: Style
+        get() = Style.None
     override val maximumFractionDigits: Int
         get() = 0
 
@@ -82,7 +108,6 @@ data class IntFormatOptions(override val numberStyle: Style = Style.None,
 expect class IntFormatter(formatOptions: NumberFormatOptions<Int>) : NumberFormatter<Int>
 
 @Serializable
-@SerialName("double")
 data class DoubleFormatOptions(override val numberStyle: Style = Style.Decimal,
                                override val usesGroupingSeparator: Boolean = true,
                                override val maximumFractionDigits: Int = 2) : NumberFormatOptions<Double>() {

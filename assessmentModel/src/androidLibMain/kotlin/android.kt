@@ -30,4 +30,5 @@ actual object UUIDGenerator {
 
 actual object DateGenerator {
     actual fun nowString(): String = "TODO: Implement"
+    actual fun currentYear(): Int = 2020    // TODO: syoung 02/18/2020 Figure out how to access current year. now() methods are all version >= 26
 }

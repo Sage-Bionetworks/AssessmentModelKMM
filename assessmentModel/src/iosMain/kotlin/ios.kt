@@ -41,11 +41,12 @@ actual object UUIDGenerator {
 actual object DateGenerator {
     actual fun nowString(): String = iso8601Formatter.stringFromDate(NSDate.now)
 
-    val iso8601Formatter = isoFormatter()
-    fun isoFormatter(): NSDateFormatter {
+    private val iso8601Formatter: NSDateFormatter = {
         val formatter = NSDateFormatter.new()!!
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         formatter.locale = NSLocale.localeWithLocaleIdentifier("en_US_POSIX")
-        return formatter
-    }
+        formatter
+    }()
+
+    actual fun currentYear(): Int = NSCalendar(NSISO8601Calendar).component(NSCalendarUnitYear, NSDate.now).toInt()
 }

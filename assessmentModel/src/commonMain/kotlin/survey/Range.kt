@@ -51,7 +51,6 @@ interface Range<T : Comparable<T>> {
             FormattedValue<T>(invalidMessage = invalidMessage)
         }
     }
-
 }
 
 /**
