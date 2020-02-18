@@ -45,10 +45,6 @@ data class TextFieldOptionsObject(override val isSecureTextEntry: Boolean = fals
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.DecimalPad)
-        val FractionEntryOptions = TextFieldOptionsObject(
-                autocorrectionType = AutoCorrectionType.No,
-                spellCheckingType = SpellCheckingType.No,
-                keyboardType = KeyboardType.NumbersAndPunctuation)
     }
 }
 
