@@ -12,11 +12,13 @@ val inputItemSerializersModule = SerializersModule {
         YearTextInputItemObject::class with YearTextInputItemObject.serializer()
         DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
     }
-    polymorphic(NumberFormatOptions::class) {
-        IntFormatOptions::class with IntFormatOptions.serializer()
-        DoubleFormatOptions::class with DoubleFormatOptions.serializer()
+    polymorphic(DateTimeFormatOptions::class) {
+        DateFormatOptions::class with DateFormatOptions.serializer()
+        TimeFormatOptions::class with TimeFormatOptions.serializer()
     }
 }
+
+// TODO: syoung 02/18/2020 Names of fields for serialization have changed from SageResearch to support kotlinx.
 
 /**
  * A [InputItemObject] is intended to implement shared code for serialization of the simple data types. This will
@@ -28,61 +30,8 @@ abstract class InputItemObject : InputItem {
     override var fieldLabel: String? = null
     override var placeholder: String? = null
     override var optional: Boolean = true
-    override val exclusive: Boolean = false
+    override var exclusive: Boolean = false
     override var uiHint: UIHint.TextField = UIHint.TextField.Default
-}
-
-@Serializable
-@SerialName("string")
-data class StringTextInputItemObject(
-        @SerialName("identifier")
-        override val resultIdentifier: String? = null) : InputItemObject(), KeyboardTextInputItem<String> {
-    override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject()
-    var regExValidator: RegExValidator? = null
-
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.STRING
-
-    override fun getTextValidator(): TextValidator<String>? = regExValidator
-}
-
-@Serializable
-@SerialName("integer")
-data class IntegerTextInputItemObject(@SerialName("identifier")
-                                  override val resultIdentifier: String? = null) : InputItemObject(), KeyboardTextInputItem<Int> {
-    override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions
-    var formatOptions: IntFormatOptions = IntFormatOptions()
-
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.INT
-
-    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
-}
-
-@Serializable
-@SerialName("year")
-data class YearTextInputItemObject(@SerialName("identifier")
-                                  override val resultIdentifier: String? = null) : InputItemObject(), KeyboardTextInputItem<Int> {
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.INT
-
-    // Text field options and the validator are not read/write or serializable.
-    override val textFieldOptions: TextFieldOptionsObject
-        get() = TextFieldOptionsObject.NumberEntryOptions
-    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(IntFormatOptions(usesGroupingSeparator = false))
-}
-
-@Serializable
-@SerialName("decimal")
-data class DecimalTextInputItemObject(@SerialName("identifier")
-                                  override val resultIdentifier: String? = null) : InputItemObject(), KeyboardTextInputItem<Double> {
-    override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions
-    var formatOptions: DoubleFormatOptions = DoubleFormatOptions()
-
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.INT
-
-    override fun getTextValidator(): TextValidator<Double>? = DoubleFormatter(formatOptions)
 }
 
 @Serializable
@@ -96,10 +45,59 @@ data class TextFieldOptionsObject(override val isSecureTextEntry: Boolean = fals
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.NumberPad)
-        val NameEntryOptions = TextFieldOptionsObject(
+        val DecimalEntryOptions = TextFieldOptionsObject(
                 autocorrectionType = AutoCorrectionType.No,
-                spellCheckingType = SpellCheckingType.No)
+                spellCheckingType = SpellCheckingType.No,
+                keyboardType = KeyboardType.DecimalPad)
+        val DateTimeEntryOptions = TextFieldOptionsObject(
+                autocorrectionType = AutoCorrectionType.No,
+                spellCheckingType = SpellCheckingType.No,
+                keyboardType = KeyboardType.NumbersAndPunctuation)
     }
+}
+
+/**
+ * KeyboardTextInputItem
+ */
+
+@Serializable
+@SerialName("decimal")
+data class DecimalTextInputItemObject(@SerialName("identifier")
+                                      override val resultIdentifier: String? = null,
+                                      var formatOptions: DoubleFormatOptions = DoubleFormatOptions())
+    : InputItemObject(), KeyboardTextInputItem<Double> {
+    override val answerKind: SerialKind
+        get() = PrimitiveKind.DOUBLE
+
+    override val textFieldOptions: TextFieldOptionsObject
+        get() = TextFieldOptionsObject.DecimalEntryOptions
+    override fun getTextValidator(): TextValidator<Double>? = DoubleFormatter(formatOptions)
+}
+
+@Serializable
+@SerialName("integer")
+data class IntegerTextInputItemObject(@SerialName("identifier")
+                                      override val resultIdentifier: String? = null,
+                                      override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions,
+                                      var formatOptions: IntFormatOptions = IntFormatOptions())
+    : InputItemObject(), KeyboardTextInputItem<Int> {
+    override val answerKind: SerialKind
+        get() = PrimitiveKind.INT
+
+    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+}
+
+@Serializable
+@SerialName("string")
+data class StringTextInputItemObject(@SerialName("identifier")
+                                     override val resultIdentifier: String? = null,
+                                     override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
+                                     var regExValidator: RegExValidator? = null)
+    : InputItemObject(), KeyboardTextInputItem<String> {
+    override val answerKind: SerialKind
+        get() = PrimitiveKind.STRING
+
+    override fun getTextValidator(): TextValidator<String>? = regExValidator
 }
 
 @Serializable
@@ -110,3 +108,52 @@ data class RegExValidator(val pattern: String, val invalidMessage: InvalidMessag
     }
     override fun localizedStringFor(value: String?) = FormattedValue(result = value)
 }
+
+@Serializable
+@SerialName("year")
+data class YearTextInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String? = null,
+                                   var formatOptions: YearFormatOptions = YearFormatOptions())
+    : InputItemObject(), KeyboardTextInputItem<Int> {
+    override val answerKind: SerialKind
+        get() = PrimitiveKind.INT
+
+    override val textFieldOptions: TextFieldOptionsObject
+        get() = TextFieldOptionsObject.NumberEntryOptions
+    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+}
+
+/**
+ * DateTimeInputItem
+ */
+
+@Serializable
+@SerialName("date")
+data class DateInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String? = null,
+                                   override var formatOptions: DateFormatOptions = DateFormatOptions())
+    : InputItemObject(), DateTimeInputItem
+
+@Serializable
+@SerialName("time")
+data class TimeInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String? = null,
+                                   override var formatOptions: TimeFormatOptions = TimeFormatOptions())
+    : InputItemObject(), DateTimeInputItem
+
+// TODO: syoung 02/18/2020 In SageResearch change "minimumDate" -> "minimumValue" and "maximumDate" -> "maximumValue"
+
+@Serializable
+data class DateFormatOptions(override val allowFuture: Boolean = true,
+                             override val allowPast: Boolean = true,
+                             override val minimumValue: String? = null,
+                             override val maximumValue: String? = null,
+                             override val codingFormat: String = ISO8601Format.DateOnly.formatString) : DateTimeFormatOptions
+
+@Serializable
+@SerialName("time")
+data class TimeFormatOptions(override val allowFuture: Boolean = true,
+                             override val allowPast: Boolean = true,
+                             override val minimumValue: String? = null,
+                             override val maximumValue: String? = null,
+                             override val codingFormat: String = ISO8601Format.TimeOnly.formatString) : DateTimeFormatOptions

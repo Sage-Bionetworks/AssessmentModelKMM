@@ -70,6 +70,8 @@ data class InstructionStepObject(override val identifier: String,
                                  @SerialName("image")
                                  override var imageInfo: ImageInfo? = null,
                                  override var fullInstructionsOnly: Boolean = false) : StepObject(), InstructionStep
+
+// TODO: syoung 02/18/2020 This is a name change of the serialization type from "form" -> "question" and "inputFields" -> "inputItems".
 @Serializable
 @SerialName("question")
 data class QuestionObject(override val identifier: String,

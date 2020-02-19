@@ -17,4 +17,5 @@ expect object UUIDGenerator {
 
 expect object DateGenerator {
     fun nowString(): String
+    fun currentYear(): Int
 }

@@ -4,6 +4,8 @@ import kotlinx.serialization.PrimitiveKind
 import kotlinx.serialization.SerialKind
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.Question
+import org.sagebionetworks.assessmentmodel.serialization.TextFieldOptionsObject
+import org.sagebionetworks.assessmentmodel.survey.DateTimePart
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 import org.sagebionetworks.assessmentmodel.survey.TextValidator
 
@@ -113,6 +115,36 @@ interface KeyboardTextInputItem<T> : InputItem {
 //
 //    /// Optional picker source for a picker or multiple selection input field.
 //    var pickerSource: RSDPickerDataSource
+}
+
+/**
+ * Dates and times are not directly serializable and should always be serialized as a [String].
+ */
+interface DateTimeInputItem : KeyboardTextInputItem<String> {
+
+    /**
+     * For date and time input entry, the format options will always be constrained for a date or time range and coding.
+     */
+    val formatOptions: DateTimeFormatOptions
+
+    override val answerKind: SerialKind
+        get() = PrimitiveKind.STRING
+
+    override val textFieldOptions: TextFieldOptionsObject
+        get() = TextFieldOptionsObject.DateTimeEntryOptions
+
+    override fun getTextValidator(): TextValidator<String>? = null
+}
+
+interface DateTimeFormatOptions {
+    val allowFuture: Boolean
+    val allowPast: Boolean
+    val minimumValue: String?
+    val maximumValue: String?
+    val codingFormat: String
+
+    val dateTimeParts: List<DateTimePart>
+        get() = DateTimePart.partsFor(codingFormat)
 }
 
 /**
