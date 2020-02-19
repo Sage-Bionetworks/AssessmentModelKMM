@@ -130,6 +130,92 @@ open class InputItemsTest {
     }
 
     /**
+     * DateInputItemObject
+     */
+
+    @Test
+    fun testDateInputItemObject_Min_Serialization() {
+        val inputString = """
+           {
+            "identifier": "foo",
+            "type": "date",
+            "uiHint": "popover",
+            "prompt": "Favorite color",
+            "placeholder": "Blue, no! Red!",
+            "formatOptions" : {
+                        "minimumValue" : "1900-01",
+                        "allowFuture" : false,
+                        "codingFormat" : "yyyy-MM"
+            }
+           }
+           """
+        val original = DateInputItemObject(
+                resultIdentifier = "foo",
+                formatOptions = DateFormatOptions(
+                        minimumValue = "1900-01",
+                        allowFuture = false,
+                        codingFormat = "yyyy-MM"))
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testDateInputItemObject_Max_Serialization() {
+        val inputString = """
+           {
+            "identifier": "foo",
+            "type": "date",
+            "uiHint": "popover",
+            "prompt": "Favorite color",
+            "placeholder": "Blue, no! Red!",
+            "formatOptions" : {
+                        "allowPast" : false,
+                        "maximumValue" : "2100-01",
+                        "codingFormat" : "yyyy-MM"
+            }
+           }
+           """
+        val original = DateInputItemObject(
+                resultIdentifier = "foo",
+                formatOptions = DateFormatOptions(
+                        allowPast = false,
+                        maximumValue = "2100-01",
+                        codingFormat = "yyyy-MM"))
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testDateInputItemObject_Default_Serialization() {
+        val inputString = """
+           {
+            "type": "date",
+           }
+           """
+        val original = DateInputItemObject()
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
      * [DecimalTextInputItemObject] Tests
      */
 
@@ -444,6 +530,92 @@ open class InputItemsTest {
            }
            """
         val original = StringTextInputItemObject()
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
+     * TimeInputItemObject
+     */
+
+    @Test
+    fun testTimeInputItemObject_Min_Serialization() {
+        val inputString = """
+           {
+            "identifier": "foo",
+            "type": "time",
+            "uiHint": "popover",
+            "prompt": "Favorite color",
+            "placeholder": "Blue, no! Red!",
+            "formatOptions" : {
+                        "minimumValue" : "06:00",
+                        "allowFuture" : false,
+                        "codingFormat" : "HH:mm"
+            }
+           }
+           """
+        val original = TimeInputItemObject(
+                resultIdentifier = "foo",
+                formatOptions = TimeFormatOptions(
+                        minimumValue = "06:00",
+                        allowFuture = false,
+                        codingFormat = "HH:mm"))
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testTimeInputItemObject_Max_Serialization() {
+        val inputString = """
+           {
+            "identifier": "foo",
+            "type": "time",
+            "uiHint": "popover",
+            "prompt": "Favorite color",
+            "placeholder": "Blue, no! Red!",
+            "formatOptions" : {
+                        "allowPast" : false,
+                        "maximumValue" : "2100-01",
+                        "codingFormat" : "HH:mm"
+            }
+           }
+           """
+        val original = TimeInputItemObject(
+                resultIdentifier = "foo",
+                formatOptions = TimeFormatOptions(
+                        allowPast = false,
+                        maximumValue = "22:00",
+                        codingFormat = "HH:mm"))
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testTimeInputItemObject_Default_Serialization() {
+        val inputString = """
+           {
+            "type": "time",
+           }
+           """
+        val original = TimeInputItemObject()
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)

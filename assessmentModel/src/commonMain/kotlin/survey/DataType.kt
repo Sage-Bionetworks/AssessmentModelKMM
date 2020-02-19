@@ -133,7 +133,7 @@ sealed class DataType() : StringEnum {
          * In a date question, the participant can enter a date, time, or combination of the two. A date data type can
          * map to a [DateRange] to box the allowed values.
          */
-        // TODO: syoung 02/18/2020 Figure out how to parse dates for Android version < 26
+        // TODO: syoung 02/18/2020 Deprecate in SageResearch. Use [DateRangeType] instead.
         Date,
 
         /**
@@ -236,6 +236,7 @@ sealed class DataType() : StringEnum {
         /**
          * Includes time, date, and GMT timezone offset ("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ").
          */
+        // TODO: syoung 02/18/2020 Deprecate in SageResearch. It doesn't really make sense to enter a time *and* date.
         Timestamp(),
 
         /**
@@ -244,6 +245,7 @@ sealed class DataType() : StringEnum {
          * - note: This framework already maps the `rawValue` of "date" to the `.base(.date)` data type which is a
          * generic that can be used to define dates independently of which components are displayed to the user.
          */
+        // TODO: syoung 02/18/2020 Map to "date" instead of "dateOnly" in SageResearch.
         DateOnly(),
 
         /**

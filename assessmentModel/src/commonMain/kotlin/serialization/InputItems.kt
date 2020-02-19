@@ -12,6 +12,10 @@ val inputItemSerializersModule = SerializersModule {
         YearTextInputItemObject::class with YearTextInputItemObject.serializer()
         DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
     }
+    polymorphic(DateTimeFormatOptions::class) {
+        DateFormatOptions::class with DateFormatOptions.serializer()
+        TimeFormatOptions::class with TimeFormatOptions.serializer()
+    }
 }
 
 // TODO: syoung 02/18/2020 Names of fields for serialization have changed from SageResearch to support kotlinx.
@@ -45,8 +49,16 @@ data class TextFieldOptionsObject(override val isSecureTextEntry: Boolean = fals
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.DecimalPad)
+        val DateTimeEntryOptions = TextFieldOptionsObject(
+                autocorrectionType = AutoCorrectionType.No,
+                spellCheckingType = SpellCheckingType.No,
+                keyboardType = KeyboardType.NumbersAndPunctuation)
     }
 }
+
+/**
+ * KeyboardTextInputItem
+ */
 
 @Serializable
 @SerialName("decimal")
@@ -110,3 +122,38 @@ data class YearTextInputItemObject(@SerialName("identifier")
         get() = TextFieldOptionsObject.NumberEntryOptions
     override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
 }
+
+/**
+ * DateTimeInputItem
+ */
+
+@Serializable
+@SerialName("date")
+data class DateInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String? = null,
+                                   override var formatOptions: DateFormatOptions = DateFormatOptions())
+    : InputItemObject(), DateTimeInputItem
+
+@Serializable
+@SerialName("time")
+data class TimeInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String? = null,
+                                   override var formatOptions: TimeFormatOptions = TimeFormatOptions())
+    : InputItemObject(), DateTimeInputItem
+
+// TODO: syoung 02/18/2020 In SageResearch change "minimumDate" -> "minimumValue" and "maximumDate" -> "maximumValue"
+
+@Serializable
+data class DateFormatOptions(override val allowFuture: Boolean = true,
+                             override val allowPast: Boolean = true,
+                             override val minimumValue: String? = null,
+                             override val maximumValue: String? = null,
+                             override val codingFormat: String = ISO8601Format.DateOnly.formatString) : DateTimeFormatOptions
+
+@Serializable
+@SerialName("time")
+data class TimeFormatOptions(override val allowFuture: Boolean = true,
+                             override val allowPast: Boolean = true,
+                             override val minimumValue: String? = null,
+                             override val maximumValue: String? = null,
+                             override val codingFormat: String = ISO8601Format.TimeOnly.formatString) : DateTimeFormatOptions
