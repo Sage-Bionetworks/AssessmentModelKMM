@@ -158,7 +158,7 @@ sealed class DataType() : StringEnum {
 
         /**
          * The integer question type asks the participant to enter an integer number. An integer data type can
-         * map to a [IntFormatOptions] to box the allowed values, but will store the value as an [Int].
+         * map to an [IntFormatOptions] to box the allowed values, but will store the value as an [Int].
          */
         Integer,
 
