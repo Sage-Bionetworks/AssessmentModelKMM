@@ -5,13 +5,13 @@ import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.ImageInfo
 import kotlin.test.*
 
-@Serializable
-data class TestImageWrapper(val image: ImageInfo)
-
-@Serializable
-data class TestImagePlacementWrapper(val placement: ImagePlacement)
-
 open class ImageTest {
+
+    @Serializable
+    data class TestImageWrapper(val image: ImageInfo)
+
+    @Serializable
+    data class TestImagePlacementWrapper(val placement: ImagePlacement)
 
     val jsonCoder = Serialization.JsonCoder.default
 

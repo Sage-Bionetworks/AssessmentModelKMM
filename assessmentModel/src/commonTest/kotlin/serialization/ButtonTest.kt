@@ -2,7 +2,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.json
 import org.sagebionetworks.assessmentmodel.Button
 import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.ButtonStyle
@@ -10,16 +9,16 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@Serializable
-data class TestButtonWrapper(val button: Button)
-
-@Serializable
-data class TestButtonStyleWrapper(val buttonStyle: ButtonStyle)
-
-@Serializable
-data class TestButtonActionWrapper(val buttonAction: ButtonAction)
-
 open class ButtonTest {
+
+    @Serializable
+    data class TestButtonWrapper(val button: Button)
+
+    @Serializable
+    data class TestButtonStyleWrapper(val buttonStyle: ButtonStyle)
+
+    @Serializable
+    data class TestButtonActionWrapper(val buttonAction: ButtonAction)
 
     val jsonCoder = Serialization.JsonCoder.default
 

@@ -1,14 +1,27 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.*
+import org.sagebionetworks.assessmentmodel.Result
+import org.sagebionetworks.assessmentmodel.survey.BaseType
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 open class ResultTest {
 
-    val jsonCoder = Serialization.JsonCoder.default
+    @Serializable
+    data class TestResultWrapper(val result: Result)
 
+    private val jsonCoder = Serialization.JsonCoder.default
+
+    /**
+     * Collection-type results
+     */
+
+    @UnstableDefault
     @Test
     fun testParentNodeResult() {
         val result1 = ResultObject("result1")
@@ -64,6 +77,7 @@ open class ResultTest {
         assertEquals("collection", r4.getPrimitiveOrNull("type")?.content)
     }
 
+    @UnstableDefault
     @Test
     fun testAssessmentResult() {
         val original = AssessmentResultObject(identifier = "testResult",
@@ -111,5 +125,225 @@ open class ResultTest {
         assertNotNull(ar1)
         assertEquals("asyncResultA", ar1.getPrimitiveOrNull("identifier")?.content)
         assertEquals("base", ar1.getPrimitiveOrNull("type")?.content)
+    }
+
+    /**
+     * AnswerResult
+     */
+
+    @Test
+    fun testAnswerResult_Boolean() {
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true)))
+        val inputString = """
+            { "result": 
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "boolean"
+                        },
+                        "value" : true
+                    }
+            }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_Decimal() {
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2)))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "decimal"
+                        },
+                        "value" : 3.2
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_Int() {
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3)))
+        val inputString = """
+            { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "integer"
+                        },
+                        "value" : 3
+                    }
+            }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_Map() {
+        val originalValue = JsonObject(mapOf("a" to JsonLiteral(3.2), "b" to JsonLiteral("boo")))
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.MAP, originalValue))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "map"
+                        },
+                        "value" : {"a":3.2,"b":"boo"}
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_String() {
+        val originalValue = JsonPrimitive("goo")
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.STRING, originalValue))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "string"
+                        },
+                        "value" : "goo"
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_DateYearMonth() {
+        val originalValue = JsonPrimitive("2020-02")
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "dateTime",
+                            "codingFormat": "yyyy-MM"
+                        },
+                        "value" : "2020-02"
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_ListInt() {
+        val originalValue = JsonArray(listOf(JsonPrimitive(2), JsonPrimitive(5)))
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.List(BaseType.INTEGER), originalValue))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "list",
+                            "baseType": "integer"
+                        },
+                        "value" : [2,5]
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testAnswerResult_Measurement() {
+        val originalValue = JsonPrimitive(10.2)
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue))
+        val inputString = """
+                { "result":
+                    {
+                        "identifier" : "foo",
+                        "type" : "answer",
+                        "answerType" : {
+                            "type": "measurement",
+                            "unit": "cm"
+                        },
+                        "value" : 10.2
+                    }
+                }
+        """.trimIndent()
+
+        val serializer = TestResultWrapper.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
     }
 }

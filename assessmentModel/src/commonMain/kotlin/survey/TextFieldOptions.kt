@@ -1,4 +1,4 @@
-package org.sagebionetworks.assessmentmodel.forms
+package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor

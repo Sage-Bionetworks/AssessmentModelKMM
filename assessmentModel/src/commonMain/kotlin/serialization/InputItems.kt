@@ -1,16 +1,22 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
-import org.sagebionetworks.assessmentmodel.forms.*
+import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.survey.*
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
-        StringTextInputItemObject::class with StringTextInputItemObject.serializer()
-        IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
-        YearTextInputItemObject::class with YearTextInputItemObject.serializer()
+        BooleanInputItem::class with BooleanInputItem.serializer()
+        DateInputItemObject::class with DateInputItemObject.serializer()
         DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
+        IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
+        TimeInputItemObject::class with TimeInputItemObject.serializer()
+        StringTextInputItemObject::class with StringTextInputItemObject.serializer()
+        YearTextInputItemObject::class with YearTextInputItemObject.serializer()
     }
     polymorphic(DateTimeFormatOptions::class) {
         DateFormatOptions::class with DateFormatOptions.serializer()
@@ -66,12 +72,12 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
                                       override val resultIdentifier: String? = null,
                                       var formatOptions: DoubleFormatOptions = DoubleFormatOptions())
     : InputItemObject(), KeyboardTextInputItem<Double> {
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.DOUBLE
+    override val answerType: AnswerType
+        get() = AnswerType.DECIMAL
 
     override val textFieldOptions: TextFieldOptionsObject
         get() = TextFieldOptionsObject.DecimalEntryOptions
-    override fun getTextValidator(): TextValidator<Double>? = DoubleFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Double>? = DoubleFormatter(formatOptions)
 }
 
 @Serializable
@@ -81,10 +87,10 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
                                       override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions,
                                       var formatOptions: IntFormatOptions = IntFormatOptions())
     : InputItemObject(), KeyboardTextInputItem<Int> {
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.INT
+    override val answerType: AnswerType
+        get() = AnswerType.INTEGER
 
-    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
 }
 
 @Serializable
@@ -92,12 +98,13 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
 data class StringTextInputItemObject(@SerialName("identifier")
                                      override val resultIdentifier: String? = null,
                                      override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
-                                     var regExValidator: RegExValidator? = null)
+                                     var regExValidator: RegExValidator? = null,
+                                     override var fieldLabel: String? = null)
     : InputItemObject(), KeyboardTextInputItem<String> {
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.STRING
+    override val answerType: AnswerType
+        get() = AnswerType.STRING
 
-    override fun getTextValidator(): TextValidator<String>? = regExValidator
+    override fun buildTextValidator(): TextValidator<String>? = regExValidator
 }
 
 @Serializable
@@ -115,12 +122,12 @@ data class YearTextInputItemObject(@SerialName("identifier")
                                    override val resultIdentifier: String? = null,
                                    var formatOptions: YearFormatOptions = YearFormatOptions())
     : InputItemObject(), KeyboardTextInputItem<Int> {
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.INT
+    override val answerType: AnswerType
+        get() = AnswerType.INTEGER
 
     override val textFieldOptions: TextFieldOptionsObject
         get() = TextFieldOptionsObject.NumberEntryOptions
-    override fun getTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
 }
 
 /**
@@ -144,6 +151,7 @@ data class TimeInputItemObject(@SerialName("identifier")
 // TODO: syoung 02/18/2020 In SageResearch change "minimumDate" -> "minimumValue" and "maximumDate" -> "maximumValue"
 
 @Serializable
+@SerialName("date")
 data class DateFormatOptions(override val allowFuture: Boolean = true,
                              override val allowPast: Boolean = true,
                              override val minimumValue: String? = null,
@@ -157,3 +165,91 @@ data class TimeFormatOptions(override val allowFuture: Boolean = true,
                              override val minimumValue: String? = null,
                              override val maximumValue: String? = null,
                              override val codingFormat: String = ISO8601Format.TimeOnly.formatString) : DateTimeFormatOptions
+
+/**
+ * ChoiceInputItem
+ */
+
+/**
+ * A [BooleanInputItem] is a special case of input item that is used to define an "or" option for a text field
+ * such as asking the participant to answer a question or allowing them to select "I don't know". This item is always
+ * shown using a [UIHint.Choice.Checkbox], and always has a [fieldLabel] defined by a non-null [prompt]. It is always
+ * [optional] and [exclusive].
+ */
+@Serializable
+@SerialName("boolean")
+data class BooleanInputItem(val prompt: String,
+                            @SerialName("identifier")
+                            override val resultIdentifier: String? = null) : ChoiceInputItem {
+    override val fieldLabel: String?
+        get() = prompt
+    override val icon: FetchableImage?
+        get() = null
+    override val optional: Boolean
+        get() = true
+    override val exclusive: Boolean
+        get() = true
+    override val answerType: AnswerType
+        get() = AnswerType.BOOLEAN
+    override val uiHint: UIHint.Choice
+        get() = UIHint.Choice.Checkbox
+    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) JsonPrimitive(true) else null
+}
+
+@Serializable
+data class ChoiceOptionObject(val value: JsonElement? = null,
+                              @SerialName("text")
+                              override val fieldLabel: String?,
+                              @Serializable(ImageNameSerializer::class)
+                              override val icon: FetchableImage? = null,
+                              override val exclusive: Boolean = false) : ChoiceOption {
+    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
+}
+
+/**
+ * A [ChoiceItemWrapper] is used to wrap serializable [ChoiceOption] items that have a shared [uiHint] and [answerType]
+ * for either a [singleChoice] or multiple choice question.
+ */
+data class ChoiceItemWrapper(val choice: ChoiceOption,
+                             val singleChoice: Boolean,
+                             override val answerType: AnswerType,
+                             override val uiHint: UIHint.Choice) : ChoiceInputItem, ChoiceOption by choice {
+    override val resultIdentifier: String?
+        get() = null
+    override val optional: Boolean
+        get() = true
+    override val exclusive: Boolean
+        get() = singleChoice || choice.exclusive
+}
+
+/**
+ * A [OtherChoiceItemWrapper] is used to wrap a serializable [InputItem] that is used to allow a multiple choice
+ * question to have an "other" text entry input item.
+ */
+data class OtherChoiceItemWrapper(val inputItem: InputItem,
+                            val singleChoice: Boolean) : InputItem by inputItem {
+    override val optional: Boolean
+        get() = true
+    override val exclusive: Boolean
+        get() = singleChoice
+}
+
+/**
+ * TODO: syoung 02/25/2020 Implement input items for Measurement types.
+ */
+
+/**
+ * A measurement type is a human-data measurement such as height or weight.
+ */
+enum class MeasurementType : StringEnum {
+    Height, Weight, BloodPressure;
+}
+
+/**
+ * The measurement range is used to determine units that are appropriate to the size of the person.
+ */
+enum class MeasurementRange : StringEnum {
+    Adult, Child, Infant;
+}
+
+
