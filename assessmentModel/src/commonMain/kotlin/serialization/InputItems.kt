@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.StringEnum
@@ -215,7 +216,7 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
                              override val answerType: AnswerType,
                              override val uiHint: UIHint.Choice) : ChoiceInputItem, ChoiceOption by choice {
     override val resultIdentifier: String?
-        get() = null
+        get() = (choice.jsonValue(true) ?: JsonNull).toString()
     override val optional: Boolean
         get() = true
     override val exclusive: Boolean
