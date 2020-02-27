@@ -12,7 +12,7 @@ import org.sagebionetworks.assessmentmodel.Node
 /**
  * An [AssessmentProvider] for loading Assessments from json files included as part of the app.
  */
-class FileAssesmentProvider(val fileLoader: FileLoader): AssessmentProvider {
+class FileAssessmentProvider(val fileLoader: FileLoader): AssessmentProvider {
 
     data class ResourceInfo(val fileName: String, val packageName: String)
 

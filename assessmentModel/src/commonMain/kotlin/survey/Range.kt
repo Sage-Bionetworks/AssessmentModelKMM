@@ -1,8 +1,5 @@
 package org.sagebionetworks.assessmentmodel.survey
 
-import kotlinx.serialization.PrimitiveKind
-import kotlin.reflect.KClass
-
 /**
  * A [Range] can be used to compare an entered value to a minimum and maximum value. It can also be used to set up a
  * slider or picker UI element.

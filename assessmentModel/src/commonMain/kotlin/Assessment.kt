@@ -1,13 +1,11 @@
 package org.sagebionetworks.assessmentmodel
 
-import org.sagebionetworks.assessmentmodel.forms.DataType
-import org.sagebionetworks.assessmentmodel.forms.InputItem
 import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
-import org.sagebionetworks.assessmentmodel.serialization.AssessmentResultObject
-import org.sagebionetworks.assessmentmodel.serialization.BranchNodeResultObject
-import org.sagebionetworks.assessmentmodel.serialization.ResultObject
+import org.sagebionetworks.assessmentmodel.serialization.*
+import org.sagebionetworks.assessmentmodel.survey.*
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 /**
  * A [Session] includes one or more [assessments] that are logically grouped together.
@@ -401,17 +399,32 @@ interface Question : ContentNode {
     val optional: Boolean
 
     /**
+     * Is there a [singleAnswer] for this [Question] or is the [Question] a composite of multiple choices or input items?
+     */
+    val singleAnswer: Boolean
+
+    /**
+     * The [AnswerType] that is associated with this [Question] or null if this [Question] has custom handling.
+     */
+    val answerType: AnswerType?
+
+    /**
      * A question will always have at least one [InputItem] that is used to define the question. These fields will form
      * a logical grouping for how the [Question] should be presented to the user. For example, the [Question] may be
      * "what is your name" where the fields are given name, family name, title, and a checkbox that says "prefer not to
      * answer". How the fields interact may use custom logic, but they are presented together and do not make sense
      * independently of one another.
      *
-     * Typically, the [getInputItems] function for a [Question] will either be serialized as the same object
+     * Typically, the [buildInputItems] function for a [Question] will either be serialized as the same object
      * (returns self) or a list of elements of type [InputItem]. It is defined here as a function to allow for
      * flexibility in how it is stored and displayed.
      */
-    fun getInputItems(): List<InputItem>
+    fun buildInputItems(): List<InputItem>
+
+    /**
+     * Override [createResult] to return an [AnswerResult] by default.
+     */
+    override fun createResult(): AnswerResult = AnswerResultObject(resultId(), answerType)
 }
 
 /**

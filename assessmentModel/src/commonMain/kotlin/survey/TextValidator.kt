@@ -2,12 +2,7 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import org.sagebionetworks.assessmentmodel.forms.KeyboardType
-import org.sagebionetworks.assessmentmodel.matching
 import org.sagebionetworks.assessmentmodel.serialization.Localization
-import kotlin.coroutines.CoroutineContext
 
 /**
  * A [TextValidator] can be used to both provide the localized string shown to the participant and convert the

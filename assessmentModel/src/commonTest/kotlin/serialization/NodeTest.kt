@@ -1,7 +1,12 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
+import org.sagebionetworks.assessmentmodel.survey.BaseType
+import org.sagebionetworks.assessmentmodel.survey.UIHint
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -10,7 +15,9 @@ open class NodeTest : NodeSerializationTestHelper() {
 
     private val jsonCoder = Serialization.JsonCoder.default
 
-    /* MARK: AssessmentObject tests */
+    /**
+     * AssessmentObject
+     */
 
     @Test
     fun testAssessment_Serialization() {
@@ -109,7 +116,180 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEquals(expected, result)
     }
 
-    /* MARK: InstructionStepObject tests */
+    /**
+     * ChoiceQuestionObject
+     */
+
+    @Test
+    fun testChoiceQuestion_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "choiceQuestion",
+               "title": "Hello World!",
+               "subtitle": "Question subtitle",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2
+                                  },
+                "optional": false,
+                "singleChoice": false,
+                "baseType": "integer",
+                "uiHint": "checkmark",
+                "choices":[
+                {"text":"choice 1","icon":"choice1","value":1},
+                {"text":"choice 2","value":2},
+                {"text":"choice 3","value":3},
+                {"text":"none of the above","exclusive":true}
+                ]
+           }
+           """
+        val original = ChoiceQuestionObject(
+                identifier = "foo",
+                choices = listOf(
+                        ChoiceOptionObject(JsonPrimitive(1), "choice 1", FetchableImage("choice1")),
+                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
+                        ChoiceOptionObject(JsonPrimitive(3), "choice 3"),
+                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                ),
+                baseType = BaseType.INTEGER)
+        original.uiHint = UIHint.Choice.Checkmark
+        original.title = "Hello World!"
+        original.subtitle = "Question subtitle"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.imageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ChoiceQuestionObject)
+        assertEqualStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertTrue(restored is ChoiceQuestionObject)
+        assertEqualStep(original, restored)
+        assertEqualContentNodes(original, restored)
+    }
+
+    @Test
+    fun testChoiceQuestion_Result_NullResultId() {
+        val original = ChoiceQuestionObject("foo", listOf())
+        val result = original.createResult()
+        val expected = AnswerResultObject("foo", AnswerType.STRING)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun testChoiceQuestion_Result_WithResultId() {
+        val original = ChoiceQuestionObject("foo", choices = listOf(), resultIdentifier = "bar")
+        val result = original.createResult()
+        val expected = AnswerResultObject("bar", AnswerType.STRING)
+        assertEquals(expected, result)
+    }
+
+    fun testChoiceQuestion_AnswerType_MultipleChoice() {
+        val original = ChoiceQuestionObject(
+                identifier = "foo",
+                choices = listOf(
+                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
+                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
+                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
+                baseType = BaseType.INTEGER)
+        original.singleAnswer = false
+        assertEquals(AnswerType.List(BaseType.INTEGER), original.answerType)
+    }
+
+    fun testChoiceQuestion_AnswerType_SingleChoice() {
+        val original = ChoiceQuestionObject(
+                identifier = "foo",
+                choices = listOf(
+                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
+                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
+                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
+                baseType = BaseType.INTEGER)
+        original.singleAnswer = true
+        assertEquals(AnswerType.INTEGER, original.answerType)
+    }
+
+    /**
+     * ComboBoxQuestion
+     */
+
+    @Test
+    fun testComboBoxQuestion_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "comboBoxQuestion",
+               "title": "Hello World!",
+               "subtitle": "Question subtitle",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2
+                                  },
+                "optional": false,
+                "singleChoice": false,
+                "uiHint": "checkmark",
+                "choices":[
+                {"text":"choice 1","value":"one"},
+                {"text":"choice 2","value":"two"},
+                {"text":"choice 3","value":"three"}
+                ],
+                "otherInputItem":{
+                    "type": "string",
+                    "prompt": "Something else"
+                   }
+           }
+           """
+        val otherInputItem = StringTextInputItemObject()
+        otherInputItem.fieldLabel = "Something else"
+
+        val original = ComboBoxQuestionObject(
+                identifier = "foo",
+                choices = listOf(
+                        ChoiceOptionObject(JsonPrimitive("one"), "choice 1"),
+                        ChoiceOptionObject(JsonPrimitive("two"), "choice 2"),
+                        ChoiceOptionObject(JsonPrimitive("three"), "choice 3"),
+                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                ),
+                otherInputItem = otherInputItem)
+        original.uiHint = UIHint.Choice.Checkmark
+        original.title = "Hello World!"
+        original.subtitle = "Question subtitle"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.imageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ComboBoxQuestionObject)
+        assertEqualStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertTrue(restored is ComboBoxQuestionObject)
+        assertEqualStep(original, restored)
+        assertEqualContentNodes(original, restored)
+    }
+
+    /**
+     * InstructionStepObject
+     */
 
     @Test
     fun testInstructionStep_Serialization() {
@@ -177,8 +357,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEquals(expected, result)
     }
 
-
-    /* MARK: QuestionObject tests */
+    /**
+     * QuestionObject
+     */
 
     @Test
     fun testQuestion_Serialization() {
@@ -234,8 +415,62 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, restored)
     }
 
+    @Test
+    fun testQuestion_Result_NullResultId() {
+        val original = QuestionObject("foo", inputItems = listOf(StringTextInputItemObject()))
+        val result = original.createResult()
+        val expected = AnswerResultObject("foo", answerType = AnswerType.STRING)
+        assertEquals(expected, result)
+    }
 
-    /* MARK: SectionObject tests */
+    @Test
+    fun testQuestion_Result_WithResultId() {
+        val original = QuestionObject("foo", inputItems = listOf(StringTextInputItemObject()), resultIdentifier = "bar")
+        val result = original.createResult()
+        val expected = AnswerResultObject("bar", answerType = AnswerType.STRING)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun testQuestion_AnswerType_SingleItem_STRING() {
+        val original = QuestionObject("foo", inputItems = listOf(StringTextInputItemObject()))
+        assertEquals(AnswerType.STRING, original.answerType)
+    }
+
+    @Test
+    fun testQuestion_AnswerType_SingleItem_Date() {
+        val original = QuestionObject("foo", inputItems = listOf(DateInputItemObject()))
+        assertEquals(AnswerType.DateTime(), original.answerType)
+    }
+
+    @Test
+    fun testQuestion_AnswerType_Compound_STRING() {
+        val item1 = StringTextInputItemObject()
+        item1.exclusive = true
+        val item2 = SkipCheckboxInputItem("I don't know")
+        val original = QuestionObject("foo", inputItems = listOf(item1, item2))
+        assertEquals(AnswerType.STRING, original.answerType)
+    }
+
+    @Test
+    fun testQuestion_AnswerType_MAP() {
+        val item1 = StringTextInputItemObject("foo")
+        val item2 = StringTextInputItemObject("bar")
+        val original = QuestionObject("foo", inputItems = listOf(item1, item2))
+        assertEquals(AnswerType.MAP, original.answerType)
+    }
+
+    @Test
+    fun testQuestion_AnswerType_Unknown() {
+        val item1 = StringTextInputItemObject()
+        val item2 = StringTextInputItemObject()
+        val original = QuestionObject("foo", inputItems = listOf(item1, item2))
+        assertEquals(AnswerType.List(BaseType.STRING), original.answerType)
+    }
+
+    /**
+     * SectionObject
+     */
 
     @Test
     fun testSection_Serialization() {

@@ -1,13 +1,9 @@
-package org.sagebionetworks.assessmentmodel.forms
+package org.sagebionetworks.assessmentmodel.survey
 
-import kotlinx.serialization.PrimitiveKind
-import kotlinx.serialization.SerialKind
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.Question
+import org.sagebionetworks.assessmentmodel.serialization.FetchableImage
 import org.sagebionetworks.assessmentmodel.serialization.TextFieldOptionsObject
-import org.sagebionetworks.assessmentmodel.survey.DateTimePart
-import org.sagebionetworks.assessmentmodel.survey.QuestionState
-import org.sagebionetworks.assessmentmodel.survey.TextValidator
 
 /**
  * An [InputItem] describes a "part" of a [Question] representing a single answer.
@@ -55,7 +51,7 @@ interface InputItem {
      * For example, if the designer wants to ask "What year did you first start having symptoms?", the participant may
      * be allowed to enter a number in a text field that conforms to the [KeyboardTextInputItem] interface *or* select
      * a checkbox that says "I don't know" which conforms to the [ChoiceInputItem] interface where the
-     * [ChoiceInputItem.uiHint] equals [UIHint.Choice.Checkmark], then the [Question.getInputItems] method will
+     * [ChoiceInputItem.uiHint] equals [UIHint.Choice.Checkmark], then the [Question.buildInputItems] method will
      * return 2 input items. Both of those input items are [optional] but the union of them is not.
      *
      * However, if the [Question] requires entering your blood pressure using two fields for the systolic and
@@ -79,15 +75,78 @@ interface InputItem {
 
     /**
      * The kind of object to expect for the serialization of the answer associated with this [InputItem]. Typically,
-     * this will be a [PrimitiveKind] of some type, but it is possible for the [InputItem] to translate to an object
+     * this will be a [AnswerType.Base] of some type, but it is possible for the [InputItem] to translate to an object
      * rather than a primitive.
      *
      * For example, the question could be about blood pressure where the participant answers the question with a string
      * of "120/70" but the [QuestionState] is responsible for translating that into a data class with systolic and
      * diastolic as properties that are themselves numbers.
      */
-    val answerKind: SerialKind
+    val answerType: AnswerType
 }
+
+/**
+ * -- ChoiceInputItem
+ */
+
+/**
+ * A choice input field is used to describe a choice that may be part of a larger list of choices or combined with a
+ * text field to indicate that the text field should be left empty.
+ */
+interface ChoiceInputItem : InputItem, ChoiceOption {
+
+    /**
+     * A [ChoiceInputItem] maps to a ui hint subtype of [UIHint.Choice].
+     */
+    override val uiHint: UIHint.Choice
+
+    /**
+     * [placeholder] does not apply to choice input items and is always null.
+     */
+    override val placeholder: String?
+        get() = null
+}
+
+/**
+ * A choice option is a light-weight interface for a list of choices that should be displayed to the participant.
+ */
+interface ChoiceOption {
+
+    /**
+     * This is the JSON serializable element selected as one of the possible answers for a [Question]. For certain
+     * special cases, the value may depend upon whether or not the item is selected.
+     *
+     * For example, a boolean [Question] may be displayed using choice items of "Yes" and "No" in a list. The choices
+     * would both be [exclusive] and the [jsonValue] for "Yes" could be `true` if [selected] and `null` if not while
+     * for the "No", it could be `false` if [selected] and `null` if not.
+     *
+     * While Kotlin does not allow for extending a final class to allow implementing an interface, it is assumed that
+     * the returned value is something that the associated result can encode to JSON.
+     */
+    fun jsonValue(selected: Boolean): JsonElement?
+
+    /**
+     * A localized string that displays a short text offering a hint to the user of the data to be entered for this
+     * field.
+     */
+    val fieldLabel: String?
+
+    /**
+     * An image that can be used to represent this choice.
+     */
+    val icon: FetchableImage?
+
+    /**
+     * Does filling in or selecting this [InputItem] mean that the other [ChoiceOption] should be deselected or
+     * disabled? For example, this can be used in a multiple selection question to allow for a "none of the above"
+     * input item that is exclusive to the other items.
+     */
+    val exclusive: Boolean
+}
+
+/**
+ * -- KeyboardTextInputItem
+ */
 
 /**
  * A [KeyboardTextInputItem] extends the input field for the case where the participant will enter data into a text
@@ -109,7 +168,7 @@ interface KeyboardTextInputItem<T> : InputItem {
     /**
      * This can be used to return a class used to format and/or validate the text input.
      */
-    fun getTextValidator(): TextValidator<T>?
+    fun buildTextValidator(): TextValidator<T>?
 
     // TODO: syoung 01/27/2020 Complete the properties for describing a text field input field.
 //
@@ -127,15 +186,20 @@ interface DateTimeInputItem : KeyboardTextInputItem<String> {
      */
     val formatOptions: DateTimeFormatOptions
 
-    override val answerKind: SerialKind
-        get() = PrimitiveKind.STRING
+    override val answerType: AnswerType
+        get() = AnswerType.DateTime(codingFormat = formatOptions.codingFormat)
 
     override val textFieldOptions: TextFieldOptionsObject
         get() = TextFieldOptionsObject.DateTimeEntryOptions
 
-    override fun getTextValidator(): TextValidator<String>? = null
+    // TODO: syoung 02/18/2020 Revisit this. I couldn't figure out Android date formatting.
+    override fun buildTextValidator(): TextValidator<String>? = null
 }
 
+/**
+ * The [DateTimeFormatOptions] is a serializable representation of the date or time range to allow for a question as
+ * well as what parts of the date or time are requested by the question.
+ */
 interface DateTimeFormatOptions {
     val allowFuture: Boolean
     val allowPast: Boolean
@@ -145,27 +209,4 @@ interface DateTimeFormatOptions {
 
     val dateTimeParts: List<DateTimePart>
         get() = DateTimePart.partsFor(codingFormat)
-}
-
-/**
- * A choice input field is used to describe a choice that may be part of a larger list of choices or combined with a
- * text field to indicate that the text field should be left empty.
- */
-interface ChoiceInputItem : InputItem {
-
-    // TODO: syoung 02/11/2020 Flesh out the choice input item and what it might need.
-
-    /**
-     * A [JsonPrimitive] wraps a String, Boolean, Number, or Null. This is the JSON serializable element selected as
-     * one of the possible answers for a [Question]. For certain special cases, the value may depend upon whether or
-     * not the item is selected. For example, a boolean [Question] may be displayed using choice items of "Yes" and
-     * "No" in a list. The choices would both be [exclusive] and the [jsonValue] for "Yes" could be `true` if [selected]
-     * and `null` if not while for the "No", it could be `false` if [selected] and `null` if not.
-     */
-    fun jsonValue(selected: Boolean): JsonPrimitive
-
-    /**
-     * A [ChoiceInputItem] maps to a ui hint subtype of [UIHint.Choice].
-     */
-    override val uiHint: UIHint.Choice
 }

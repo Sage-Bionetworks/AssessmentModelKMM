@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.QuestionStateImpl
 
 /**
  * The [RootNodeController] is a platform-specific implementation of the UI that is described by the [Assessment] model.
@@ -122,15 +123,7 @@ interface BranchNodeState : NodeState {
 }
 
 open class LeafNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
-    override var currentResult: Result
-        get() {
-            if (_currentResult == null) {
-                _currentResult = node.createResult()
-            }
-            return _currentResult!!
-        }
-        set(value) { _currentResult = value }
-    private var _currentResult: Result? = null
+    override val currentResult: Result by lazy { node.createResult() }
 
     override fun goForward(requestedPermissions: Set<Permission>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
@@ -143,10 +136,10 @@ open class LeafNodeStateImpl(override val node: Node, override val parent: Branc
     }
 }
 
-open class BranchNodeStateImpl(final override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
+open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
 
-    override var currentResult: BranchNodeResult = node.createResult()
-    private var navigator: Navigator = node.getNavigator()
+    override val currentResult: BranchNodeResult by lazy { node.createResult() }
+    private val navigator: Navigator by lazy { node.getNavigator() }
 
     override var currentChild: NodeState? = null
         protected set
@@ -230,7 +223,10 @@ open class BranchNodeStateImpl(final override val node: BranchNode, final overri
      */
     open fun getLeafNodeState(navigationPoint: NavigationPoint): NodeState? {
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
-        return rootNodeController?.customNodeStateFor(node, this) ?: LeafNodeStateImpl(node, this)
+        return rootNodeController?.customNodeStateFor(node, this) ?: when (node) {
+            is Question -> QuestionStateImpl(node, this)
+            else -> LeafNodeStateImpl(node, this)
+        }
     }
 
     /**

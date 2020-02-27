@@ -1,5 +1,8 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.json.JsonElement
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
+
 /**
  * A [Result] is any data result that should be included with an [Assessment]. The base level interface only has an
  * [identifier] and does not include any other properties. The [identifier] in this case may be either the
@@ -18,7 +21,7 @@ interface Result {
 }
 
 /**
- * A [CollectionResult] is used to describe the output of a [Section], [Form], or [Assessment].
+ * A [CollectionResult] is used to describe the output of a [Section], [FormStep], or [Assessment].
  */
 interface CollectionResult : Result {
 
@@ -71,4 +74,20 @@ interface AssessmentResult : BranchNodeResult {
      * The end date timestamp for the result.
      */
     var endDateString: String
+}
+
+/**
+ * An [AnswerResult] is used to hold a serializable answer to a question or measurement.
+ */
+interface AnswerResult : Result {
+
+    /**
+     * Optional property for defining additional information about the answer expected for this result.
+     */
+    val answerType: AnswerType?
+
+    /**
+     * The answer held by this result.
+     */
+    var jsonValue: JsonElement?
 }

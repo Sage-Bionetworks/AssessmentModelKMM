@@ -1,9 +1,8 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
-import org.sagebionetworks.assessmentmodel.forms.*
-import org.sagebionetworks.assessmentmodel.survey.FormattedValue
-import org.sagebionetworks.assessmentmodel.survey.InvalidMessageObject
+import kotlinx.serialization.json.JsonPrimitive
+import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
 
 open class InputItemsTest {
@@ -130,6 +129,67 @@ open class InputItemsTest {
     }
 
     /**
+     * ChoiceItemObject
+     */
+
+    @Test
+    fun testChoiceOptionObject_Boolean() {
+        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val original = ChoiceOptionObject(
+                value = JsonPrimitive(true),
+                fieldLabel = "Pick me!",
+                icon = FetchableImage("pickMe"),
+                exclusive = true)
+
+        val serializer = ChoiceOptionObject.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+        assertEquals(inputString, jsonString)
+    }
+
+    @Test
+    fun testChoiceOptionObject_String() {
+        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val original = ChoiceOptionObject(
+                value = JsonPrimitive("foo"),
+                fieldLabel = "Pick me!",
+                icon = FetchableImage("pickMe"),
+                exclusive = true)
+
+        val serializer = ChoiceOptionObject.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+        assertEquals(inputString, jsonString)
+    }
+
+    @Test
+    fun testChoiceOptionObject_Int() {
+        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val original = ChoiceOptionObject(
+                value = JsonPrimitive(1),
+                fieldLabel = "Pick me!",
+                icon = FetchableImage("pickMe"),
+                exclusive = true)
+
+        val serializer = ChoiceOptionObject.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+        assertEquals(inputString, jsonString)
+    }
+
+    /**
      * DateInputItemObject
      */
 
@@ -201,7 +261,7 @@ open class InputItemsTest {
     fun testDateInputItemObject_Default_Serialization() {
         val inputString = """
            {
-            "type": "date",
+            "type": "date"
            }
            """
         val original = DateInputItemObject()
@@ -332,9 +392,9 @@ open class InputItemsTest {
            """
         val original = DecimalTextInputItemObject()
 
-        // Check the defaults for an integer
+        // Check the defaults for an decimal
         assertTrue(original.formatOptions.usesGroupingSeparator)
-        assertEquals(TextFieldOptionsObject.NumberEntryOptions, original.textFieldOptions)
+        assertEquals(TextFieldOptionsObject.DecimalEntryOptions, original.textFieldOptions)
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -481,6 +541,24 @@ open class InputItemsTest {
     }
 
     /**
+     * SkipCheckboxInputItem
+     */
+
+    @Test
+    fun testSkipCheckboxInputItem() {
+        val inputString = """{"type":"skipCheckbox","prompt":"Pick me!","value":-1}"""
+        val original = SkipCheckboxInputItem("Pick me!", JsonPrimitive(-1))
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
      * [StringTextInputItemObject] Tests
      */
 
@@ -587,7 +665,7 @@ open class InputItemsTest {
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "allowPast" : false,
-                        "maximumValue" : "2100-01",
+                        "maximumValue" : "22:00",
                         "codingFormat" : "HH:mm"
             }
            }
@@ -612,7 +690,7 @@ open class InputItemsTest {
     fun testTimeInputItemObject_Default_Serialization() {
         val inputString = """
            {
-            "type": "time",
+            "type": "time"
            }
            """
         val original = TimeInputItemObject()

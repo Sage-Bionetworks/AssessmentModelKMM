@@ -1,10 +1,5 @@
 package org.sagebionetworks.assessmentmodel
 
-import kotlinx.serialization.*
-import kotlinx.serialization.internal.EnumDescriptor
-import kotlinx.serialization.internal.StringDescriptor
-import org.sagebionetworks.assessmentmodel.forms.DataType
-
 /**
  * A string enum is an enum that uses a string as its raw value.
  */
