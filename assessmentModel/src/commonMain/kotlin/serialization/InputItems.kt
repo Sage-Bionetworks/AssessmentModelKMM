@@ -11,7 +11,7 @@ import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
-        BooleanInputItem::class with BooleanInputItem.serializer()
+        SkipCheckboxInputItem::class with SkipCheckboxInputItem.serializer()
         DateInputItemObject::class with DateInputItemObject.serializer()
         DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
         IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
@@ -99,8 +99,7 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
 data class StringTextInputItemObject(@SerialName("identifier")
                                      override val resultIdentifier: String? = null,
                                      override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
-                                     var regExValidator: RegExValidator? = null,
-                                     override var fieldLabel: String? = null)
+                                     var regExValidator: RegExValidator? = null)
     : InputItemObject(), KeyboardTextInputItem<String> {
     override val answerType: AnswerType
         get() = AnswerType.STRING
@@ -172,18 +171,17 @@ data class TimeFormatOptions(override val allowFuture: Boolean = true,
  */
 
 /**
- * A [BooleanInputItem] is a special case of input item that is used to define an "or" option for a text field
+ * A [SkipCheckboxInputItem] is a special case of input item that can be used to define an "or" option for a text field
  * such as asking the participant to answer a question or allowing them to select "I don't know". This item is always
- * shown using a [UIHint.Choice.Checkbox], and always has a [fieldLabel] defined by a non-null [prompt]. It is always
- * [optional] and [exclusive].
+ * shown using a [UIHint.Choice.Checkbox] and always has a [fieldLabel]. It is always [optional] and [exclusive].
  */
 @Serializable
-@SerialName("boolean")
-data class BooleanInputItem(val prompt: String,
-                            @SerialName("identifier")
-                            override val resultIdentifier: String? = null) : ChoiceInputItem {
-    override val fieldLabel: String?
-        get() = prompt
+@SerialName("skipCheckbox")
+data class SkipCheckboxInputItem(@SerialName("prompt")
+                                 override val fieldLabel: String,
+                                 val value: JsonElement = JsonNull) : ChoiceInputItem {
+    override val resultIdentifier: String?
+        get() = null
     override val icon: FetchableImage?
         get() = null
     override val optional: Boolean
@@ -194,11 +192,12 @@ data class BooleanInputItem(val prompt: String,
         get() = AnswerType.BOOLEAN
     override val uiHint: UIHint.Choice
         get() = UIHint.Choice.Checkbox
-    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) JsonPrimitive(true) else null
+
+    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
 }
 
 @Serializable
-data class ChoiceOptionObject(val value: JsonElement? = null,
+data class ChoiceOptionObject(val value: JsonElement = JsonNull,
                               @SerialName("text")
                               override val fieldLabel: String?,
                               @Serializable(ImageNameSerializer::class)

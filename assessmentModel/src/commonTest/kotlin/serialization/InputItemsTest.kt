@@ -129,24 +129,6 @@ open class InputItemsTest {
     }
 
     /**
-     * BooleanInputItem
-     */
-
-    @Test
-    fun testBooleanInputItem() {
-        val inputString = """{"identifier":"pickMe","type":"boolean","prompt":"Pick me!"}"""
-        val original = BooleanInputItem("Pick me!", "pickMe")
-
-        val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
-
-        assertEquals(original, restored)
-        assertEquals(original, decoded)
-    }
-
-    /**
      * ChoiceItemObject
      */
 
@@ -548,6 +530,24 @@ open class InputItemsTest {
         // Check the defaults for an integer
         assertTrue(original.formatOptions.usesGroupingSeparator)
         assertEquals(TextFieldOptionsObject.NumberEntryOptions, original.textFieldOptions)
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
+     * SkipCheckboxInputItem
+     */
+
+    @Test
+    fun testSkipCheckboxInputItem() {
+        val inputString = """{"type":"skipCheckbox","prompt":"Pick me!","value":-1}"""
+        val original = SkipCheckboxInputItem("Pick me!", JsonPrimitive(-1))
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)

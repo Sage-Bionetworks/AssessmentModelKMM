@@ -117,9 +117,9 @@ data class QuestionObject(override val identifier: String,
         get() = (inputItems.count() <= 1) || inputItems.fold(true) { ret, it -> ret && it.exclusive }
 
     override val answerType: AnswerType? = when {
-        singleAnswer -> inputItems.firstOrNull()?.answerType
+        singleAnswer -> inputItems.first().answerType
         inputItems.fold(true) { sum, it -> sum && (it.resultIdentifier != null) } -> AnswerType.MAP
-        else -> null
+        else -> AnswerType.List(inputItems.first().answerType.baseType)
     }
 
     override fun buildInputItems(): List<InputItem> = inputItems
@@ -156,8 +156,7 @@ data class ChoiceQuestionObject(override val identifier: String,
 @SerialName("comboBoxQuestion")
 data class ComboBoxQuestionObject(override val identifier: String,
                                   override val choices: List<ChoiceOptionObject>,
-                                  val otherInputItem: InputItem = StringTextInputItemObject(
-                                          fieldLabel = Localization.localizeString("Other")),
+                                  val otherInputItem: InputItem = defaultOtherInputItem,
                                   override val resultIdentifier: String? = null) : BaseChoiceQuestionObject() {
     override val baseType: BaseType
         get() = BaseType.STRING
@@ -166,5 +165,14 @@ data class ComboBoxQuestionObject(override val identifier: String,
         val items = super.buildInputItems()
         val otherField = OtherChoiceItemWrapper(otherInputItem, singleAnswer)
         return items.plus(otherField)
+    }
+
+    companion object {
+        val defaultOtherInputItem: StringTextInputItemObject
+            get() {
+                val otherInputItem = StringTextInputItemObject()
+                otherInputItem.fieldLabel = Localization.localizeString("Other")
+                return otherInputItem
+            }
     }
 }

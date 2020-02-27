@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
@@ -8,7 +9,6 @@ import org.sagebionetworks.assessmentmodel.survey.BaseType
 import org.sagebionetworks.assessmentmodel.survey.UIHint
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 open class NodeTest : NodeSerializationTestHelper() {
@@ -153,7 +153,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         ChoiceOptionObject(JsonPrimitive(1), "choice 1", FetchableImage("choice1")),
                         ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
                         ChoiceOptionObject(JsonPrimitive(3), "choice 3"),
-                        ChoiceOptionObject(null, "none of the above", null, true)
+                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
                 ),
                 baseType = BaseType.INTEGER)
         original.uiHint = UIHint.Choice.Checkmark
@@ -252,15 +252,18 @@ open class NodeTest : NodeSerializationTestHelper() {
                    }
            }
            """
+        val otherInputItem = StringTextInputItemObject()
+        otherInputItem.fieldLabel = "Something else"
+
         val original = ComboBoxQuestionObject(
                 identifier = "foo",
                 choices = listOf(
                         ChoiceOptionObject(JsonPrimitive("one"), "choice 1"),
                         ChoiceOptionObject(JsonPrimitive("two"), "choice 2"),
                         ChoiceOptionObject(JsonPrimitive("three"), "choice 3"),
-                        ChoiceOptionObject(null, "none of the above", null, true)
+                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
                 ),
-                otherInputItem = StringTextInputItemObject(fieldLabel = "Something else"))
+                otherInputItem = otherInputItem)
         original.uiHint = UIHint.Choice.Checkmark
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
@@ -444,7 +447,7 @@ open class NodeTest : NodeSerializationTestHelper() {
     fun testQuestion_AnswerType_Compound_STRING() {
         val item1 = StringTextInputItemObject()
         item1.exclusive = true
-        val item2 = BooleanInputItem("I don't know")
+        val item2 = SkipCheckboxInputItem("I don't know")
         val original = QuestionObject("foo", inputItems = listOf(item1, item2))
         assertEquals(AnswerType.STRING, original.answerType)
     }
@@ -462,7 +465,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         val item1 = StringTextInputItemObject()
         val item2 = StringTextInputItemObject()
         val original = QuestionObject("foo", inputItems = listOf(item1, item2))
-        assertEquals(null, original.answerType)
+        assertEquals(AnswerType.List(BaseType.STRING), original.answerType)
     }
 
     /**

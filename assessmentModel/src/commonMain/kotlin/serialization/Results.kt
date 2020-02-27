@@ -20,7 +20,7 @@ val resultSerializersModule = SerializersModule {
 @Serializable
 @SerialName("answer")
 data class AnswerResultObject(override val identifier: String,
-                              override val answerType: AnswerType? = null,
+                              override var answerType: AnswerType? = null,
                               @SerialName("value")
                               override var jsonValue: JsonElement? = null) : AnswerResult
 
