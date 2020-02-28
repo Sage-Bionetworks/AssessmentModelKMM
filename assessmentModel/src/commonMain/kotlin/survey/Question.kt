@@ -89,10 +89,7 @@ interface MultipleInputQuestion : SkipCheckboxQuestion {
     override val singleAnswer: Boolean
         get() = false
     override val answerType: AnswerType
-        get() = when {
-            inputItems.fold(true) { sum, it -> sum && (it.resultIdentifier != null) } -> AnswerType.MAP
-            else -> AnswerType.List(inputItems.first().answerType.baseType, sequenceSeparator)
-        }
+        get() =  AnswerType.MAP
 
     override fun buildInputItems(): List<InputItem> = skipCheckbox?.let { inputItems.plus(it) } ?: inputItems
 }
