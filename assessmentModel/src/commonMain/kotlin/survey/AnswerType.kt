@@ -98,7 +98,7 @@ abstract class AnswerType {
     }
 
     /**
-     * The [NULL] answer type is used as a placeholder for an answer where, when selected, should return [JsonNull]
+     * The [NULL] answer type is used as a placeholder for an answer which, when selected, should return [JsonNull]
      * as its value.
      */
     @Serializable
