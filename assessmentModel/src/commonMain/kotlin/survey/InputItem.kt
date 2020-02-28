@@ -108,8 +108,8 @@ interface ChoiceInputItem : InputItem, ChoiceOption {
         get() = null
 
     /**
-     * A choice input is always optional because it is either a checkbox yes/no input where the different between
-     * "not selected" and "not answered" is indeterminant or it is a choice in a list of other choices.
+     * A choice input is always optional because it is either a checkbox yes/no input where the difference between
+     * "not selected" and "not answered" is indeterminate, or it is a choice in a list of other choices.
      */
     override val optional: Boolean
         get() = true
