@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.Question
 import org.sagebionetworks.assessmentmodel.survey.QuestionStateImpl
 
 /**

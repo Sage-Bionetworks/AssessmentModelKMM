@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.survey.FormattedValue
 import org.sagebionetworks.assessmentmodel.survey.NumberType
 import org.sagebionetworks.assessmentmodel.survey.TextValidator
@@ -40,6 +41,8 @@ actual class IntFormatter actual constructor(formatOptions: NumberFormatOptions<
     : NumberFormatter<Int>(formatOptions = formatOptions) {
     override fun toNSNumber(value: Int): NSNumber = NSNumber(value)
     override fun toType(value: NSNumber?): Int? = value?.intValue
+    override fun jsonValueFor(value: Int?): JsonElement? = JsonPrimitive(value)
+    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.int
 }
 
 @ExperimentalUnsignedTypes
@@ -47,4 +50,6 @@ actual class DoubleFormatter actual constructor(formatOptions: NumberFormatOptio
     : NumberFormatter<Double>(formatOptions = formatOptions) {
     override fun toNSNumber(value: Double): NSNumber = NSNumber(value)
     override fun toType(value: NSNumber?): Double? = value?.doubleValue
+    override fun jsonValueFor(value: Double?): JsonElement? = JsonPrimitive(value)
+    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.double
 }

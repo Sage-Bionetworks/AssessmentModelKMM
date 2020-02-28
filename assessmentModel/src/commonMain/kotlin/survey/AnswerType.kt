@@ -2,6 +2,8 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.StringEnum
@@ -93,6 +95,17 @@ abstract class AnswerType {
     object BOOLEAN : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.BOOLEAN
+    }
+
+    /**
+     * The [NULL] answer type is used as a placeholder for an answer where, when selected, should return [JsonNull]
+     * as its value.
+     */
+    @Serializable
+    @SerialName("null")
+    object NULL : AnswerType() {
+        override val baseType: BaseType
+            get() = BaseType.STRING
     }
 
     companion object {

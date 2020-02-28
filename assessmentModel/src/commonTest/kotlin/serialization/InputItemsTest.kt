@@ -7,7 +7,7 @@ import kotlin.test.*
 
 open class InputItemsTest {
 
-    val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder = Serialization.JsonCoder.default
 
     /**
      * [TextFieldOptions] Tests
@@ -129,6 +129,24 @@ open class InputItemsTest {
     }
 
     /**
+     * CheckboxInputItem
+     */
+
+    @Test
+    fun testCheckboxInputItem() {
+        val inputString = """{"type":"checkbox","fieldLabel":"Pick me!","identifier":"pickMe"}"""
+        val original = CheckboxInputItemObject(resultIdentifier = "pickMe", fieldLabel = "Pick me!")
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
      * ChoiceItemObject
      */
 
@@ -200,7 +218,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "date",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "minimumValue" : "1900-01",
@@ -232,7 +250,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "date",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "allowPast" : false,
@@ -349,7 +367,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "decimal",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "usesGroupingSeparator" : false,
@@ -478,7 +496,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "integer",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "textFieldOptions" : {
                         "keyboardType" : "NumbersAndPunctuation",
@@ -546,8 +564,8 @@ open class InputItemsTest {
 
     @Test
     fun testSkipCheckboxInputItem() {
-        val inputString = """{"type":"skipCheckbox","prompt":"Pick me!","value":-1}"""
-        val original = SkipCheckboxInputItem("Pick me!", JsonPrimitive(-1))
+        val inputString = """{"type":"skipCheckbox","fieldLabel":"Pick me!","value":-1}"""
+        val original = SkipCheckboxInputItemObject("Pick me!", JsonPrimitive(-1))
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -569,7 +587,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "string",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "textFieldOptions" : {
                         "autocapitalizationType" : "words",
@@ -629,7 +647,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "time",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "minimumValue" : "06:00",
@@ -661,7 +679,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "time",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "allowPast" : false,
@@ -715,7 +733,7 @@ open class InputItemsTest {
             "identifier": "foo",
             "type": "year",
             "uiHint": "popover",
-            "prompt": "Favorite color",
+            "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "exclusive": true,
             "formatOptions": {
