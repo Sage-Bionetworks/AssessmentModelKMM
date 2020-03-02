@@ -35,7 +35,7 @@ interface QuestionState : NodeState {
      * then passes the change event to the controller.
      *
      * The [QuestionState] can then update any other input items for cases where the selection of this item triggers
-     * deselecting other items --for example, a "none of the above" choice.
+     * deselecting other items--for example, a "none of the above" choice.
      *
      * @return Whether or not the change of selection state should trigger a refresh.
      */
