@@ -101,12 +101,15 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
     protected open fun selectedFor(index: Int, choice: ChoiceInputItem) : Boolean {
         val answer = currentResult.jsonValue ?: return false
         val selectedAnswer = choice.jsonValue(true) ?: return false
-        val resultIdentifier = choice.resultIdentifier
+        val resultIdentifier = choice.resultIdentifier ?: "$index"
         return when {
             node.singleAnswer || choice is SkipCheckboxInputItem -> answer == selectedAnswer
-            resultIdentifier != null && answer is JsonObject -> answer[resultIdentifier] == selectedAnswer
             answer is JsonArray -> answer.contains(selectedAnswer)
-            else -> false
+            answer is JsonObject -> answer[resultIdentifier] == selectedAnswer
+            else -> {
+                println("WARNING! Cannot interpret answer mapping for $answer")
+                false
+            }
         }
     }
 
@@ -115,11 +118,22 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
      */
     protected open fun answerFor(index: Int, inputItem: InputItem) : JsonElement? {
         val answer = currentResult.jsonValue ?: return null
-        val resultIdentifier = inputItem.resultIdentifier
+        val resultIdentifier = inputItem.resultIdentifier ?: "$index"
+        val question = node
         return when {
             answer is JsonNull -> null
-            node is SimpleQuestion -> answer
-            resultIdentifier != null && answer is JsonObject -> answer[resultIdentifier]
+            question is ComboBoxQuestion -> {
+                val choiceAnswers = question.choices.map { it.jsonValue(true) }
+                if (question.singleAnswer) {
+                    if (choiceAnswers.contains(answer)) null else answer
+                } else if (answer is JsonArray) {
+                    answer.minus(choiceAnswers).firstOrNull()
+                } else {
+                    null
+                }
+            }
+            question.singleAnswer -> answer
+            answer is JsonObject -> answer[resultIdentifier]
             answer is JsonArray && index < answer.count() -> answer[index]
             else -> null
         }

@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ResultTest" type="JUnit" factoryName="JUnit">
     <module name="assessmentModel" />
+    <useClassPathOnly />
     <option name="PACKAGE_NAME" value="serialization" />
     <option name="MAIN_CLASS_NAME" value="org.sagebionetworks.assessmentmodel.serialization.ResultTest" />
     <option name="METHOD_NAME" value="" />
@@ -8,7 +9,7 @@
     <option name="PARAMETERS" value="" />
     <method v="2">
       <option name="Make" enabled="true" />
-      <option name="Gradle.BeforeRunTask" enabled="true" tasks="bundleLibCompileDebugUnitTest" externalProjectPath="$PROJECT_DIR$/assessmentModel" vmOptions="" scriptParameters="" />
+      <option name="Gradle.BeforeRunTask" enabled="false" tasks="bundleLibCompileDebugUnitTest" externalProjectPath="$PROJECT_DIR$/assessmentModel" vmOptions="" scriptParameters="" />
     </method>
   </configuration>
 </component>
