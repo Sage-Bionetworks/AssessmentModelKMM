@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.serialization.Localization
 
 /**
@@ -12,6 +13,8 @@ import org.sagebionetworks.assessmentmodel.serialization.Localization
 interface TextValidator<T> {
     fun valueFor(text: String): FormattedValue<T>?
     fun localizedStringFor(value: T?): FormattedValue<String>
+    fun jsonValueFor(value: T?): JsonElement?
+    fun valueFor(jsonValue: JsonElement?): T?
 }
 
 /**

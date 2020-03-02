@@ -382,52 +382,6 @@ interface CountdownStep : OptionalStep, ActiveStep
 interface FormStep : Step, NodeContainer, ContentNode
 
 /**
- * A [Question] can be a node in a [FormStep] or [Section] or it might be a stand-alone question.
- *
- * When defining a [Question], the [subtitle] is roughly equivalent to what is often described as a "prompt". It
- * is additional text displayed in a smaller font below [title]. If you need to display a long question, it can work
- * well to keep the title short and put the additional content in the [subtitle] property.
- *
- * Similarly, the [detail] is text to display at the top of the screen in a smaller font to further explain the
- * instructions for the question included on the screen shown to the participant --for example, "Select all that apply".
- */
-interface Question : ContentNode {
-
-    /**
-     * Can the question be skipped?
-     */
-    val optional: Boolean
-
-    /**
-     * Is there a [singleAnswer] for this [Question] or is the [Question] a composite of multiple choices or input items?
-     */
-    val singleAnswer: Boolean
-
-    /**
-     * The [AnswerType] that is associated with this [Question] or null if this [Question] has custom handling.
-     */
-    val answerType: AnswerType?
-
-    /**
-     * A question will always have at least one [InputItem] that is used to define the question. These fields will form
-     * a logical grouping for how the [Question] should be presented to the user. For example, the [Question] may be
-     * "what is your name" where the fields are given name, family name, title, and a checkbox that says "prefer not to
-     * answer". How the fields interact may use custom logic, but they are presented together and do not make sense
-     * independently of one another.
-     *
-     * Typically, the [buildInputItems] function for a [Question] will either be serialized as the same object
-     * (returns self) or a list of elements of type [InputItem]. It is defined here as a function to allow for
-     * flexibility in how it is stored and displayed.
-     */
-    fun buildInputItems(): List<InputItem>
-
-    /**
-     * Override [createResult] to return an [AnswerResult] by default.
-     */
-    override fun createResult(): AnswerResult = AnswerResultObject(resultId(), answerType)
-}
-
-/**
  * A result summary step is used to display a result that is calculated or measured earlier in the [Assessment].
  */
 interface ResultSummaryStep : Step, ContentNode {

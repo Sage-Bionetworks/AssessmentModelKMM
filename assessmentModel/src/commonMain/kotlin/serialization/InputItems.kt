@@ -11,13 +11,17 @@ import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
-        SkipCheckboxInputItem::class with SkipCheckboxInputItem.serializer()
+        CheckboxInputItemObject::class with CheckboxInputItemObject.serializer()
         DateInputItemObject::class with DateInputItemObject.serializer()
         DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
         IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
-        TimeInputItemObject::class with TimeInputItemObject.serializer()
+        SkipCheckboxInputItemObject::class with SkipCheckboxInputItemObject.serializer()
         StringTextInputItemObject::class with StringTextInputItemObject.serializer()
+        TimeInputItemObject::class with TimeInputItemObject.serializer()
         YearTextInputItemObject::class with YearTextInputItemObject.serializer()
+    }
+    polymorphic(SkipCheckboxInputItem::class) {
+        SkipCheckboxInputItemObject::class with SkipCheckboxInputItemObject.serializer()
     }
     polymorphic(DateTimeFormatOptions::class) {
         DateFormatOptions::class with DateFormatOptions.serializer()
@@ -26,6 +30,7 @@ val inputItemSerializersModule = SerializersModule {
 }
 
 // TODO: syoung 02/18/2020 Names of fields for serialization have changed from SageResearch to support kotlinx.
+// "prompt" -> "fieldLabel"
 
 /**
  * A [InputItemObject] is intended to implement shared code for serialization of the simple data types. This will
@@ -33,7 +38,6 @@ val inputItemSerializersModule = SerializersModule {
  */
 @Serializable
 abstract class InputItemObject : InputItem {
-    @SerialName("prompt")
     override var fieldLabel: String? = null
     override var placeholder: String? = null
     override var optional: Boolean = true
@@ -78,7 +82,7 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
 
     override val textFieldOptions: TextFieldOptionsObject
         get() = TextFieldOptionsObject.DecimalEntryOptions
-    override fun buildTextValidator(): TextValidator<Double>? = DoubleFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Double> = DoubleFormatter(formatOptions)
 }
 
 @Serializable
@@ -91,7 +95,7 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.INTEGER
 
-    override fun buildTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }
 
 @Serializable
@@ -104,7 +108,7 @@ data class StringTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.STRING
 
-    override fun buildTextValidator(): TextValidator<String>? = regExValidator
+    override fun buildTextValidator(): TextValidator<String> = regExValidator ?: PassThruTextValidator
 }
 
 @Serializable
@@ -114,6 +118,8 @@ data class RegExValidator(val pattern: String, val invalidMessage: InvalidMessag
         return if (regex.matches(text)) FormattedValue(result = text) else FormattedValue(invalidMessage = invalidMessage)
     }
     override fun localizedStringFor(value: String?) = FormattedValue(result = value)
+    override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
+    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.toString()
 }
 
 @Serializable
@@ -127,7 +133,7 @@ data class YearTextInputItemObject(@SerialName("identifier")
 
     override val textFieldOptions: TextFieldOptionsObject
         get() = TextFieldOptionsObject.NumberEntryOptions
-    override fun buildTextValidator(): TextValidator<Int>? = IntFormatter(formatOptions)
+    override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }
 
 /**
@@ -170,31 +176,16 @@ data class TimeFormatOptions(override val allowFuture: Boolean = true,
  * ChoiceInputItem
  */
 
-/**
- * A [SkipCheckboxInputItem] is a special case of input item that can be used to define an "or" option for a text field
- * such as asking the participant to answer a question or allowing them to select "I don't know". This item is always
- * shown using a [UIHint.Choice.Checkbox] and always has a [fieldLabel]. It is always [optional] and [exclusive].
- */
 @Serializable
 @SerialName("skipCheckbox")
-data class SkipCheckboxInputItem(@SerialName("prompt")
-                                 override val fieldLabel: String,
-                                 val value: JsonElement = JsonNull) : ChoiceInputItem {
-    override val resultIdentifier: String?
-        get() = null
-    override val icon: FetchableImage?
-        get() = null
-    override val optional: Boolean
-        get() = true
-    override val exclusive: Boolean
-        get() = true
-    override val answerType: AnswerType
-        get() = AnswerType.BOOLEAN
-    override val uiHint: UIHint.Choice
-        get() = UIHint.Choice.Checkbox
+data class SkipCheckboxInputItemObject(override val fieldLabel: String,
+                                       override val value: JsonElement = JsonNull) : SkipCheckboxInputItem
 
-    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
-}
+@Serializable
+@SerialName("checkbox")
+data class CheckboxInputItemObject(@SerialName("identifier")
+                                   override val resultIdentifier: String,
+                                   override val fieldLabel: String) : CheckboxInputItem
 
 @Serializable
 data class ChoiceOptionObject(val value: JsonElement = JsonNull,
@@ -213,13 +204,13 @@ data class ChoiceOptionObject(val value: JsonElement = JsonNull,
 data class ChoiceItemWrapper(val choice: ChoiceOption,
                              val singleChoice: Boolean,
                              override val answerType: AnswerType,
-                             override val uiHint: UIHint.Choice) : ChoiceInputItem, ChoiceOption by choice {
+                             override val uiHint: UIHint) : ChoiceInputItem, ChoiceOption by choice {
     override val resultIdentifier: String?
         get() = (choice.jsonValue(true) ?: JsonNull).toString()
-    override val optional: Boolean
-        get() = true
     override val exclusive: Boolean
         get() = singleChoice || choice.exclusive
+    override val fieldLabel: String?
+        get() = choice.fieldLabel
 }
 
 /**
@@ -228,10 +219,8 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
  */
 data class OtherChoiceItemWrapper(val inputItem: InputItem,
                             val singleChoice: Boolean) : InputItem by inputItem {
-    override val optional: Boolean
-        get() = true
     override val exclusive: Boolean
-        get() = singleChoice
+        get() = singleChoice || inputItem.exclusive
 }
 
 /**

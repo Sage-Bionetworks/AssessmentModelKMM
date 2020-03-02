@@ -1,9 +1,9 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.json.JsonElement
-import org.sagebionetworks.assessmentmodel.Question
-import org.sagebionetworks.assessmentmodel.serialization.FetchableImage
-import org.sagebionetworks.assessmentmodel.serialization.TextFieldOptionsObject
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import org.sagebionetworks.assessmentmodel.serialization.*
 
 /**
  * An [InputItem] describes a "part" of a [Question] representing a single answer.
@@ -96,15 +96,23 @@ interface InputItem {
 interface ChoiceInputItem : InputItem, ChoiceOption {
 
     /**
-     * A [ChoiceInputItem] maps to a ui hint subtype of [UIHint.Choice].
-     */
-    override val uiHint: UIHint.Choice
-
-    /**
      * [placeholder] does not apply to choice input items and is always null.
      */
     override val placeholder: String?
         get() = null
+
+    /**
+     * [fieldLabel] does not apply to choice input items and is always null.
+     */
+    override val fieldLabel: String?
+        get() = null
+
+    /**
+     * A choice input is always optional because it is either a checkbox yes/no input where the difference between
+     * "not selected" and "not answered" is indeterminate, or it is a choice in a list of other choices.
+     */
+    override val optional: Boolean
+        get() = true
 }
 
 /**
@@ -145,6 +153,57 @@ interface ChoiceOption {
 }
 
 /**
+ * A [SkipCheckboxInputItemObject] is a special case of input item that can be used to define an "or" option for a text
+ * field such as asking the participant to answer a question or allowing them to select "I don't know". This item is
+ * always shown using a [UIHint.Choice.Checkbox] and always has a [fieldLabel] value rather than using an [icon] to
+ * define the selection. It is always [optional] and [exclusive].
+ */
+interface SkipCheckboxInputItem  : ChoiceInputItem {
+
+    override val fieldLabel: String
+
+    val value: JsonElement
+        get() = JsonNull
+
+    override val resultIdentifier: String?
+        get() = null
+
+    override val icon: FetchableImage?
+        get() = null
+
+    override val exclusive: Boolean
+        get() = true
+
+    override val answerType: AnswerType
+        get() = AnswerType.NULL
+
+    override val uiHint: UIHint
+        get() = UIHint.Choice.Checkbox
+
+    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
+}
+
+/**
+ * A [CheckboxInputItem] is intended as a simplified input item that can be included in a compound [Question] where
+ * the goal is to build a mapping of answers to identifiers. As such, [resultIdentifier] and [fieldLabel] are required
+ * fields.
+ */
+interface CheckboxInputItem : ChoiceInputItem {
+    override val resultIdentifier: String
+    override val fieldLabel: String
+    override val uiHint: UIHint
+        get() = UIHint.Choice.Checkbox
+    override val exclusive: Boolean
+        get() = false
+    override val answerType: AnswerType
+        get() = AnswerType.BOOLEAN
+    override val icon: FetchableImage?
+        get() = null
+    override fun jsonValue(selected: Boolean): JsonElement?
+            = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
+}
+
+/**
  * -- KeyboardTextInputItem
  */
 
@@ -168,7 +227,7 @@ interface KeyboardTextInputItem<T> : InputItem {
     /**
      * This can be used to return a class used to format and/or validate the text input.
      */
-    fun buildTextValidator(): TextValidator<T>?
+    fun buildTextValidator(): TextValidator<T>
 
     // TODO: syoung 01/27/2020 Complete the properties for describing a text field input field.
 //
@@ -193,7 +252,7 @@ interface DateTimeInputItem : KeyboardTextInputItem<String> {
         get() = TextFieldOptionsObject.DateTimeEntryOptions
 
     // TODO: syoung 02/18/2020 Revisit this. I couldn't figure out Android date formatting.
-    override fun buildTextValidator(): TextValidator<String>? = null
+    override fun buildTextValidator(): TextValidator<String> = PassThruTextValidator
 }
 
 /**
@@ -209,4 +268,11 @@ interface DateTimeFormatOptions {
 
     val dateTimeParts: List<DateTimePart>
         get() = DateTimePart.partsFor(codingFormat)
+}
+
+object PassThruTextValidator : TextValidator<String> {
+    override fun valueFor(text: String): FormattedValue<String>? = FormattedValue(text)
+    override fun localizedStringFor(value: String?): FormattedValue<String> = FormattedValue(value)
+    override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
+    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.toString()
 }

@@ -1,13 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.PrimitiveKind
+import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.survey.FormattedValue
 import org.sagebionetworks.assessmentmodel.survey.NumberType
 import org.sagebionetworks.assessmentmodel.survey.TextValidator
 import java.text.NumberFormat
 import java.text.ParseException
-import java.util.*
-import kotlin.reflect.KClass
 
 //TODO: syoung 02/13/2020 implment the other styles of formatting. (Spellout, Scientific, Ordinal)
 
@@ -30,6 +28,8 @@ actual abstract class NumberFormatter<T> actual constructor(formatOptions: Numbe
     override fun valueFor(text: String): FormattedValue<T>?
             = if (text.isEmpty()) FormattedValue() else options.validate(toType(parseText(text)))
 
+    override fun jsonValueFor(value: T?): JsonElement? = JsonPrimitive(value)
+
     override fun localizedStringFor(value: T?): FormattedValue<String>
             = FormattedValue(value?.let { formatter.format(it) })
 
@@ -40,8 +40,10 @@ actual abstract class NumberFormatter<T> actual constructor(formatOptions: Numbe
 
 actual class IntFormatter actual constructor(formatOptions: NumberFormatOptions<Int>) : NumberFormatter<Int>(formatOptions = formatOptions) {
     override fun toType(value: Number?): Int? = value?.toInt()
+    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.intOrNull
 }
 
 actual class DoubleFormatter actual constructor(formatOptions: NumberFormatOptions<Double>) : NumberFormatter<Double>(formatOptions = formatOptions) {
     override fun toType(value: Number?): Double? = value?.toDouble()
+    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.doubleOrNull
 }

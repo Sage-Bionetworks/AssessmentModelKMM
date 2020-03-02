@@ -5,22 +5,28 @@ import kotlinx.serialization.*
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.survey.*
-import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 
 // TODO: syoung 01/28/2020 Deprecate the `text` property in the `RSDUIStep` protocol and decoding. Replace with "detail" or "subtitle" as appropriate.
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
-        InstructionStepObject::class with InstructionStepObject.serializer()
-        SectionObject::class with SectionObject.serializer()
         AssessmentObject::class with AssessmentObject.serializer()
-        QuestionObject::class with QuestionObject.serializer()
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
         ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
+        InstructionStepObject::class with InstructionStepObject.serializer()
+        MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
+        SimpleQuestionObject::class with SimpleQuestionObject.serializer()
+        SectionObject::class with SectionObject.serializer()
     }
     polymorphic(Assessment::class) {
         AssessmentObject::class with AssessmentObject.serializer()
+    }
+    polymorphic(Question::class) {
+        ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
+        ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
+        MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
+        SimpleQuestionObject::class with SimpleQuestionObject.serializer()
     }
 }
 
@@ -105,68 +111,48 @@ data class InstructionStepObject(override val identifier: String,
  */
 
 @Serializable
-@SerialName("question")
-data class QuestionObject(override val identifier: String,
-                          val inputItems: List<InputItem>,
-                          override val resultIdentifier: String? = null,
-                          @SerialName("image")
-                          override var imageInfo: ImageInfo? = null,
-                          override var optional: Boolean = true) : StepObject(), Question {
-
-    override val singleAnswer: Boolean
-        get() = (inputItems.count() <= 1) || inputItems.fold(true) { ret, it -> ret && it.exclusive }
-
-    override val answerType: AnswerType? = when {
-        singleAnswer -> inputItems.first().answerType
-        inputItems.fold(true) { sum, it -> sum && (it.resultIdentifier != null) } -> AnswerType.MAP
-        else -> AnswerType.List(inputItems.first().answerType.baseType)
-    }
-
-    override fun buildInputItems(): List<InputItem> = inputItems
+abstract class QuestionObject : StepObject(), Question {
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null
+    override var optional: Boolean = true
 }
 
 @Serializable
-abstract class BaseChoiceQuestionObject : StepObject(), Question {
-    abstract val baseType: BaseType
-    abstract val choices: List<ChoiceOption>
+@SerialName("simpleQuestion")
+data class SimpleQuestionObject(override val identifier: String,
+                                override val inputItem: InputItem,
+                                override val resultIdentifier: String? = null,
+                                override var skipCheckbox: SkipCheckboxInputItem? = null)
+    : QuestionObject(), SimpleQuestion
 
-    @SerialName("singleChoice")
-    override var singleAnswer: Boolean = true
-    @SerialName("image")
-    override var imageInfo: ImageInfo? = null
-    var uiHint: UIHint.Choice = UIHint.Choice.ListItem
-    override var optional: Boolean = true
-
-    override val answerType
-        get() = if (singleAnswer) AnswerType.valueFor(baseType) else AnswerType.List(baseType)
-
-    override fun buildInputItems(): List<InputItem> = choices.map {
-        ChoiceItemWrapper(it, singleAnswer, AnswerType.valueFor(baseType), uiHint)
-    }
-}
+@Serializable
+@SerialName("multipleInputQuestion")
+data class MultipleInputQuestionObject(override val identifier: String,
+                                       override val inputItems: List<InputItem>,
+                                       override val resultIdentifier: String? = null,
+                                       override var sequenceSeparator: String? = null,
+                                       override var skipCheckbox: SkipCheckboxInputItem? = null)
+    : QuestionObject(), MultipleInputQuestion
 
 @Serializable
 @SerialName("choiceQuestion")
 data class ChoiceQuestionObject(override val identifier: String,
                                 override val choices: List<ChoiceOptionObject>,
                                 override val baseType: BaseType = BaseType.STRING,
-                                override val resultIdentifier: String? = null) : BaseChoiceQuestionObject()
+                                override val resultIdentifier: String? = null,
+                                @SerialName("singleChoice")
+                                override var singleAnswer: Boolean = true,
+                                override var uiHint: UIHint = UIHint.Choice.ListItem) : QuestionObject(), ChoiceQuestion
 
 @Serializable
 @SerialName("comboBoxQuestion")
 data class ComboBoxQuestionObject(override val identifier: String,
                                   override val choices: List<ChoiceOptionObject>,
-                                  val otherInputItem: InputItem = defaultOtherInputItem,
-                                  override val resultIdentifier: String? = null) : BaseChoiceQuestionObject() {
-    override val baseType: BaseType
-        get() = BaseType.STRING
-
-    override fun buildInputItems(): List<InputItem> {
-        val items = super.buildInputItems()
-        val otherField = OtherChoiceItemWrapper(otherInputItem, singleAnswer)
-        return items.plus(otherField)
-    }
-
+                                  override val otherInputItem: InputItem = defaultOtherInputItem,
+                                  override val resultIdentifier: String? = null,
+                                  @SerialName("singleChoice")
+                                  override var singleAnswer: Boolean = false,
+                                  override var uiHint: UIHint = UIHint.Choice.Checkbox) : QuestionObject(), ComboBoxQuestion {
     companion object {
         val defaultOtherInputItem: StringTextInputItemObject
             get() {
