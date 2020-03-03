@@ -1066,11 +1066,104 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     /**
+     * QuestionStateImpl - allAnswersValid
+     */
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_NotOptional_Valid() {
+        val item1 = StringTextInputItemObject()
+        val question = SimpleQuestionObject("foo", inputItem = item1)
+        question.optional = false
+        val jsonValue = JsonPrimitive("baloo")
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+        assertTrue(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_NotOptional_Skip() {
+        val item1 = StringTextInputItemObject()
+        val question = SimpleQuestionObject("foo", inputItem = item1, skipCheckbox = SkipCheckboxInputItemObject("skip"))
+        question.optional = false
+        val jsonValue = JsonNull
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+        assertTrue(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_NotOptional_Null() {
+        val item1 = StringTextInputItemObject()
+        val question = SimpleQuestionObject("foo", inputItem = item1)
+        question.optional = false
+        val questionState = buildQuestionState(question)
+        assertFalse(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_Optional_Null() {
+        val item1 = StringTextInputItemObject()
+        val question = SimpleQuestionObject("foo", inputItem = item1)
+        question.optional = true
+        val questionState = buildQuestionState(question)
+        assertTrue(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_MultipleInputQuestion_WithSkipCheckbox_Checked() {
+        val item1 = StringTextInputItemObject("item1")
+        item1.optional = false
+        val item2 = StringTextInputItemObject("item2")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2),
+                skipCheckbox = checkbox)
+        question.optional = false
+        val jsonValue = JsonNull
+        assertEquals(AnswerType.MAP, question.answerType)
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+        assertTrue(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_MultipleInputQuestion_WithRequired() {
+        val item1 = StringTextInputItemObject("item1")
+        item1.optional = false
+        val item2 = StringTextInputItemObject("item2")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2),
+                skipCheckbox = checkbox)
+        question.optional = false
+        val jsonValue = JsonObject(mapOf("item1" to JsonPrimitive("baloo")))
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+        assertTrue(questionState.allAnswersValid())
+    }
+
+    @Test
+    fun testQuestionStateImpl_AllAnswersValid_MultipleInputQuestion_WithoutRequired() {
+        val item1 = StringTextInputItemObject("item1")
+        item1.optional = false
+        val item2 = StringTextInputItemObject("item2")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2),
+                skipCheckbox = checkbox)
+        question.optional = false
+        val jsonValue = JsonObject(mapOf("item2" to JsonPrimitive("baloo")))
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+        assertFalse(questionState.allAnswersValid())
+    }
+
+    /**
      * Helper methods
      */
 
     private fun buildQuestionState(question: Question, previousResult: AnswerResult? = null): QuestionState {
-        val nodeList = buildNodeList(3, 1, "step").toList()
+        val nodeList = buildNodeList(3, 1, "step").plus(question).toList()
         val assessmentObject = AssessmentObject("parent", nodeList)
         val result = buildResult(assessmentObject, 2)
         if (previousResult != null) {

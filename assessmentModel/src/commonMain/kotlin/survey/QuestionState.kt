@@ -41,9 +41,6 @@ interface QuestionState : NodeState {
      */
     fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean
 
-
-//    fun <T> didEndTextEdit(newValue: String, forItemState: KeyboardInputItemState<T>): Boolean
-
     /**
      * Save the given answer. It is assumed that the answer in this case has already been validated for the given input
      * item and any errors have been shown to the participant. It is also assumed that the [JsonElement] is of the
@@ -145,9 +142,13 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
      * -- Answer state handling
      */
 
-    override fun allAnswersValid(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun allAnswersValid(): Boolean
+            // Return true if the question is optional.
+            = node.optional ||
+            // `JsonNull` is used as a special placeholder for "chose not to answer".
+            currentResult.jsonValue == JsonNull ||
+            // Otherwise, there should be a non-null result and all the non-optional items should be selected.
+            (currentResult.jsonValue != null && itemStates.none { !it.inputItem.optional && !it.selected })
 
     override fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean {
         forItem.selected = selected
@@ -160,7 +161,7 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
     }
 
     /**
-     * Overridable method for setting the new value to the current result.
+     * Protected overridable method for setting the new value to the current result and updating the question state.
      */
     protected open fun updateAnswerState(changedItem: InputItemState): Boolean {
         var refresh = false
@@ -207,7 +208,7 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
         is AnswerType.List -> if (aType.sequenceSeparator == null) {
             JsonArray(forMap.values.toSet().toList())
         } else {
-            TODO("Not implemented")
+            TODO("Not implemented. syoung 03/03/2020")
         }
         else -> forMap.values.firstOrNull()
     }
@@ -236,6 +237,11 @@ interface AnyInputItemState : InputItemState {
 
 interface ChoiceInputItemState : InputItemState {
     override val inputItem: ChoiceInputItem
+    override var currentAnswer: JsonElement?
+        get() = inputItem.jsonValue(selected)
+        set(value) {
+            this.selected = (inputItem.jsonValue(true) == value)
+        }
 }
 
 interface KeyboardInputItemState<T> : AnyInputItemState {
@@ -251,13 +257,7 @@ class KeyboardInputItemStateImpl<T>(override val index: Int,
 
 class ChoiceInputItemStateImpl(override val index: Int,
                                override val inputItem: ChoiceInputItem,
-                               override var selected: Boolean) : ChoiceInputItemState {
-    override var currentAnswer: JsonElement?
-        get() = inputItem.jsonValue(selected)
-        set(value) {
-            this.selected = (inputItem.jsonValue(true) == value)
-        }
-}
+                               override var selected: Boolean) : ChoiceInputItemState
 
 class AnyInputItemStateImpl(override val index: Int,
                             override val inputItem: InputItem,
