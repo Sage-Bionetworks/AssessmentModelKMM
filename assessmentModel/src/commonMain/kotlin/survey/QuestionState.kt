@@ -41,19 +41,21 @@ interface QuestionState : NodeState {
      */
     fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean
 
+
+//    fun <T> didEndTextEdit(newValue: String, forItemState: KeyboardInputItemState<T>): Boolean
+
     /**
      * Save the given answer. It is assumed that the answer in this case has already been validated for the given input
      * item and any errors have been shown to the participant. It is also assumed that the [JsonElement] is of the
      * appropriate type that is expected for this result.
+     *
+     * The [QuestionState] can then update any other input items for cases where the selection of this item triggers
+     * refreshing other items--for example, a custom skip UI/UX where entering a value should uncheck the checkbox.
+     *
+     * @return Whether or not the updated answer should trigger a refresh.
      */
-    fun saveAnswer(answer: JsonElement?, forItem: InputItemState)
+    fun saveAnswer(answer: JsonElement?, forItem: InputItemState): Boolean
 }
-
-/**
- * Return the state of the [SkipCheckboxInputItem] for this question or nil if there is no skip checkbox.
- */
-val QuestionState.skipCheckbox : ChoiceInputItemState?
-    get() = itemStates.first { it is ChoiceInputItemState && it.inputItem is SkipCheckboxInputItem } as ChoiceInputItemState
 
 open class QuestionStateImpl(override val node: Question, override val parent: BranchNodeState) : QuestionState {
     override val currentResult: AnswerResult by lazy {
@@ -148,59 +150,66 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
     }
 
     override fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        forItem.selected = selected
+        return updateAnswerState(forItem)
     }
 
-    override fun saveAnswer(answer: JsonElement?, forItem: InputItemState) {
-        forItem.currentAnswer = when (answerType) {
-            AnswerType.MAP -> updateJsonObject(answer, forItem)
-            is AnswerType.List -> updateJsonArray(answer, forItem)
-            else -> updateJsonValue(answer, forItem)
-        }
-    }
-
-    /**
-     * Overridable method for adding or removing the [answer] from the [JsonObject] that is used to back the
-     * [AnswerResult.jsonValue]. The returned value is then set on the [forItem] in the [saveAnswer] method.
-     * By default, the return value is [answer].
-     */
-    protected open fun updateJsonObject(answer: JsonElement?, forItem: InputItemState): JsonElement? {
-        val map: MutableMap<String, JsonElement> = when (val currentValue = currentResult.jsonValue) {
-            is JsonObject -> currentValue.toMutableMap()
-            else -> mutableMapOf()
-        }
-        if (answer != null) map[forItem.itemIdentifier] = answer else map.remove(forItem.itemIdentifier)
-        currentResult.jsonValue = JsonObject(map)
-        return answer
+    override fun saveAnswer(answer: JsonElement?, forItem: InputItemState): Boolean {
+        forItem.currentAnswer = answer
+        return updateAnswerState(forItem)
     }
 
     /**
-     * Overridable method for adding or removing the [answer] from the [JsonArray] that is used to back the
-     * [AnswerResult.jsonValue]. The returned value is then set on the [forItem] in the [saveAnswer] method.
-     * By default, the return value is [answer].
+     * Overridable method for setting the new value to the current result.
      */
-    protected open fun updateJsonArray(answer: JsonElement?, forItem: InputItemState): JsonElement? {
-        val set: MutableSet<JsonElement> = when (val currentValue = currentResult.jsonValue) {
-            is JsonArray -> currentValue.toMutableSet()
-            else -> mutableSetOf()
+    protected open fun updateAnswerState(changedItem: InputItemState): Boolean {
+        var refresh = false
+
+        // If the changed item is selected, then iterate through the collection and deselect other items as needed.
+        if (changedItem.selected) {
+            val deselectOthers = (changedItem.inputItem.exclusive || node.singleAnswer)
+            itemStates.forEach {
+                if (it != changedItem && it.selected && (deselectOthers || it.inputItem.exclusive))  {
+                    it.selected = false
+                    refresh = true
+                }
+            }
         }
-        if (answer != null) {
-            set.add(answer)
-        } else if (forItem.currentAnswer != null) {
-            set.remove(forItem.currentAnswer!!)
+
+        // Update the result.
+        val isSkipCheckbox = changedItem.inputItem is SkipCheckboxInputItem
+        if (isSkipCheckbox && changedItem.selected) {
+            // For a skip checkbox, use the changeItem's answer to mark the current result.
+            currentResult.jsonValue = changedItem.currentAnswer
+        } else {
+            val map = itemStates.mapNotNull {
+                // If the state change to uncheck the skip checkbox, then need to update the selected state
+                // for previously stored answers.
+                if (isSkipCheckbox && it is AnyInputItemState) {
+                    it.selected = (it.storedAnswer != null)
+                    refresh = refresh || it.selected
+                }
+                // Create a mapping of the non-null currentAnswer to the item identifier.
+                val itemAnswer = it.currentAnswer
+                if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
+            }.toMap()
+            currentResult.jsonValue = jsonValue(map)
         }
-        currentResult.jsonValue = JsonArray(set.toList())
-        return answer
+        return refresh
     }
 
     /**
-     * Overridable method for updating the current result to use set the [answer] as the [AnswerResult.jsonValue].
-     * The returned value is then set on the [forItem] in the [saveAnswer] method. By default, the return value is
-     * [answer].
+     * Protected overridable method for setting the answer value of the result. By default, this will handle only the
+     * simple cases of a map, an set made up of unique answers, or setting the value to the first element in the array.
      */
-    protected open fun updateJsonValue(answer: JsonElement?, forItem: InputItemState): JsonElement? {
-        currentResult.jsonValue = answer
-        return answer
+    protected open fun jsonValue(forMap: Map<String, JsonElement>) : JsonElement? = when (val aType = answerType) {
+        AnswerType.MAP -> JsonObject(forMap)
+        is AnswerType.List -> if (aType.sequenceSeparator == null) {
+            JsonArray(forMap.values.toSet().toList())
+        } else {
+            TODO("Not implemented")
+        }
+        else -> forMap.values.firstOrNull()
     }
 }
 
@@ -212,21 +221,32 @@ interface InputItemState {
     val itemIdentifier: String
         get() = inputItem.resultIdentifier ?: "$index"
     var currentAnswer: JsonElement?
+    var selected: Boolean
+}
+
+interface AnyInputItemState : InputItemState {
+    var storedAnswer: JsonElement?
+    override var currentAnswer: JsonElement?
+        get() = if (selected) storedAnswer else null
+        set(value) {
+            storedAnswer = value
+            selected = (value != null)
+        }
 }
 
 interface ChoiceInputItemState : InputItemState {
     override val inputItem: ChoiceInputItem
-    var selected: Boolean
 }
 
-interface KeyboardInputItemState<T> : InputItemState {
+interface KeyboardInputItemState<T> : AnyInputItemState {
     val textValidator: TextValidator<T>
 }
 
-open class KeyboardInputItemStateImpl<T>(override val index: Int,
-                                         override val inputItem: KeyboardTextInputItem<T>,
-                                         override var currentAnswer: JsonElement?) : KeyboardInputItemState<T> {
+class KeyboardInputItemStateImpl<T>(override val index: Int,
+                                    override val inputItem: KeyboardTextInputItem<T>,
+                                    override var storedAnswer: JsonElement?) : KeyboardInputItemState<T> {
     override val textValidator = inputItem.buildTextValidator()
+    override var selected = (storedAnswer != null)
 }
 
 class ChoiceInputItemStateImpl(override val index: Int,
@@ -241,4 +261,6 @@ class ChoiceInputItemStateImpl(override val index: Int,
 
 class AnyInputItemStateImpl(override val index: Int,
                             override val inputItem: InputItem,
-                            override var currentAnswer: JsonElement?) : InputItemState
+                            override var storedAnswer: JsonElement?) : AnyInputItemState {
+    override var selected = (storedAnswer != null)
+}

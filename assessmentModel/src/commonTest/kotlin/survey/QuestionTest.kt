@@ -1,15 +1,12 @@
 package org.sagebionetworks.assessmentmodel.survey
 
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.PrimitiveKind
+import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.BranchNode
 import org.sagebionetworks.assessmentmodel.BranchNodeResult
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeStateImpl
 import org.sagebionetworks.assessmentmodel.navigation.NavigationTestHelper
-import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
 import org.sagebionetworks.assessmentmodel.serialization.*
 import kotlin.test.*
 
@@ -24,7 +21,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = ChoiceQuestionObject("foo", listOf())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -33,7 +29,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = ChoiceQuestionObject("foo", listOf(), resultIdentifier = "bar")
         val result = original.createResult()
         assertEquals("bar", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -90,7 +85,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = ComboBoxQuestionObject("foo", listOf())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -99,7 +93,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = ComboBoxQuestionObject("foo", listOf(), resultIdentifier = "bar")
         val result = original.createResult()
         assertEquals("bar", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -157,7 +150,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = MultipleInputQuestionObject("foo", inputItems = listOf(StringTextInputItemObject(), StringTextInputItemObject()))
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -166,7 +158,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = MultipleInputQuestionObject("foo", inputItems = listOf(StringTextInputItemObject(), StringTextInputItemObject()), resultIdentifier = "bar")
         val result = original.createResult()
         assertEquals("bar", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -231,7 +222,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = SimpleQuestionObject("foo", inputItem = StringTextInputItemObject())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -240,7 +230,6 @@ class QuestionTest : NavigationTestHelper() {
         val original = SimpleQuestionObject("foo", inputItem = StringTextInputItemObject(), resultIdentifier = "bar")
         val result = original.createResult()
         assertEquals("bar", result.identifier)
-        assertTrue(result is AnswerResult)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -678,7 +667,6 @@ class QuestionTest : NavigationTestHelper() {
         assertEquals(previousResult, questionState.currentResult)
     }
 
-
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion_PreviousResult_MultipleAnswer() {
         val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
@@ -741,10 +729,347 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     /**
+     * QuestionStateImpl - saveAnswer
+     */
+
+    @Test
+    fun testQuestionStateImpl_SaveAnswer_SimpleQuestion_NoSkipCheckbox() {
+        val item1 = StringTextInputItemObject()
+        val question = SimpleQuestionObject("foo",
+                inputItem = item1)
+        val questionState = buildQuestionState(question)
+
+        val jsonValue = JsonPrimitive("baloon")
+        val firstItem = questionState.itemStates.first()
+        val refresh = questionState.saveAnswer(jsonValue, firstItem)
+
+        assertFalse(refresh)
+        assertEquals(jsonValue, firstItem.currentAnswer)
+        assertEquals(jsonValue, questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_SaveAnswer_MultipleInputQuestion_NoSkipCheckbox() {
+        val item1 = StringTextInputItemObject("item1")
+        val item2 = StringTextInputItemObject("item2")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2))
+        val questionState = buildQuestionState(question)
+
+        val jsonValue1 = JsonPrimitive("baloon")
+        val firstItem = questionState.itemStates.first()
+        val refresh1 = questionState.saveAnswer(jsonValue1, firstItem)
+
+        val map = mutableMapOf<String, JsonElement>("item1" to jsonValue1)
+
+        assertFalse(refresh1)
+        assertEquals(jsonValue1, firstItem.currentAnswer)
+        assertEquals(JsonObject(map), questionState.currentResult.jsonValue)
+
+        val jsonValue2 = JsonPrimitive("ragu")
+        map["item2"] = jsonValue2
+        val lastItem = questionState.itemStates.last()
+        val refresh2 = questionState.saveAnswer(jsonValue2, lastItem)
+
+        assertFalse(refresh2)
+        assertEquals(jsonValue2, lastItem.currentAnswer)
+        assertEquals(JsonObject(map), questionState.currentResult.jsonValue)
+
+        val jsonValue1B = JsonPrimitive("moo")
+        map["item1"] = jsonValue1B
+        val refresh1B = questionState.saveAnswer(jsonValue1B, firstItem)
+
+        assertFalse(refresh1B)
+        assertEquals(jsonValue1B, firstItem.currentAnswer)
+        assertEquals(JsonObject(map), questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_SaveAnswer_MultipleInputQuestion_WithSkipCheckbox() {
+        val item1 = StringTextInputItemObject("item1")
+        val item2 = StringTextInputItemObject("item2")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2),
+                skipCheckbox = checkbox)
+        val jsonValue = JsonNull
+        assertEquals(AnswerType.MAP, question.answerType)
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
+        val questionState = buildQuestionState(question, previousResult)
+
+        val jsonValue1 = JsonPrimitive("baloon")
+        val firstItem = questionState.itemStates.first()
+        val refresh = questionState.saveAnswer(jsonValue1, firstItem)
+
+        assertTrue(refresh)
+        assertEquals(jsonValue1, firstItem.currentAnswer)
+        assertEquals(JsonObject(mapOf("item1" to jsonValue1)), questionState.currentResult.jsonValue)
+
+        val lastItem = questionState.itemStates.last()
+        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
+        assertFalse(lastItem.selected)
+    }
+
+    /**
+     * QuestionStateImpl - didChangeSelectionState
+     */
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_SimpleQuestion_WithSkipCheckbox() {
+        val item1 = StringTextInputItemObject("item1")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = SimpleQuestionObject("foo",
+                inputItem = item1,
+                skipCheckbox = checkbox)
+        val jsonValue1 = JsonPrimitive("baloon")
+        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue1)
+        val questionState = buildQuestionState(question, previousResult)
+
+        val firstItem = questionState.itemStates.first() as KeyboardInputItemState<*>
+        val lastItem = questionState.itemStates.last() as ChoiceInputItemState
+        val refresh1 = questionState.didChangeSelectionState(true, lastItem)
+
+        assertTrue(refresh1)
+        assertTrue(lastItem.selected)
+        assertNull(firstItem.currentAnswer)
+        assertEquals(jsonValue1, firstItem.storedAnswer)
+        assertFalse(firstItem.selected)
+        assertEquals(JsonNull, questionState.currentResult.jsonValue)
+
+        questionState.didChangeSelectionState(false, lastItem)
+
+        assertFalse(lastItem.selected)
+        assertEquals(jsonValue1, firstItem.currentAnswer)
+        assertEquals(jsonValue1, firstItem.storedAnswer)
+        assertTrue(firstItem.selected)
+        assertEquals(jsonValue1, questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_MultipleInputQuestion_WithSkipCheckbox() {
+        val item1 = StringTextInputItemObject("item1")
+        val item2 = StringTextInputItemObject("item2")
+        val checkbox = SkipCheckboxInputItemObject("no answer")
+        val question = MultipleInputQuestionObject("foo",
+                inputItems = listOf(item1, item2),
+                skipCheckbox = checkbox)
+        val jsonValue1 = JsonPrimitive("baloon")
+        val initialValue = JsonObject(mapOf("item1" to jsonValue1))
+        val previousResult = AnswerResultObject("foo", question.answerType, initialValue)
+        val questionState = buildQuestionState(question, previousResult)
+
+        val firstItem = questionState.itemStates.first() as KeyboardInputItemState<*>
+        val lastItem = questionState.itemStates.last() as ChoiceInputItemState
+        val refresh1 = questionState.didChangeSelectionState(true, lastItem)
+
+        assertTrue(refresh1)
+        assertTrue(lastItem.selected)
+        assertNull(firstItem.currentAnswer)
+        assertEquals(jsonValue1, firstItem.storedAnswer)
+        assertFalse(firstItem.selected)
+        assertEquals(JsonNull, questionState.currentResult.jsonValue)
+
+        questionState.didChangeSelectionState(false, lastItem)
+
+        assertFalse(lastItem.selected)
+        assertEquals(jsonValue1, firstItem.currentAnswer)
+        assertEquals(jsonValue1, firstItem.storedAnswer)
+        assertTrue(firstItem.selected)
+        assertEquals(initialValue, questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_ChoiceQuestion_Single() {
+        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
+        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
+        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
+        val questionState = buildQuestionState(question)
+
+        val firstItem = questionState.itemStates.first() as ChoiceInputItemState
+        val secondItem = questionState.itemStates[1] as ChoiceInputItemState
+        val thirdItem = questionState.itemStates.last() as ChoiceInputItemState
+
+        val refresh1 = questionState.didChangeSelectionState(true, thirdItem)
+        assertFalse(refresh1)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertEquals(JsonPrimitive("item3"), questionState.currentResult.jsonValue)
+
+        val refresh2 = questionState.didChangeSelectionState(true, secondItem)
+        assertTrue(refresh2)
+        assertFalse(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertEquals(JsonPrimitive("item2"), questionState.currentResult.jsonValue)
+
+        val refresh3 = questionState.didChangeSelectionState(false, secondItem)
+        assertFalse(refresh3)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertEquals(null, questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_ChoiceQuestion_Multiple() {
+        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
+        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
+        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val itemNone = ChoiceOptionObject(exclusive = true)
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3, itemNone), singleAnswer = false)
+        val questionState = buildQuestionState(question)
+
+        val firstItem = questionState.itemStates.first() as ChoiceInputItemState
+        val secondItem = questionState.itemStates[1] as ChoiceInputItemState
+        val thirdItem = questionState.itemStates[2] as ChoiceInputItemState
+        val noneItem = questionState.itemStates.last() as ChoiceInputItemState
+
+        val refresh1 = questionState.didChangeSelectionState(true, thirdItem)
+        assertFalse(refresh1)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(noneItem.selected)
+        val result1 = questionState.currentResult.jsonValue
+        assertTrue(result1 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3")), result1.toSet())
+
+        val refresh2 = questionState.didChangeSelectionState(true, secondItem)
+        assertFalse(refresh2)
+        assertFalse(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(noneItem.selected)
+        val result2 = questionState.currentResult.jsonValue
+        assertTrue(result2 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3"), JsonPrimitive("item2")), result2.toSet())
+
+        val refresh3 = questionState.didChangeSelectionState(false, secondItem)
+        assertFalse(refresh3)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(noneItem.selected)
+        val result3 = questionState.currentResult.jsonValue
+        assertTrue(result3 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3")), result3.toSet())
+
+        val refresh4 = questionState.didChangeSelectionState(true, noneItem)
+        assertTrue(refresh4)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertTrue(noneItem.selected)
+        assertEquals(JsonArray(listOf()), questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_ComboBoxQuestion_Single() {
+        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
+        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
+        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
+        val questionState = buildQuestionState(question)
+
+        val firstItem = questionState.itemStates.first() as ChoiceInputItemState
+        val secondItem = questionState.itemStates[1] as ChoiceInputItemState
+        val thirdItem = questionState.itemStates[2] as ChoiceInputItemState
+        val otherItem = questionState.itemStates.last() as KeyboardInputItemState<*>
+
+        val refresh1 = questionState.didChangeSelectionState(true, thirdItem)
+        assertFalse(refresh1)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        assertEquals(JsonPrimitive("item3"), questionState.currentResult.jsonValue)
+
+        val refresh2 = questionState.didChangeSelectionState(true, secondItem)
+        assertTrue(refresh2)
+        assertFalse(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        assertEquals(JsonPrimitive("item2"), questionState.currentResult.jsonValue)
+
+        val refresh3 = questionState.didChangeSelectionState(false, secondItem)
+        assertFalse(refresh3)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        assertEquals(null, questionState.currentResult.jsonValue)
+
+        val refresh4 = questionState.saveAnswer(JsonPrimitive("baloo"), otherItem)
+        assertFalse(refresh4)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(thirdItem.selected)
+        assertTrue(otherItem.selected)
+        assertEquals(JsonPrimitive("baloo"), questionState.currentResult.jsonValue)
+    }
+
+    @Test
+    fun testQuestionStateImpl_DidChangeSelectionState_ComboBoxQuestion_Multiple() {
+        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
+        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
+        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false)
+        val questionState = buildQuestionState(question)
+
+        val firstItem = questionState.itemStates.first() as ChoiceInputItemState
+        val secondItem = questionState.itemStates[1] as ChoiceInputItemState
+        val thirdItem = questionState.itemStates[2] as ChoiceInputItemState
+        val otherItem = questionState.itemStates.last() as KeyboardInputItemState<*>
+
+        val refresh1 = questionState.didChangeSelectionState(true, thirdItem)
+        assertFalse(refresh1)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        val result1 = questionState.currentResult.jsonValue
+        assertTrue(result1 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3")), result1.toSet())
+
+        val refresh2 = questionState.didChangeSelectionState(true, secondItem)
+        assertFalse(refresh2)
+        assertFalse(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        val result2 = questionState.currentResult.jsonValue
+        assertTrue(result2 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3"), JsonPrimitive("item2")), result2.toSet())
+
+        val refresh3 = questionState.didChangeSelectionState(false, secondItem)
+        assertFalse(refresh3)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertFalse(otherItem.selected)
+        val result3 = questionState.currentResult.jsonValue
+        assertTrue(result3 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3")), result3.toSet())
+
+        val refresh4 = questionState.saveAnswer(JsonPrimitive("baloo"), otherItem)
+        assertFalse(refresh4)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertTrue(thirdItem.selected)
+        assertTrue(otherItem.selected)
+        val result4 = questionState.currentResult.jsonValue
+        assertTrue(result4 is JsonArray)
+        assertEquals(setOf(JsonPrimitive("item3"),JsonPrimitive("baloo")), result4.toSet())
+    }
+
+    /**
      * Helper methods
      */
 
-    fun buildQuestionState(question: Question, previousResult: AnswerResult? = null): QuestionState {
+    private fun buildQuestionState(question: Question, previousResult: AnswerResult? = null): QuestionState {
         val nodeList = buildNodeList(3, 1, "step").toList()
         val assessmentObject = AssessmentObject("parent", nodeList)
         val result = buildResult(assessmentObject, 2)
