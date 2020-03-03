@@ -10,9 +10,9 @@ group = "org.sagebionetworks.assessmentmodel"
 version = 1.0
 
 android {
-    compileSdkVersion(27)
+    compileSdkVersion(29)
     defaultConfig {
-        minSdkVersion(15)
+        minSdkVersion(19)
     }
     buildTypes {
         getByName("release") {
