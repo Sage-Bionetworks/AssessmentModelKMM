@@ -20,6 +20,14 @@ val inputItemSerializersModule = SerializersModule {
         TimeInputItemObject::class with TimeInputItemObject.serializer()
         YearTextInputItemObject::class with YearTextInputItemObject.serializer()
     }
+    polymorphic(KeyboardTextInputItem::class) {
+        DateInputItemObject::class with DateInputItemObject.serializer()
+        DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
+        IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
+        StringTextInputItemObject::class with StringTextInputItemObject.serializer()
+        TimeInputItemObject::class with TimeInputItemObject.serializer()
+        YearTextInputItemObject::class with YearTextInputItemObject.serializer()
+    }
     polymorphic(SkipCheckboxInputItem::class) {
         SkipCheckboxInputItemObject::class with SkipCheckboxInputItemObject.serializer()
     }
@@ -190,7 +198,7 @@ data class CheckboxInputItemObject(@SerialName("identifier")
 @Serializable
 data class ChoiceOptionObject(val value: JsonElement = JsonNull,
                               @SerialName("text")
-                              override val fieldLabel: String?,
+                              override val fieldLabel: String? = null,
                               @Serializable(ImageNameSerializer::class)
                               override val icon: FetchableImage? = null,
                               override val exclusive: Boolean = false) : ChoiceOption {
@@ -211,16 +219,6 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
         get() = singleChoice || choice.exclusive
     override val fieldLabel: String?
         get() = choice.fieldLabel
-}
-
-/**
- * A [OtherChoiceItemWrapper] is used to wrap a serializable [InputItem] that is used to allow a multiple choice
- * question to have an "other" text entry input item.
- */
-data class OtherChoiceItemWrapper(val inputItem: InputItem,
-                            val singleChoice: Boolean) : InputItem by inputItem {
-    override val exclusive: Boolean
-        get() = singleChoice || inputItem.exclusive
 }
 
 /**

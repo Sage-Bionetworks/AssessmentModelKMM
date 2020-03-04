@@ -4,7 +4,7 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.serialization.*
 import kotlin.test.*
 
-class NodeNavigatorTest {
+class NodeNavigatorTest : NavigationTestHelper() {
 
     @Test
     fun testNodeWithIdentifier() {
@@ -127,7 +127,7 @@ class NodeNavigatorTest {
         val result = buildResult(assessmentObject, 2)
         val progress = navigator.progress(nodeList[2], result)
 
-        val expected = Progress(2,5, false)
+        val expected = Progress(2, 5, false)
         assertEquals(expected, progress)
     }
 
@@ -144,7 +144,7 @@ class NodeNavigatorTest {
         println("${result.pathHistoryResults}")
         val progress = navigator.progress(nodeList[2], result)
 
-        val expected = Progress(2,6, false)
+        val expected = Progress(2, 6, false)
         assertEquals(expected, progress)
     }
 
@@ -180,7 +180,7 @@ class NodeNavigatorTest {
         val result = buildResult(assessmentObject, 2)
         val progress = navigator.progress(nodeList[2], result)
 
-        val expected = Progress(1,3, false)
+        val expected = Progress(1, 3, false)
         assertEquals(expected, progress)
     }
 
@@ -361,7 +361,7 @@ class NodeNavigatorTest {
 
     @Test
     fun testAppendChildResultIfNeeded_DoNotReplaceUniqueLastResult() {
-        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3, 1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
         val nodeState = BranchNodeStateImpl(assessmentObject)
@@ -380,7 +380,7 @@ class NodeNavigatorTest {
 
     @Test
     fun testAppendChildResultIfNeeded_IncludeEqualStepResult() {
-        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3, 1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
         val nodeState = BranchNodeStateImpl(assessmentObject)
@@ -397,7 +397,7 @@ class NodeNavigatorTest {
 
     @Test
     fun testAppendChildResultIfNeeded_StepNotAddedResult() {
-        val assessmentObject = AssessmentObject("foo", buildNodeList(3,1, "step").toList())
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3, 1, "step").toList())
         val navigator = NodeNavigator(assessmentObject)
         val rootNodeController = TestRootNodeController(null, 999)
         val nodeState = BranchNodeStateImpl(assessmentObject)
@@ -410,6 +410,9 @@ class NodeNavigatorTest {
         val expectedPathResults = listOf<Result>(testResult)
         assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
     }
+}
+
+open class NavigationTestHelper {
 
     /**
      * Helper methods
