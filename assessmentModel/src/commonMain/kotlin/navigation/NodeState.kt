@@ -100,6 +100,17 @@ fun NodeState.root() :  NodeState {
     return thisPath
 }
 
+fun NodeState.previousResult() : Result?
+        = parent?.currentResult?.pathHistoryResults?.lastOrNull { it.identifier == node.resultId() }?.copyResult()
+
+fun BranchNodeState.lowestBranch() : BranchNodeState {
+    var thisPath: BranchNodeState = this
+    while (thisPath.currentChild != null && thisPath.currentChild is BranchNodeState) {
+        thisPath = thisPath.currentChild!! as BranchNodeState
+    }
+    return thisPath
+}
+
 interface BranchNodeState : NodeState {
 
     /**
@@ -121,26 +132,40 @@ interface BranchNodeState : NodeState {
      * Override the [currentResult] to require return of a [BranchNodeResult]
      */
     override val currentResult: BranchNodeResult
+
+    /**
+     * Called from the child node to send the call back up the chain to the parent.
+     */
+    fun moveToNextNode(direction: NavigationPoint.Direction,
+                       requestedPermissions: Set<Permission>? = null,
+                       asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 }
 
-open class LeafNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : NodeState {
-    override val currentResult: Result by lazy { node.createResult() }
+interface LeafNodeState : NodeState {
+    override val parent: BranchNodeState
 
     override fun goForward(requestedPermissions: Set<Permission>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goForward(requestedPermissions, asyncActionNavigations)
+        parent.moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
     }
 
     override fun goBackward(requestedPermissions: Set<Permission>?,
                             asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goBackward(requestedPermissions, asyncActionNavigations)
+        parent.moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
     }
 }
 
-open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
+class LeafNodeStateImpl(override val node: Node, override val parent: BranchNodeState) : LeafNodeState {
+    override val currentResult: Result = node.createResult()
+}
 
-    override val currentResult: BranchNodeResult by lazy { node.createResult() }
+open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
     private val navigator: Navigator by lazy { node.getNavigator() }
+
+    override val currentResult: BranchNodeResult by lazy {
+        // If this node has previously been shown, use that to determine the current state.
+        previousResult() as? BranchNodeResult ?: this.node.createResult()
+    }
 
     override var currentChild: NodeState? = null
         protected set
@@ -152,7 +177,18 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
 
     override fun goForward(requestedPermissions: Set<Permission>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        val next = getNextNode()
+        lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
+    }
+
+    override fun goBackward(requestedPermissions: Set<Permission>?,
+                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        lowestBranch().moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
+    }
+
+    override fun moveToNextNode(direction: NavigationPoint.Direction,
+                                requestedPermissions: Set<Permission>?,
+                                asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        val next = getNextNode(direction) ?: return
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
         if (next.node != null) {
             // Go to next node if it is not null.
@@ -205,17 +241,21 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             parent == null ->
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
             else ->
-                parent.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                parent.moveToNextNode(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
         }
     }
 
     /**
      * Get the next node to show after the current node.
      */
-    open fun getNextNode(): NavigationPoint {
+    open fun getNextNode(inDirection: NavigationPoint.Direction): NavigationPoint? {
         appendChildResultIfNeeded()
         val currentNode = currentChild?.node
-        return if (currentNode == null) navigator.start() else navigator.nodeAfter(currentNode, currentResult)
+        return if (inDirection == NavigationPoint.Direction.Forward) {
+            navigator.nodeAfter(currentNode, currentResult)
+        } else {
+            navigator.nodeBefore(currentNode, currentResult)
+        }
     }
 
     /**
@@ -232,7 +272,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
 
     /**
      * Look to see if the next node to move to is a navigation point that can return a branch node state. The base
-     * class looks for conformance to the [NodeContainer] interface and the [Assessment] interface in that order.
+     * class looks for conformance to the [BranchNode] interface.
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return (navigationPoint.node as? BranchNode)?.let { BranchNodeStateImpl(it, this) }
@@ -265,10 +305,5 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
                 currentResult.pathHistoryResults.add(childResult)
             }
         }
-    }
-
-    override fun goBackward(requestedPermissions: Set<Permission>?,
-                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        TODO("syoung 02/04/2020 Not implemented.")
     }
 }

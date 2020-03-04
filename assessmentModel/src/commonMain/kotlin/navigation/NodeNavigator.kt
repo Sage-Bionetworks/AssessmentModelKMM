@@ -7,18 +7,12 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     override fun node(identifier: String): Node?
         = node.children.firstOrNull { it.identifier == identifier }
 
-    override fun start(): NavigationPoint {
-        return NavigationPoint(
-                node = node.children.firstOrNull(),
-                branchResult = node.createResult())
-     }
-
-    override fun nodeAfter(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint {
+    override fun nodeAfter(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
         val next = nextNode(currentNode, branchResult)
         return NavigationPoint(node = next, branchResult = branchResult, direction = NavigationPoint.Direction.Forward)
     }
 
-    override fun nodeBefore(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint {
+    override fun nodeBefore(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
         val previous = previousNode(currentNode, branchResult)
         return NavigationPoint(node = previous, branchResult = branchResult, direction = NavigationPoint.Direction.Backward)
     }
@@ -57,15 +51,26 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
      * syoung 01/30/2020 WIP for stubbing out more complex navigation.
      */
 
-    private fun nextNode(currentNode: Node, parentResult: CollectionResult): Node? {
-        val children = node.children
-        val idx = node.children.indexOf(currentNode)
-        return if ((idx >= 0) && (idx + 1 < children.count())) children[idx+1] else null
+    private val children
+        get() = node.children
+
+    private fun nextNode(currentNode: Node?, parentResult: BranchNodeResult): Node? {
+        return if (currentNode == null) {
+            children.firstOrNull()
+        } else {
+            val idx = children.indexOf(currentNode)
+            if ((idx >= 0) && (idx + 1 < children.count())) children[idx + 1] else null
+        }
     }
 
-    private fun previousNode(currentNode: Node, parentResult: CollectionResult): Node? {
-        val children = node.children
-        val idx = children.indexOf(currentNode)
-        return if (idx-1>=0) children[idx-1] else null
+    private fun previousNode(currentNode: Node?, parentResult: BranchNodeResult): Node? {
+        return if (currentNode == null) {
+            parentResult.pathHistoryResults.lastOrNull()?.let { result ->
+                children.lastOrNull { it.resultId() == result.identifier }
+            } ?: children.firstOrNull()
+        } else {
+            val idx = children.indexOf(currentNode)
+            if (idx - 1 >= 0) children[idx - 1] else null
+        }
     }
 }
