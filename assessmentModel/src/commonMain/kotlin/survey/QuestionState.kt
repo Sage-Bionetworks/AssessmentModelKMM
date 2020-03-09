@@ -2,11 +2,11 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.AsyncActionNavigation
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
-import org.sagebionetworks.assessmentmodel.navigation.NodeState
+import org.sagebionetworks.assessmentmodel.navigation.LeafNodeState
+import org.sagebionetworks.assessmentmodel.navigation.previousResult
 
-interface QuestionState : NodeState {
+interface QuestionState : LeafNodeState {
     override val node: Question
     override val currentResult: AnswerResult
 
@@ -57,18 +57,7 @@ interface QuestionState : NodeState {
 open class QuestionStateImpl(override val node: Question, override val parent: BranchNodeState) : QuestionState {
     override val currentResult: AnswerResult by lazy {
         // The question state should look at the path history and pull the last result with a matching result id.
-        parent.currentResult.pathHistoryResults.lastOrNull { it.identifier == node.resultId() } as? AnswerResult
-                ?: this.node.createResult()
-    }
-
-    override fun goForward(requestedPermissions: Set<Permission>?,
-                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goForward(requestedPermissions, asyncActionNavigations)
-    }
-
-    override fun goBackward(requestedPermissions: Set<Permission>?,
-                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.goBackward(requestedPermissions, asyncActionNavigations)
+        previousResult() as? AnswerResult ?: this.node.createResult()
     }
 
     /**

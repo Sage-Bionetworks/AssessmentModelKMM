@@ -22,7 +22,9 @@ val resultSerializersModule = SerializersModule {
 data class AnswerResultObject(override val identifier: String,
                               override var answerType: AnswerType? = null,
                               @SerialName("value")
-                              override var jsonValue: JsonElement? = null) : AnswerResult
+                              override var jsonValue: JsonElement? = null) : AnswerResult {
+    override fun copyResult(identifier: String): AnswerResult = this.copy(identifier = identifier)
+}
 
 @Serializable
 @SerialName("assessment")
@@ -37,16 +39,27 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")
-                                  override var endDateString: String = DateGenerator.nowString()) : AssessmentResult
+                                  override var endDateString: String = DateGenerator.nowString()) : AssessmentResult {
+    override fun copyResult(identifier: String): AssessmentResult = this.copy(
+            identifier = identifier,
+            pathHistoryResults = pathHistoryResults.copyResults(),
+            inputResults = inputResults.copyResults())
+}
 
 @Serializable
 @SerialName("base")
-data class ResultObject(override val identifier: String) : Result
+data class ResultObject(override val identifier: String) : Result {
+    override fun copyResult(identifier: String): Result = this.copy(identifier = identifier)
+}
 
 @Serializable
 @SerialName("collection")
 data class CollectionResultObject(override val identifier: String,
-                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : CollectionResult
+                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : CollectionResult {
+    override fun copyResult(identifier: String): CollectionResult = this.copy(
+            identifier = identifier,
+            inputResults = inputResults.copyResults())
+}
 
 @Serializable
 @SerialName("task")
@@ -54,6 +67,11 @@ data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("stepHistory")
                                   override var pathHistoryResults: MutableList<Result> = mutableListOf(),
                                   @SerialName("asyncResults")
-                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : BranchNodeResult
+                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : BranchNodeResult {
+    override fun copyResult(identifier: String): BranchNodeResult = this.copy(
+            identifier = identifier,
+            pathHistoryResults = pathHistoryResults.copyResults(),
+            inputResults = inputResults.copyResults())
+}
 
 
