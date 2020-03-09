@@ -21,6 +21,22 @@
       "title": "Step 1"
     },
     {
+      "identifier": "foo",
+      "type": "simpleQuestion",
+      "title": "Hello World!",
+      "subtitle": "Question subtitle",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": false,
+      "inputItem":{"type" : "year"},
+      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
       "identifier": "step2",
       "type": "instruction",
       "title": "Step 2"

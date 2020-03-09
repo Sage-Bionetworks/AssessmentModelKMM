@@ -50,7 +50,7 @@ class AssessmentFragment : Fragment() {
 
     private fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
-        val fragment = StepFragment()
+        val fragment = presentation.StepFragment()
         return fragment
     }
 

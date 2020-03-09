@@ -35,8 +35,10 @@ android {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation(project(":presentation"))
     implementation(project(":assessmentModel"))
 
+    implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
