@@ -39,6 +39,7 @@ class QuestionStepFragment: StepFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.textView.text = stepViewModel.nodeState.node.toString()
         binding.navBar.navBarNext.setOnClickListener { assessmentViewModel.goforward() }
+        binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
 

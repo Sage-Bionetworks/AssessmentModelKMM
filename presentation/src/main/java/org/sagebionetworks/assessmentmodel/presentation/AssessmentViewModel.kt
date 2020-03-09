@@ -35,6 +35,10 @@ class AssessmentViewModel(val assesmentIdentifier: String, val assessmentProvide
         assessmentNodeState.goForward()
     }
 
+    fun goBackward() {
+        assessmentNodeState.goBackward()
+    }
+
     override fun canHandle(node: Node): Boolean {
         return (node is Step)
     }
