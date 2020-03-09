@@ -12,6 +12,7 @@ import org.sagebionetworks.assessmentmodel.survey.AnswerType
  *
  */
 interface Result {
+    fun copyResult(identifier: String = this.identifier) : Result
 
     /**
      * The identifier for the result. This identifier maps to the [ResultMapElement.resultIdentifier] for an associated
@@ -20,10 +21,14 @@ interface Result {
     val identifier: String
 }
 
+fun MutableSet<Result>.copyResults() = map { it.copyResult() }.toMutableSet()
+fun MutableList<Result>.copyResults() = map { it.copyResult() }.toMutableList()
+
 /**
  * A [CollectionResult] is used to describe the output of a [Section], [FormStep], or [Assessment].
  */
 interface CollectionResult : Result {
+    override fun copyResult(identifier: String) : CollectionResult
 
     /**
      * The [inputResults] is a set that contains results that are recorded in parallel to the user-facing node
@@ -39,6 +44,7 @@ interface CollectionResult : Result {
  * [pathHistoryResults] is additive where each time a node is traversed, it is added to the list.
  */
 interface BranchNodeResult : CollectionResult {
+    override fun copyResult(identifier: String) : BranchNodeResult
 
     /**
      * The [pathHistoryResults] includes the history of the [Node] results that were traversed as a part of running an
@@ -52,6 +58,7 @@ interface BranchNodeResult : CollectionResult {
  * An [AssessmentResult] is the top-level [Result] for an [Assessment].
  */
 interface AssessmentResult : BranchNodeResult {
+    override fun copyResult(identifier: String) : AssessmentResult
 
     /**
      * A unique identifier for this run of the assessment. This property is defined as readwrite to allow the
@@ -80,6 +87,7 @@ interface AssessmentResult : BranchNodeResult {
  * An [AnswerResult] is used to hold a serializable answer to a question or measurement.
  */
 interface AnswerResult : Result {
+    override fun copyResult(identifier: String) : AnswerResult
 
     /**
      * Optional property for defining additional information about the answer expected for this result.

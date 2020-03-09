@@ -3,12 +3,14 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.*
+import org.sagebionetworks.assessmentmodel.CollectionResult
 import org.sagebionetworks.assessmentmodel.Result
-import org.sagebionetworks.assessmentmodel.survey.BaseType
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
+import org.sagebionetworks.assessmentmodel.survey.BaseType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNotSame
 
 open class ResultTest {
 
@@ -345,5 +347,108 @@ open class ResultTest {
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
+    }
+
+    /**
+     * Result - copyResult
+     */
+
+//    AnswerResultObject::class with AnswerResultObject.serializer()
+//    AssessmentResultObject::class with AssessmentResultObject.serializer()
+//    BranchNodeResultObject::class with BranchNodeResultObject.serializer()
+//    CollectionResultObject::class with CollectionResultObject.serializer()
+//    ResultObject::class with ResultObject.serializer()
+    @Test
+    fun testResultObject_copyResult() {
+        val original = ResultObject("foo")
+        val copy = original.copyResult()
+        assertEquals(original, copy)
+        assertNotSame(original, copy)
+    }
+
+    @Test
+    fun testAnswerResultObject_copyResult() {
+        val original = AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), JsonPrimitive("2020-02"))
+        val copy = original.copyResult()
+        assertEquals(original, copy)
+        assertNotSame(original, copy)
+    }
+
+    @Test
+    fun testAssessmentResultObject_copyResult() {
+        val inputResult1 = ResultObject("boo")
+        val inputResults = mutableSetOf<Result>(inputResult1, ResultObject("yahoow"))
+        val pathHistoryResult1 = ResultObject("step1")
+        val pathHistoryResults = mutableListOf<Result>(pathHistoryResult1, ResultObject("step2"))
+        val original = AssessmentResultObject(identifier = "testResult",
+                pathHistoryResults = pathHistoryResults,
+                inputResults = inputResults,
+                runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
+                startDateString = "2020-01-21T12:00:00.000+7000",
+                endDateString = "2020-01-21T12:05:00.000+7000"
+        )
+        val copy = original.copyResult()
+        assertEquals(original, copy)
+        assertNotSame(original, copy)
+        val copyInputResult1 = copy.inputResults.firstOrNull()
+        assertNotNull(copyInputResult1)
+        assertEquals(inputResult1, copyInputResult1)
+        assertNotSame(inputResult1, copyInputResult1)
+        val copyPathHistoryResult1 = copy.pathHistoryResults.firstOrNull()
+        assertNotNull(copyPathHistoryResult1)
+        assertEquals(pathHistoryResult1, copyPathHistoryResult1)
+        assertNotSame(pathHistoryResult1, copyPathHistoryResult1)
+    }
+
+    @Test
+    fun testBranchNodeResultObject_copyResult() {
+        val inputResult1 = ResultObject("boo")
+        val inputResults = mutableSetOf<Result>(inputResult1, ResultObject("yahoow"))
+        val pathHistoryResult1 = ResultObject("step1")
+        val pathHistoryResults = mutableListOf<Result>(pathHistoryResult1, ResultObject("step2"))
+        val original = BranchNodeResultObject("foo", pathHistoryResults, inputResults)
+        val copy = original.copyResult()
+        assertEquals(original, copy)
+        assertNotSame(original, copy)
+        val copyInputResult1 = copy.inputResults.firstOrNull()
+        assertNotNull(copyInputResult1)
+        assertEquals(inputResult1, copyInputResult1)
+        assertNotSame(inputResult1, copyInputResult1)
+        val copyPathHistoryResult1 = copy.pathHistoryResults.firstOrNull()
+        assertNotNull(copyPathHistoryResult1)
+        assertEquals(pathHistoryResult1, copyPathHistoryResult1)
+        assertNotSame(pathHistoryResult1, copyPathHistoryResult1)
+    }
+
+    @Test
+    fun testCollectionResultObject_copyResult() {
+        val inputResult1 = ResultObject("boo")
+        val inputResults = mutableSetOf<Result>(inputResult1, ResultObject("yahoow"))
+        val original = CollectionResultObject("foo", inputResults)
+        val copy = original.copyResult()
+        assertEquals(original, copy)
+        assertNotSame(original, copy)
+        val copyInputResult1 = copy.inputResults.firstOrNull { it == inputResult1 }
+        assertNotNull(copyInputResult1)
+        assertNotSame(inputResult1, copyInputResult1)
+    }
+
+    @Test
+    fun testNestedCollection_copyResult() {
+        val inputResult1 = ResultObject("boo")
+        val inputResults = mutableSetOf<Result>(inputResult1, ResultObject("yahoow"))
+        val originalCollection = CollectionResultObject("foo", inputResults)
+        val pathHistoryResult1 = ResultObject("step1")
+        val pathHistoryResults = mutableListOf<Result>(pathHistoryResult1, ResultObject("step2"))
+        val originalBranch = BranchNodeResultObject("foo", pathHistoryResults, mutableSetOf(originalCollection))
+        val copy = originalBranch.copyResult()
+        assertEquals(originalBranch, copy)
+        assertNotSame(originalBranch, copy)
+        val copyCollection = copy.inputResults.first() as CollectionResultObject
+        assertEquals(originalCollection, copyCollection)
+        assertNotSame(originalCollection, copyCollection)
+        val copyInputResult1 = copyCollection.inputResults.firstOrNull { it == inputResult1 }
+        assertNotNull(copyInputResult1)
+        assertNotSame(inputResult1, copyInputResult1)
     }
 }

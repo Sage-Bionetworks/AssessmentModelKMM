@@ -22,24 +22,16 @@ interface Navigator {
     fun node(identifier: String): Node?
 
     /**
-     * Start the assessment. This should return the first [NavigationPoint] for this assessment.
+     * Continue to the next node after the current node. If [currentNode] is null, then the navigation is moving
+     * forward into this section or assessment.
      */
-    fun start(): NavigationPoint
+    fun nodeAfter(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint
 
     /**
-     * Continue to the next node after the current node. This should return the next node (if any), the current
-     * result state for the assessment, as well as the direction and any async actions that should be started or stopped.
+     * The node to move *back* to if the participant taps the back button. If [currentNode] is null, then the
+     * navigation is moving back into this section or assessment.
      */
-    fun nodeAfter(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint
-
-    /**
-     *
-     * The node to move *back* to if the participant taps the back button.
-     *
-     * The [NavigationPoint.direction] and the [NavigationPoint.requestedPermissions] are ignored by the controller for
-     * this return.
-     */
-    fun nodeBefore(currentNode: Node, branchResult: BranchNodeResult): NavigationPoint
+    fun nodeBefore(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint
 
     /**
      * Should the controller display a "Next" button or is the given button the last one in the assessment in which case
