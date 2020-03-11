@@ -199,7 +199,7 @@ interface NodeContainer : BranchNode {
 }
 
 /**
- * Convenience method for mapping the child nodes to their identifier.
+ * Convenience method for mapping the child nodes to their identifiers.
  */
 fun NodeContainer.allNodeIdentifiers(): List<String> = children.map { it.identifier }
 
