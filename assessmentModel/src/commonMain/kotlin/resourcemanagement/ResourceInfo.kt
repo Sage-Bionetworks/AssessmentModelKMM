@@ -33,11 +33,13 @@ interface ResourceBundle {
 }
 
 /**
- * The resource data info describes additional information for a *specific* file. The [ResourceInfo] can be used to
+ * The [AssetInfo] describes additional information for a *specific* resource. The [ResourceInfo] can be used to
  * describe a collection of resources within the same package or bundle whereas this is used to hold the
- * platform-specific information needed to load a single resource.
+ * platform-specific information needed to load a single asset.
+ *
+ * @see: [AssetResourceInfo]
  */
-interface FileResourceInfo : ResourceInfo {
+interface AssetInfo {
 
     /**
      * The name of the resource.
@@ -54,13 +56,20 @@ interface FileResourceInfo : ResourceInfo {
     /**
      * The android-type of the resource.
      *
+     * @see [StandardResourceAssetType] for the list of constants defining the asset type for the Android platform.
+     *
      * @note: This is different from the Apple bundle structure where you would use either the raw file extension or
      * the initializer with the resource name and bundle to construct the object.
      */
     val resourceAssetType: String?
 }
 
-fun FileResourceInfo.copyResourceInfo(fromResourceInfo: ResourceInfo) {
+/**
+ * An asset that defines its own resource info.
+ */
+interface AssetResourceInfo : AssetInfo, ResourceInfo
+
+fun AssetResourceInfo.copyResourceInfo(fromResourceInfo: ResourceInfo) {
     this.decoderBundle = this.decoderBundle ?: fromResourceInfo.decoderBundle
     this.packageName = this.packageName ?: fromResourceInfo.packageName
 }
@@ -69,4 +78,5 @@ object StandardResourceAssetType {
     const val DRAWABLE = "drawable"
     const val COLOR = "color"
     const val FONT = "font"
+    const val RAW = "raw"
 }

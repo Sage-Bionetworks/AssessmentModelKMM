@@ -4,20 +4,21 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 
 /**
  * A [TransformableNode] is a special node that allows for two-part unpacking of deserialization. This is used to allow
  * a "placeholder" to be replaced with a different node.
  */
-interface TransformableNode : ContentNode {
-    val resourceName: String
+interface TransformableNode : ContentNode, AssetInfo {
+    override val resourceAssetType: String?
+        get() = StandardResourceAssetType.RAW
+    override val rawFileExtension: String?
+        get() = "json"
 
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = fileLoader.loadFile(resourceName, "json", resourceInfo)
+        val jsonString = fileLoader.loadFile(this, resourceInfo)
         val unpackedNode = jsonCoder.parse(serializer, jsonString)
         return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
     }
@@ -42,7 +43,7 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
     override fun loadAssessment(assessmentIdentifier: String): Assessment? {
         val serializer = PolymorphicSerializer(Assessment::class)
         return files.firstOrNull { it.identifier == assessmentIdentifier }?.let {
-            val jsonString = fileLoader.loadFile(it.resourceName, "json", resourceInfo)
+            val jsonString = fileLoader.loadFile(it, resourceInfo)
             val assessment = jsonCoder.parse(serializer, jsonString)
             return assessment.unpack(fileLoader, resourceInfo, jsonCoder)
         }
