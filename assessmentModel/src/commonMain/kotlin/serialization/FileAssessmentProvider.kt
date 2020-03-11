@@ -1,30 +1,46 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import kotlinx.serialization.modules.SerializersModule
-import org.sagebionetworks.assessmentmodel.Assessment
-import org.sagebionetworks.assessmentmodel.AssessmentProvider
-import org.sagebionetworks.assessmentmodel.serialization.FileLoader
-import org.sagebionetworks.assessmentmodel.Node
+import kotlinx.serialization.json.json
+import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
-/**
- * An [AssessmentProvider] for loading Assessments from json files included as part of the app.
- */
-class FileAssessmentProvider(val fileLoader: FileLoader): AssessmentProvider {
+interface TransformableNode : ContentNode {
+    val resourceName: String
 
-    data class ResourceInfo(val fileName: String, val packageName: String)
-
-    //TODO: Need a more configurable mapping of Assessment identifiers to files -nbrown 02/10/2020
-    val fileMap = mapOf<String, ResourceInfo>(Pair("test_json", ResourceInfo("sample_assessment", "org.sagebionetworks.assessmentmodel.sampleapp")))
-
-    override fun loadAssessment(assssmentIdentifier: String): Assessment? {
-        fileMap.get(assssmentIdentifier)?.let {
-            val jsonString = fileLoader.loadFile(it.fileName, it.packageName)
-            return Serialization.JsonCoder.default.parse(AssessmentObject.serializer(), jsonString)
-        }
-
-        return null
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = fileLoader.loadFile(resourceName, "json", resourceInfo)
+        return jsonCoder.parse(serializer, jsonString)
     }
 }
+
+data class ResourceInfoObject(override var packageName: String? = null,
+                              override var decoderBundle: ResourceBundle? = null,
+                              override val bundleIdentifier: String? = null): ResourceInfo
+
+class FileAssessmentProvider(val files: List<TransformableNode>,
+                             val fileLoader: FileLoader,
+                             val resourceInfo: ResourceInfo): AssessmentProvider {
+
+    var jsonCoder: Json = Serialization.JsonCoder.default
+
+    override fun canLoadAssessment(assessmentIdentifier: String): Boolean = files.any { it.identifier == assessmentIdentifier }
+
+    override fun loadAssessment(assessmentIdentifier: String): Assessment? {
+        val serializer = PolymorphicSerializer(Assessment::class)
+        return files.firstOrNull { it.identifier == assessmentIdentifier }?.let {
+            val jsonString = fileLoader.loadFile(it.resourceName, "json", resourceInfo)
+            val assessment = jsonCoder.parse(serializer, jsonString)
+            return assessment.unpack(fileLoader, resourceInfo, jsonCoder)
+        }
+    }
+}
+

@@ -1,10 +1,14 @@
 package org.sagebionetworks.assessmentmodel
 
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAssetType
+
 /**
  * The [ImageInfo] is used to define a placeholder for an image. This could refer to a drawable object as defined by
  * the platform, a url, or the name of an embedded resource.
  */
-interface ImageInfo : DrawableLayout {
+interface ImageInfo : FileResourceInfo, DrawableLayout {
 
     /**
      * A unique identifier that can be used to validate that the image shown in a reusable view is the same image as the
@@ -16,6 +20,12 @@ interface ImageInfo : DrawableLayout {
      * A caption or label to display for the image in a localized string.
      */
     val label: String?
+
+    override val resourceAssetType: String?
+        get() = StandardResourceAssetType.DRAWABLE
+
+    override val resourceName: String
+        get() = imageName
 }
 
 interface AnimatedImageInfo : ImageInfo {

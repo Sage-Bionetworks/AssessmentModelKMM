@@ -2,8 +2,12 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 
@@ -18,9 +22,13 @@ val nodeSerializersModule = SerializersModule {
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
+        TransformableNodeObject::class with TransformableNodeObject.serializer()
     }
     polymorphic(Assessment::class) {
         AssessmentObject::class with AssessmentObject.serializer()
+    }
+    polymorphic(TransformableNode::class) {
+        TransformableNodeObject::class with TransformableNodeObject.serializer()
     }
     polymorphic(Question::class) {
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
@@ -56,6 +64,15 @@ abstract class IconNodeObject : NodeObject() {
     override var imageInfo: FetchableImage? = null
 }
 
+/**
+ * TransformableNode
+ */
+
+@Serializable
+@SerialName("transform")
+data class TransformableNodeObject(override val identifier: String,
+                                   override val resourceName: String,
+                                   override val resultIdentifier: String? = null) : IconNodeObject(), TransformableNode
 
 /**
  * NodeContainer
@@ -75,6 +92,11 @@ data class AssessmentObject(override val identifier: String,
                             override val resultIdentifier: String? = null,
                             override var estimatedMinutes: Int = 0) : NodeContainerObject(), Assessment {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
+        imageInfo?.copyResourceInfo(resourceInfo)
+        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
+        return copy(children = copyChildren)
+    }
 }
 
 @Serializable
@@ -82,7 +104,13 @@ data class AssessmentObject(override val identifier: String,
 data class SectionObject(override val identifier: String,
                          @SerialName("steps")
                          override val children: List<Node>,
-                         override val resultIdentifier: String? = null) : NodeContainerObject(), Section
+                         override val resultIdentifier: String? = null) : NodeContainerObject(), Section {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+        imageInfo?.copyResourceInfo(resourceInfo)
+        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
+        return copy(children = copyChildren)
+    }
+}
 
 /**
  * ContentNode

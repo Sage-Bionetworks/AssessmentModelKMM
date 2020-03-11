@@ -1,8 +1,12 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
@@ -53,6 +57,8 @@ interface Assessment : BranchNode, ContentNode {
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult
             = AssessmentResultObject(resultId(), versionString)
+
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment
 }
 
 /**
@@ -121,6 +127,11 @@ interface Node : ResultMapElement {
      * skip button. The lower level mapping should be respected and the button should be displayed for that step only.
      */
     val buttonMap: Map<ButtonAction, Button>
+
+    /**
+     * Unpack (and potentially replace) the node and set up any required resource pointers.
+     */
+    fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node = this
 }
 
 /**
@@ -160,6 +171,11 @@ interface ContentNode : Node {
      */
     val footnote: String?
         get() = null
+
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+        imageInfo?.copyResourceInfo(resourceInfo)
+        return super.unpack(fileLoader, resourceInfo, jsonCoder)
+    }
 }
 
 /**
@@ -179,17 +195,13 @@ interface NodeContainer : BranchNode {
      */
     val progressMarkers: List<String>?
 
-    /**
-     * Convenience method for mapping the child nodes to their identifier.
-     */
-    fun allNodeIdentifiers(): List<String> = children.map { it.identifier }
-
     override fun getNavigator(): Navigator = NodeNavigator(this)
 }
 
-interface NavigatorLoader : Assessment {
-    // TODO: syoung 01/28/2020 implement.
-}
+/**
+ * Convenience method for mapping the child nodes to their identifier.
+ */
+fun NodeContainer.allNodeIdentifiers(): List<String> = children.map { it.identifier }
 
 /**
  * [AsyncActionConfiguration] defines general configuration for an asynchronous action that should be run in
@@ -275,6 +287,11 @@ interface OverviewStep : StandardPermissionsStep {
      * The [icons] that are used to define the list of things you will need for an active assessment.
      */
     val icons: List<ImageInfo>?
+
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+        icons?.forEach { it.copyResourceInfo(resourceInfo) }
+        return super.unpack(fileLoader, resourceInfo, jsonCoder)
+    }
 }
 
 /**

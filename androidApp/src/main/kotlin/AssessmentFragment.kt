@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.serialization.FileAssessmentProvider
 import org.sagebionetworks.assessmentmodel.serialization.FileLoaderAndroid
+import org.sagebionetworks.assessmentmodel.serialization.ResourceInfoObject
+import org.sagebionetworks.assessmentmodel.serialization.TransformableNodeObject
 
 
 class AssessmentFragment : Fragment() {
@@ -27,9 +29,13 @@ class AssessmentFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val assessmentProvider = FileAssessmentProvider(FileLoaderAndroid(resources))
+        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
+        val fileLoader = FileLoaderAndroid(resources)
+        val resourceInfo = ResourceInfoObject(packageName = "org.sagebionetworks.assessmentmodel.sampleapp")
+        val files = listOf(TransformableNodeObject("test_json", "sample_assessment"))
+        val assessmentProvider = FileAssessmentProvider(files, fileLoader, resourceInfo)
         viewModel = ViewModelProvider(
-                this, AssesmentViewModelFactory()
+                this, AssessmentViewModelFactory()
                 .create("test_json", assessmentProvider))
                 .get(AssessmentViewModel::class.java)
 
