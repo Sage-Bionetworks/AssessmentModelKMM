@@ -24,7 +24,7 @@ class StepFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         stepViewModel = ViewModelProvider(
-                this, SteptViewModelFactory()
+                this, StepViewModelFactory()
                 .create(assessmentViewModel.currentNodeStateLiveData.value!!.nodeState))
                 .get(StepViewModel::class.java)
     }

@@ -1,13 +1,17 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import android.content.res.Resources
+import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class FileLoaderAndroid(val resources: Resources): FileLoader {
+class FileLoaderAndroid(private val resources: Resources, private val defaultPackageName: String): FileLoader {
 
-    override fun loadFile(fileName: String, packageName: String): String {
-        val resourceId = resources.getIdentifier(fileName, "raw", packageName)
+    override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String {
+        val packageName = resourceInfo.packageName ?: defaultPackageName
+        val resourceId = resources.getIdentifier(assetInfo.resourceName, assetInfo.resourceAssetType, packageName)
         val inputStream = resources.openRawResource(resourceId)
         val r = BufferedReader(InputStreamReader(inputStream))
         val total = StringBuilder(inputStream.available())
