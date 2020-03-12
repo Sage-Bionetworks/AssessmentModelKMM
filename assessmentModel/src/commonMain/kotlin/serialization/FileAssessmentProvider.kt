@@ -4,6 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 
 /**
@@ -25,11 +26,29 @@ interface TransformableNode : ContentNode, AssetInfo {
 }
 
 /**
+ * A [TransformableAssessment] is a placeholder that can be used to contain just enough information about an
+ * [Assessment] to allow referencing the resource information needed to load the actual [Assessment] on demand. This
+ * allows using a "placeholder" that can be vended from a different source from the actual assessment. For example,
+ * an active task may be defined using a hardcoded JSON file and included in a module but requested via a
+ * [TransformableAssessment] that is vended from a server.
+ */
+interface TransformableAssessment : Assessment, TransformableNode {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment {
+        val serializer = PolymorphicSerializer(Assessment::class)
+        val jsonString = fileLoader.loadFile(this, resourceInfo)
+        val unpackedNode = jsonCoder.parse(serializer, jsonString)
+        return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
+    }
+
+    override fun getNavigator(): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
+}
+
+/**
  * The [AssessmentGroupInfo] is a way of collecting a group of assessments that are shared within a given module where
  * they should use the same [resourceInfo] to load any of the assessments within the [files] included in this group.
  */
 interface AssessmentGroupInfo {
-    val files: List<TransformableNode>
+    val files: List<Assessment>
     val resourceInfo: ResourceInfo
 }
 
@@ -41,17 +60,14 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
             files.any { it.identifier == assessmentIdentifier }
 
     override fun loadAssessment(assessmentIdentifier: String): Assessment? {
-        val serializer = PolymorphicSerializer(Assessment::class)
         return files.firstOrNull { it.identifier == assessmentIdentifier }?.let {
-            val jsonString = fileLoader.loadFile(it, resourceInfo)
-            val assessment = jsonCoder.parse(serializer, jsonString)
-            return assessment.unpack(fileLoader, resourceInfo, jsonCoder)
+            return it.unpack(fileLoader, resourceInfo, jsonCoder)
         }
     }
 }
 
 @Serializable
-data class AssessmentGroupInfoObject(override val files: List<TransformableNode>,
+data class AssessmentGroupInfoObject(override val files: List<Assessment>,
                                      override var packageName: String? = null,
                                      override var decoderBundle: ResourceBundle? = null,
                                      override val bundleIdentifier: String? = null): ResourceInfo, AssessmentGroupInfo {
@@ -68,4 +84,3 @@ class FileAssessmentProvider(override val fileLoader: FileLoader,
     : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo {
     override var jsonCoder: Json = Serialization.JsonCoder.default
 }
-

@@ -51,6 +51,13 @@ interface AssetInfo {
      */
     val rawFileExtension: String?
 
+    /**
+     * The [versionString] may be a semantic version, timestamp, or sequential revision integer. This can be used to
+     * allow the asset loader to look for a specific version of the asset. It is up to the asset loader to determine
+     * whether or not this is supported.
+     */
+    val versionString: String?
+
     // MARK: Android
 
     /**

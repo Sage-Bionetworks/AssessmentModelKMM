@@ -26,7 +26,8 @@ data class FetchableImage(override val imageName: String,
                           override var decoderBundle: ResourceBundle? = null,
                           override val bundleIdentifier: String? = null,
                           override var packageName: String? = null,
-                          override val rawFileExtension: String? = null) : ImageInfo, ImageTheme
+                          override val rawFileExtension: String? = null,
+                          override val versionString: String? = null) : ImageInfo, ImageTheme
 
 @Serializable
 @SerialName("animated")
@@ -41,7 +42,8 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override var decoderBundle: ResourceBundle? = null,
                          override val bundleIdentifier: String? = null,
                          override var packageName: String? = null,
-                         override val rawFileExtension: String? = null) : AnimatedImageInfo, ImageTheme {
+                         override val rawFileExtension: String? = null,
+                         override val versionString: String? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String
         get() = imageNames.first()
 }

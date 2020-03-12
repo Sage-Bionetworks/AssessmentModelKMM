@@ -29,7 +29,7 @@ class AssessmentFragment : Fragment() {
         // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
         val fileLoader = FileLoaderAndroid(resources)
         val assessmentGroup = AssessmentGroupInfoObject(
-                files = listOf(TransformableNodeObject("test_json", "sample_assessment")),
+                files = listOf(TransformableAssessmentObject("test_json", "sample_assessment")),
                 packageName = "org.sagebionetworks.assessmentmodel.sampleapp")
         val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup)
         viewModel = ViewModelProvider(
