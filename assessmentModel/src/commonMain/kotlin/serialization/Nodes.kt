@@ -2,8 +2,12 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 
@@ -18,9 +22,12 @@ val nodeSerializersModule = SerializersModule {
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
+        TransformableAssessmentObject::class with TransformableAssessmentObject.serializer()
+        TransformableNodeObject::class with TransformableNodeObject.serializer()
     }
     polymorphic(Assessment::class) {
         AssessmentObject::class with AssessmentObject.serializer()
+        TransformableAssessmentObject::class with TransformableAssessmentObject.serializer()
     }
     polymorphic(Question::class) {
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
@@ -32,7 +39,6 @@ val nodeSerializersModule = SerializersModule {
 
 @Serializable
 abstract class NodeObject : ContentNode {
-
     override var comment: String? = null
     override var title: String? = null
     override var subtitle: String? = null
@@ -42,11 +48,28 @@ abstract class NodeObject : ContentNode {
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
     override var buttonMap: Map<ButtonAction, Button> = mapOf()
+
+    open fun copyFrom(original: ContentNode) {
+        this.comment = original.comment
+        this.title = original.title
+        this.subtitle = original.subtitle
+        this.detail = original.detail
+        this.footnote = original.footnote
+        this.hideButtons = original.hideButtons
+        this.buttonMap = original.buttonMap
+    }
 }
 
 @Serializable
 abstract class StepObject : NodeObject(), Step {
     override var spokenInstructions: Map<String, String>? = null
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is Step) {
+            this.spokenInstructions = original.spokenInstructions
+        }
+    }
 }
 
 @Serializable
@@ -54,8 +77,33 @@ abstract class IconNodeObject : NodeObject() {
     @SerialName("icon")
     @Serializable(ImageNameSerializer::class)
     override var imageInfo: FetchableImage? = null
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is IconNodeObject) {
+            this.imageInfo = original.imageInfo
+        }
+    }
 }
 
+/**
+ * TransformableNode
+ */
+
+@Serializable
+@SerialName("transform")
+data class TransformableNodeObject(override val identifier: String,
+                                   override val resourceName: String,
+                                   override val versionString: String? = null,
+                                   override val resultIdentifier: String? = null) : IconNodeObject(), TransformableNode
+
+@Serializable
+@SerialName("transformableAssessment")
+data class TransformableAssessmentObject(override val identifier: String,
+                                         override val resourceName: String,
+                                         override val versionString: String? = null,
+                                         override val estimatedMinutes: Int = 0,
+                                         override val resultIdentifier: String? = null) : IconNodeObject(), TransformableAssessment
 
 /**
  * NodeContainer
@@ -64,6 +112,13 @@ abstract class IconNodeObject : NodeObject() {
 @Serializable
 abstract class NodeContainerObject : IconNodeObject(), NodeContainer {
     override var progressMarkers: List<String>? = null
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is NodeContainer) {
+            this.progressMarkers = original.progressMarkers
+        }
+    }
 }
 
 @Serializable
@@ -75,6 +130,13 @@ data class AssessmentObject(override val identifier: String,
                             override val resultIdentifier: String? = null,
                             override var estimatedMinutes: Int = 0) : NodeContainerObject(), Assessment {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
+        imageInfo?.copyResourceInfo(resourceInfo)
+        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
+        val copy = copy(children = copyChildren)
+        copy.copyFrom(this)
+        return copy
+    }
 }
 
 @Serializable
@@ -82,7 +144,18 @@ data class AssessmentObject(override val identifier: String,
 data class SectionObject(override val identifier: String,
                          @SerialName("steps")
                          override val children: List<Node>,
-                         override val resultIdentifier: String? = null) : NodeContainerObject(), Section
+                         override val resultIdentifier: String? = null) : NodeContainerObject(), Section {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
+        println("In unpack. $this")
+        imageInfo?.copyResourceInfo(resourceInfo)
+        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
+        println("In unpack. copyChildren=$copyChildren")
+        val copy = copy(children = copyChildren)
+        copy.copyFrom(this)
+        println("In unpack. copy=$copy")
+        return copy
+    }
+}
 
 /**
  * ContentNode
@@ -115,6 +188,14 @@ abstract class QuestionObject : StepObject(), Question {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
     override var optional: Boolean = true
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is Question) {
+            this.imageInfo = original.imageInfo
+            this.optional = original.optional
+        }
+    }
 }
 
 @Serializable

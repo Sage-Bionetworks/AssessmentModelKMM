@@ -4,10 +4,12 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 open class NodeTest : NodeSerializationTestHelper() {
 
@@ -86,7 +88,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, restored)
         assertEquals(original.estimatedMinutes, restored.estimatedMinutes)
         assertEquals(original.versionString, restored.versionString)
-
     }
 
     @Test
@@ -516,6 +517,312 @@ open class NodeTest : NodeSerializationTestHelper() {
         val result = original.createResult()
         val expected = BranchNodeResultObject("bar")
         assertEquals(expected, result)
+    }
+
+    /**
+     * TransformableNodeObject
+     */
+
+    class TestFileLoader(val jsonMap: Map<String, String>) : FileLoader {
+        override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String
+                = jsonMap[assetInfo.resourceName] ?: error("JSON mapping not found for $assetInfo")
+    }
+
+    data class TestResourceInfo(override var packageName: String? = null,
+                                override var decoderBundle: ResourceBundle? = null,
+                                override val bundleIdentifier: String? = null) : ResourceInfo
+
+    data class TestResourceBundle(override val bundleIdentifier: String? = null) : ResourceBundle
+
+    @Test
+    fun testTransformableNodeObject_Serialization() {
+        val inputString = """
+            {
+                "identifier": "foo",
+                "resourceName": "foo_test",
+                "type": "transform",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "icon": "fooIcon"
+            }
+            """
+
+        val original = TransformableNodeObject(
+                identifier = "foo",
+                resourceName = "foo_test"
+        )
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.imageInfo = FetchableImage("fooIcon")
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is TransformableNodeObject)
+        assertEqualContentNodes(original, decoded)
+        assertEqualNodes(original, decoded)
+
+        assertTrue(restored is TransformableNodeObject)
+        assertEqualContentNodes(original, restored)
+        assertEqualNodes(original, restored)
+    }
+
+    @Test
+    fun testTransformInstruction() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "instruction",
+               "title": "Hello World!",
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2
+                                  }
+           }
+           """
+        val original = InstructionStepObject(identifier = "foo")
+        original.title = "Hello World!"
+        val originalImageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+        original.imageInfo = originalImageInfo
+
+        val bundle = TestResourceBundle()
+        val packageName = "org.foo.exampleToo"
+        originalImageInfo.decoderBundle = bundle
+        originalImageInfo.packageName = packageName
+
+        val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
+        val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
+        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
+        val decoded = transform.unpack(fileLoader, resourceInfo, jsonCoder)
+
+        assertTrue(decoded is InstructionStepObject)
+        assertEqualStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        val imageInfo = decoded.imageInfo
+        assertNotNull(imageInfo)
+        assertNull(imageInfo.bundleIdentifier)
+        assertSame(bundle, imageInfo.decoderBundle)
+        assertEquals(packageName, imageInfo.packageName)
+    }
+
+
+    @Test
+    fun testTransformSection() {
+        val inputString = """
+            {
+                "identifier": "foobar",
+                "type": "section",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "detail": "Some text. This is a test.",
+                "icon": "fooIcon",
+                "footnote": "This is a footnote.",
+                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+                "shouldHideActions": ["goBackward"],
+                "progressMarkers": ["step1","step2"],
+                "steps": [
+                    {
+                        "identifier": "step1",
+                        "type": "instruction",
+                        "title": "Step 1"
+                    },
+                    {
+                        "identifier": "step2",
+                        "type": "instruction",
+                        "title": "Step 2"
+                    }
+                ]
+            }
+            """
+
+        val original = SectionObject(
+                identifier = "foobar",
+                children = listOf(
+                        buildInstructionStep("step1", "Step 1"),
+                        buildInstructionStep("step2", "Step 2")))
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
+        original.buttonMap = mapOf(
+                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+        original.progressMarkers = listOf("step1", "step2")
+        val originalImageInfo = FetchableImage("fooIcon")
+        original.imageInfo = originalImageInfo
+
+        val bundle = TestResourceBundle()
+        val packageName = "org.foo.exampleToo"
+        originalImageInfo.decoderBundle = bundle
+        originalImageInfo.packageName = packageName
+
+        val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
+        val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
+        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
+        val decoded = transform.unpack(fileLoader, resourceInfo, jsonCoder)
+
+        assertTrue(decoded is SectionObject)
+        assertContainerNode(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        val imageInfo = decoded.imageInfo
+        assertNotNull(imageInfo)
+        assertNull(imageInfo.bundleIdentifier)
+        assertSame(bundle, imageInfo.decoderBundle)
+        assertEquals(packageName, imageInfo.packageName)
+    }
+
+    @Test
+    fun testTransformableAssessmentObject_Serialization_Node() {
+        val inputString = """
+            {
+                "identifier": "foo",
+                "resourceName": "foo_test",
+                "type": "transformableAssessment",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "icon": "fooIcon"
+            }
+            """
+
+        val original = TransformableAssessmentObject(
+                identifier = "foo",
+                resourceName = "foo_test"
+        )
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.imageInfo = FetchableImage("fooIcon")
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is TransformableAssessmentObject)
+        assertEqualContentNodes(original, decoded)
+        assertEqualNodes(original, decoded)
+
+        assertTrue(restored is TransformableAssessmentObject)
+        assertEqualContentNodes(original, restored)
+        assertEqualNodes(original, restored)
+    }
+
+    @Test
+    fun testTransformableAssessmentObject_Serialization_Assessment() {
+        val inputString = """
+            {
+                "identifier": "foo",
+                "resourceName": "foo_test",
+                "type": "transformableAssessment",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "icon": "fooIcon"
+            }
+            """
+
+        val original = TransformableAssessmentObject(
+                identifier = "foo",
+                resourceName = "foo_test"
+        )
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.imageInfo = FetchableImage("fooIcon")
+
+        val serializer = PolymorphicSerializer(Assessment::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is TransformableAssessmentObject)
+        assertEqualContentNodes(original, decoded)
+        assertEqualNodes(original, decoded)
+
+        assertTrue(restored is TransformableAssessmentObject)
+        assertEqualContentNodes(original, restored)
+        assertEqualNodes(original, restored)
+    }
+
+    @Test
+    fun testTransformAssessment() {
+        val inputString = """
+            {
+                "type": "assessment",
+                "identifier": "foo",
+                "versionString": "1.2.3",
+                "resultIdentifier":"bar",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "icon": "fooIcon",
+                "steps": [
+                    {
+                        "identifier": "step1",
+                        "type": "instruction",
+                        "title": "Step 1",
+                        "image": {"type":"fetchable","imageName":"step1Image"}
+                    },
+                    {
+                        "identifier": "step2",
+                        "type": "instruction",
+                        "title": "Step 2"
+                    }
+                ]
+            }
+            """
+
+        val bundle = TestResourceBundle()
+        val packageName = "org.foo.exampleToo"
+
+        val originalStep1 = buildInstructionStep("step1", "Step 1")
+        val originalStep1Image = FetchableImage("step1Image")
+        originalStep1.imageInfo = originalStep1Image
+        originalStep1Image.decoderBundle = bundle
+        originalStep1Image.packageName = packageName
+
+        val original = AssessmentObject(
+                identifier = "foo",
+                resultIdentifier = "bar",
+                versionString = "1.2.3",
+                children = listOf(
+                        originalStep1,
+                        buildInstructionStep("step2", "Step 2")))
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        val originalImageInfo = FetchableImage("fooIcon")
+        original.imageInfo = originalImageInfo
+        originalImageInfo.decoderBundle = bundle
+        originalImageInfo.packageName = packageName
+
+        val transform = TransformableAssessmentObject(identifier = "foo", resourceName = "foo_test")
+        val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
+        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
+        val decoded = transform.unpack(fileLoader, resourceInfo, jsonCoder)
+
+        assertTrue(decoded is AssessmentObject)
+        assertContainerNode(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        val imageInfo = decoded.imageInfo
+        assertNotNull(imageInfo)
+        assertNull(imageInfo.bundleIdentifier)
+        assertSame(bundle, imageInfo.decoderBundle)
+        assertEquals(packageName, imageInfo.packageName)
+
+        val step1 = decoded.children.first()
+        assertTrue(step1 is InstructionStepObject)
+        val step1Image = step1.imageInfo
+        assertNotNull(step1Image)
+        assertSame(bundle, step1Image.decoderBundle)
+        assertEquals(packageName, step1Image.packageName)
     }
 }
 

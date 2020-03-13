@@ -4,6 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
 
 // TODO: syoung 01/13/2020 Figure out how to carry the resource bundle as a part of decoding an image and/or how to load an image from a Kotlin resource directory.
 
@@ -20,7 +21,13 @@ data class FetchableImage(override val imageName: String,
                           override val label: String? = null,
                           @SerialName("placementType")
                           override val imagePlacement: ImagePlacement? = null,
-                          override val size: Size? = null) : ImageInfo, ImageTheme
+                          override val size: Size? = null,
+                          @Transient
+                          override var decoderBundle: ResourceBundle? = null,
+                          override val bundleIdentifier: String? = null,
+                          override var packageName: String? = null,
+                          override val rawFileExtension: String? = null,
+                          override val versionString: String? = null) : ImageInfo, ImageTheme
 
 @Serializable
 @SerialName("animated")
@@ -30,7 +37,13 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val label: String? = null,
                          @SerialName("placementType")
                          override val imagePlacement: ImagePlacement? = null,
-                         override val size: Size? = null) : AnimatedImageInfo, ImageTheme {
+                         override val size: Size? = null,
+                         @Transient
+                         override var decoderBundle: ResourceBundle? = null,
+                         override val bundleIdentifier: String? = null,
+                         override var packageName: String? = null,
+                         override val rawFileExtension: String? = null,
+                         override val versionString: String? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String
         get() = imageNames.first()
 }

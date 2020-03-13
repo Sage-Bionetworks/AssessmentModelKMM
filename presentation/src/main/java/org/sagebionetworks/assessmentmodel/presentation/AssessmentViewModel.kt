@@ -7,19 +7,19 @@ import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
-class AssessmentViewModel(val assesmentIdentifier: String, val assessmentProvider: AssessmentProvider) : ViewModel(), RootNodeController {
+class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvider: AssessmentProvider) : ViewModel(), RootNodeController {
 
     //TODO: This should probably be done asynchronously -nbrown 02/06/20
     private var _assessment: Assessment? = null
-    fun loadAssesment(): Assessment? {
+    fun loadAssessment(): Assessment? {
         if (_assessment == null) {
-            _assessment = assessmentProvider.loadAssessment(assesmentIdentifier)
+            _assessment = assessmentProvider.loadAssessment(assessmentIdentifier)
         }
         return _assessment
     }
 
     private var isStarted = false
-    private val assessmentNodeState = BranchNodeStateImpl(loadAssesment()!!, null)
+    private val assessmentNodeState = BranchNodeStateImpl(loadAssessment()!!, null)
     private val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
     val currentNodeStateLiveData: LiveData<ShowNodeState> = currentNodeStateMutableLiveData
 
@@ -86,18 +86,15 @@ class AssessmentViewModel(val assesmentIdentifier: String, val assessmentProvide
  * Providing ViewModelProvider.Factory allows us to inject dependencies and pass parameters
  * to an instance since the Android framework controls the instantiation of ViewModels.
  */
-class AssesmentViewModelFactory() {
+class AssessmentViewModelFactory() {
 
-    fun create(assesmentIdentifier: String, assessmentProvider: AssessmentProvider): ViewModelProvider.Factory {
+    fun create(assessmentIdentifier: String, assessmentProvider: AssessmentProvider): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(AssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return AssessmentViewModel(
-                        assesmentIdentifier,
-                        assessmentProvider
-                    ) as T
+                    return AssessmentViewModel(assessmentIdentifier, assessmentProvider) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

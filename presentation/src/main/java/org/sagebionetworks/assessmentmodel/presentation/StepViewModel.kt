@@ -17,7 +17,7 @@ class StepViewModel(val nodeState: NodeState) : ViewModel() {
  * Providing ViewModelProvider.Factory allows us to inject dependencies and pass parameters
  * to an instance since the Android framework controls the instantiation of ViewModels.
  */
-class SteptViewModelFactory() {
+class StepViewModelFactory() {
 
     fun create(nodeState: NodeState): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
