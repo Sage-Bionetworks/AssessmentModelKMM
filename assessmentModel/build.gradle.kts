@@ -42,6 +42,7 @@ kotlin {
    val iosTarget = if(buildForDevice) iosArm64("ios") else iosX64("ios")
    iosTarget.binaries {
       framework {
+          baseName = "AssessmentModel"
          // Disable bitcode embedding for the simulator build.
          if (!buildForDevice) {
             embedBitcode("disable")
@@ -83,8 +84,8 @@ tasks.register("copyFramework") {
         copy {
             from(srcFile.parent)
             into(targetDir)
-            include( "assessmentModel.framework/**")
-            include("assessmentModel.framework.dSYM")
+            include( "AssessmentModel.framework/**")
+            include("AssessmentModel.framework.dSYM")
         }
     }
 }

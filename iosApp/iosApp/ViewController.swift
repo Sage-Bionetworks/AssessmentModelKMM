@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import assessmentModel
+import AssessmentModel
 
 class ViewController: UIViewController {
 
