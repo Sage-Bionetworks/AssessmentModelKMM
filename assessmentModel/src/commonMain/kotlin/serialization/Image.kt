@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
@@ -60,12 +59,12 @@ interface ImageTheme : DrawableLayout {
 @Serializer(forClass = FetchableImage::class)
 object ImageNameSerializer : KSerializer<FetchableImage> {
     override val descriptor: SerialDescriptor
-            = StringDescriptor.withName("ImageName")
+            = PrimitiveDescriptor("ImageName", PrimitiveKind.STRING)
     override fun deserialize(decoder: Decoder): FetchableImage {
         return FetchableImage(decoder.decodeString())
     }
-    override fun serialize(encoder: Encoder, obj: FetchableImage) {
-        encoder.encodeString(obj.imageName)
+    override fun serialize(encoder: Encoder, value: FetchableImage) {
+        encoder.encodeString(value.imageName)
     }
 }
 
@@ -138,13 +137,13 @@ sealed class ImagePlacement() : StringEnum {
     @Serializer(forClass = ImagePlacement::class)
     companion object : KSerializer<ImagePlacement> {
         override val descriptor: SerialDescriptor
-                = StringDescriptor.withName("ImagePlacement")
+                = PrimitiveDescriptor("ImagePlacement", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ImagePlacement {
             val name = decoder.decodeString()
             return valueOf(name)
         }
-        override fun serialize(encoder: Encoder, obj: ImagePlacement) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: ImagePlacement) {
+            encoder.encodeString(value.name)
         }
         fun valueOf(name: String): ImagePlacement
                 = Standard.valueOf(name) ?: Custom(name)

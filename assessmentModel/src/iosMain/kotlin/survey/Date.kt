@@ -56,7 +56,7 @@ actual class DateTime  : Comparable<DateTime> {
         get() = formatter.dateFormat
 
     actual fun getDateTimeReference(): DateTimeReference
-        = formatter.stringFromDate(dateBehind)?.let { DateTimeReference(it, timeZone?.name) }
+        = formatter.stringFromDate(dateBehind).let { DateTimeReference(it, timeZone?.name) }
 
     @ExperimentalUnsignedTypes
     actual fun getDateTimeComponents(): DateTimeComponents {

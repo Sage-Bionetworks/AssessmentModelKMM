@@ -45,7 +45,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("default", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -76,7 +76,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("navigation", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -114,7 +114,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -146,7 +146,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("\$remindMeLaterButtonTitle\$", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -183,7 +183,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("webView", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -246,7 +246,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("videoView", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)

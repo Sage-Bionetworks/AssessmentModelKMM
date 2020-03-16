@@ -64,7 +64,7 @@ open class ResultTest {
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
-        val jsonWrapper = Json.nonstrict.parseJson(jsonString).jsonObject
+        val jsonWrapper = Json.parseJson(jsonString).jsonObject
         assertEquals("testResult", jsonWrapper.getPrimitiveOrNull("identifier")?.content)
         val pathHistory = jsonWrapper.getArrayOrNull("stepHistory")
         assertNotNull(pathHistory)
@@ -108,7 +108,7 @@ open class ResultTest {
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
-        val jsonWrapper = Json.nonstrict.parseJson(jsonString).jsonObject
+        val jsonWrapper = Json.parseJson(jsonString).jsonObject
         assertEquals("testResult", jsonWrapper.getPrimitiveOrNull("identifier")?.content)
         assertEquals("4cb0580-3cdb-11ea-b77f-2e728ce88125", jsonWrapper.getPrimitiveOrNull("taskRunUUID")?.content)
         assertEquals("2020-01-21T12:00:00.000+7000", jsonWrapper.getPrimitiveOrNull("startDate")?.content)
