@@ -68,7 +68,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -280,7 +280,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 imagePlacement = ImagePlacement.Standard.TopBackground,
@@ -476,7 +476,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -523,7 +523,7 @@ open class NodeTest : NodeSerializationTestHelper() {
      * TransformableNodeObject
      */
 
-    class TestFileLoader(val jsonMap: Map<String, String>) : FileLoader {
+    class TestFileLoader(private val jsonMap: Map<String, String>) : FileLoader {
         override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String
                 = jsonMap[assetInfo.resourceName] ?: error("JSON mapping not found for $assetInfo")
     }
@@ -656,7 +656,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.progressMarkers = listOf("step1", "step2")
         val originalImageInfo = FetchableImage("fooIcon")
         original.imageInfo = originalImageInfo

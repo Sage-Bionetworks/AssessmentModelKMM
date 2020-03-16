@@ -88,7 +88,7 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.DECIMAL
 
-    override val textFieldOptions: TextFieldOptionsObject
+    override val textFieldOptions: TextFieldOptions
         get() = TextFieldOptionsObject.DecimalEntryOptions
     override fun buildTextValidator(): TextValidator<Double> = DoubleFormatter(formatOptions)
 }
@@ -97,12 +97,15 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
 @SerialName("integer")
 data class IntegerTextInputItemObject(@SerialName("identifier")
                                       override val resultIdentifier: String? = null,
-                                      override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions,
+                                      @SerialName("textFieldOptions")
+                                      var textOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions,
                                       var formatOptions: IntFormatOptions = IntFormatOptions())
     : InputItemObject(), KeyboardTextInputItem<Int> {
     override val answerType: AnswerType
         get() = AnswerType.INTEGER
 
+    override val textFieldOptions: TextFieldOptions
+        get() = textOptions
     override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }
 
@@ -110,11 +113,15 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
 @SerialName("string")
 data class StringTextInputItemObject(@SerialName("identifier")
                                      override val resultIdentifier: String? = null,
-                                     override var textFieldOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
+                                     @SerialName("textFieldOptions")
+                                     var textOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
                                      var regExValidator: RegExValidator? = null)
     : InputItemObject(), KeyboardTextInputItem<String> {
     override val answerType: AnswerType
         get() = AnswerType.STRING
+
+    override val textFieldOptions: TextFieldOptions
+        get() = textOptions
 
     override fun buildTextValidator(): TextValidator<String> = regExValidator ?: PassThruTextValidator
 }
@@ -139,7 +146,7 @@ data class YearTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.INTEGER
 
-    override val textFieldOptions: TextFieldOptionsObject
+    override val textFieldOptions: TextFieldOptions
         get() = TextFieldOptionsObject.NumberEntryOptions
     override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }

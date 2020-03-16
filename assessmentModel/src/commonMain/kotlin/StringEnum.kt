@@ -5,14 +5,18 @@ package org.sagebionetworks.assessmentmodel
  */
 interface StringEnum {
     val name: String
+    val serialName: String?
+        get() = null
 }
+
+fun StringEnum.matchingName() = serialName ?: name
 
 /**
  * This framework considers string enums to be case insensitive. This is to allow for different languages to support
  * different conventions.
  */
 fun <T> Array<T>.matching(name: String) where T : StringEnum =
-        this.firstOrNull { it.name.toLowerCase() == name.toLowerCase() }
+        this.firstOrNull { it.matchingName().toLowerCase() == name.toLowerCase() }
 
 /**
  * An interface for sealed classes to use to define "enum" behavior.

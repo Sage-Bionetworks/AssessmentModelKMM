@@ -4,10 +4,8 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.plus
 import org.sagebionetworks.assessmentmodel.*
 
 
@@ -23,37 +21,43 @@ val buttonSerializersModule = SerializersModule {
     }
 }
 
+interface SerializableButton : Button {
+    val icon: FetchableImage?
+    override val imageInfo: ImageInfo?
+        get() = icon
+}
+
 @Serializable
 @SerialName("default")
 data class ButtonObject(override val buttonTitle: String? = null,
                         @SerialName("iconName")
-                        override val imageInfo: FetchableImage? = null) : Button
+                        override val icon: FetchableImage? = null) : SerializableButton
 
 @Serializable
 @SerialName("navigation")
 data class NavigationButtonObject(override val buttonTitle: String? = null,
                                   @SerialName("iconName")
-                                  override val imageInfo: FetchableImage? = null,
-                                  override val skipToIdentifier: String) : NavigationButton
+                                  override val icon: FetchableImage? = null,
+                                  override val skipToIdentifier: String) : SerializableButton, NavigationButton
 
 @Serializable
 @SerialName("reminder")
 data class ReminderButtonObject(override val buttonTitle: String? = "\$remindMeLaterButtonTitle\$", // TODO: syoung 01/21/2020 Implement a localization strategy
                                 @SerialName("iconName")
-                                override val imageInfo: FetchableImage? = null,
+                                override val icon: FetchableImage? = null,
                                 override val reminderIdentifier: String,
                                 override val reminderPrompt: String? = null,
-                                override val reminderAlert: String? = null) : ReminderButton
+                                override val reminderAlert: String? = null) : SerializableButton, ReminderButton
 
 @Serializable
 @SerialName("webView")
 data class WebViewButtonObject(override val buttonTitle: String? = null,
                                @SerialName("iconName")
-                               override val imageInfo: FetchableImage? = null,
+                               override val icon: FetchableImage? = null,
                                override val url: String,
                                override val title: String? = null,
                                val usesBackButton: Boolean? = null,
-                               val closeButtonTitle: String? = null) : WebViewButton {
+                               val closeButtonTitle: String? = null) : SerializableButton, WebViewButton {
     override val backButtonStyle: ButtonStyle
         get() = closeButtonTitle?.let {
             return ButtonStyle.Footer(it) }
@@ -66,6 +70,6 @@ data class WebViewButtonObject(override val buttonTitle: String? = null,
 @SerialName("videoView")
 data class VideoViewButtonObject(override val buttonTitle: String? = null,
                                  @SerialName("iconName")
-                                 override val imageInfo: FetchableImage? = null,
+                                 override val icon: FetchableImage? = null,
                                  override val url: String,
-                                 override val title: String? = null) : VideoViewButton
+                                 override val title: String? = null) : SerializableButton, VideoViewButton
