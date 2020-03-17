@@ -18,7 +18,8 @@ object Serialization {
                 imageSerializersModule +
                 nodeSerializersModule +
                 resultSerializersModule +
-                        SerializersModule {}    // Marker for the end of the list. Used to make github read more cleanly.
+                fileProviderSerializersModule +
+                SerializersModule {}    // Marker for the end of the list. Used to make github read more cleanly.
 
     }
     object JsonCoder {

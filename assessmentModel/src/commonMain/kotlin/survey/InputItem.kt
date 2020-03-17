@@ -140,6 +140,12 @@ interface ChoiceOption {
     val fieldLabel: String?
 
     /**
+     * Additional detail shown below the [fieldLabel]
+     */
+    val detail: String?
+        get() = null
+
+    /**
      * An image that can be used to represent this choice.
      */
     val icon: FetchableImage?

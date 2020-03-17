@@ -152,12 +152,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Boolean() {
-        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(true),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -171,12 +172,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_String() {
-        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive("foo"),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -190,12 +192,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Int() {
-        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(1),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)

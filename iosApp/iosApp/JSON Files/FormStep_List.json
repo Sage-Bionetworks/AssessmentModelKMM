@@ -1,0 +1,71 @@
+{
+    "identifier": "list",
+    "type": "assessment",
+    "steps": [
+              {
+                  "identifier": "selectOne",
+                  "type": "stringChoiceQuestion",
+                  "title": "Single Choice",
+                  "detail": "Select a single option",
+                  "uiHint": "list",
+                  "singleChoice": true,
+                  "choices": ["Alfa", "Bravo", "Charlie", "Delta", "Echo"]
+              },
+              {
+                  "identifier": "selectMultiple",
+                  "type": "choiceQuestion",
+                  "title": "Multiple Choice",
+                  "detail": "Select as many as you want",
+                  "uiHint": "list",
+                  "singleChoice": false,
+                  "baseType": "integer",
+                  "choices": [
+                          {"text": "Alpha","value": 1},
+                          {"text": "Beta","value": 2},
+                          {"text": "Gamma","value": 3},
+                          {"text": "None of the above", "value": 0, "exclusive": true }
+                      ]
+              },
+              {
+                  "identifier": "imageList",
+                  "type": "choiceQuestion",
+                  "title": "Single Choice with Images",
+                  "detail": "Select a single option",
+                  "uiHint": "list",
+                  "singleChoice": true,
+                  "baseType": "integer",
+                  "choices": [
+                          {
+                          "text": "delighted",
+                          "detail": "Nothing could be better!",
+                          "value": 1,
+                          "icon": "moodScale1"
+                          },
+                          {
+                          "text": "good",
+                          "detail": "Life is good.",
+                          "value": 2,
+                          "icon": "moodScale2"
+                          },
+                          {
+                          "text": "so-so",
+                          "detail": "Things are okay, I guess.",
+                          "value": 3,
+                          "icon": "moodScale3"
+                          },
+                          {
+                          "text": "sad",
+                          "detail": "I'm feeling a bit down.",
+                          "value": 4,
+                          "icon": "moodScale4"
+                          },
+                          {
+                          "text": "miserable",
+                          "detail": "I cry into my pillow every night.",
+                          "value": 5,
+                          "icon": "moodScale5"
+                          }
+                      ]
+              }
+    ]
+}

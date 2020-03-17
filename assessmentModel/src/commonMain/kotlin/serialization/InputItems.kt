@@ -208,7 +208,8 @@ data class ChoiceOptionObject(val value: JsonElement = JsonNull,
                               override val fieldLabel: String? = null,
                               @Serializable(ImageNameSerializer::class)
                               override val icon: FetchableImage? = null,
-                              override val exclusive: Boolean = false) : ChoiceOption {
+                              override val exclusive: Boolean = false,
+                              override val detail: String? = null) : ChoiceOption {
     override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
 }
 

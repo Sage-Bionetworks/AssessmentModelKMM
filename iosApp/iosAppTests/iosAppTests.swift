@@ -36,5 +36,17 @@ import AssessmentModel
 
 class iosAppTests: XCTestCase {
     
-
+    func testAssessments_Decoding() {
+        do {
+            let group = AssessmentGroupLoader(resourceName: "Assessments", bundle: .main)
+            try group.load()
+            XCTAssertNotNil(group.assessmentGroupInfo)
+            try group.assessments.forEach { loader in
+                let assessment = try loader.loadAssessment()
+                print(assessment)
+            }
+        } catch let err {
+            XCTFail("Failed to decode files: \(err)")
+        }
+    }
 }

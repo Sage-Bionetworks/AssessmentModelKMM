@@ -4,10 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
 
@@ -529,10 +526,10 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     data class TestResourceInfo(override var packageName: String? = null,
-                                override var decoderBundle: ResourceBundle? = null,
+                                override var decoderBundle: Any? = null,
                                 override val bundleIdentifier: String? = null) : ResourceInfo
 
-    data class TestResourceBundle(override val bundleIdentifier: String? = null) : ResourceBundle
+    data class TestResourceBundle(val bundleIdentifier: String? = null)
 
     @Test
     fun testTransformableNodeObject_Serialization() {
