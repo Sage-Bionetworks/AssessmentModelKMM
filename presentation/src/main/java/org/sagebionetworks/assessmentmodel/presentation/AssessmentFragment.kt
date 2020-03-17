@@ -60,7 +60,7 @@ class AssessmentFragment : Fragment() {
     private fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
         if (step is SimpleQuestion) {
-            return QuestionStepFragment()
+            return TextQuestionStepFragment()
         } else {
             return InstructionStepFragment()
         }

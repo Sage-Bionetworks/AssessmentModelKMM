@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.navigation.NodeState
-import org.sagebionetworks.assessmentmodel.presentation.databinding.StepFragmentBinding
 
 abstract class StepFragment: Fragment() {
 

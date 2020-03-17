@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StepFragment">
+    tools:context=".InstructionStepFragment">
 
     <include layout="@layout/include_question_header"
         android:id="@+id/question_header"
@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
 
-    <include layout="@layout/include_question_text_input"
+    <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
         android:id="@+id/question_input"
-        android:layout_below="@id/question_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/question_header"/>
 
     <TextView
             android:id="@+id/textView"

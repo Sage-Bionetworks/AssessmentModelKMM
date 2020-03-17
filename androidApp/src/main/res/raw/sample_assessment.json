@@ -21,9 +21,9 @@
       "title": "Step 1"
     },
     {
-      "identifier": "foo",
+      "identifier": "stringQuestion",
       "type": "simpleQuestion",
-      "title": "Hello World!",
+      "title": "String question",
       "subtitle": "Question subtitle",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
@@ -33,7 +33,23 @@
         "animationDuration" : 2
       },
       "optional": false,
-      "inputItem":{"type" : "year"},
+      "inputItem":{"type" : "string", "placeholder" :  "Enter text"},
+      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
+      "identifier": "yearQuestion",
+      "type": "simpleQuestion",
+      "title": "Birth year",
+      "subtitle": "Enter year",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": false,
+      "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
     },
     {

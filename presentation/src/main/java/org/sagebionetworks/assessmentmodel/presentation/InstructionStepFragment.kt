@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.navigation.NodeState
-import org.sagebionetworks.assessmentmodel.presentation.databinding.StepFragmentBinding
+import org.sagebionetworks.assessmentmodel.presentation.databinding.InstructionStepFragmentBinding
 
 open class InstructionStepFragment: StepFragment() {
 
-    private var _binding: StepFragmentBinding? = null
+    private var _binding: InstructionStepFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
@@ -26,7 +26,7 @@ open class InstructionStepFragment: StepFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = StepFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = InstructionStepFragmentBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

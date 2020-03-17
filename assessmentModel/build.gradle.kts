@@ -53,7 +53,7 @@ kotlin {
       commonMain {
          dependencies {
             implementation( "org.jetbrains.kotlin:kotlin-stdlib-common")
-             implementation ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.14.0")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.14.0")
          }
       }
       commonTest {
@@ -64,10 +64,10 @@ kotlin {
       }
        sourceSets["androidLibMain"].dependencies {
            implementation("org.jetbrains.kotlin:kotlin-stdlib")
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
        }
        sourceSets["iosMain"].dependencies {
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.14.0")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.14.0")
        }
 
     }
