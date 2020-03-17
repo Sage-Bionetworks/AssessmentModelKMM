@@ -1,6 +1,6 @@
 //
-//  iosAppTests.swift
-//  iosAppTests
+//  MainView.swift
+//  iosApp
 //
 //  Copyright © 2019 Sage Bionetworks. All rights reserved.
 //
@@ -31,10 +31,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import XCTest
-import AssessmentModel
 
-class iosAppTests: XCTestCase {
-    
+import SwiftUI
 
+struct MainView: View {
+    var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    }
+}
+
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView()
+    }
 }
