@@ -60,7 +60,6 @@ interface TransformableAssessment : Assessment, TransformableNode {
 interface AssessmentGroupInfo {
     val files: List<Assessment>
     val resourceInfo: ResourceInfo
-
 }
 
 interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {

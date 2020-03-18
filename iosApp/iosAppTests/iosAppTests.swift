@@ -38,11 +38,10 @@ class iosAppTests: XCTestCase {
     
     func testAssessments_Decoding() {
         do {
-            let group = AssessmentGroupLoader(resourceName: "Assessments", bundle: .main)
-            try group.load()
-            XCTAssertNotNil(group.assessmentGroupInfo)
-            try group.assessments.forEach { loader in
-                let assessment = try loader.loadAssessment()
+            let loader = AssessmentGroupFileLoader(resourceName: "Assessments", bundle: .main)
+            let group = try loader.decodeObject()
+            try group.assessments.forEach { assessmentLoader in
+                let assessment = try assessmentLoader.decodeObject()
                 print(assessment)
             }
         } catch let err {
