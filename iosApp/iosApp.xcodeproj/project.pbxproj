@@ -13,16 +13,11 @@
 		F861D7F6207FA4100085E80D /* iosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861D7F5207FA4100085E80D /* iosAppTests.swift */; };
 		FF1482B12421586900190A2D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1482B02421586900190A2D /* MainView.swift */; };
 		FF1482B324215F3E00190A2D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1482B224215F3E00190A2D /* SceneDelegate.swift */; };
-		FF3211F12421719B00917BEA /* AssessmentModelUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF3211E82421719A00917BEA /* AssessmentModelUI.framework */; };
-		FF3211F82421719B00917BEA /* AssessmentModelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3211F72421719B00917BEA /* AssessmentModelUITests.swift */; };
-		FF3211FA2421719B00917BEA /* AssessmentModelUI.h in Headers */ = {isa = PBXBuildFile; fileRef = FF3211EA2421719B00917BEA /* AssessmentModelUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FF3211FD2421719B00917BEA /* AssessmentModelUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF3211E82421719A00917BEA /* AssessmentModelUI.framework */; };
-		FF3211FE2421719B00917BEA /* AssessmentModelUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FF3211E82421719A00917BEA /* AssessmentModelUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FF321206242171C000917BEA /* AssessmentModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* AssessmentModel.framework */; };
-		FF321207242171C000917BEA /* AssessmentModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* AssessmentModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FF32121A2421734700917BEA /* FormStep_List.json in Resources */ = {isa = PBXBuildFile; fileRef = FF3212112421734700917BEA /* FormStep_List.json */; };
 		FF32121D2421734700917BEA /* FormStep_Textfield.json in Resources */ = {isa = PBXBuildFile; fileRef = FF3212142421734700917BEA /* FormStep_Textfield.json */; };
 		FF32121F2421739A00917BEA /* Assessments.json in Resources */ = {isa = PBXBuildFile; fileRef = FF32121E2421739A00917BEA /* Assessments.json */; };
+		FF32122124229A1100917BEA /* AssessmentModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* AssessmentModel.framework */; };
+		FF32122224229A1100917BEA /* AssessmentModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F861D805207FA4200085E80D /* AssessmentModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,28 +28,7 @@
 			remoteGlobalIDString = F861D7DC207FA40F0085E80D;
 			remoteInfo = iosApp;
 		};
-		FF3211F22421719B00917BEA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F861D7D5207FA40F0085E80D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FF3211E72421719A00917BEA;
-			remoteInfo = AssessmentModelUI;
-		};
-		FF3211F42421719B00917BEA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F861D7D5207FA40F0085E80D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F861D7DC207FA40F0085E80D;
-			remoteInfo = iosApp;
-		};
-		FF3211FB2421719B00917BEA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F861D7D5207FA40F0085E80D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FF3211E72421719A00917BEA;
-			remoteInfo = AssessmentModelUI;
-		};
-		FF321208242171C000917BEA /* PBXContainerItemProxy */ = {
+		FF32122324229A1100917BEA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F861D7D5207FA40F0085E80D /* Project object */;
 			proxyType = 1;
@@ -70,18 +44,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FF3211FE2421719B00917BEA /* AssessmentModelUI.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF32120A242171C000917BEA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				FF321207242171C000917BEA /* AssessmentModel.framework in Embed Frameworks */,
+				FF32122224229A1100917BEA /* AssessmentModel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,12 +64,6 @@
 		F861D813207FA4520085E80D /* assessmentModel */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assessmentModel; path = ../assessmentModel; sourceTree = "<group>"; };
 		FF1482B02421586900190A2D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		FF1482B224215F3E00190A2D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FF3211E82421719A00917BEA /* AssessmentModelUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AssessmentModelUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		FF3211EA2421719B00917BEA /* AssessmentModelUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AssessmentModelUI.h; sourceTree = "<group>"; };
-		FF3211EB2421719B00917BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FF3211F02421719B00917BEA /* AssessmentModelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AssessmentModelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		FF3211F72421719B00917BEA /* AssessmentModelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentModelUITests.swift; sourceTree = "<group>"; };
-		FF3211F92421719B00917BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FF3212112421734700917BEA /* FormStep_List.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FormStep_List.json; sourceTree = "<group>"; };
 		FF3212142421734700917BEA /* FormStep_Textfield.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FormStep_Textfield.json; sourceTree = "<group>"; };
 		FF32121E2421739A00917BEA /* Assessments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Assessments.json; sourceTree = "<group>"; };
@@ -117,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF3211FD2421719B00917BEA /* AssessmentModelUI.framework in Frameworks */,
+				FF32122124229A1100917BEA /* AssessmentModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,22 +82,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF3211E52421719A00917BEA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FF321206242171C000917BEA /* AssessmentModel.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF3211ED2421719B00917BEA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FF3211F12421719B00917BEA /* AssessmentModelUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,8 +94,6 @@
 				F861D813207FA4520085E80D /* assessmentModel */,
 				F861D7DF207FA40F0085E80D /* iosApp */,
 				F861D7F4207FA4100085E80D /* iosAppTests */,
-				FF3211E92421719B00917BEA /* AssessmentModelUI */,
-				FF3211F62421719B00917BEA /* AssessmentModelUITests */,
 				F861D7DE207FA40F0085E80D /* Products */,
 				FF321205242171C000917BEA /* Frameworks */,
 			);
@@ -166,8 +105,6 @@
 				F861D7DD207FA40F0085E80D /* iosApp.app */,
 				F861D7F1207FA4100085E80D /* iosAppTests.xctest */,
 				F861D805207FA4200085E80D /* AssessmentModel.framework */,
-				FF3211E82421719A00917BEA /* AssessmentModelUI.framework */,
-				FF3211F02421719B00917BEA /* AssessmentModelUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -195,25 +132,6 @@
 			path = iosAppTests;
 			sourceTree = "<group>";
 		};
-		FF3211E92421719B00917BEA /* AssessmentModelUI */ = {
-			isa = PBXGroup;
-			children = (
-				FF3211EA2421719B00917BEA /* AssessmentModelUI.h */,
-				FF3211EB2421719B00917BEA /* Info.plist */,
-				FF3212202421BE0600917BEA /* Views */,
-			);
-			path = AssessmentModelUI;
-			sourceTree = "<group>";
-		};
-		FF3211F62421719B00917BEA /* AssessmentModelUITests */ = {
-			isa = PBXGroup;
-			children = (
-				FF3211F72421719B00917BEA /* AssessmentModelUITests.swift */,
-				FF3211F92421719B00917BEA /* Info.plist */,
-			);
-			path = AssessmentModelUITests;
-			sourceTree = "<group>";
-		};
 		FF321205242171C000917BEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -231,25 +149,7 @@
 			path = "JSON Files";
 			sourceTree = "<group>";
 		};
-		FF3212202421BE0600917BEA /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		FF3211E32421719A00917BEA /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FF3211FA2421719B00917BEA /* AssessmentModelUI.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		F861D7DC207FA40F0085E80D /* iosApp */ = {
@@ -264,7 +164,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				FF3211FC2421719B00917BEA /* PBXTargetDependency */,
+				FF32122424229A1100917BEA /* PBXTargetDependency */,
 			);
 			name = iosApp;
 			productName = iosApp;
@@ -304,45 +204,6 @@
 			productReference = F861D805207FA4200085E80D /* AssessmentModel.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		FF3211E72421719A00917BEA /* AssessmentModelUI */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FF3212032421719B00917BEA /* Build configuration list for PBXNativeTarget "AssessmentModelUI" */;
-			buildPhases = (
-				FF3211E32421719A00917BEA /* Headers */,
-				FF3211E42421719A00917BEA /* Sources */,
-				FF3211E52421719A00917BEA /* Frameworks */,
-				FF3211E62421719A00917BEA /* Resources */,
-				FF32120A242171C000917BEA /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				FF321209242171C000917BEA /* PBXTargetDependency */,
-			);
-			name = AssessmentModelUI;
-			productName = AssessmentModelUI;
-			productReference = FF3211E82421719A00917BEA /* AssessmentModelUI.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		FF3211EF2421719B00917BEA /* AssessmentModelUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FF3212042421719B00917BEA /* Build configuration list for PBXNativeTarget "AssessmentModelUITests" */;
-			buildPhases = (
-				FF3211EC2421719B00917BEA /* Sources */,
-				FF3211ED2421719B00917BEA /* Frameworks */,
-				FF3211EE2421719B00917BEA /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				FF3211F32421719B00917BEA /* PBXTargetDependency */,
-				FF3211F52421719B00917BEA /* PBXTargetDependency */,
-			);
-			name = AssessmentModelUITests;
-			productName = AssessmentModelUITests;
-			productReference = FF3211F02421719B00917BEA /* AssessmentModelUITests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -364,13 +225,6 @@
 					F861D804207FA4200085E80D = {
 						CreatedOnToolsVersion = 9.3;
 					};
-					FF3211E72421719A00917BEA = {
-						CreatedOnToolsVersion = 11.2.1;
-					};
-					FF3211EF2421719B00917BEA = {
-						CreatedOnToolsVersion = 11.2.1;
-						TestTargetID = F861D7DC207FA40F0085E80D;
-					};
 				};
 			};
 			buildConfigurationList = F861D7D8207FA40F0085E80D /* Build configuration list for PBXProject "iosApp" */;
@@ -388,8 +242,6 @@
 			targets = (
 				F861D7DC207FA40F0085E80D /* iosApp */,
 				F861D7F0207FA4100085E80D /* iosAppTests */,
-				FF3211E72421719A00917BEA /* AssessmentModelUI */,
-				FF3211EF2421719B00917BEA /* AssessmentModelUITests */,
 				F861D804207FA4200085E80D /* AssessmentModel */,
 			);
 		};
@@ -409,20 +261,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F861D7EF207FA4100085E80D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF3211E62421719A00917BEA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF3211EE2421719B00917BEA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -466,21 +304,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FF3211E42421719A00917BEA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF3211EC2421719B00917BEA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FF3211F82421719B00917BEA /* AssessmentModelUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -489,25 +312,10 @@
 			target = F861D7DC207FA40F0085E80D /* iosApp */;
 			targetProxy = F861D7F2207FA4100085E80D /* PBXContainerItemProxy */;
 		};
-		FF3211F32421719B00917BEA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FF3211E72421719A00917BEA /* AssessmentModelUI */;
-			targetProxy = FF3211F22421719B00917BEA /* PBXContainerItemProxy */;
-		};
-		FF3211F52421719B00917BEA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F861D7DC207FA40F0085E80D /* iosApp */;
-			targetProxy = FF3211F42421719B00917BEA /* PBXContainerItemProxy */;
-		};
-		FF3211FC2421719B00917BEA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FF3211E72421719A00917BEA /* AssessmentModelUI */;
-			targetProxy = FF3211FB2421719B00917BEA /* PBXContainerItemProxy */;
-		};
-		FF321209242171C000917BEA /* PBXTargetDependency */ = {
+		FF32122424229A1100917BEA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F861D804207FA4200085E80D /* AssessmentModel */;
-			targetProxy = FF321208242171C000917BEA /* PBXContainerItemProxy */;
+			targetProxy = FF32122324229A1100917BEA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -791,108 +599,6 @@
 			};
 			name = Release;
 		};
-		FF3211FF2421719B00917BEA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AssessmentModelUI/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.sagebase.AssessmentModelUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		FF3212002421719B00917BEA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AssessmentModelUI/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.sagebase.AssessmentModelUI;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		FF3212012421719B00917BEA /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KA9Z8R6M6K;
-				INFOPLIST_FILE = AssessmentModelUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.sagebase.AssessmentModelUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iosApp.app/iosApp";
-			};
-			name = Debug;
-		};
-		FF3212022421719B00917BEA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KA9Z8R6M6K;
-				INFOPLIST_FILE = AssessmentModelUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.sagebase.AssessmentModelUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/iosApp.app/iosApp";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -928,24 +634,6 @@
 			buildConfigurations = (
 				F861D80F207FA4200085E80D /* Debug */,
 				F861D810207FA4200085E80D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		FF3212032421719B00917BEA /* Build configuration list for PBXNativeTarget "AssessmentModelUI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FF3211FF2421719B00917BEA /* Debug */,
-				FF3212002421719B00917BEA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		FF3212042421719B00917BEA /* Build configuration list for PBXNativeTarget "AssessmentModelUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FF3212012421719B00917BEA /* Debug */,
-				FF3212022421719B00917BEA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
