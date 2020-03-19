@@ -42,6 +42,7 @@ kotlin {
    val iosTarget = if(buildForDevice) iosArm64("ios") else iosX64("ios")
    iosTarget.binaries {
       framework {
+          baseName = "AssessmentModel"
          // Disable bitcode embedding for the simulator build.
          if (!buildForDevice) {
             embedBitcode("disable")
@@ -53,7 +54,7 @@ kotlin {
       commonMain {
          dependencies {
             implementation( "org.jetbrains.kotlin:kotlin-stdlib-common")
-             implementation ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.14.0")
+             implementation ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
          }
       }
       commonTest {
@@ -64,10 +65,10 @@ kotlin {
       }
        sourceSets["androidLibMain"].dependencies {
            implementation("org.jetbrains.kotlin:kotlin-stdlib")
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
        }
        sourceSets["iosMain"].dependencies {
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.14.0")
+           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
        }
 
     }
@@ -83,22 +84,23 @@ tasks.register("copyFramework") {
         copy {
             from(srcFile.parent)
             into(targetDir)
-            include( "assessmentModel.framework/**")
-            include("assessmentModel.framework.dSYM")
+            include( "AssessmentModel.framework/**")
+            include("AssessmentModel.framework.dSYM")
         }
     }
 }
 
-tasks.register("iosTest")  {
-    val  device = project.findProperty("iosDevice") as? String ?: "iPhone 8"
-    dependsOn("linkDebugTestIos")
-    group = JavaBasePlugin.VERIFICATION_GROUP
-    description = "Runs tests for target 'ios' on an iOS simulator"
-
-    doLast {
-        val  binary = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getTest("DEBUG").outputFile
-        exec {
-            commandLine("xcrun", "simctl", "spawn", "--standalone", device, binary.absolutePath)
-        }
-    }
-}
+//TODO: syoung 03/24/2020 Figure out why getting a warning that this was already added.
+//tasks.register("iosTest")  {
+//    val  device = project.findProperty("iosDevice") as? String ?: "iPhone 8"
+//    dependsOn("linkDebugTestIos")
+//    group = JavaBasePlugin.VERIFICATION_GROUP
+//    description = "Runs tests for target 'ios' on an iOS simulator"
+//
+//    doLast {
+//        val  binary = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getTest("DEBUG").outputFile
+//        exec {
+//            commandLine("xcrun", "simctl", "spawn", "--standalone", device, binary.absolutePath)
+//        }
+//    }
+//}

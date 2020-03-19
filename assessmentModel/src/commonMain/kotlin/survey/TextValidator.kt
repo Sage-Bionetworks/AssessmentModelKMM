@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.serialization.Localization
 
@@ -42,12 +41,12 @@ data class InvalidMessageObject(val string: String) : InvalidMessage {
 
     @Serializer(forClass = InvalidMessageObject::class)
     companion object : KSerializer<InvalidMessageObject> {
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("InvalidMessageObject")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("InvalidMessageObject", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): InvalidMessageObject {
             return InvalidMessageObject(decoder.decodeString())
         }
-        override fun serialize(encoder: Encoder, obj: InvalidMessageObject) {
-            encoder.encodeString(obj.string)
+        override fun serialize(encoder: Encoder, value: InvalidMessageObject) {
+            encoder.encodeString(value.string)
         }
     }
 }

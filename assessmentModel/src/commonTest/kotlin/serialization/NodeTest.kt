@@ -4,10 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
 
@@ -68,7 +65,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -280,7 +277,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 imagePlacement = ImagePlacement.Standard.TopBackground,
@@ -476,7 +473,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -523,16 +520,16 @@ open class NodeTest : NodeSerializationTestHelper() {
      * TransformableNodeObject
      */
 
-    class TestFileLoader(val jsonMap: Map<String, String>) : FileLoader {
+    class TestFileLoader(private val jsonMap: Map<String, String>) : FileLoader {
         override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String
                 = jsonMap[assetInfo.resourceName] ?: error("JSON mapping not found for $assetInfo")
     }
 
     data class TestResourceInfo(override var packageName: String? = null,
-                                override var decoderBundle: ResourceBundle? = null,
+                                override var decoderBundle: Any? = null,
                                 override val bundleIdentifier: String? = null) : ResourceInfo
 
-    data class TestResourceBundle(override val bundleIdentifier: String? = null) : ResourceBundle
+    data class TestResourceBundle(val bundleIdentifier: String? = null)
 
     @Test
     fun testTransformableNodeObject_Serialization() {
@@ -656,7 +653,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(imageInfo = FetchableImage("closeX")))
+                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
         original.progressMarkers = listOf("step1", "step2")
         val originalImageInfo = FetchableImage("fooIcon")
         original.imageInfo = originalImageInfo

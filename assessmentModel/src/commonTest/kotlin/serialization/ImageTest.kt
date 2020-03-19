@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.ImageInfo
 import kotlin.test.*
 
@@ -30,7 +29,7 @@ open class ImageTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("image")
         assertEquals("fetchable", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("before", jsonWrapper.getPrimitiveOrNull("imageName")?.content)
@@ -51,7 +50,7 @@ open class ImageTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("image")
         assertEquals("fetchable", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("before", jsonWrapper.getPrimitiveOrNull("imageName")?.content )
@@ -59,8 +58,8 @@ open class ImageTest {
         assertEquals("backgroundBefore", jsonWrapper.getPrimitiveOrNull("placementType")?.content)
         val sizeObject = jsonWrapper.getObjectOrNull("size")
         assertNotNull(sizeObject)
-        assertEquals(20.0, sizeObject?.getPrimitiveOrNull("width")?.double)
-        assertEquals(40.0, sizeObject?.getPrimitiveOrNull("height")?.double)
+        assertEquals(20.0, sizeObject.getPrimitiveOrNull("width")?.double)
+        assertEquals(40.0, sizeObject.getPrimitiveOrNull("height")?.double)
     }
 
     @Test
@@ -78,7 +77,7 @@ open class ImageTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("image")
         assertEquals("animated", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals(0.25, jsonWrapper.getPrimitiveOrNull("animationDuration")?.double)
@@ -102,7 +101,7 @@ open class ImageTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("image")
         assertEquals("animated", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals(0.25, jsonWrapper.getPrimitiveOrNull("animationDuration")?.double)
@@ -113,8 +112,8 @@ open class ImageTest {
         assertEquals("iconBefore", jsonWrapper.getPrimitiveOrNull("placementType")?.content)
         val sizeObject = jsonWrapper.getObjectOrNull("size")
         assertNotNull(sizeObject)
-        assertEquals(20.0, sizeObject?.getPrimitiveOrNull("width")?.double)
-        assertEquals(40.0, sizeObject?.getPrimitiveOrNull("height")?.double)
+        assertEquals(20.0, sizeObject.getPrimitiveOrNull("width")?.double)
+        assertEquals(40.0, sizeObject.getPrimitiveOrNull("height")?.double)
     }
 
     @Test

@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.Button
 import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.ButtonStyle
@@ -20,7 +19,7 @@ open class ButtonTest {
     @Serializable
     data class TestButtonActionWrapper(val buttonAction: ButtonAction)
 
-    val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder = Serialization.JsonCoder.default
 
     @Test
     fun testButton() {
@@ -45,7 +44,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("default", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -76,7 +75,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("navigation", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -87,7 +86,7 @@ open class ButtonTest {
     @Test
     fun testReminderButtonWithValues() {
         val button = ReminderButtonObject(buttonTitle = "foo title",
-                imageInfo = FetchableImage("fooImage"),
+                icon = FetchableImage("fooImage"),
                 reminderIdentifier = "remindLater",
                 reminderPrompt = "Remind me later to do stuff",
                 reminderAlert = "Time to do stuff")
@@ -114,7 +113,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -146,7 +145,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("\$remindMeLaterButtonTitle\$", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -156,7 +155,7 @@ open class ButtonTest {
     @Test
     fun testWebViewButton() {
         val button = WebViewButtonObject(buttonTitle = "foo title",
-                imageInfo = FetchableImage("fooImage"),
+                icon = FetchableImage("fooImage"),
                 url = "learnMore",
                 title = "Learn More about this assessment",
                 closeButtonTitle = "Exit")
@@ -183,7 +182,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("webView", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
@@ -196,7 +195,7 @@ open class ButtonTest {
     @Test
     fun testWebViewButton_BackButtonStyle_Footer() {
         val button = WebViewButtonObject(buttonTitle = "foo title",
-                imageInfo = FetchableImage("fooImage"),
+                icon = FetchableImage("fooImage"),
                 url = "learnMore",
                 closeButtonTitle = "Exit")
         assertEquals(ButtonStyle.Footer("Exit"), button.backButtonStyle)
@@ -205,7 +204,7 @@ open class ButtonTest {
     @Test
     fun testWebViewButton_BackButtonStyle_BackArrow() {
         val buttonA = WebViewButtonObject(buttonTitle = "foo title",
-                imageInfo = FetchableImage("fooImage"),
+                icon = FetchableImage("fooImage"),
                 url = "learnMore",
                 usesBackButton = true)
         assertEquals(ButtonStyle.NavigationHeader.Back, buttonA.backButtonStyle)
@@ -215,7 +214,7 @@ open class ButtonTest {
     @Test
     fun testWebViewButton_BackButtonStyle_CloseX() {
         val buttonA = WebViewButtonObject(buttonTitle = "foo title",
-                imageInfo = FetchableImage("fooImage"),
+                icon = FetchableImage("fooImage"),
                 url = "learnMore",
                 usesBackButton = false)
         assertEquals(ButtonStyle.NavigationHeader.Close, buttonA.backButtonStyle)
@@ -246,7 +245,7 @@ open class ButtonTest {
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = Json.nonstrict.parseJson(jsonString)
+        val jsonOutput = jsonCoder.parseJson(jsonString)
         val jsonWrapper = jsonOutput.jsonObject.getObject("button")
         assertEquals("videoView", jsonWrapper.getPrimitiveOrNull("type")?.content)
         assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)

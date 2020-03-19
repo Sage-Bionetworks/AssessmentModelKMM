@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
 
@@ -45,13 +44,13 @@ enum class AutoCapitalizationType : StringEnum {
 
     @Serializer(forClass = AutoCapitalizationType::class)
     companion object : KSerializer<AutoCapitalizationType>{
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("AutoCapitalizationType")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("AutoCapitalizationType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCapitalizationType {
             val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
-        override fun serialize(encoder: Encoder, obj: AutoCapitalizationType) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: AutoCapitalizationType) {
+            encoder.encodeString(value.name)
         }
     }
 }
@@ -62,13 +61,13 @@ enum class AutoCorrectionType : StringEnum {
 
     @Serializer(forClass = AutoCorrectionType::class)
     companion object : KSerializer<AutoCorrectionType>{
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("AutoCorrectionType")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("AutoCorrectionType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCorrectionType {
             val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
-        override fun serialize(encoder: Encoder, obj: AutoCorrectionType) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: AutoCorrectionType) {
+            encoder.encodeString(value.name)
         }
     }
 }
@@ -79,13 +78,13 @@ enum class SpellCheckingType : StringEnum {
 
     @Serializer(forClass = SpellCheckingType::class)
     companion object : KSerializer<SpellCheckingType>{
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("KeyboardType")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("KeyboardType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): SpellCheckingType {
             val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
-        override fun serialize(encoder: Encoder, obj: SpellCheckingType) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: SpellCheckingType) {
+            encoder.encodeString(value.name)
         }
     }
 }
@@ -108,13 +107,13 @@ enum class KeyboardType : StringEnum {
 
     @Serializer(forClass = KeyboardType::class)
     companion object : KSerializer<KeyboardType>{
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("KeyboardType")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("KeyboardType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): KeyboardType {
             val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${ values() }")
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${ values() }")
         }
-        override fun serialize(encoder: Encoder, obj: KeyboardType) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: KeyboardType) {
+            encoder.encodeString(value.name)
         }
     }
 }
