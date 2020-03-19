@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.json
 import org.sagebionetworks.assessmentmodel.Assessment
 import org.sagebionetworks.assessmentmodel.Node
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
@@ -16,13 +17,12 @@ class FileLoaderIOS() : FileLoader {
         val filename = assetInfo.resourceName
         val ext = assetInfo.rawFileExtension ?: "json"
         val url = bundle.URLForResource(filename, ext) ?: return ""
-        return NSString.stringWithContentsOfURL(url, 4u, null) ?: return ""
+        return NSString.stringWithContentsOfURL(url, NSUTF8StringEncoding, null) ?: return ""
     }
 }
 
 fun ResourceInfo.bundle() : NSBundle
         = (this.decoderBundle as? NSBundle) ?: this.bundleIdentifier?.let { NSBundle.bundleWithIdentifier(it) } ?: NSBundle.mainBundle()
-
 
 /**
  * syoung 03/18/2020
@@ -30,54 +30,26 @@ fun ResourceInfo.bundle() : NSBundle
  * return value so I've tried to organize these interfaces to allow for a fairly flexible implementation for decoding
  * an assessment and/or an assessment group.
  */
-interface KotlinDecoder : ResourceInfo {
-    val fileLoader: FileLoader
-    val jsonCoder: Json
-}
+class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
+    var fileLoader: FileLoader = FileLoaderIOS()
+    var jsonCoder: Json = Serialization.JsonCoder.default
 
-interface KotlinDecodable {
-    val decoder: KotlinDecoder
-    fun jsonString(): String
-}
-
-abstract class KotlinDecodableIOSWrapper : KotlinDecoder, KotlinDecodable {
-    abstract var bundle: NSBundle
-    override var fileLoader: FileLoader = FileLoaderIOS()
-    override var jsonCoder = Serialization.JsonCoder.default
-
-    override val decoder: KotlinDecoder
-        get() = this
-
-    override var decoderBundle: Any?
-        get() = bundle
-        set(value) {
-            if (value is NSBundle)
-                bundle = value
-        }
-
+    override var decoderBundle: Any? = bundle
+    override var packageName: String? = null
     override val bundleIdentifier: String?
         get() = null
-
-    override var packageName: String? = null
 }
 
-abstract class JsonFile : KotlinDecodableIOSWrapper(), AssetInfo {
-    override val rawFileExtension: kotlin.String?
-        get() = "json"
-    override val resourceAssetType: kotlin.String?
-        get() = StandardResourceAssetType.RAW
-    override val versionString: String?
-        get() = null
-
-    override fun jsonString() = fileLoader.loadFile(this, this)
+abstract class KotlinDecodable(val decoder: KotlinDecoder) {
+    abstract val jsonString: String?
 }
 
-class AssessmentGroupFileLoader(override val resourceName: String, override var bundle: NSBundle) : JsonFile() {
+class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
     @Throws
     fun decodeObject(): AssessmentGroupWrapper {
         try {
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
-            val group = decoder.jsonCoder.parse(serializer, jsonString())
+            val group = decoder.jsonCoder.parse(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.files.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
@@ -89,7 +61,7 @@ class AssessmentGroupFileLoader(override val resourceName: String, override var 
 data class AssessmentGroupWrapper(val assessmentGroupInfo: AssessmentGroupInfo, val assessments: List<AssessmentLoader>)
 
 class AssessmentLoader(private val placeholder: Assessment,
-                       private val decoder: KotlinDecoder) : Assessment by placeholder, KotlinDecoder by decoder {
+                       private val decoder: KotlinDecoder) : Assessment by placeholder {
     @Throws
     fun decodeObject(): Assessment {
         try {
@@ -99,4 +71,18 @@ class AssessmentLoader(private val placeholder: Assessment,
         }
     }
 }
+
+class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
+    @Throws
+    fun decodeObject(): Assessment {
+        try {
+            val serializer = PolymorphicSerializer(Assessment::class)
+            val placeholder = decoder.jsonCoder.parse(serializer, jsonString)
+            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonCoder)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
+
 

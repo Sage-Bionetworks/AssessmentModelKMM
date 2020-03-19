@@ -36,9 +36,27 @@ import AssessmentModel
 
 class iosAppTests: XCTestCase {
     
-    func testAssessments_Decoding() {
+    func testAssessmentGroup_StringDecoding() {
+        let json = """
+        {
+            "type": "assessmentGroupInfo",
+            "files": [
+                {
+                    "identifier":"list",
+                    "type": "transformableAssessment",
+                    "resourceName": "FormStep_List"
+                },
+                {
+                    "identifier": "textfield",
+                    "type": "transformableAssessment",
+                    "resourceName": "FormStep_Textfield"
+                }
+            ]
+        }
+        """ // our data in native (JSON) format
+
         do {
-            let loader = AssessmentGroupFileLoader(resourceName: "Assessments", bundle: .main)
+            let loader = AssessmentGroupStringLoader(jsonString: json, bundle: .main)
             let group = try loader.decodeObject()
             try group.assessments.forEach { assessmentLoader in
                 let assessment = try assessmentLoader.decodeObject()
@@ -47,5 +65,6 @@ class iosAppTests: XCTestCase {
         } catch let err {
             XCTFail("Failed to decode files: \(err)")
         }
+        
     }
 }
