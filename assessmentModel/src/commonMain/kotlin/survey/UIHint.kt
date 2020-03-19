@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import org.sagebionetworks.assessmentmodel.*
 
 /**
@@ -48,13 +47,13 @@ sealed class UIHint : StringEnum {
             override fun values(): Array<Choice>
                     = arrayOf(ListItem, Checkmark, Checkbox, RadioButton)
 
-            override val descriptor: SerialDescriptor = StringDescriptor.withName("Choice")
+            override val descriptor: SerialDescriptor = PrimitiveDescriptor("Choice", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): Choice {
                 val name = decoder.decodeString()
-                return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+                return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
             }
-            override fun serialize(encoder: Encoder, obj: Choice) {
-                encoder.encodeString(obj.name)
+            override fun serialize(encoder: Encoder, value: Choice) {
+                encoder.encodeString(value.name)
             }
         }
     }
@@ -118,13 +117,13 @@ sealed class UIHint : StringEnum {
             override fun values(): Array<TextField>
                     = arrayOf(Default, MultipleLine, Popover)
 
-            override val descriptor: SerialDescriptor = StringDescriptor.withName("TextField")
+            override val descriptor: SerialDescriptor = PrimitiveDescriptor("TextField", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): TextField {
                 val name = decoder.decodeString()
-                return TextField.values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+                return TextField.values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
             }
-            override fun serialize(encoder: Encoder, obj: TextField) {
-                encoder.encodeString(obj.name)
+            override fun serialize(encoder: Encoder, value: TextField) {
+                encoder.encodeString(value.name)
             }
         }
     }
@@ -144,13 +143,13 @@ sealed class UIHint : StringEnum {
     @Serializer(forClass = UIHint::class)
     companion object : KSerializer<UIHint> {
         override val descriptor: SerialDescriptor
-                = StringDescriptor.withName("UIHint")
+                = PrimitiveDescriptor("UIHint", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): UIHint {
             val name = decoder.decodeString()
             return valueOf(name)
         }
-        override fun serialize(encoder: Encoder, obj: UIHint) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: UIHint) {
+            encoder.encodeString(value.name)
         }
         fun valueOf(name: String): UIHint {
             return when {

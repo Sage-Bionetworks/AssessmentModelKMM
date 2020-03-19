@@ -1,10 +1,8 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceBundle
 
 // TODO: syoung 01/13/2020 Figure out how to carry the resource bundle as a part of decoding an image and/or how to load an image from a Kotlin resource directory.
 
@@ -23,7 +21,7 @@ data class FetchableImage(override val imageName: String,
                           override val imagePlacement: ImagePlacement? = null,
                           override val size: Size? = null,
                           @Transient
-                          override var decoderBundle: ResourceBundle? = null,
+                          override var decoderBundle: Any? = null,
                           override val bundleIdentifier: String? = null,
                           override var packageName: String? = null,
                           override val rawFileExtension: String? = null,
@@ -39,7 +37,7 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val imagePlacement: ImagePlacement? = null,
                          override val size: Size? = null,
                          @Transient
-                         override var decoderBundle: ResourceBundle? = null,
+                         override var decoderBundle: Any? = null,
                          override val bundleIdentifier: String? = null,
                          override var packageName: String? = null,
                          override val rawFileExtension: String? = null,
@@ -60,12 +58,12 @@ interface ImageTheme : DrawableLayout {
 @Serializer(forClass = FetchableImage::class)
 object ImageNameSerializer : KSerializer<FetchableImage> {
     override val descriptor: SerialDescriptor
-            = StringDescriptor.withName("ImageName")
+            = PrimitiveDescriptor("ImageName", PrimitiveKind.STRING)
     override fun deserialize(decoder: Decoder): FetchableImage {
         return FetchableImage(decoder.decodeString())
     }
-    override fun serialize(encoder: Encoder, obj: FetchableImage) {
-        encoder.encodeString(obj.imageName)
+    override fun serialize(encoder: Encoder, value: FetchableImage) {
+        encoder.encodeString(value.imageName)
     }
 }
 
@@ -138,13 +136,13 @@ sealed class ImagePlacement() : StringEnum {
     @Serializer(forClass = ImagePlacement::class)
     companion object : KSerializer<ImagePlacement> {
         override val descriptor: SerialDescriptor
-                = StringDescriptor.withName("ImagePlacement")
+                = PrimitiveDescriptor("ImagePlacement", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ImagePlacement {
             val name = decoder.decodeString()
             return valueOf(name)
         }
-        override fun serialize(encoder: Encoder, obj: ImagePlacement) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: ImagePlacement) {
+            encoder.encodeString(value.name)
         }
         fun valueOf(name: String): ImagePlacement
                 = Standard.valueOf(name) ?: Custom(name)

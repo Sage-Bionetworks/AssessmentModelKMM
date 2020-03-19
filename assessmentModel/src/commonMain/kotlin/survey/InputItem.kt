@@ -140,6 +140,12 @@ interface ChoiceOption {
     val fieldLabel: String?
 
     /**
+     * Additional detail shown below the [fieldLabel]
+     */
+    val detail: String?
+        get() = null
+
+    /**
      * An image that can be used to represent this choice.
      */
     val icon: FetchableImage?
@@ -248,7 +254,7 @@ interface DateTimeInputItem : KeyboardTextInputItem<String> {
     override val answerType: AnswerType
         get() = AnswerType.DateTime(codingFormat = formatOptions.codingFormat)
 
-    override val textFieldOptions: TextFieldOptionsObject
+    override val textFieldOptions: TextFieldOptions
         get() = TextFieldOptionsObject.DateTimeEntryOptions
 
     // TODO: syoung 02/18/2020 Revisit this. I couldn't figure out Android date formatting.

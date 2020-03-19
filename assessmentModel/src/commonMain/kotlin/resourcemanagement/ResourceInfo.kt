@@ -9,7 +9,7 @@ interface ResourceInfo {
      * a pointer to the `Bundle` from which a JSON file was decoded but is defined generically here so that the lowest
      * level of the model does not include bundle information directly.
      */
-    var decoderBundle: ResourceBundle?
+    var decoderBundle: Any?
 
     /**
      * The identifier of the bundle within which the resource is embedded on Apple platforms.
@@ -22,14 +22,6 @@ interface ResourceInfo {
      * The package within which the resource is embedded on Android platforms.
      */
     var packageName: String?
-}
-
-/**
- * A resource bundle is used on Apple platforms to point to the `Bundle` for the resource. It is not directly
- * referenced within this framework so as to avoid any Apple-specific resource handling classes.
- */
-interface ResourceBundle {
-    val bundleIdentifier: String?
 }
 
 /**

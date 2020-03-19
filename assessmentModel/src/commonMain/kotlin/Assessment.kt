@@ -91,15 +91,13 @@ interface ResultMapElement {
     /**
      * Create an appropriate instance of a *new* [Result] for this map element.
      */
-    fun createResult(): Result
-            = ResultObject(resultId())
-
-    /**
-     * Convenience method for accessing the result identifier associated with a given node.
-     */
-    fun resultId() : String
-            = resultIdentifier ?: identifier
+    fun createResult(): Result = ResultObject(resultId())
 }
+
+/**
+ * Convenience method for accessing the result identifier associated with a given node.
+ */
+fun ResultMapElement.resultId() : String = resultIdentifier ?: identifier
 
 /**
  * A [Node] is any object defined within the structure of an [Assessment] that is used to display a sequence of [Step]

@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import org.sagebionetworks.assessmentmodel.DateGenerator
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
@@ -38,18 +37,26 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
      * Hint to use for the formatter.
      */
     @Serializable
-    enum class Style : StringEnum {
-        None, Decimal, Currency, Percent, Scientific, SpellOut, Ordinal;
+    enum class Style(override val serialName: String? = null) : StringEnum {
+        None,
+        Decimal,
+        Currency,
+        Percent,
+        Scientific,
+        SpellOut,
+        OrdinalNumber("ordinal"),
+        ;
 
         @Serializer(forClass = Style::class)
         companion object : KSerializer<Style> {
-            override val descriptor: SerialDescriptor = StringDescriptor.withName("Style")
+            override val descriptor: SerialDescriptor = PrimitiveDescriptor("Style", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): Style {
                 val name = decoder.decodeString()
-                return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+
+                return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
             }
-            override fun serialize(encoder: Encoder, obj: Style) {
-                encoder.encodeString(obj.name)
+            override fun serialize(encoder: Encoder, value: Style) {
+                encoder.encodeString(value.serialName ?: value.name)
             }
         }
     }

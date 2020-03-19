@@ -1,11 +1,21 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
+import org.sagebionetworks.assessmentmodel.survey.Question
+
+val fileProviderSerializersModule = SerializersModule {
+    polymorphic(AssessmentGroupInfo::class) {
+        AssessmentGroupInfoObject::class with AssessmentGroupInfoObject.serializer()
+    }
+}
 
 /**
  * A [TransformableNode] is a special node that allows for two-part unpacking of deserialization. This is used to allow
@@ -67,12 +77,15 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
 }
 
 @Serializable
+@SerialName("assessmentGroupInfo")
 data class AssessmentGroupInfoObject(override val files: List<Assessment>,
                                      override var packageName: String? = null,
-                                     override var decoderBundle: ResourceBundle? = null,
                                      override val bundleIdentifier: String? = null): ResourceInfo, AssessmentGroupInfo {
     override val resourceInfo: ResourceInfo
         get() = this
+
+    @Transient
+    override var decoderBundle: Any? = null
 }
 
 /**

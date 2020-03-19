@@ -3,6 +3,7 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
@@ -22,6 +23,7 @@ val nodeSerializersModule = SerializersModule {
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
+        StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
         TransformableAssessmentObject::class with TransformableAssessmentObject.serializer()
         TransformableNodeObject::class with TransformableNodeObject.serializer()
     }
@@ -34,6 +36,7 @@ val nodeSerializersModule = SerializersModule {
         ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
+        StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
     }
 }
 
@@ -224,6 +227,21 @@ data class ChoiceQuestionObject(override val identifier: String,
                                 @SerialName("singleChoice")
                                 override var singleAnswer: Boolean = true,
                                 override var uiHint: UIHint = UIHint.Choice.ListItem) : QuestionObject(), ChoiceQuestion
+
+@Serializable
+@SerialName("stringChoiceQuestion")
+data class StringChoiceQuestionObject(override val identifier: String,
+                                      @SerialName("choices")
+                                      val items: List<String>,
+                                      override val resultIdentifier: String? = null,
+                                      @SerialName("singleChoice")
+                                      override var singleAnswer: Boolean = true,
+                                      override var uiHint: UIHint = UIHint.Choice.ListItem) : QuestionObject(), ChoiceQuestion {
+    override val choices: List<ChoiceOptionObject>
+        get() = items.map { ChoiceOptionObject(fieldLabel = it, value = JsonPrimitive(it)) }
+    override val baseType: BaseType
+        get() = BaseType.STRING
+}
 
 @Serializable
 @SerialName("comboBoxQuestion")

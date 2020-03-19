@@ -152,12 +152,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Boolean() {
-        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(true),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -171,12 +172,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_String() {
-        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive("foo"),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -190,12 +192,13 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Int() {
-        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true}"""
+        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(1),
                 fieldLabel = "Pick me!",
                 icon = FetchableImage("pickMe"),
-                exclusive = true)
+                exclusive = true,
+                detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -466,6 +469,96 @@ open class InputItemsTest {
     }
 
     @Test
+    fun testIntNumberOptions_Serialization_Decimal() {
+        val inputString = """{"numberStyle":"decimal"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.Decimal)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testIntNumberOptions_Serialization_Currency() {
+        val inputString = """{"numberStyle":"currency"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.Currency)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testIntNumberOptions_Serialization_Percent() {
+        val inputString = """{"numberStyle":"percent"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.Percent)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testIntNumberOptions_Serialization_Scientific() {
+        val inputString = """{"numberStyle":"scientific"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.Scientific)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testIntNumberOptions_Serialization_SpellOut() {
+        val inputString = """{"numberStyle":"spellOut"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.SpellOut)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun testIntNumberOptions_Serialization_OrdinalNumber() {
+        val inputString = """{"numberStyle":"ordinal"}"""
+
+        val original = IntFormatOptions(NumberFormatOptions.Style.OrdinalNumber)
+
+        val serializer = IntFormatOptions.serializer()
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    @Test
     fun testIntNumberOptions_Format() {
         val original = IntFormatOptions(usesGroupingSeparator = false)
         original.minimumValue = 0
@@ -516,7 +609,7 @@ open class InputItemsTest {
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
         original.uiHint = UIHint.TextField.Popover
-        original.textFieldOptions = TextFieldOptionsObject(
+        original.textOptions = TextFieldOptionsObject(
                 keyboardType = KeyboardType.NumbersAndPunctuation,
                 isSecureTextEntry = true)
         original.formatOptions = IntFormatOptions(usesGroupingSeparator = false)
@@ -603,7 +696,7 @@ open class InputItemsTest {
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
         original.uiHint = UIHint.TextField.Popover
-        original.textFieldOptions = TextFieldOptionsObject(
+        original.textOptions = TextFieldOptionsObject(
                 autocapitalizationType = AutoCapitalizationType.Words,
                 keyboardType = KeyboardType.AsciiCapable,
                 isSecureTextEntry = true)

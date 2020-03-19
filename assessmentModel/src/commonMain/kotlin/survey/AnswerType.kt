@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.modules.SerializersModule
@@ -163,13 +162,13 @@ enum class BaseType : StringEnum {
 
     @Serializer(forClass = BaseType::class)
     companion object : KSerializer<BaseType> {
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("SerialType")
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("SerialType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): BaseType {
             val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.name}. Needs to be one of ${values()}")
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
-        override fun serialize(encoder: Encoder, obj: BaseType) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: BaseType) {
+            encoder.encodeString(value.name)
         }
     }
 }

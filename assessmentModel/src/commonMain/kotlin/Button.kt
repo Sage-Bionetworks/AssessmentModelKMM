@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 
 /**
  * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
@@ -174,13 +173,13 @@ sealed class ButtonAction() : StringEnum {
     @Serializer(forClass = ButtonAction::class)
     companion object : KSerializer<ButtonAction> {
         override val descriptor: SerialDescriptor
-                = StringDescriptor.withName("ButtonAction")
+                = PrimitiveDescriptor("ButtonAction", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ButtonAction {
             val name = decoder.decodeString()
             return valueOf(name)
         }
-        override fun serialize(encoder: Encoder, obj: ButtonAction) {
-            encoder.encodeString(obj.name)
+        override fun serialize(encoder: Encoder, value: ButtonAction) {
+            encoder.encodeString(value.name)
         }
         fun valueOf(name: String): ButtonAction
                 = Navigation.valueOf(name) ?: Custom(name)
