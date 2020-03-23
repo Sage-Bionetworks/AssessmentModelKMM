@@ -40,7 +40,7 @@ class iosAppTests: XCTestCase {
         let json = """
         {
             "type": "assessmentGroupInfo",
-            "files": [
+            "assessments": [
                 {
                     "identifier":"list",
                     "type": "transformableAssessment",
@@ -65,6 +65,75 @@ class iosAppTests: XCTestCase {
         } catch let err {
             XCTFail("Failed to decode files: \(err)")
         }
+    }
+    
+    func testAnswerResult_Serialization() {
+        let answerType = AnswerType.INTEGER()
+        let jsonValue = answerType.jsonElementFor(value: 3)
+        let result = AnswerResultObject(identifier: "foo", answerType: answerType, jsonValue: jsonValue)
+        do {
+            let dictionary = try result.jsonObject() as NSDictionary
+            let expectedJson: NSDictionary = [
+                            "identifier" : "foo",
+                            "type" : "answer",
+                            "answerType" : [
+                                "type": "integer"
+                            ],
+                            "value" : 3
+                        ]
+            XCTAssertEqual(expectedJson, dictionary)
+        } catch let err {
+            XCTFail("Failed to encode: \(err)")
+        }
+    }
+    
+    func testJsonObject_Serialization() {
+        let expectedJson: NSDictionary = [
+            "identifier" : "foo",
+            "type" : "answer",
+            "answerType" : [
+                "type": "integer"
+            ],
+            "value" : 3
+        ]
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: expectedJson, options: [])
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+                XCTFail("Failed to convert data to UTF8 string")
+                return
+            }
+            let jsonObject = try JsonElementDecoder(jsonString: jsonString).decodeObject()
+            let encodedString = try JsonElementEncoder(jsonElement: jsonObject).encodeObject()
+            guard let outputData = encodedString.data(using: .utf8) else {
+                XCTFail("Failed to convert \(encodedString) to UTF8 data")
+                return
+            }
+            let outputJson = try JSONSerialization.jsonObject(with: outputData, options: [])
+            guard let outputDictionary = outputJson as? NSDictionary else {
+                XCTFail("Failed to encode object as a dictionary")
+                return
+            }
+            XCTAssertEqual(expectedJson, outputDictionary)
+        } catch let err {
+            XCTFail("Failed to encode: \(err)")
+        }
         
+    }
+}
+
+extension Result {
+    func jsonObject() throws -> [String : Any]  {
+        let encoding = try ResultEncoder(result: self).encodeObject()
+        let data = encoding.data(using: .utf8)
+        guard let jsonData = data else {
+            let context = EncodingError.Context(codingPath: [], debugDescription: "Failed to get a UTF8 encoded string")
+            throw EncodingError.invalidValue(self, context)
+        }
+        let json = try JSONSerialization.jsonObject(with: jsonData, options: [])
+        guard let dictionary = json as? [String : Any] else {
+            let context = EncodingError.Context(codingPath: [], debugDescription: "Failed to encode a dictionary for \(json)")
+            throw EncodingError.invalidValue(json, context)
+        }
+        return dictionary
     }
 }
