@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ResultTest" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="ResultTest" type="AndroidJUnit" factoryName="Android JUnit">
     <module name="assessmentModel" />
     <useClassPathOnly />
     <option name="PACKAGE_NAME" value="serialization" />
@@ -7,7 +7,9 @@
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <option name="PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
     <method v="2">
+      <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       <option name="Make" enabled="true" />
       <option name="Gradle.BeforeRunTask" enabled="false" tasks="bundleLibCompileDebugUnitTest" externalProjectPath="$PROJECT_DIR$/assessmentModel" vmOptions="" scriptParameters="" />
     </method>

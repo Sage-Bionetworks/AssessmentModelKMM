@@ -1,11 +1,15 @@
 pluginManagement {
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.android.library") {
-                useModule("com.android.tools.build:gradle:3.5.2")
+                useModule("com.android.tools.build:gradle:3.6.1")
             }
             if (requested.id.id == "com.android.application") {
-                useModule("com.android.tools.build:gradle:3.5.2")
+                useModule("com.android.tools.build:gradle:3.6.1")
+            }
+            if (requested.id.id == "org.jetbrains.kotlin.android") {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
             }
             if (requested.id.id == "org.jetbrains.kotlin.multiplatform") {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
@@ -25,3 +29,4 @@ pluginManagement {
 
 include(":assessmentModel")
 include(":androidApp")
+include(":presentation")

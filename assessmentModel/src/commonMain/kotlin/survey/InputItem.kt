@@ -280,5 +280,5 @@ object PassThruTextValidator : TextValidator<String> {
     override fun valueFor(text: String): FormattedValue<String>? = FormattedValue(text)
     override fun localizedStringFor(value: String?): FormattedValue<String> = FormattedValue(value)
     override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
-    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.toString()
+    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.primitive?.contentOrNull
 }

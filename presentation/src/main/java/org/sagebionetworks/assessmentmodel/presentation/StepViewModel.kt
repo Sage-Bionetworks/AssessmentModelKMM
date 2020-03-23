@@ -1,4 +1,4 @@
-package org.sagebionetworks.assessmentmodel.sampleapp
+package org.sagebionetworks.assessmentmodel.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -25,7 +25,9 @@ class StepViewModelFactory() {
                 if (modelClass.isAssignableFrom(StepViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return StepViewModel(nodeState) as T
+                    return StepViewModel(
+                        nodeState
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

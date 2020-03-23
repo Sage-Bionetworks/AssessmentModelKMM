@@ -1,4 +1,4 @@
-package org.sagebionetworks.assessmentmodel.sampleapp
+package org.sagebionetworks.assessmentmodel.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -35,17 +35,33 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
         assessmentNodeState.goForward()
     }
 
+    fun goBackward() {
+        assessmentNodeState.goBackward()
+    }
+
     override fun canHandle(node: Node): Boolean {
         return (node is Step)
     }
 
     override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
         //Update the LiveData stream with the new node
-        currentNodeStateMutableLiveData.value = ShowNodeState(nodeState, NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
+        currentNodeStateMutableLiveData.value =
+            ShowNodeState(
+                nodeState,
+                NavigationPoint.Direction.Forward,
+                requestedPermissions,
+                asyncActionNavigations
+            )
     }
 
     override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        currentNodeStateMutableLiveData.value = ShowNodeState(nodeState, NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
+        currentNodeStateMutableLiveData.value =
+            ShowNodeState(
+                nodeState,
+                NavigationPoint.Direction.Backward,
+                requestedPermissions,
+                asyncActionNavigations
+            )
     }
 
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
