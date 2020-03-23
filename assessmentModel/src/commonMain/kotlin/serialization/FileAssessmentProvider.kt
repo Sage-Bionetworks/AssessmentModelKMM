@@ -9,7 +9,6 @@ import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
-import org.sagebionetworks.assessmentmodel.survey.Question
 
 val fileProviderSerializersModule = SerializersModule {
     polymorphic(AssessmentGroupInfo::class) {
@@ -55,10 +54,10 @@ interface TransformableAssessment : Assessment, TransformableNode {
 
 /**
  * The [AssessmentGroupInfo] is a way of collecting a group of assessments that are shared within a given module where
- * they should use the same [resourceInfo] to load any of the assessments within the [files] included in this group.
+ * they should use the same [resourceInfo] to load any of the assessments within the [assessments] included in this group.
  */
 interface AssessmentGroupInfo {
-    val files: List<Assessment>
+    val assessments: List<Assessment>
     val resourceInfo: ResourceInfo
 }
 
@@ -67,10 +66,10 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
     val jsonCoder: Json
 
     override fun canLoadAssessment(assessmentIdentifier: String): Boolean =
-            files.any { it.identifier == assessmentIdentifier }
+            assessments.any { it.identifier == assessmentIdentifier }
 
     override fun loadAssessment(assessmentIdentifier: String): Assessment? {
-        return files.firstOrNull { it.identifier == assessmentIdentifier }?.let {
+        return assessments.firstOrNull { it.identifier == assessmentIdentifier }?.let {
             return it.unpack(fileLoader, resourceInfo, jsonCoder)
         }
     }
@@ -78,7 +77,7 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
 
 @Serializable
 @SerialName("assessmentGroupInfo")
-data class AssessmentGroupInfoObject(override val files: List<Assessment>,
+data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
                                      override var packageName: String? = null,
                                      override val bundleIdentifier: String? = null): ResourceInfo, AssessmentGroupInfo {
     override val resourceInfo: ResourceInfo
@@ -86,6 +85,9 @@ data class AssessmentGroupInfoObject(override val files: List<Assessment>,
 
     @Transient
     override var decoderBundle: Any? = null
+
+    fun jsonString(): String =
+            Serialization.JsonCoder.default.stringify(AssessmentGroupInfoObject.serializer(), this)
 }
 
 /**

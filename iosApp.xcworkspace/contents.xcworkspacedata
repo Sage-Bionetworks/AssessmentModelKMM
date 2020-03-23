@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:swiftFramework/AssessmentModelWrapper/AssessmentModelWrapper.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "container:iosApp/iosApp.xcodeproj">
    </FileRef>
    <FileRef
