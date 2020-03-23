@@ -1,8 +1,7 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.StringEnum
@@ -39,6 +38,8 @@ abstract class AnswerType {
     open val serialKind: SerialKind
         get() = baseType.serialKind
 
+    open fun jsonElementFor(value: Any): JsonElement = baseType.jsonElementFor(value)
+
     @Serializable
     @SerialName("measurement")
     data class Measurement(val unit: String? = null) : AnswerType() {
@@ -59,6 +60,18 @@ abstract class AnswerType {
                     val sequenceSeparator: String? = null) : AnswerType() {
         override val serialKind: SerialKind
             get() = StructureKind.LIST
+        override fun jsonElementFor(value: Any): JsonElement {
+            val elements: kotlin.collections.List<JsonElement> = if (value is Collection<*>) {
+                value.mapNotNull { it?.let { baseType.jsonElementFor(it) } }.toList()
+            } else {
+                listOf(super.jsonElementFor(value))
+            }
+            return if (sequenceSeparator == null) {
+                JsonArray(elements)
+            } else {
+                JsonPrimitive(elements.joinToString(sequenceSeparator) { it.toString() })
+            }
+        }
     }
 
     @Serializable
@@ -105,6 +118,7 @@ abstract class AnswerType {
     object NULL : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.STRING
+        override fun jsonElementFor(value: Any): JsonElement = JsonNull
     }
 
     companion object {
@@ -115,8 +129,11 @@ abstract class AnswerType {
             BaseType.INTEGER -> INTEGER
             BaseType.STRING -> STRING
         }
+        fun nullJsonElement() = JsonNull
     }
 }
+
+
 
 /**
  * The base type of the form input field. This is used to indicate what the type is of the value being prompted
@@ -150,6 +167,14 @@ enum class BaseType : StringEnum {
      */
     MAP,
     ;
+
+    fun jsonElementFor(value: Any): JsonElement = when (this) {
+        BOOLEAN -> JsonPrimitive((value as? Boolean) ?: value.toString().toBoolean())
+        DECIMAL -> JsonPrimitive( (value as? Number)?.toDouble() ?: value.toString().toDoubleOrNull())
+        INTEGER -> JsonPrimitive( (value as? Number)?.toInt() ?: value.toString().toIntOrNull())
+        STRING -> JsonPrimitive(value.toString())
+        MAP -> TODO("Not implemented. syoung 03/23/2020")
+    }
 
     val serialKind: SerialKind
         get() = when (this) {

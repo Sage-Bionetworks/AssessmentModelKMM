@@ -2,7 +2,10 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import org.sagebionetworks.assessmentmodel.Assessment
+import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
@@ -82,6 +85,41 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
     }
 }
 
+class ResultEncoder(val result: Result) {
+    var jsonCoder: Json = Serialization.JsonCoder.default
+    @Throws
+    fun encodeObject(): String {
+        try {
+            val serializer = PolymorphicSerializer(Result::class)
+            return jsonCoder.stringify(serializer, result)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
 
+class JsonElementEncoder(val jsonElement: JsonElement) {
+    var jsonCoder: Json = Serialization.JsonCoder.default
+    @Throws
+    fun encodeObject(): String {
+        try {
+            return jsonCoder.stringify(JsonElement.serializer(), jsonElement)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
+
+class JsonElementDecoder(val jsonString: String) {
+    var jsonCoder: Json = Serialization.JsonCoder.default
+    @Throws
+    fun decodeObject(): JsonElement {
+        try {
+            return jsonCoder.parseJson(jsonString) as JsonElement
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
 
 

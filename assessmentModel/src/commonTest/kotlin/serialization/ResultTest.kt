@@ -134,6 +134,29 @@ open class ResultTest {
      */
 
     @Test
+    fun testAnswerType_Primitive_jsonElementFor() {
+        assertEquals(JsonPrimitive(true), AnswerType.BOOLEAN.jsonElementFor(true))
+        assertEquals(JsonPrimitive(3), AnswerType.INTEGER.jsonElementFor(3))
+        assertEquals(JsonPrimitive(3.2), AnswerType.DECIMAL.jsonElementFor(3.2))
+        assertEquals(JsonPrimitive("foo"), AnswerType.STRING.jsonElementFor("foo"))
+    }
+
+    @Test
+    fun testAnswerType_PhoneNumber_jsonElementFor() {
+        val answerType = AnswerType.List(BaseType.INTEGER,"-")
+        val parts = listOf(206,555,1212)
+        assertEquals(JsonPrimitive("206-555-1212"), answerType.jsonElementFor(parts))
+    }
+
+    @Test
+    fun testAnswerType_WordList_jsonElementFor() {
+        val answerType = AnswerType.List()
+        val words = listOf("fox","jumped","over","moon")
+        val expected = JsonArray(words.map { JsonPrimitive(it) })
+        assertEquals(expected, answerType.jsonElementFor(words))
+    }
+
+    @Test
     fun testAnswerResult_Boolean() {
         val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true)))
         val inputString = """
