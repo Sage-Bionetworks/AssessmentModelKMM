@@ -1,4 +1,4 @@
-package org.sagebionetworks.assessmentmodel.sampleapp
+package org.sagebionetworks.assessmentmodel.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.Step
-import org.sagebionetworks.assessmentmodel.serialization.*
+import org.sagebionetworks.assessmentmodel.serialization.AssessmentGroupInfoObject
+
+import org.sagebionetworks.assessmentmodel.serialization.FileAssessmentProvider
+import org.sagebionetworks.assessmentmodel.serialization.FileLoaderAndroid
+import org.sagebionetworks.assessmentmodel.serialization.TransformableAssessmentObject
+import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 
 class AssessmentFragment : Fragment() {
@@ -54,8 +59,11 @@ class AssessmentFragment : Fragment() {
 
     private fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
-        val fragment = StepFragment()
-        return fragment
+        if (step is SimpleQuestion) {
+            return TextQuestionStepFragment()
+        } else {
+            return InstructionStepFragment()
+        }
     }
 
 }

@@ -10,9 +10,9 @@ group = "org.sagebionetworks.assessmentmodel"
 version = 1.0
 
 android {
-    compileSdkVersion(27)
+    compileSdkVersion(29)
     defaultConfig {
-        minSdkVersion(15)
+        minSdkVersion(19)
     }
     buildTypes {
         getByName("release") {
@@ -54,7 +54,7 @@ kotlin {
       commonMain {
          dependencies {
             implementation( "org.jetbrains.kotlin:kotlin-stdlib-common")
-             implementation ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
          }
       }
       commonTest {
@@ -65,10 +65,10 @@ kotlin {
       }
        sourceSets["androidLibMain"].dependencies {
            implementation("org.jetbrains.kotlin:kotlin-stdlib")
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
        }
        sourceSets["iosMain"].dependencies {
-           implementation( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
        }
 
     }

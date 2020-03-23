@@ -235,6 +235,7 @@ interface ChoiceInputItemState : InputItemState {
 
 interface KeyboardInputItemState<T> : AnyInputItemState {
     val textValidator: TextValidator<T>
+    override val inputItem: KeyboardTextInputItem<T>
 }
 
 class KeyboardInputItemStateImpl<T>(override val index: Int,
