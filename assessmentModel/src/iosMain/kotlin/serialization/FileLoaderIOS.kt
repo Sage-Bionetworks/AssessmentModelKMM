@@ -2,13 +2,10 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.json
 import org.sagebionetworks.assessmentmodel.Assessment
-import org.sagebionetworks.assessmentmodel.Node
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
-import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAssetType
 import platform.Foundation.*
 
 class FileLoaderIOS() : FileLoader {
@@ -51,7 +48,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
             val group = decoder.jsonCoder.parse(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
-            val assessments = group.files.map { AssessmentLoader(it, decoder) }
+            val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
         } catch (err: Exception) {
             throw Throwable(err.message)
@@ -84,5 +81,7 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
         }
     }
 }
+
+
 
 
