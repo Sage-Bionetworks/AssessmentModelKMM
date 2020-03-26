@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -65,6 +66,8 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
     }
 
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+        val resultString = nodeState.currentResult.toString()
+        Log.d("Result", resultString)
         //TODO: -nbrown 02/13/2020
     }
 

@@ -13,6 +13,7 @@ import org.sagebionetworks.assessmentmodel.serialization.AssessmentGroupInfoObje
 import org.sagebionetworks.assessmentmodel.serialization.FileAssessmentProvider
 import org.sagebionetworks.assessmentmodel.serialization.FileLoaderAndroid
 import org.sagebionetworks.assessmentmodel.serialization.TransformableAssessmentObject
+import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 
@@ -59,10 +60,10 @@ class AssessmentFragment : Fragment() {
 
     private fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
-        if (step is SimpleQuestion) {
-            return TextQuestionStepFragment()
-        } else {
-            return InstructionStepFragment()
+        when(step) {
+            is SimpleQuestion -> return TextQuestionStepFragment()
+            is ChoiceQuestion -> return ChoiceQuestionStepFragment()
+            else -> return InstructionStepFragment()
         }
     }
 

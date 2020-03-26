@@ -21,6 +21,29 @@
       "title": "Step 1"
     },
     {
+      "identifier": "choice",
+      "type": "choiceQuestion",
+      "title": "Hello World!",
+      "subtitle": "Question subtitle",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": false,
+      "singleChoice": false,
+      "baseType": "integer",
+      "uiHint": "checkmark",
+      "choices":[
+        {"text":"choice 1","icon":"choice1","value":1},
+        {"text":"choice 2","value":2},
+        {"text":"choice 3","value":3},
+        {"text":"none of the above","exclusive":true}
+      ]
+    },
+    {
       "identifier": "stringQuestion",
       "type": "simpleQuestion",
       "title": "String question",
