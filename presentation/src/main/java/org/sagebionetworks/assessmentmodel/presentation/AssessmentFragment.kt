@@ -25,6 +25,20 @@ class AssessmentFragment : Fragment() {
 
     lateinit var viewModel: AssessmentViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
+        val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: "org.sagebionetworks.assessmentmodel.sampleapp")
+        val assessmentGroup = AssessmentGroupInfoObject(
+            files = listOf(TransformableAssessmentObject("test_json", "sample_assessment")),
+            packageName = "org.sagebionetworks.assessmentmodel.sampleapp")
+        val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup)
+        viewModel = ViewModelProvider(
+            this, AssessmentViewModelFactory()
+                .create("test_json", assessmentProvider))
+            .get(AssessmentViewModel::class.java)
+        super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.assessment_fragment, container, false)
@@ -32,16 +46,7 @@ class AssessmentFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
-        val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: "org.sagebionetworks.assessmentmodel.sampleapp")
-        val assessmentGroup = AssessmentGroupInfoObject(
-                files = listOf(TransformableAssessmentObject("test_json", "sample_assessment")),
-                packageName = "org.sagebionetworks.assessmentmodel.sampleapp")
-        val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup)
-        viewModel = ViewModelProvider(
-                this, AssessmentViewModelFactory()
-                .create("test_json", assessmentProvider))
-                .get(AssessmentViewModel::class.java)
+
 
         viewModel.currentNodeStateLiveData
                 .observe(this.viewLifecycleOwner, Observer<AssessmentViewModel.ShowNodeState>

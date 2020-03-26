@@ -18,11 +18,11 @@ abstract class StepFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        assessmentViewModel = (parentFragment as AssessmentFragment).viewModel
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        assessmentViewModel = (parentFragment as AssessmentFragment).viewModel
         stepViewModel = ViewModelProvider(
                 this, StepViewModelFactory()
                 .create(assessmentViewModel.currentNodeStateLiveData.value!!.nodeState))
