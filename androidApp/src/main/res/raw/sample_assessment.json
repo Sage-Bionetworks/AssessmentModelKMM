@@ -18,7 +18,22 @@
     {
       "identifier": "step1",
       "type": "instruction",
-      "title": "Step 1"
+      "title": "Instruction Step 1",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_seated"
+      }
+    },
+    {
+      "identifier": "step2",
+      "type": "instruction",
+      "title": "Animating image instruction",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_stair_step_start_animation"
+      }
     },
     {
       "identifier": "choice",
@@ -27,11 +42,6 @@
       "subtitle": "Question subtitle",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
-      "image"  : {    "type" : "animated",
-        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-        "placementType" : "topBackground",
-        "animationDuration" : 2
-      },
       "optional": false,
       "singleChoice": false,
       "baseType": "integer",

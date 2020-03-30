@@ -66,6 +66,7 @@ kotlin {
        sourceSets["androidLibMain"].dependencies {
            implementation("org.jetbrains.kotlin:kotlin-stdlib")
            api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
+           implementation("androidx.appcompat:appcompat:1.1.0")
        }
        sourceSets["iosMain"].dependencies {
            api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
