@@ -84,16 +84,6 @@
       "optional": false,
       "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
-    },
-    {
-      "identifier": "step2",
-      "type": "instruction",
-      "title": "Step 2"
-    },
-    {
-      "identifier": "step3",
-      "type": "instruction",
-      "title": "Step 3"
     }
   ]
 }
