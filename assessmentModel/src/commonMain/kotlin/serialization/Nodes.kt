@@ -12,8 +12,6 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 
-// TODO: syoung 01/28/2020 Deprecate the `text` property in the `RSDUIStep` protocol and decoding. Replace with "detail" or "subtitle" as appropriate.
-
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
         AssessmentObject::class with AssessmentObject.serializer()
