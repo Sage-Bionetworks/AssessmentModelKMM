@@ -8,9 +8,6 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 
-
-// TODO: syoung 01/13/2020 Figure out how to carry the resource bundle as a part of decoding an image and/or how to load an image from a Kotlin resource directory.
-
 val buttonSerializersModule = SerializersModule {
     polymorphic(Button::class) {
         ButtonObject::class with ButtonObject.serializer()
