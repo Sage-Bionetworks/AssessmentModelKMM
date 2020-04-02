@@ -89,7 +89,7 @@ interface MultipleInputQuestion : SkipCheckboxQuestion {
     override val singleAnswer: Boolean
         get() = false
     override val answerType: AnswerType
-        get() =  AnswerType.MAP
+        get() =  AnswerType.OBJECT
 
     override fun buildInputItems(): List<InputItem> = skipCheckbox?.let { inputItems.plus(it) } ?: inputItems
 }
@@ -109,7 +109,7 @@ interface ChoiceQuestion : Question {
      * mapping or a [JsonArray] mapping depending upon the value of [singleAnswer].
      */
     override val answerType: AnswerType
-        get() = if (singleAnswer) AnswerType.valueFor(baseType) else AnswerType.List(baseType)
+        get() = if (singleAnswer) AnswerType.valueFor(baseType) else AnswerType.Array(baseType)
 
     /**
      * The default implementation for building the input items is to wrap the [choices].

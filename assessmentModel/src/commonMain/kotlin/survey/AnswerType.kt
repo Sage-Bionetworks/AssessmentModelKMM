@@ -14,9 +14,9 @@ import org.sagebionetworks.assessmentmodel.matching
 val answerTypeSerializersModule = SerializersModule {
     polymorphic(AnswerType::class) {
         AnswerType.DateTime::class with AnswerType.DateTime.serializer()
-        AnswerType.List::class with AnswerType.List.serializer()
+        AnswerType.Array::class with AnswerType.Array.serializer()
         AnswerType.Measurement::class with AnswerType.Measurement.serializer()
-        AnswerType.MAP::class with AnswerType.MAP.serializer()
+        AnswerType.OBJECT::class with AnswerType.OBJECT.serializer()
         AnswerType.STRING::class with AnswerType.STRING.serializer()
         AnswerType.BOOLEAN::class with AnswerType.BOOLEAN.serializer()
         AnswerType.INTEGER::class with AnswerType.INTEGER.serializer()
@@ -44,7 +44,7 @@ abstract class AnswerType {
     @SerialName("measurement")
     data class Measurement(val unit: String? = null) : AnswerType() {
         override val baseType: BaseType
-            get() = BaseType.DECIMAL
+            get() = BaseType.NUMBER
     }
 
     @Serializable
@@ -55,8 +55,8 @@ abstract class AnswerType {
     }
 
     @Serializable
-    @SerialName("list")
-    data class List(override val baseType: BaseType = BaseType.STRING,
+    @SerialName("array")
+    data class Array(override val baseType: BaseType = BaseType.STRING,
                     val sequenceSeparator: String? = null) : AnswerType() {
         override val serialKind: SerialKind
             get() = StructureKind.LIST
@@ -75,10 +75,10 @@ abstract class AnswerType {
     }
 
     @Serializable
-    @SerialName("map")
-    object MAP : AnswerType() {
+    @SerialName("object")
+    object OBJECT : AnswerType() {
         override val baseType: BaseType
-            get() = BaseType.MAP
+            get() = BaseType.OBJECT
     }
 
     @Serializable
@@ -96,10 +96,10 @@ abstract class AnswerType {
     }
 
     @Serializable
-    @SerialName("decimal")
+    @SerialName("number")
     object DECIMAL : AnswerType() {
         override val baseType: BaseType
-            get() = BaseType.DECIMAL
+            get() = BaseType.NUMBER
     }
 
     @Serializable
@@ -124,8 +124,9 @@ abstract class AnswerType {
     companion object {
         fun valueFor(baseType: BaseType) : AnswerType = when (baseType) {
             BaseType.BOOLEAN -> BOOLEAN
-            BaseType.MAP -> MAP
-            BaseType.DECIMAL -> DECIMAL
+            BaseType.ARRAY -> Array()
+            BaseType.OBJECT -> OBJECT
+            BaseType.NUMBER -> DECIMAL
             BaseType.INTEGER -> INTEGER
             BaseType.STRING -> STRING
         }
@@ -150,7 +151,7 @@ enum class BaseType : StringEnum {
     /**
      * The decimal question type asks the participant to enter a decimal number.
      */
-    DECIMAL,
+    NUMBER,
 
     /**
      * The integer question type asks the participant to enter an integer number.
@@ -163,26 +164,33 @@ enum class BaseType : StringEnum {
     STRING,
 
     /**
+     * A serializable array of objects or primitives.
+     */
+    ARRAY,
+
+    /**
      * A Serializable object. This is an object that can be represented using a JSON or XML dictionary.
      */
-    MAP,
+    OBJECT,
     ;
 
     fun jsonElementFor(value: Any): JsonElement = when (this) {
         BOOLEAN -> JsonPrimitive((value as? Boolean) ?: value.toString().toBoolean())
-        DECIMAL -> JsonPrimitive( (value as? Number)?.toDouble() ?: value.toString().toDoubleOrNull())
+        NUMBER -> JsonPrimitive( (value as? Number)?.toDouble() ?: value.toString().toDoubleOrNull())
         INTEGER -> JsonPrimitive( (value as? Number)?.toInt() ?: value.toString().toIntOrNull())
         STRING -> JsonPrimitive(value.toString())
-        MAP -> TODO("Not implemented. syoung 03/23/2020")
+        ARRAY -> TODO("Not implemented. syoung 03/23/2020")
+        OBJECT -> TODO("Not implemented. syoung 03/23/2020")
     }
 
     val serialKind: SerialKind
         get() = when (this) {
             BOOLEAN -> PrimitiveKind.BOOLEAN
-            DECIMAL -> PrimitiveKind.DOUBLE
+            NUMBER -> PrimitiveKind.DOUBLE
             INTEGER -> PrimitiveKind.INT
             STRING -> PrimitiveKind.STRING
-            MAP -> StructureKind.MAP
+            ARRAY -> StructureKind.LIST
+            OBJECT -> StructureKind.MAP
         }
 
     @Serializer(forClass = BaseType::class)
