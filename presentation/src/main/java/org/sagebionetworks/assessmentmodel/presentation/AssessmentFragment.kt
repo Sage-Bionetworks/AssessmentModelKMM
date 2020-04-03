@@ -1,5 +1,7 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.Step
+import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentGroupInfoObject
 
 import org.sagebionetworks.assessmentmodel.serialization.FileAssessmentProvider
@@ -21,6 +24,8 @@ class AssessmentFragment : Fragment() {
 
     companion object {
         fun newInstance() = AssessmentFragment()
+
+        const val ASSESSMENT_RESULT = "AsssessmentResult"
     }
 
     lateinit var viewModel: AssessmentViewModel
@@ -55,6 +60,14 @@ class AssessmentFragment : Fragment() {
     }
 
     private fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
+        if (NavigationPoint.Direction.Exit == showNodeState.direction) {
+            val resultIntent = Intent()
+            resultIntent.putExtra(ASSESSMENT_RESULT, showNodeState.nodeState.currentResult.toString())
+            activity?.setResult(Activity.RESULT_CANCELED, resultIntent)
+            activity?.finish()
+            return
+        }
+
         val stepFragment = this.getFragmentForStep(showNodeState.nodeState.node as Step)
         val transaction = childFragmentManager.beginTransaction()
         transaction

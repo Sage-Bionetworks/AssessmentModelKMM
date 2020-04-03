@@ -47,7 +47,7 @@ class TextQuestionStepFragment: StepFragment() {
         binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
-
+        binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
         binding.questionInput.setup(inputState)
 
     }

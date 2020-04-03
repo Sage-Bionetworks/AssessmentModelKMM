@@ -49,6 +49,7 @@ open class InstructionStepFragment: StepFragment() {
         }
         binding.navBar.navBarNext.setOnClickListener { assessmentViewModel.goforward() }
         binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
+        binding.header.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 
 }

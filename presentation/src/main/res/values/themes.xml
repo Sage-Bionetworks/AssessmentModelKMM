@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Royal application theme. Used by mPower-->
+    <style name="RoyalTheme" parent="Sage.BaseTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/royal300</item>
+        <item name="colorPrimaryDark">@color/royal400</item>
+        <item name="colorAccent">@color/turquoise300</item>
+        <item name="colorSecondary">@color/butterscotch400</item>
+        <item name="colorControlHighlight">@color/royal100_25</item>
+    </style>
+
+    <!-- Blueberry application theme. Used by MTB-->
+    <style name="BlueberryTheme" parent="Sage.BaseTheme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/blueberry400</item>
+        <item name="colorPrimaryDark">@color/blueberry500</item>
+        <item name="colorAccent">@color/apple200</item>
+        <item name="colorSecondary">@color/fern200</item>
+        <item name="colorControlHighlight">@color/blueberry400_35</item>
+    </style>
+
+    <style name="Sage.BaseTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Sage.SmallComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.Sage.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+
+
+</resources>

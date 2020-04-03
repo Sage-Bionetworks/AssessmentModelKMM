@@ -16,10 +16,6 @@ abstract class StepFragment: Fragment() {
 
     protected lateinit var assessmentViewModel: AssessmentViewModel
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         assessmentViewModel = (parentFragment as AssessmentFragment).viewModel

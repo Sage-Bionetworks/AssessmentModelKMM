@@ -10,12 +10,14 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
         <Button
+            style="@style/Button.ColoredButton"
             android:id="@+id/nav_bar_back"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/back" />
         <Button
+            style="@style/Button.ColoredButton"
             android:id="@+id/nav_bar_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

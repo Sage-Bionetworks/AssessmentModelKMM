@@ -1,2 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.sagebionetworks.assessmentmodel.presentation" />
+    package="org.sagebionetworks.assessmentmodel.presentation" >
+    <application>
+
+        <activity
+            android:name=".AssessmentActivity"
+            android:theme="@style/BlueberryTheme">
+        </activity>
+
+    </application>
+
+</manifest>
