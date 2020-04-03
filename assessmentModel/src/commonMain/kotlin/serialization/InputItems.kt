@@ -54,21 +54,21 @@ abstract class InputItemObject : InputItem {
 }
 
 @Serializable
-data class TextFieldOptionsObject(override val isSecureTextEntry: Boolean = false,
-                                  override val autocapitalizationType: AutoCapitalizationType = AutoCapitalizationType.None,
-                                  override val autocorrectionType: AutoCorrectionType = AutoCorrectionType.Default,
-                                  override val spellCheckingType: SpellCheckingType = SpellCheckingType.Default,
-                                  override val keyboardType: KeyboardType = KeyboardType.Default) : TextFieldOptions {
+data class KeyboardOptionsObject(override val isSecureTextEntry: Boolean = false,
+                                 override val autocapitalizationType: AutoCapitalizationType = AutoCapitalizationType.None,
+                                 override val autocorrectionType: AutoCorrectionType = AutoCorrectionType.Default,
+                                 override val spellCheckingType: SpellCheckingType = SpellCheckingType.Default,
+                                 override val keyboardType: KeyboardType = KeyboardType.Default) : KeyboardOptions {
     companion object {
-        val NumberEntryOptions = TextFieldOptionsObject(
+        val NumberEntryOptions = KeyboardOptionsObject(
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.NumberPad)
-        val DecimalEntryOptions = TextFieldOptionsObject(
+        val DecimalEntryOptions = KeyboardOptionsObject(
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.DecimalPad)
-        val DateTimeEntryOptions = TextFieldOptionsObject(
+        val DateTimeEntryOptions = KeyboardOptionsObject(
                 autocorrectionType = AutoCorrectionType.No,
                 spellCheckingType = SpellCheckingType.No,
                 keyboardType = KeyboardType.NumbersAndPunctuation)
@@ -88,8 +88,8 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.DECIMAL
 
-    override val textFieldOptions: TextFieldOptions
-        get() = TextFieldOptionsObject.DecimalEntryOptions
+    override val keyboardOptions: KeyboardOptions
+        get() = KeyboardOptionsObject.DecimalEntryOptions
     override fun buildTextValidator(): TextValidator<Double> = DoubleFormatter(formatOptions)
 }
 
@@ -97,14 +97,14 @@ data class DecimalTextInputItemObject(@SerialName("identifier")
 @SerialName("integer")
 data class IntegerTextInputItemObject(@SerialName("identifier")
                                       override val resultIdentifier: String? = null,
-                                      @SerialName("textFieldOptions")
-                                      var textOptions: TextFieldOptionsObject = TextFieldOptionsObject.NumberEntryOptions,
+                                      @SerialName("keyboardOptions")
+                                      var textOptions: KeyboardOptionsObject = KeyboardOptionsObject.NumberEntryOptions,
                                       var formatOptions: IntFormatOptions = IntFormatOptions())
     : InputItemObject(), KeyboardTextInputItem<Int> {
     override val answerType: AnswerType
         get() = AnswerType.INTEGER
 
-    override val textFieldOptions: TextFieldOptions
+    override val keyboardOptions: KeyboardOptions
         get() = textOptions
     override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }
@@ -113,14 +113,14 @@ data class IntegerTextInputItemObject(@SerialName("identifier")
 @SerialName("string")
 data class StringTextInputItemObject(@SerialName("identifier")
                                      override val resultIdentifier: String? = null,
-                                     @SerialName("textFieldOptions")
-                                     var textOptions: TextFieldOptionsObject = TextFieldOptionsObject(),
+                                     @SerialName("keyboardOptions")
+                                     var textOptions: KeyboardOptionsObject = KeyboardOptionsObject(),
                                      var regExValidator: RegExValidator? = null)
     : InputItemObject(), KeyboardTextInputItem<String> {
     override val answerType: AnswerType
         get() = AnswerType.STRING
 
-    override val textFieldOptions: TextFieldOptions
+    override val keyboardOptions: KeyboardOptions
         get() = textOptions
 
     override fun buildTextValidator(): TextValidator<String> = regExValidator ?: PassThruTextValidator
@@ -146,8 +146,8 @@ data class YearTextInputItemObject(@SerialName("identifier")
     override val answerType: AnswerType
         get() = AnswerType.INTEGER
 
-    override val textFieldOptions: TextFieldOptions
-        get() = TextFieldOptionsObject.NumberEntryOptions
+    override val keyboardOptions: KeyboardOptions
+        get() = KeyboardOptionsObject.NumberEntryOptions
     override fun buildTextValidator(): TextValidator<Int> = IntFormatter(formatOptions)
 }
 

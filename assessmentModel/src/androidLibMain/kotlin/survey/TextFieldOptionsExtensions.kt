@@ -5,7 +5,7 @@ import android.text.InputType
 /**
  * Get the input type mask to use with Android TextView.inputType field.
  */
-fun TextFieldOptions.inputTypeMask(): Int  {
+fun KeyboardOptions.inputTypeMask(): Int  {
 
     var mask = keyboardInputType()
     if (isSecureTextEntry) {
@@ -27,7 +27,7 @@ fun TextFieldOptions.inputTypeMask(): Int  {
 /**
  * Helper method to convert [AutoCapitalizationType] to Android InputType.
  */
-private fun TextFieldOptions.capitalizationInputType(): Int {
+private fun KeyboardOptions.capitalizationInputType(): Int {
     when (autocapitalizationType) {
         AutoCapitalizationType.AllCharacters -> return InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
         AutoCapitalizationType.Words -> return InputType.TYPE_TEXT_FLAG_CAP_WORDS
@@ -39,7 +39,7 @@ private fun TextFieldOptions.capitalizationInputType(): Int {
 /**
  * Helper method to convert [KeyboardType] to Android InputType.
  */
-private fun TextFieldOptions.keyboardInputType(): Int  {
+private fun KeyboardOptions.keyboardInputType(): Int  {
     when (keyboardType) {
         KeyboardType.NumberPad -> return InputType.TYPE_CLASS_NUMBER
         KeyboardType.URL -> return InputType.TYPE_TEXT_VARIATION_URI

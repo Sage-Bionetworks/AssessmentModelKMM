@@ -7,7 +7,7 @@ import org.sagebionetworks.assessmentmodel.matching
 /**
  * Defines the options that can be used for a text field.
  */
-interface TextFieldOptions {
+interface KeyboardOptions {
 
     /**
      * Is the text field for password entry?
