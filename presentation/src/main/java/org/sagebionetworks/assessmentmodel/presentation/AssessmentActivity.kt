@@ -5,7 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 
 class AssessmentActivity: AppCompatActivity() {
 
+    companion object {
+
+        const val ARG_THEME = "arg_theme"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (intent.hasExtra(ARG_THEME)) {
+            setTheme(intent.getIntExtra(ARG_THEME, R.style.BlueberryTheme))
+        }
+
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             val fragment = AssessmentFragment.newFragmentInstance(
