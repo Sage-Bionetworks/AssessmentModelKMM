@@ -3,8 +3,7 @@
     <application>
 
         <activity
-            android:name=".AssessmentActivity"
-            android:theme="@style/BlueberryTheme">
+            android:name=".AssessmentActivity">
         </activity>
 
     </application>

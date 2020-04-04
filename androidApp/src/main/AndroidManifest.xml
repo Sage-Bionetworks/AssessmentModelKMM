@@ -5,14 +5,13 @@
                  android:supportsRtl="true"
                  android:theme="@style/BlueberryTheme">
 
-    <activity
-        android:name=".ContainerActivity"
-        android:theme="@style/BlueberryTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+        <activity
+            android:name=".ContainerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 
