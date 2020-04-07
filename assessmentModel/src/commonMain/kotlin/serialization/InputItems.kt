@@ -37,9 +37,6 @@ val inputItemSerializersModule = SerializersModule {
     }
 }
 
-// TODO: syoung 02/18/2020 Names of fields for serialization have changed from SageResearch to support kotlinx.
-// "prompt" -> "fieldLabel"
-
 /**
  * A [InputItemObject] is intended to implement shared code for serialization of the simple data types. This will
  * work to deserialize some of the existing input items that use the [DataType] to define their type.
@@ -168,8 +165,6 @@ data class TimeInputItemObject(@SerialName("identifier")
                                    override val resultIdentifier: String? = null,
                                    override var formatOptions: TimeFormatOptions = TimeFormatOptions())
     : InputItemObject(), DateTimeInputItem
-
-// TODO: syoung 02/18/2020 In SageResearch change "minimumDate" -> "minimumValue" and "maximumDate" -> "maximumValue"
 
 @Serializable
 @SerialName("date")

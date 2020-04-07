@@ -174,16 +174,6 @@ data class InstructionStepObject(override val identifier: String,
  * Question
  */
 
-/**
- * TODO: syoung 02/18/2020 This is a name change of the serialization type from "form" -> "question" and
- * "inputFields" -> "inputItems"... sort of. The deserialization defined in SageResearch uses `RSDDataType` to
- * determine the type of question decoded. In a sense, the Question interface is more closely mapped to the
- * `RSDInputField` interface. However, there's a lot of customization that would need to happen to support that
- * architecture here. Since that architecture was designed to be reverse-compatible to AppCore and Bridge Surveys,
- * the deserialization is muddled. We elected to take an approach here that works better with the kotlinx.serialization
- * patterns. Subsequently, the serialization strategy in SageResearch will need to be refactored and deprecated.
- */
-
 @Serializable
 abstract class QuestionObject : StepObject(), Question {
     @SerialName("image")
