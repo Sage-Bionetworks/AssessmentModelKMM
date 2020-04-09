@@ -74,10 +74,6 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
         //TODO: -nbrown 02/13/2020
-//        when (reason) {
-//            FinishedReason.EarlyExit ->
-//        }
-
         if (FinishedReason.EarlyExit == reason) {
             currentNodeStateMutableLiveData.value =
                 ShowNodeState(
