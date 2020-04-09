@@ -10,13 +10,13 @@ open class InputItemsTest {
     private val jsonCoder = Serialization.JsonCoder.default
 
     /**
-     * [TextFieldOptions] Tests
+     * [KeyboardOptions] Tests
      */
 
     @Test
     fun testTextFieldOptions_Serialization() {
 
-        val original = TextFieldOptionsObject(
+        val original = KeyboardOptionsObject(
                 autocapitalizationType = AutoCapitalizationType.Words,
                 autocorrectionType = AutoCorrectionType.No,
                 keyboardType = KeyboardType.NumberPad,
@@ -30,9 +30,9 @@ open class InputItemsTest {
                 }
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(TextFieldOptionsObject.serializer(), original)
-        val restored = jsonCoder.parse(TextFieldOptionsObject.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TextFieldOptionsObject.serializer(), inputString)
+        val jsonString = jsonCoder.stringify(KeyboardOptionsObject.serializer(), original)
+        val restored = jsonCoder.parse(KeyboardOptionsObject.serializer(), jsonString)
+        val decoded = jsonCoder.parse(KeyboardOptionsObject.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -415,7 +415,7 @@ open class InputItemsTest {
 
         // Check the defaults for an decimal
         assertTrue(original.formatOptions.usesGroupingSeparator)
-        assertEquals(TextFieldOptionsObject.DecimalEntryOptions, original.textFieldOptions)
+        assertEquals(KeyboardOptionsObject.DecimalEntryOptions, original.keyboardOptions)
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -591,7 +591,7 @@ open class InputItemsTest {
             "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
-            "textFieldOptions" : {
+            "keyboardOptions" : {
                         "keyboardType" : "NumbersAndPunctuation",
                         "isSecureTextEntry" : true },
             "formatOptions" : {
@@ -609,7 +609,7 @@ open class InputItemsTest {
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
         original.uiHint = UIHint.TextField.Popover
-        original.textOptions = TextFieldOptionsObject(
+        original.textOptions = KeyboardOptionsObject(
                 keyboardType = KeyboardType.NumbersAndPunctuation,
                 isSecureTextEntry = true)
         original.formatOptions = IntFormatOptions(usesGroupingSeparator = false)
@@ -640,7 +640,7 @@ open class InputItemsTest {
 
         // Check the defaults for an integer
         assertTrue(original.formatOptions.usesGroupingSeparator)
-        assertEquals(TextFieldOptionsObject.NumberEntryOptions, original.textFieldOptions)
+        assertEquals(KeyboardOptionsObject.NumberEntryOptions, original.keyboardOptions)
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -682,7 +682,7 @@ open class InputItemsTest {
             "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
-            "textFieldOptions" : {
+            "keyboardOptions" : {
                         "autocapitalizationType" : "words",
                         "keyboardType" : "asciiCapable",
                         "isSecureTextEntry" : true },
@@ -696,7 +696,7 @@ open class InputItemsTest {
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
         original.uiHint = UIHint.TextField.Popover
-        original.textOptions = TextFieldOptionsObject(
+        original.textOptions = KeyboardOptionsObject(
                 autocapitalizationType = AutoCapitalizationType.Words,
                 keyboardType = KeyboardType.AsciiCapable,
                 isSecureTextEntry = true)

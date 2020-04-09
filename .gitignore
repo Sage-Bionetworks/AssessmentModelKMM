@@ -5,3 +5,5 @@ build/
 !.idea/runConfigurations
 .DS_STORE
 local.properties
+*.xcuserstate
+*.xcsettings
