@@ -53,7 +53,7 @@ class AssessmentFragment : Fragment() {
         // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
         val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: packageName)
         val assessmentGroup = AssessmentGroupInfoObject(
-            files = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
+            assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
             packageName = packageName)
         val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup)
         viewModel = ViewModelProvider(
@@ -70,7 +70,6 @@ class AssessmentFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
 
         viewModel.currentNodeStateLiveData
                 .observe(this.viewLifecycleOwner, Observer<AssessmentViewModel.ShowNodeState>

@@ -193,8 +193,8 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
      * simple cases of a map, an set made up of unique answers, or setting the value to the first element in the array.
      */
     protected open fun jsonValue(forMap: Map<String, JsonElement>) : JsonElement? = when (val aType = answerType) {
-        AnswerType.MAP -> JsonObject(forMap)
-        is AnswerType.List -> if (aType.sequenceSeparator == null) {
+        AnswerType.OBJECT -> JsonObject(forMap)
+        is AnswerType.Array -> if (aType.sequenceSeparator == null) {
             JsonArray(forMap.values.toSet().toList())
         } else {
             TODO("Not implemented. syoung 03/03/2020")

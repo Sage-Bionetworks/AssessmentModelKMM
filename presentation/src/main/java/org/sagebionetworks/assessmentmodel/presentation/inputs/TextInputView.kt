@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.presentation.inputs
 
 import android.content.Context
-import android.text.InputType
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -29,7 +28,7 @@ class TextInputView : LinearLayout {
     }
 
     fun setup(inputItemState: KeyboardInputItemState<*>) {
-        textInput.inputType = inputItemState.inputItem.textFieldOptions.inputTypeMask()
+        textInput.inputType = inputItemState.inputItem.keyboardOptions.inputTypeMask()
 
         textInputLayout.hint = inputItemState.inputItem.placeholder
         if (inputItemState.selected) {

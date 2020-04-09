@@ -228,7 +228,7 @@ interface KeyboardTextInputItem<T> : InputItem {
      * Options for displaying a text field. This is only applicable for certain types of UI hints and data types. If
      * not applicable, it will be ignored.
      */
-    val textFieldOptions: TextFieldOptions
+    val keyboardOptions: KeyboardOptions
 
     /**
      * This can be used to return a class used to format and/or validate the text input.
@@ -254,8 +254,8 @@ interface DateTimeInputItem : KeyboardTextInputItem<String> {
     override val answerType: AnswerType
         get() = AnswerType.DateTime(codingFormat = formatOptions.codingFormat)
 
-    override val textFieldOptions: TextFieldOptions
-        get() = TextFieldOptionsObject.DateTimeEntryOptions
+    override val keyboardOptions: KeyboardOptions
+        get() = KeyboardOptionsObject.DateTimeEntryOptions
 
     // TODO: syoung 02/18/2020 Revisit this. I couldn't figure out Android date formatting.
     override fun buildTextValidator(): TextValidator<String> = PassThruTextValidator

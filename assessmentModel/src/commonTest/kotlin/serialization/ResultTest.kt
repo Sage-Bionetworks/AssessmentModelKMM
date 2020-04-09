@@ -3,7 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.*
-import org.sagebionetworks.assessmentmodel.CollectionResult
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
@@ -134,6 +133,29 @@ open class ResultTest {
      */
 
     @Test
+    fun testAnswerType_Primitive_jsonElementFor() {
+        assertEquals(JsonPrimitive(true), AnswerType.BOOLEAN.jsonElementFor(true))
+        assertEquals(JsonPrimitive(3), AnswerType.INTEGER.jsonElementFor(3))
+        assertEquals(JsonPrimitive(3.2), AnswerType.DECIMAL.jsonElementFor(3.2))
+        assertEquals(JsonPrimitive("foo"), AnswerType.STRING.jsonElementFor("foo"))
+    }
+
+    @Test
+    fun testAnswerType_PhoneNumber_jsonElementFor() {
+        val answerType = AnswerType.Array(BaseType.INTEGER,"-")
+        val parts = listOf(206,555,1212)
+        assertEquals(JsonPrimitive("206-555-1212"), answerType.jsonElementFor(parts))
+    }
+
+    @Test
+    fun testAnswerType_WordList_jsonElementFor() {
+        val answerType = AnswerType.Array()
+        val words = listOf("fox","jumped","over","moon")
+        val expected = JsonArray(words.map { JsonPrimitive(it) })
+        assertEquals(expected, answerType.jsonElementFor(words))
+    }
+
+    @Test
     fun testAnswerResult_Boolean() {
         val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true)))
         val inputString = """
@@ -168,7 +190,7 @@ open class ResultTest {
                         "identifier" : "foo",
                         "type" : "answer",
                         "answerType" : {
-                            "type": "decimal"
+                            "type": "number"
                         },
                         "value" : 3.2
                     }
@@ -214,14 +236,14 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Map() {
         val originalValue = JsonObject(mapOf("a" to JsonLiteral(3.2), "b" to JsonLiteral("boo")))
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.MAP, originalValue))
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.OBJECT, originalValue))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
                         "answerType" : {
-                            "type": "map"
+                            "type": "object"
                         },
                         "value" : {"a":3.2,"b":"boo"}
                     }
@@ -296,14 +318,14 @@ open class ResultTest {
     @Test
     fun testAnswerResult_ListInt() {
         val originalValue = JsonArray(listOf(JsonPrimitive(2), JsonPrimitive(5)))
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.List(BaseType.INTEGER), originalValue))
+        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
                         "answerType" : {
-                            "type": "list",
+                            "type": "array",
                             "baseType": "integer"
                         },
                         "value" : [2,5]
