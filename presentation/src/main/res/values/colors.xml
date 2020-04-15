@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--Royal Colors    -->
+    <color name="royal100">#A294CA</color>
+    <color name="royal100_25">#40A294CA</color>
+    <color name="royal200">#7B67B3</color>
+    <color name="royal300">#5A478F</color> <!-- Prmary -->
+    <color name="royal400">#3D3062</color>
+    <color name="royal500">#211A34</color>
+
+    <color name="butterscotch400">#F5B33C</color>
+
+    <color name="turquoise300">#24AB9F</color>
+
+<!--Blueberry Colors   -->
+    <color name="blueberry100">#BBD3E2</color>
+    <color name="blueberry200">#8BB4CE</color>
+    <color name="blueberry300">#5B95BA</color>
+    <color name="blueberry400">#3E7293</color> <!-- Prmary -->
+    <color name="blueberry400_35">#593E7293</color> <!-- Prmary -->
+    <color name="blueberry500">#2A4D63</color>
+
+    <color name="fern200">#9ACCAB</color>
+
+    <color name="apple200">#DA7579</color>
+
+</resources>

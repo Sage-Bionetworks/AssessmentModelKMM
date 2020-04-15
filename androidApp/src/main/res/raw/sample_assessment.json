@@ -18,7 +18,40 @@
     {
       "identifier": "step1",
       "type": "instruction",
-      "title": "Step 1"
+      "title": "Instruction Step 1",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_seated"
+      }
+    },
+    {
+      "identifier": "step2",
+      "type": "instruction",
+      "title": "Animating image instruction",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_stair_step_start_animation"
+      }
+    },
+    {
+      "identifier": "choice",
+      "type": "choiceQuestion",
+      "title": "Hello World!",
+      "subtitle": "Question subtitle",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "optional": false,
+      "singleChoice": false,
+      "baseType": "integer",
+      "uiHint": "checkmark",
+      "choices":[
+        {"text":"choice 1","icon":"choice1","value":1},
+        {"text":"choice 2","value":2},
+        {"text":"choice 3","value":3},
+        {"text":"none of the above","exclusive":true}
+      ]
     },
     {
       "identifier": "stringQuestion",
@@ -51,16 +84,6 @@
       "optional": false,
       "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
-    },
-    {
-      "identifier": "step2",
-      "type": "instruction",
-      "title": "Step 2"
-    },
-    {
-      "identifier": "step3",
-      "type": "instruction",
-      "title": "Step 3"
     }
   ]
 }

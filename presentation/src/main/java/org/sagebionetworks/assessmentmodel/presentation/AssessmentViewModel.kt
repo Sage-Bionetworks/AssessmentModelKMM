@@ -1,5 +1,7 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
+import android.graphics.Path
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,6 +41,10 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
         assessmentNodeState.goBackward()
     }
 
+    fun cancel() {
+        assessmentNodeState.finish(NavigationPoint(null, assessmentNodeState.currentResult, NavigationPoint.Direction.Exit))
+    }
+
     override fun canHandle(node: Node): Boolean {
         return (node is Step)
     }
@@ -65,7 +71,18 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
     }
 
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+        val resultString = nodeState.currentResult.toString()
+        Log.d("Result", resultString)
         //TODO: -nbrown 02/13/2020
+        if (FinishedReason.EarlyExit == reason) {
+            currentNodeStateMutableLiveData.value =
+                ShowNodeState(
+                    nodeState,
+                    NavigationPoint.Direction.Exit,
+                    null,
+                    null
+                )
+        }
     }
 
     /**

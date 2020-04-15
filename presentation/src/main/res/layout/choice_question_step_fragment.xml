@@ -12,11 +12,16 @@
         android:layout_height="@dimen/header_height"
         android:layout_alignParentTop="true" />
 
-    <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-        android:id="@+id/question_input"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/question_header"/>
+        android:layout_below="@id/question_header"
+        android:layout_above="@id/nav_bar">
+        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
+            android:id="@+id/question_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
     <include layout="@layout/include_step_navigation_bar"
         android:id="@+id/nav_bar"
