@@ -328,7 +328,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
                                "placementType" : "topBackground",
                                "animationDuration" : 2
-                                  }
+                                  },
+                "viewTheme": { 
+                            "viewIdentifier":"Moo",
+                            "storyboardIdentifier":"Ba",
+                            "fragmentIdentifier":"La",
+                            "fragmentLayout":"LaLa" }
            }
            """
         val original = InstructionStepObject("foo")
@@ -345,6 +350,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                 imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.spokenInstructions = mapOf("start" to "Start now")
+        original.viewTheme = ViewThemeObject(
+            viewIdentifier = "Moo",
+            storyboardIdentifier = "Ba",
+            fragmentIdentifier = "La",
+            fragmentLayout = "LaLa"
+        )
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
