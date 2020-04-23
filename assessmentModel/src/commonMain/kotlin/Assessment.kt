@@ -394,7 +394,18 @@ interface CountdownStep : OptionalStep, ActiveStep
  * For example, a [FormStep] may describe entering a participant's demographics data where the study designer wants to
  * display height, weight, gender, and birth year on a single screen.
  */
-interface FormStep : Step, NodeContainer, ContentNode
+interface FormStep : Step, ContentNode {
+
+    /**
+     * The children contained within this collection.
+     */
+    val children: List<Node>
+
+    /**
+     * A form should always return a collection of results.
+     */
+    override fun createResult(): CollectionResult = CollectionResultObject(resultId())
+}
 
 /**
  * A result summary step is used to display a result that is calculated or measured earlier in the [Assessment].
