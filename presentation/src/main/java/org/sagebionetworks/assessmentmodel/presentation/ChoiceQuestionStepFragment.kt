@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ChoiceQuestionStepFragmentBinding
-import org.sagebionetworks.assessmentmodel.presentation.databinding.TextQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
-import org.sagebionetworks.assessmentmodel.survey.KeyboardInputItemState
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
-import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 class ChoiceQuestionStepFragment: StepFragment() {
 
@@ -40,7 +37,7 @@ class ChoiceQuestionStepFragment: StepFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.navBar.navBarNext.setOnClickListener {
-            assessmentViewModel.goforward()
+            assessmentViewModel.goForward()
         }
         binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
         binding.questionHeader.questionTitle.text = questionStep.title

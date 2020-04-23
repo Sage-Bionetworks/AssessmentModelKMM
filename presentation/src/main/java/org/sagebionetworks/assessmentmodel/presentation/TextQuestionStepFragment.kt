@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import org.sagebionetworks.assessmentmodel.presentation.databinding.TextQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.survey.*
 
@@ -42,7 +40,7 @@ class TextQuestionStepFragment: StepFragment() {
         binding.navBar.navBarNext.setOnClickListener {
             binding.questionInput.updateResult(inputState)
             questionState.saveAnswer(inputState.currentAnswer, inputState)
-            assessmentViewModel.goforward()
+            assessmentViewModel.goForward()
         }
         binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
         binding.questionHeader.questionTitle.text = questionStep.title
