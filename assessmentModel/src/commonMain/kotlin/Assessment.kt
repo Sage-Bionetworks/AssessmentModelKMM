@@ -262,6 +262,12 @@ interface Step : Node {
      * ```
      */
     val spokenInstructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String with a sealed class
+
+    /**
+     * The [ViewTheme] to use to provide a custom view for this step.
+     */
+    val viewTheme: ViewTheme?
+        get() = null
 }
 
 /**
