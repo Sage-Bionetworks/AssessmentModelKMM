@@ -17,6 +17,7 @@ val nodeSerializersModule = SerializersModule {
         AssessmentObject::class with AssessmentObject.serializer()
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
         ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
+        FormStepObject::class with FormStepObject.serializer()
         InstructionStepObject::class with InstructionStepObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
@@ -169,6 +170,20 @@ data class InstructionStepObject(override val identifier: String,
                                  @SerialName("image")
                                  override var imageInfo: ImageInfo? = null,
                                  override var fullInstructionsOnly: Boolean = false) : StepObject(), InstructionStep
+
+@Serializable
+@SerialName("form")
+data class FormStepObject(
+    override val identifier: String,
+    override val resultIdentifier: String? = null,
+    @SerialName("image")
+    override val imageInfo: ImageInfo? = null,
+    // TODO: syoung 04/22/2020 iOS defines the child nodes as "inputFields" but may want to change that?
+    //  Basically, what is the keyword that makes sense for the nodes in a collection where the "step" shows multiple
+    //  questions as a part of a single step?
+    @SerialName("inputFields")
+    override val children: List<Node>
+) : StepObject(), FormStep
 
 /**
  * Question

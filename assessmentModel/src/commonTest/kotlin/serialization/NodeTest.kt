@@ -244,6 +244,68 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     /**
+     * FormStepObject
+     */
+
+    @Test
+    fun testFormStep_Serialization() {
+        val inputString = """
+            {
+                "identifier": "foobar",
+                "type": "form",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "detail": "Some text. This is a test.",
+                "image": {    "type" : "fetchable",
+                               "imageName" : "fooIcon"
+                        },
+                "footnote": "This is a footnote.",
+                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+                "shouldHideActions": ["goBackward"],
+                "inputFields": [
+                           {
+                               "identifier": "foo",
+                               "type": "stringChoiceQuestion",
+                                "choices":["choice 1","choice 2","choice 3"]
+                           }
+                ]
+            }
+            """
+
+        val original = FormStepObject(
+            identifier = "foobar",
+            children = listOf(
+                StringChoiceQuestionObject("foo", listOf("choice 1","choice 2","choice 3"))
+            ),
+            imageInfo = FetchableImage("fooIcon")
+        )
+
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
+        original.buttonMap = mapOf(
+            ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is FormStepObject)
+        assertFormStepNode(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        assertTrue(restored is FormStepObject)
+        assertFormStepNode(original, restored)
+        assertEqualContentNodes(original, restored)
+    }
+
+    /**
      * InstructionStepObject
      */
 
@@ -851,6 +913,14 @@ open class NodeSerializationTestHelper {
     fun assertContainerNode(expected: NodeContainer, actual: NodeContainer) {
         assertEqualNodes(expected, actual)
         assertEquals(expected.progressMarkers, actual.progressMarkers)
+        assertEquals(expected.children.count(), actual.children.count())
+        actual.children.forEachIndexed { index, node ->
+            assertEqualNodes(expected.children[index], node)
+        }
+    }
+
+    fun assertFormStepNode(expected: FormStep, actual: FormStep) {
+        assertEqualNodes(expected, actual)
         assertEquals(expected.children.count(), actual.children.count())
         actual.children.forEachIndexed { index, node ->
             assertEqualNodes(expected.children[index], node)
