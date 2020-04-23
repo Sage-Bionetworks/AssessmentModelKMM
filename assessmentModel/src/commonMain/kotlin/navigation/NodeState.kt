@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.FormStepStateImpl
 import org.sagebionetworks.assessmentmodel.survey.Question
 import org.sagebionetworks.assessmentmodel.survey.QuestionStateImpl
 
@@ -266,6 +267,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
         return rootNodeController?.customNodeStateFor(node, this) ?: when (node) {
             is Question -> QuestionStateImpl(node, this)
+            is FormStep -> FormStepStateImpl(node, this)
             else -> LeafNodeStateImpl(node, this)
         }
     }

@@ -6,7 +6,12 @@ import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.LeafNodeState
 import org.sagebionetworks.assessmentmodel.navigation.previousResult
 
-interface QuestionState : LeafNodeState {
+interface QuestionState : LeafNodeState, QuestionFieldState {
+    override val node: Question
+    override val currentResult: AnswerResult
+}
+
+interface QuestionFieldState : FieldState {
     override val node: Question
     override val currentResult: AnswerResult
 
@@ -54,11 +59,16 @@ interface QuestionState : LeafNodeState {
     fun saveAnswer(answer: JsonElement?, forItem: InputItemState): Boolean
 }
 
-open class QuestionStateImpl(override val node: Question, override val parent: BranchNodeState) : QuestionState {
+open class QuestionStateImpl(override val node: Question, override val parent: BranchNodeState)
+    : AbstractQuestionFieldStateImpl(), QuestionState {
+    override val index: Int = 0
     override val currentResult: AnswerResult by lazy {
         // The question state should look at the path history and pull the last result with a matching result id.
         previousResult() as? AnswerResult ?: this.node.createResult()
     }
+}
+
+abstract class AbstractQuestionFieldStateImpl() : QuestionFieldState {
 
     /**
      * -- Initialization
