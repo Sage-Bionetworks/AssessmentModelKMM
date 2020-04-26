@@ -65,6 +65,7 @@ abstract class NodeObject : ContentNode {
 @Serializable
 abstract class StepObject : NodeObject(), Step {
     override var spokenInstructions: Map<String, String>? = null
+    override var viewTheme: ViewThemeObject? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
