@@ -9,18 +9,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
-import org.sagebionetworks.assessmentmodel.serialization.AssessmentGroupInfoObject
-
-import org.sagebionetworks.assessmentmodel.serialization.FileAssessmentProvider
-import org.sagebionetworks.assessmentmodel.serialization.FileLoaderAndroid
-import org.sagebionetworks.assessmentmodel.serialization.TransformableAssessmentObject
+import org.sagebionetworks.assessmentmodel.northwestern.MtbSerialization
+import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 
-class AssessmentFragment : Fragment() {
+open class AssessmentFragment : Fragment() {
 
     companion object {
 
@@ -55,7 +55,7 @@ class AssessmentFragment : Fragment() {
         val assessmentGroup = AssessmentGroupInfoObject(
             assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
             packageName = packageName)
-        val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup)
+        val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
         viewModel = ViewModelProvider(
             this, AssessmentViewModelFactory()
                 .create(assessmentId, assessmentProvider))
@@ -94,12 +94,17 @@ class AssessmentFragment : Fragment() {
         childFragmentManager.executePendingTransactions()
     }
 
-    private fun getFragmentForStep(step: Step): Fragment {
+    open fun getJsonLoader() : Json {
+        return Serialization.JsonCoder.default
+    }
+
+    open fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
         when(step) {
             is SimpleQuestion -> return TextQuestionStepFragment()
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
-            else -> return InstructionStepFragment()
+            is InstructionStep -> return InstructionStepFragment()
+            else -> return DebugStepFragment()
         }
     }
 
