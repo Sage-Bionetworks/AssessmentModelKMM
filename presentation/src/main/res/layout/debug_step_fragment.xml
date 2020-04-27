@@ -13,27 +13,11 @@
         android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/title"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:layout_margin="10dp"/>
-
-    <TextView
-        android:id="@+id/detail"
-        style="@style/TextAppearance.MaterialComponents.Body1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:layout_margin="10dp"/>
-
-    <TextView
         android:id="@+id/raw"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/detail"
+        android:layout_below="@id/header"
         android:layout_margin="10dp"/>
 
     <include layout="@layout/include_step_navigation_bar"
