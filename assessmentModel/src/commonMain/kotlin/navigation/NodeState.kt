@@ -207,6 +207,10 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     open fun moveTo(navigationPoint: NavigationPoint) {
         val controller = rootNodeController ?: throw NullPointerException("Unexpected null rootNodeController")
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
+        val pathMarker = PathMarker(node.identifier, navigationPoint.direction)
+        if (currentResult.path.lastOrNull() != pathMarker) {
+            currentResult.path.add(pathMarker)
+        }
         if (controller.canHandle(node)) {
             // If the controller can handle the node state then it is responsible for showing it. Just set the current
             // child and hand off control to the root node controller.

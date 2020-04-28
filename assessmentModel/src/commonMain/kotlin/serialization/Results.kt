@@ -39,7 +39,9 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")
-                                  override var endDateString: String = DateGenerator.nowString()) : AssessmentResult {
+                                  override var endDateString: String = DateGenerator.nowString(),
+                                  override val path: MutableList<PathMarker> = mutableListOf())
+    : AssessmentResult {
     override fun copyResult(identifier: String): AssessmentResult = this.copy(
             identifier = identifier,
             pathHistoryResults = pathHistoryResults.copyResults(),
@@ -67,7 +69,8 @@ data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("stepHistory")
                                   override var pathHistoryResults: MutableList<Result> = mutableListOf(),
                                   @SerialName("asyncResults")
-                                  override var inputResults: MutableSet<Result> = mutableSetOf()) : BranchNodeResult {
+                                  override var inputResults: MutableSet<Result> = mutableSetOf(),
+                                  override val path: MutableList<PathMarker> = mutableListOf()) : BranchNodeResult {
     override fun copyResult(identifier: String): BranchNodeResult = this.copy(
             identifier = identifier,
             pathHistoryResults = pathHistoryResults.copyResults(),

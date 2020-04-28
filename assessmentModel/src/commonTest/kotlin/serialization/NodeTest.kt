@@ -407,7 +407,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                                   },
                 "optional": false,
                 "inputItem":{"type" : "year"},
-                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"},
+                "surveyRules": [{ "matchingAnswer": 1900}]
            }
            """
         val original = SimpleQuestionObject(
@@ -423,6 +424,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
+        original.surveyRules = listOf(ComparableSurveyRuleObject(JsonPrimitive(1900)))
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)

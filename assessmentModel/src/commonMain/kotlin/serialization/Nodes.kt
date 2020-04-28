@@ -3,9 +3,14 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.NavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
@@ -40,7 +45,7 @@ val nodeSerializersModule = SerializersModule {
 }
 
 @Serializable
-abstract class NodeObject : ContentNode {
+abstract class NodeObject : ContentNode, DirectNavigationRule {
     override var comment: String? = null
     override var title: String? = null
     override var subtitle: String? = null
@@ -50,6 +55,9 @@ abstract class NodeObject : ContentNode {
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
     override var buttonMap: Map<ButtonAction, Button> = mapOf()
+
+    @SerialName("nextStepIdentifier")
+    override var nextNodeIdentifier: String? = null
 
     open fun copyFrom(original: ContentNode) {
         this.comment = original.comment
@@ -191,10 +199,11 @@ data class FormStepObject(
  */
 
 @Serializable
-abstract class QuestionObject : StepObject(), Question {
+abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
     override var optional: Boolean = true
+    override var surveyRules: List<ComparableSurveyRuleObject>? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
@@ -265,3 +274,11 @@ data class ComboBoxQuestionObject(override val identifier: String,
             }
     }
 }
+
+@Serializable
+data class ComparableSurveyRuleObject(
+    override val matchingAnswer: JsonElement = JsonNull,
+    override val skipToIdentifier: String? = null,
+    override val ruleOperator: SurveyRuleOperator? = null,
+    override val accuracy: Double = 0.00001
+) : ComparableSurveyRule
