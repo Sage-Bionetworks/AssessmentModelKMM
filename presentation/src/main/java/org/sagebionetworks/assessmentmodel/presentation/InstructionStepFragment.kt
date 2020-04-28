@@ -47,8 +47,9 @@ open class InstructionStepFragment: StepFragment() {
         if (drawable is AnimationDrawable) {
             drawable.start()
         }
-        binding.navBar.navBarNext.setOnClickListener { assessmentViewModel.goForward() }
-        binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
+        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setup(step)
         binding.header.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 

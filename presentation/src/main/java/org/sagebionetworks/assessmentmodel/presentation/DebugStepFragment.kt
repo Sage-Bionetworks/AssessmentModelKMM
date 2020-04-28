@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.DebugStepFragmentBinding
+import org.sagebionetworks.assessmentmodel.serialization.loadDrawable
 
 open class DebugStepFragment: StepFragment() {
 
@@ -39,8 +41,9 @@ open class DebugStepFragment: StepFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.raw.text = step.toString()
-        binding.navBar.navBarNext.setOnClickListener { assessmentViewModel.goForward() }
-        binding.navBar.navBarBack.setOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
+        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setup(step)
         binding.header.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 

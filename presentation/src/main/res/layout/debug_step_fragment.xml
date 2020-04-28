@@ -20,7 +20,7 @@
         android:layout_below="@id/header"
         android:layout_margin="10dp"/>
 
-    <include layout="@layout/include_step_navigation_bar"
+    <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
