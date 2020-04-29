@@ -1,6 +1,5 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
-import android.graphics.Path
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
