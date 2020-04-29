@@ -49,7 +49,7 @@ abstract class NodeObject : ContentNode {
     @SerialName("shouldHideActions")
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
-    override var buttonMap: Map<ButtonAction, Button> = mapOf()
+    override var buttonMap: Map<ButtonAction, ButtonActionInfo> = mapOf()
 
     open fun copyFrom(original: ContentNode) {
         this.comment = original.comment

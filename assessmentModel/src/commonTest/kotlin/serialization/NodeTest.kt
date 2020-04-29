@@ -64,8 +64,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+                ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName = "closeX"))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -288,8 +288,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-            ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-            ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -343,8 +343,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.fullInstructionsOnly = true
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+                ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 imagePlacement = ImagePlacement.Standard.TopBackground,
@@ -545,8 +545,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+                ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = FetchableImage("fooIcon")
         original.progressMarkers = listOf("step1", "step2")
 
@@ -725,8 +725,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-                ButtonAction.Navigation.GoForward to ButtonObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonObject(icon = FetchableImage("closeX")))
+                ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName = "closeX"))
         original.progressMarkers = listOf("step1", "step2")
         val originalImageInfo = FetchableImage("fooIcon")
         original.imageInfo = originalImageInfo
