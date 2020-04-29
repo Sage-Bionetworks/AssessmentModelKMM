@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 open class NodeNavigator(val node: NodeContainer) : Navigator {
 
@@ -12,6 +13,8 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         var direction = NavigationPoint.Direction.Forward
         if (next != null && currentNode != null && node.children.indexOf(next) < node.children.indexOf(currentNode)) {
             direction = NavigationPoint.Direction.Backward
+        } else if (shouldExitEarly(currentNode, branchResult, false)) {
+            direction = NavigationPoint.Direction.Exit
         }
         return NavigationPoint(node = next, branchResult = branchResult, direction = direction)
     }
@@ -69,8 +72,16 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     private val children
         get() = node.children
 
+    private fun shouldExitEarly(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): Boolean
+        = nextNodeIdentifier(currentNode, parentResult, isPeeking)?.let {
+            it.toLowerCase() == ReservedNavigationIdentifier.exit.name.toLowerCase()
+        } ?: false
+
+    private fun nextNodeIdentifier(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): String?
+        = currentNode?.let { navigationRuleFor(it, parentResult) }?.nextNodeIdentifier(parentResult, isPeeking)
+
     private fun nextNode(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): Node? {
-        val nextIdentifier = currentNode?.let { navigationRuleFor(it, parentResult) }?.nextNodeIdentifier(parentResult, isPeeking)
+        val nextIdentifier = nextNodeIdentifier(currentNode, parentResult, isPeeking)
         return if (nextIdentifier != null) {
             node(nextIdentifier)
         } else if (currentNode == null) {

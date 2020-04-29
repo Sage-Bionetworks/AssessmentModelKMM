@@ -140,6 +140,11 @@ interface BranchNodeState : NodeState {
     fun moveToNextNode(direction: NavigationPoint.Direction,
                        requestedPermissions: Set<Permission>? = null,
                        asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+
+    /**
+     * Allow for chaining up to the top node state when the navigation should end early.
+     */
+    fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
 }
 
 interface LeafNodeState : NodeState {
@@ -242,11 +247,20 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     open fun finish(navigationPoint: NavigationPoint) {
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
-                rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
+                exitEarly(navigationPoint.asyncActionNavigations)
             parent == null ->
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
             else ->
                 parent.moveToNextNode(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+        }
+    }
+
+    override fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        appendChildResultIfNeeded()
+        if (parent == null) {
+            rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
+        } else {
+            parent.exitEarly(asyncActionNavigations)
         }
     }
 

@@ -29,11 +29,6 @@ enum class ReservedNavigationIdentifier {
      * Continue to the next section.
      */
     nextSection,
-
-    /**
-     * Continue to the next step.
-     */
-    nextStep,
     ;
 }
 

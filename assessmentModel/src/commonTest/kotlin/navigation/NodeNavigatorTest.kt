@@ -123,7 +123,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
 
         val point = navigator.nodeAfter(nodeList[2], result)
         assertNull(point.node)
-        assertEquals(NavigationPoint.Direction.Forward, point.direction)
+        assertEquals(NavigationPoint.Direction.Exit, point.direction)
         assertEquals(result, point.branchResult)
         assertNull(point.requestedPermissions)
         assertNull(point.asyncActionNavigations)
@@ -526,6 +526,39 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeState, testRootNodeController.finished_nodeState)
     }
 
+    @Test
+    fun testGoForward_Exit_SectionNavigation() {
+        val nodeA = InstructionStepObject("stepA")
+        val nodeListB = buildNodeList(5, 1, "stepB").toList()
+        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.exit.name
+        val nodeB = SectionObject("stepB", nodeListB)
+        val nodeListC = buildNodeList(3, 1, "stepC").toList()
+        val nodeC = SectionObject("stepC", nodeListC)
+        val nodeD = InstructionStepObject("stepD")
+        val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+
+        val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3")
+        val expectedResults = listOf("stepA", "stepB")
+        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "end"), expectedChain.count())
+
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
+
+        assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
+        assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
+
+        val topResult = nodeState.currentResult
+        // The path history should be up to but not including the current node
+        assertEquals(nodeB, nodeState.currentChild?.node)
+        assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
+        // The node chains should include each node in the list to the testRootNodeController.stepTo value.
+        assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
+
+        assertTrue(testRootNodeController.finished_called)
+        assertEquals(nodeState, testRootNodeController.finished_nodeState)
+    }
+
     /**
      * BranchNodeStateImpl - goBackward
      */
@@ -645,6 +678,42 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val testRootNodeController = TestRootNodeController(mapOf(
             NavigationPoint.Direction.Forward to "stepC3",
             NavigationPoint.Direction.Backward to "stepB3"),
+            expectedChain.count())
+
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
+        assertEquals(nodeC, nodeState.currentChild?.node)
+        nodeState.goBackward()
+
+        assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
+
+        val topResult = nodeState.currentResult
+        // The path history should be up to but not including the current node
+        assertEquals(nodeB, nodeState.currentChild?.node)
+        assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
+        // The node chains should include each node in the list to the testRootNodeController.stepTo value.
+        assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
+
+        assertFalse(testRootNodeController.finished_called)
+    }
+
+    @Test
+    fun testGoBackward_StepB3_FromNextSection_SectionNavigation() {
+        val nodeA = InstructionStepObject("stepA")
+        val nodeListB = buildNodeList(5, 1, "stepB").toList()
+        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.nextSection.name
+        val nodeB = SectionObject("stepB", nodeListB)
+        val nodeListC = buildNodeList(3, 1, "stepC").toList()
+        val nodeC = SectionObject("stepC", nodeListC)
+        val nodeD = InstructionStepObject("stepD")
+        val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+
+        val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3", "stepC1", "stepC2", "stepC3", "stepC2", "stepC1", "stepB3", "stepB2")
+        val expectedResults = listOf("stepA", "stepB", "stepC")
+        val testRootNodeController = TestRootNodeController(mapOf(
+            NavigationPoint.Direction.Forward to "stepC3",
+            NavigationPoint.Direction.Backward to "stepB2"),
             expectedChain.count())
 
         nodeState.rootNodeController = testRootNodeController

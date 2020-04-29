@@ -18,7 +18,7 @@ interface NavigationRule {
      * [isPeeking] equals `true` if this is used in a call to [NodeNavigator.hasNodeAfter] and equals `false` in the
      * call to [NodeNavigator.nodeAfter].
      */
-    fun nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Boolean) : String?
+    fun nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Boolean): String?
 }
 
 interface DirectNavigationRule : NavigationRule {
