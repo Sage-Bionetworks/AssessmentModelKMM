@@ -129,6 +129,39 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertNull(point.asyncActionNavigations)
     }
 
+    @Test
+    fun testNodeAfter_BackTo2_WithSkip() {
+        val nodeList = buildNodeList(7, 1, "step").toList()
+
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        val navigator = assessmentObject.getNavigator()
+        assertNotNull(navigator)
+        assertTrue(navigator is NodeNavigator)
+        val result = buildResult(assessmentObject, 4)
+        (result.pathHistoryResults.last() as ResultNavigationRule).nextNodeIdentifier = "step2"
+
+        assertTrue(navigator.hasNodeAfter(nodeList[4], result))
+
+        val point = navigator.nodeAfter(nodeList[4], result)
+        assertEquals(nodeList[1], point.node)
+        assertEquals(NavigationPoint.Direction.Backward, point.direction)
+        assertEquals(result, point.branchResult)
+        assertNull(point.requestedPermissions)
+        assertNull(point.asyncActionNavigations)
+
+        // And then go forward again.
+
+        result.pathHistoryResults.add(nodeList[1].createResult())
+        result.path.add(PathMarker("step2", NavigationPoint.Direction.Backward))
+
+        val nextPoint = navigator.nodeAfter(nodeList[1], result)
+        assertEquals(nodeList[2], nextPoint.node)
+        assertEquals(NavigationPoint.Direction.Forward, nextPoint.direction)
+        assertEquals(result, nextPoint.branchResult)
+        assertNull(nextPoint.requestedPermissions)
+        assertNull(nextPoint.asyncActionNavigations)
+    }
+
     /**
      * NodeNavigator - nodeBefore
      */
