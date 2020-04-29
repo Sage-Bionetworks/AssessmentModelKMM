@@ -4,6 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
@@ -320,6 +321,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "fullInstructionsOnly": true,
                "spokenInstructions": {"start": "Start now"},
+               "nextStepIdentifier": "ragu",
                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
                             "cancel": { "type": "default", "iconName" : "closeX" }
                            },
@@ -341,6 +343,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.detail = "Some text. This is a test."
         original.footnote = "This is a footnote."
         original.fullInstructionsOnly = true
+        original.nextNodeIdentifier = "ragu"
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
@@ -365,9 +368,19 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertTrue(decoded is InstructionStepObject)
         assertEqualOptionalStep(original, decoded)
         assertEqualContentNodes(original, decoded)
+        assertEquals(original.nextNodeIdentifier, decoded.nextNodeIdentifier)
+
         assertTrue(restored is InstructionStepObject)
         assertEqualOptionalStep(original, restored)
         assertEqualContentNodes(original, restored)
+        assertEquals(original.nextNodeIdentifier, restored.nextNodeIdentifier)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEqualOptionalStep(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.nextNodeIdentifier, copy.nextNodeIdentifier)
+
     }
 
     @Test
@@ -431,12 +444,25 @@ open class NodeTest : NodeSerializationTestHelper() {
         val restored = jsonCoder.parse(serializer, jsonString)
         val decoded = jsonCoder.parse(serializer, inputString)
 
+
         assertTrue(decoded is SimpleQuestionObject)
         assertEqualStep(original, decoded)
         assertEqualContentNodes(original, decoded)
+        assertEquals(original.optional, decoded.optional)
+        assertEquals(original.surveyRules, decoded.surveyRules)
+
         assertTrue(restored is SimpleQuestionObject)
         assertEqualStep(original, restored)
         assertEqualContentNodes(original, restored)
+        assertEquals(original.optional, restored.optional)
+        assertEquals(original.surveyRules, restored.surveyRules)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEqualStep(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.optional, copy.optional)
+        assertEquals(original.surveyRules, copy.surveyRules)
     }
 
     /**

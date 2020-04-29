@@ -67,6 +67,9 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
         this.footnote = original.footnote
         this.hideButtons = original.hideButtons
         this.buttonMap = original.buttonMap
+        if (original is DirectNavigationRule) {
+            this.nextNodeIdentifier = original.nextNodeIdentifier
+        }
     }
 }
 
@@ -207,6 +210,9 @@ abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
         if (original is Question) {
             this.imageInfo = original.imageInfo
             this.optional = original.optional
+        }
+        if (original is QuestionObject) {
+            this.surveyRules = original.surveyRules
         }
     }
 }
