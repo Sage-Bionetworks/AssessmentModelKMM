@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 open class NodeNavigator(val node: NodeContainer) : Navigator {
 
@@ -8,17 +9,24 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         = node.children.firstOrNull { it.identifier == identifier }
 
     override fun nodeAfter(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
-        val next = nextNode(currentNode, branchResult)
-        return NavigationPoint(node = next, branchResult = branchResult, direction = NavigationPoint.Direction.Forward)
+        val next = nextNode(currentNode, branchResult, false)
+        var direction = NavigationPoint.Direction.Forward
+        if (next != null && currentNode != null && node.children.indexOf(next) < node.children.indexOf(currentNode)) {
+            direction = NavigationPoint.Direction.Backward
+        } else if (shouldExitEarly(currentNode, branchResult, false)) {
+            direction = NavigationPoint.Direction.Exit
+        }
+        return NavigationPoint(node = next, branchResult = branchResult, direction = direction)
     }
 
     override fun nodeBefore(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
         val previous = previousNode(currentNode, branchResult)
-        return NavigationPoint(node = previous, branchResult = branchResult, direction = NavigationPoint.Direction.Backward)
+        val direction = NavigationPoint.Direction.Backward
+        return NavigationPoint(node = previous, branchResult = branchResult, direction = direction)
     }
 
     override fun hasNodeAfter(currentNode: Node, branchResult: BranchNodeResult): Boolean {
-        return nextNode(currentNode, branchResult) != null
+        return nextNode(currentNode, branchResult, true) != null
     }
 
     override fun allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult): Boolean {
@@ -47,15 +55,36 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
                 isEstimated = isEstimated)
     }
 
+    // MARK: Node navigation
+
     /**
-     * syoung 01/30/2020 WIP for stubbing out more complex navigation.
+     * The navigation rule (if any) associated with this node.
      */
+    open fun navigationRuleFor(node: Node, parentResult: BranchNodeResult) : NavigationRule? {
+        val result = parentResult.pathHistoryResults.lastOrNull { it.identifier == node.resultId() }
+        return if (result is ResultNavigationRule && result.nextNodeIdentifier != null) {
+            result
+        } else {
+            (node as? NavigationRule)
+        }
+    }
 
     private val children
         get() = node.children
 
-    private fun nextNode(currentNode: Node?, parentResult: BranchNodeResult): Node? {
-        return if (currentNode == null) {
+    private fun shouldExitEarly(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): Boolean
+        = nextNodeIdentifier(currentNode, parentResult, isPeeking)?.let {
+            it.toLowerCase() == ReservedNavigationIdentifier.exit.name.toLowerCase()
+        } ?: false
+
+    private fun nextNodeIdentifier(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): String?
+        = currentNode?.let { navigationRuleFor(it, parentResult) }?.nextNodeIdentifier(parentResult, isPeeking)
+
+    private fun nextNode(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): Node? {
+        val nextIdentifier = nextNodeIdentifier(currentNode, parentResult, isPeeking)
+        return if (nextIdentifier != null) {
+            node(nextIdentifier)
+        } else if (currentNode == null) {
             children.firstOrNull()
         } else {
             val idx = children.indexOf(currentNode)
@@ -64,13 +93,25 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     }
 
     private fun previousNode(currentNode: Node?, parentResult: BranchNodeResult): Node? {
-        return if (currentNode == null) {
-            parentResult.pathHistoryResults.lastOrNull()?.let { result ->
-                children.lastOrNull { it.resultId() == result.identifier }
-            } ?: children.firstOrNull()
-        } else {
-            val idx = children.indexOf(currentNode)
-            if (idx - 1 >= 0) children[idx - 1] else null
+        return when {
+            currentNode == null -> {
+                parentResult.pathHistoryResults.lastOrNull()?.let { marker ->
+                    children.lastOrNull { it.resultId() == marker.identifier }
+                } ?: children.firstOrNull()
+            }
+            parentResult.path.count() == 0 -> {
+                val idx = children.indexOf(currentNode)
+                if (idx - 1 >= 0) children[idx - 1] else null
+            }
+            else -> {
+                var currentResultIndex = parentResult.path.indexOfLast {
+                    it.identifier == currentNode.identifier && it.direction == NavigationPoint.Direction.Forward
+                }
+                if (currentResultIndex <= 0) null else {
+                    val resultBefore = parentResult.path[currentResultIndex - 1]
+                    children.lastOrNull { it.identifier == resultBefore.identifier }
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
+import org.sagebionetworks.assessmentmodel.survey.SurveyRuleOperator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

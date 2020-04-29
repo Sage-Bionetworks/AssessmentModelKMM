@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
+import kotlinx.serialization.Serializable
 import org.sagebionetworks.assessmentmodel.*
 
 /**
@@ -72,6 +73,7 @@ data class NavigationPoint(val node: Node?,
                            val direction: Direction = Direction.Forward,
                            var requestedPermissions: Set<Permission>? = null,
                            var asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
+    @Serializable
     enum class Direction {
         /**
          * Move forward through the assessment.
