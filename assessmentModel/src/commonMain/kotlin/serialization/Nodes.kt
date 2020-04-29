@@ -157,13 +157,10 @@ data class SectionObject(override val identifier: String,
                          override val children: List<Node>,
                          override val resultIdentifier: String? = null) : NodeContainerObject(), Section {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
-        println("In unpack. $this")
         imageInfo?.copyResourceInfo(resourceInfo)
         val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
-        println("In unpack. copyChildren=$copyChildren")
         val copy = copy(children = copyChildren)
         copy.copyFrom(this)
-        println("In unpack. copy=$copy")
         return copy
     }
 }
