@@ -1,6 +1,8 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
@@ -400,6 +402,53 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     /**
+     * OverviewStepObject
+     */
+
+    @Test
+    fun testOverviewStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "overview",
+               "title": "Hello World!",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+               "icons" : [ {"icon": "cuteDogs", "title": "Cute Dogs"} ]
+           }
+           """
+        val original = OverviewStepObject("foo")
+        original.title = "Hello World!"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.buttonMap = mapOf(
+            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
+        original.icons = listOf(ImageInfoObject("cuteDogs", "Cute Dogs"))
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is OverviewStepObject)
+        assertEqualContentNodes(original, decoded)
+        assertEquals(original.icons, decoded.icons)
+
+        assertTrue(restored is OverviewStepObject)
+        assertEqualContentNodes(original, restored)
+        assertEquals(original.icons, restored.icons)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.icons, copy.icons)
+    }
+
+    /**
      * SimpleQuestion
      */
 
@@ -709,7 +758,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertSame(bundle, imageInfo.decoderBundle)
         assertEquals(packageName, imageInfo.packageName)
     }
-
 
     @Test
     fun testTransformSection() {

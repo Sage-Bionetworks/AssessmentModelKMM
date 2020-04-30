@@ -1,7 +1,9 @@
 
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -9,13 +11,19 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
-import org.sagebionetworks.assessmentmodel.navigation.NavigationRule
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mapOf
+import kotlin.collections.set
+import kotlin.collections.toMutableMap
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
@@ -25,6 +33,7 @@ val nodeSerializersModule = SerializersModule {
         FormStepObject::class with FormStepObject.serializer()
         InstructionStepObject::class with InstructionStepObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
+        OverviewStepObject::class with OverviewStepObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
         StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
@@ -71,6 +80,16 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
             this.nextNodeIdentifier = original.nextNodeIdentifier
         }
     }
+
+    protected fun setButton(key: ButtonAction, value: ButtonActionInfo?) {
+        val map = buttonMap.toMutableMap()
+        if (value == null) {
+            map.remove(key)
+        } else {
+            map[key] = value
+        }
+        buttonMap = map
+    }
 }
 
 @Serializable
@@ -106,18 +125,22 @@ abstract class IconNodeObject : NodeObject() {
 
 @Serializable
 @SerialName("transform")
-data class TransformableNodeObject(override val identifier: String,
-                                   override val resourceName: String,
-                                   override val versionString: String? = null,
-                                   override val resultIdentifier: String? = null) : IconNodeObject(), TransformableNode
+data class TransformableNodeObject(
+    override val identifier: String,
+    override val resourceName: String,
+    override val versionString: String? = null,
+    override val resultIdentifier: String? = null
+) : IconNodeObject(), TransformableNode
 
 @Serializable
 @SerialName("transformableAssessment")
-data class TransformableAssessmentObject(override val identifier: String,
-                                         override val resourceName: String,
-                                         override val versionString: String? = null,
-                                         override val estimatedMinutes: Int = 0,
-                                         override val resultIdentifier: String? = null) : IconNodeObject(), TransformableAssessment
+data class TransformableAssessmentObject(
+    override val identifier: String,
+    override val resourceName: String,
+    override val versionString: String? = null,
+    override val estimatedMinutes: Int = 0,
+    override val resultIdentifier: String? = null
+) : IconNodeObject(), TransformableAssessment
 
 /**
  * NodeContainer
@@ -137,12 +160,14 @@ abstract class NodeContainerObject : IconNodeObject(), NodeContainer {
 
 @Serializable
 @SerialName("assessment")
-data class AssessmentObject(override val identifier: String,
-                            @SerialName("steps")
-                            override val children: List<Node>,
-                            override val versionString: String? = null,
-                            override val resultIdentifier: String? = null,
-                            override var estimatedMinutes: Int = 0) : NodeContainerObject(), Assessment {
+data class AssessmentObject(
+    override val identifier: String,
+    @SerialName("steps")
+    override val children: List<Node>,
+    override val versionString: String? = null,
+    override val resultIdentifier: String? = null,
+    override var estimatedMinutes: Int = 0
+) : NodeContainerObject(), Assessment {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
         imageInfo?.copyResourceInfo(resourceInfo)
@@ -155,10 +180,12 @@ data class AssessmentObject(override val identifier: String,
 
 @Serializable
 @SerialName("section")
-data class SectionObject(override val identifier: String,
-                         @SerialName("steps")
-                         override val children: List<Node>,
-                         override val resultIdentifier: String? = null) : NodeContainerObject(), Section {
+data class SectionObject(
+    override val identifier: String,
+    @SerialName("steps")
+    override val children: List<Node>,
+    override val resultIdentifier: String? = null
+) : NodeContainerObject(), Section {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
         imageInfo?.copyResourceInfo(resourceInfo)
         val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
@@ -174,11 +201,42 @@ data class SectionObject(override val identifier: String,
 
 @Serializable
 @SerialName("instruction")
-data class InstructionStepObject(override val identifier: String,
-                                 override val resultIdentifier: String? = null,
-                                 @SerialName("image")
-                                 override var imageInfo: ImageInfo? = null,
-                                 override var fullInstructionsOnly: Boolean = false) : StepObject(), InstructionStep
+data class InstructionStepObject(
+    override val identifier: String,
+     override val resultIdentifier: String? = null,
+     @SerialName("image")
+     override var imageInfo: ImageInfo? = null,
+     override var fullInstructionsOnly: Boolean = false
+) : StepObject(), InstructionStep
+
+@Serializable
+@SerialName("overview")
+data class OverviewStepObject(
+    override val identifier: String,
+    override val resultIdentifier: String? = null,
+    override var imageInfo: ImageInfo? = null,
+    override var icons: List<ImageInfoObject>? = null
+) : StepObject(), OverviewStep {
+    override var learnMore: ButtonActionInfo?
+        get() = buttonMap[ButtonAction.Navigation.LearnMore]
+        set(value) = setButton(ButtonAction.Navigation.LearnMore, value)
+}
+
+@Serializable
+data class ImageInfoObject(
+    @SerialName("icon")
+    override val imageName: String,
+    @SerialName("title")
+    override val label: String? = null,
+    override val bundleIdentifier: String? = null,
+    override var packageName: String? = null,
+    override val rawFileExtension: String? = null
+) : ImageInfo {
+    @Transient
+    override var decoderBundle: Any? = null
+    override val versionString: String?
+        get() = null
+}
 
 @Serializable
 @SerialName("form")
@@ -219,40 +277,46 @@ abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
 
 @Serializable
 @SerialName("simpleQuestion")
-data class SimpleQuestionObject(override val identifier: String,
-                                override val inputItem: InputItem,
-                                override val resultIdentifier: String? = null,
-                                override var skipCheckbox: SkipCheckboxInputItem? = null)
-    : QuestionObject(), SimpleQuestion
+data class SimpleQuestionObject(
+    override val identifier: String,
+    override val inputItem: InputItem,
+    override val resultIdentifier: String? = null,
+    override var skipCheckbox: SkipCheckboxInputItem? = null
+) : QuestionObject(), SimpleQuestion
 
 @Serializable
 @SerialName("multipleInputQuestion")
-data class MultipleInputQuestionObject(override val identifier: String,
-                                       override val inputItems: List<InputItem>,
-                                       override val resultIdentifier: String? = null,
-                                       override var sequenceSeparator: String? = null,
-                                       override var skipCheckbox: SkipCheckboxInputItem? = null)
-    : QuestionObject(), MultipleInputQuestion
+data class MultipleInputQuestionObject(
+    override val identifier: String,
+    override val inputItems: List<InputItem>,
+    override val resultIdentifier: String? = null,
+    override var sequenceSeparator: String? = null,
+    override var skipCheckbox: SkipCheckboxInputItem? = null
+) : QuestionObject(), MultipleInputQuestion
 
 @Serializable
 @SerialName("choiceQuestion")
-data class ChoiceQuestionObject(override val identifier: String,
-                                override val choices: List<ChoiceOptionObject>,
-                                override val baseType: BaseType = BaseType.STRING,
-                                override val resultIdentifier: String? = null,
-                                @SerialName("singleChoice")
-                                override var singleAnswer: Boolean = true,
-                                override var uiHint: UIHint = UIHint.Choice.ListItem) : QuestionObject(), ChoiceQuestion
+data class ChoiceQuestionObject(
+    override val identifier: String,
+    override val choices: List<ChoiceOptionObject>,
+    override val baseType: BaseType = BaseType.STRING,
+    override val resultIdentifier: String? = null,
+    @SerialName("singleChoice")
+    override var singleAnswer: Boolean = true,
+    override var uiHint: UIHint = UIHint.Choice.ListItem
+) : QuestionObject(), ChoiceQuestion
 
 @Serializable
 @SerialName("stringChoiceQuestion")
-data class StringChoiceQuestionObject(override val identifier: String,
-                                      @SerialName("choices")
-                                      val items: List<String>,
-                                      override val resultIdentifier: String? = null,
-                                      @SerialName("singleChoice")
-                                      override var singleAnswer: Boolean = true,
-                                      override var uiHint: UIHint = UIHint.Choice.ListItem) : QuestionObject(), ChoiceQuestion {
+data class StringChoiceQuestionObject(
+    override val identifier: String,
+    @SerialName("choices")
+    val items: List<String>,
+    override val resultIdentifier: String? = null,
+    @SerialName("singleChoice")
+    override var singleAnswer: Boolean = true,
+    override var uiHint: UIHint = UIHint.Choice.ListItem
+) : QuestionObject(), ChoiceQuestion {
     override val choices: List<ChoiceOptionObject>
         get() = items.map { ChoiceOptionObject(fieldLabel = it, value = JsonPrimitive(it)) }
     override val baseType: BaseType
@@ -261,13 +325,15 @@ data class StringChoiceQuestionObject(override val identifier: String,
 
 @Serializable
 @SerialName("comboBoxQuestion")
-data class ComboBoxQuestionObject(override val identifier: String,
-                                  override val choices: List<ChoiceOptionObject>,
-                                  override val otherInputItem: InputItem = defaultOtherInputItem,
-                                  override val resultIdentifier: String? = null,
-                                  @SerialName("singleChoice")
-                                  override var singleAnswer: Boolean = false,
-                                  override var uiHint: UIHint = UIHint.Choice.Checkbox) : QuestionObject(), ComboBoxQuestion {
+data class ComboBoxQuestionObject(
+    override val identifier: String,
+    override val choices: List<ChoiceOptionObject>,
+    override val otherInputItem: InputItem = defaultOtherInputItem,
+    override val resultIdentifier: String? = null,
+    @SerialName("singleChoice")
+    override var singleAnswer: Boolean = false,
+    override var uiHint: UIHint = UIHint.Choice.Checkbox
+) : QuestionObject(), ComboBoxQuestion {
     companion object {
         val defaultOtherInputItem: StringTextInputItemObject
             get() {
