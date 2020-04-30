@@ -201,14 +201,14 @@ data class MtbCriteria(
 )
 
 @Serializable
-abstract class MtbStep(
-    val timeout: Int? = null,
+abstract class MtbStep() : StepObject() {
+    val timeout: Int? = null
     @SerialName("text")
-    override var detail: String? = null,
-    override val resultIdentifier: String? = null,
+    override var detail: String? = null
+    override val resultIdentifier: String? = null
     @SerialName("image")
     override val imageInfo: ImageInfo? = null
-) : StepObject()
+}
 
 
 
