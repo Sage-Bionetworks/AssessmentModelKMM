@@ -122,6 +122,7 @@ data class FlankerInstructionForm(
 data class FlankerInstructionStep(
     override val identifier: String,
     override val fullInstructionsOnly: Boolean = false,
+    val branchingNavigationRules: List<MtbStepRule> = listOf(),
     val flankerImageNames: List<String> = listOf(),
     val htmlText: String? = null,
     //val inputFields: List<Node> = listOf(),
@@ -201,7 +202,6 @@ data class MtbCriteria(
 
 @Serializable
 abstract class MtbStep(
-    val branchingNavigationRules: List<MtbStepRule> = listOf(),
     val timeout: Int? = null,
     @SerialName("text")
     override var detail: String? = null,
