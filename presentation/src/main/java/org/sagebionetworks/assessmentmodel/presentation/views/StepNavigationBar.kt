@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import com.google.android.material.button.MaterialButton
-import org.sagebionetworks.assessmentmodel.Button
 import org.sagebionetworks.assessmentmodel.ButtonAction
+import org.sagebionetworks.assessmentmodel.ButtonActionInfo
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.databinding.StepNavigationBarBinding
@@ -49,7 +49,7 @@ class StepNavigationBar: LinearLayout {
 
     }
 
-    private fun configureButton(button: MaterialButton, buttonAction: Button) {
+    private fun configureButton(button: MaterialButton, buttonAction: ButtonActionInfo) {
         buttonAction.buttonTitle?.let { title ->
             button.text = title
         }
