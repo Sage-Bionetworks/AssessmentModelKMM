@@ -95,7 +95,8 @@ data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
  * [Assessment] using a platform-specific resource management strategy.
  */
 class FileAssessmentProvider(override val fileLoader: FileLoader,
-                             private val assessmentGroupInfo: AssessmentGroupInfo)
+                             private val assessmentGroupInfo: AssessmentGroupInfo,
+                             override var jsonCoder: Json = Serialization.JsonCoder.default)
     : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo {
-    override var jsonCoder: Json = Serialization.JsonCoder.default
+
 }

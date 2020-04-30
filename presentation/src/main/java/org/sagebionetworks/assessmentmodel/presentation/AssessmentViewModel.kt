@@ -1,6 +1,5 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
-import android.graphics.Path
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,11 +28,11 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
         if (!isStarted) {
             isStarted = true
             assessmentNodeState.rootNodeController = this
-            goforward()
+            goForward()
         }
     }
 
-    fun goforward() {
+    fun goForward() {
         assessmentNodeState.goForward()
     }
 

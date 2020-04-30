@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TextQuestionStepFragment">
+    tools:context=".InstructionStepFragment">
 
-    <include layout="@layout/include_question_header"
-        android:id="@+id/question_header"
+    <include layout="@layout/include_image_header"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_height"
         android:layout_alignParentTop="true" />
 
-    <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-        android:id="@+id/question_input"
+    <TextView
+        android:id="@+id/raw"
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/question_header"/>
+        android:layout_below="@id/header"
+        android:layout_margin="10dp"/>
 
     <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
         android:id="@+id/nav_bar"
