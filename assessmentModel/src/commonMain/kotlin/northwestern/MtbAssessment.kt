@@ -37,9 +37,6 @@ val flankerSerializersModule = SerializersModule {
     polymorphic(Assessment::class) {
         MtbAssessmentObject::class with MtbAssessmentObject.serializer()
     }
-    polymorphic(Question::class) {
-
-    }
 }
 
 val flankerStringIntSerializersModule = SerializersModule {
@@ -70,8 +67,6 @@ data class MtbAssessmentObject(
     val taskOrientation: String = "portrait",
     val defaultSteps: MtbDefaultSteps? = null,
     val stepRules: List<MtbStepRule> = listOf()
-
-
 ) : NodeContainerObject(), Assessment {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): MtbAssessmentObject {
@@ -114,10 +109,9 @@ data class FlankerForm(
 @SerialName("flankerInstructionForm")
 data class FlankerInstructionForm(
     override val identifier: String,
-    val isInstruction: Boolean = true,
     @SerialName("inputFields")
     override val children: List<Node> = listOf(),
-
+    val isInstruction: Boolean = true,
     val flankerImageNames: List<String> = listOf(),
     val flankerType: String? = null
 ) : MtbStep(), FormStep
@@ -128,14 +122,12 @@ data class FlankerInstructionForm(
 data class FlankerInstructionStep(
     override val identifier: String,
     override val fullInstructionsOnly: Boolean = false,
-
     val flankerImageNames: List<String> = listOf(),
     val htmlText: String? = null,
     //val inputFields: List<Node> = listOf(),
     val stepBackTo: String? = null,
     val stepGroup: String? = null,
     val stepName: String? = null
-
 ) : MtbStep(), InstructionStep
 
 @Serializable
@@ -152,15 +144,14 @@ abstract class FlankerChoiceInputField<ValueType, ScoreType> : Node {
         get() = listOf()
     override val buttonMap: Map<ButtonAction, ButtonActionInfo>
         get() = mapOf()
-
 }
+
 @Serializable
 @SerialName("singleChoice")
 data class StringIntChoiceInputField(
     override val identifier: String,
     override val choices: List<FlankerChoiceOption<String, Int>>
-) : FlankerChoiceInputField<String, Int>() {
-}
+) : FlankerChoiceInputField<String, Int>()
 
 @Serializable
 @SerialName("singleChoice")
@@ -212,11 +203,11 @@ data class MtbCriteria(
 abstract class MtbStep(
     val branchingNavigationRules: List<MtbStepRule> = listOf(),
     val timeout: Int? = null,
-
+    @SerialName("text")
+    override var detail: String? = null,
     override val resultIdentifier: String? = null,
     @SerialName("image")
     override val imageInfo: ImageInfo? = null
-
 ) : StepObject()
 
 
