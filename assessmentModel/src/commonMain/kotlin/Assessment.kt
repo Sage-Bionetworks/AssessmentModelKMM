@@ -8,8 +8,6 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
-import org.sagebionetworks.assessmentmodel.survey.*
-import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 /**
  * A [Session] includes one or more [assessments] that are logically grouped together.
@@ -113,7 +111,7 @@ interface Node : ResultMapElement {
     val hideButtons: List<ButtonAction>
 
     /**
-     * A mapping of a [ButtonAction] to a [Button].
+     * A mapping of a [ButtonAction] to a [ButtonActionInfo].
      *
      * For example, this mapping can be used to define the url for a [ButtonAction.Navigation.LearnMore] link or to
      * customize the title of the [ButtonAction.Navigation.GoForward] button. It can also define the title, icon, etc.
@@ -124,7 +122,7 @@ interface Node : ResultMapElement {
      * skip button as hidden but a lower level step within that assessment's hierarchy can return a mapping for the
      * skip button. The lower level mapping should be respected and the button should be displayed for that step only.
      */
-    val buttonMap: Map<ButtonAction, Button>
+    val buttonMap: Map<ButtonAction, ButtonActionInfo>
 
     /**
      * Unpack (and potentially replace) the node and set up any required resource pointers.
@@ -285,7 +283,7 @@ interface OverviewStep : StandardPermissionsStep {
      * that researchers who are using the [Assessment] as a part of their application can define a custom learn more
      * action.
      */
-    var learnMore: Button?
+    var learnMore: ButtonActionInfo?
 
     /**
      * The [icons] that are used to define the list of things you will need for an active assessment.

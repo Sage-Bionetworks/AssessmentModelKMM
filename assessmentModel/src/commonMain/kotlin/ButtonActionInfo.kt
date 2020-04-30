@@ -1,12 +1,13 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
 /**
- * A [Button] can be used to customize the title and image displayed for a given action of the UI. This is the view
+ * A [ButtonActionInfo] can be used to customize the title and image displayed for a given action of the UI. This is the view
  * model for a UI element.
  */
-interface Button {
+interface ButtonActionInfo {
 
     /**
      * The localized title to display on the button view associated with this action.
@@ -20,11 +21,11 @@ interface Button {
 }
 
 /**
- * The action of this [Button] is to set up navigation to a different step. That navigation should happen immediately
+ * The action of this [ButtonActionInfo] is to set up navigation to a different step. That navigation should happen immediately
  * without waiting for normal completion of any activity associated with this step. The behavior is similar to a "skip"
  * button where timers and spoken instructions are ignored.
  */
-interface NavigationButton : Button {
+interface NavigationButtonActionInfo : ButtonActionInfo {
 
     /**
      * The identifier for the step to skip to if the action is called.
@@ -33,11 +34,11 @@ interface NavigationButton : Button {
 }
 
 /**
- * [ReminderButton] is used to associate a button with the action of setting up a local notification for the
+ * [ReminderButtonActionInfo] is used to associate a button with the action of setting up a local notification for the
  * participant. Currently, the reminder notification only supports setting up a reminder that uses a time interval from
  * now rather than being scheduled at a specific time.
  */
-interface ReminderButton : Button {
+interface ReminderButtonActionInfo : ButtonActionInfo {
 
     /**
      * The identifier to use for the notification request.
@@ -59,7 +60,7 @@ interface ReminderButton : Button {
  * A modal view button links to showing a modal view. Typically, this is used to define a web view or a video view with
  * limited UI outside of the URL that it is intended to display.
  */
-interface ModalViewButton : Button {
+interface ModalViewButtonActionInfo : ButtonActionInfo, ResourceInfo {
 
     /**
      * What style of back button should be used? Should it use a back arrow icon, localized text with "Back" or "Close",
@@ -77,10 +78,10 @@ interface ModalViewButton : Button {
 }
 
 /**
- * [WebViewButton] implements an extension of the base protocol where the action includes a pointer to a [url] that can
+ * [WebViewButtonActionInfo] implements an extension of the base protocol where the action includes a pointer to a [url] that can
  * display in a web view. The url can either be fully qualified or point to an embedded resource.
  */
-interface WebViewButton : ModalViewButton {
+interface WebViewButtonActionInfo : ModalViewButtonActionInfo {
 
     /**
      * The url to load in the web view. If this is not a fully qualified url string, then it is assumed to refer to an
@@ -90,10 +91,10 @@ interface WebViewButton : ModalViewButton {
 }
 
 /**
- * [VideoViewButton] implements an extension of the base protocol where the action includes a pointer to a [url] that can
+ * [VideoViewButtonActionInfo] implements an extension of the base protocol where the action includes a pointer to a [url] that can
  * display in a video. The url can either be fully qualified or point to an embedded resource.
  */
-interface VideoViewButton : ModalViewButton {
+interface VideoViewButtonActionInfo : ModalViewButtonActionInfo {
 
     /**
      * The url to load in the video view. If this is not a fully qualified url string, then it is assumed to refer to an

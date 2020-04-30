@@ -1,7 +1,7 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
-import org.sagebionetworks.assessmentmodel.Button
+import org.sagebionetworks.assessmentmodel.ButtonActionInfo
 import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.ButtonStyle
 import kotlin.test.Test
@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 open class ButtonTest {
 
     @Serializable
-    data class TestButtonWrapper(val button: Button)
+    data class TestButtonWrapper(val button: ButtonActionInfo)
 
     @Serializable
     data class TestButtonStyleWrapper(val buttonStyle: ButtonStyle)
@@ -23,13 +23,17 @@ open class ButtonTest {
 
     @Test
     fun testButton() {
-        val button = ButtonObject("foo title", FetchableImage("fooImage"))
+        val button = ButtonActionInfoObject("foo title", "fooImage")
+        button.bundleIdentifier = "org.SageBase.Example"
+        button.packageName = "org.sagebase.example.resources"
         val inputString = """
             {
                 "button": {
                     "type": "default",
                     "buttonTitle": "foo title",
-                    "iconName": "fooImage"
+                    "iconName": "fooImage",
+                    "bundleIdentifier": "org.SageBase.Example",
+                    "packageName": "org.sagebase.example.resources"
                 }
             }    
             """.trimIndent()
@@ -53,7 +57,7 @@ open class ButtonTest {
 
     @Test
     fun testNavigationButton() {
-        val button = NavigationButtonObject("foo title", FetchableImage("fooImage"), "skipToMaFoo")
+        val button = NavigationButtonActionInfoObject("foo title", "fooImage", "skipToMaFoo")
         val inputString = """
             {
                 "button": {
@@ -85,8 +89,8 @@ open class ButtonTest {
 
     @Test
     fun testReminderButtonWithValues() {
-        val button = ReminderButtonObject(buttonTitle = "foo title",
-                icon = FetchableImage("fooImage"),
+        val button = ReminderButtonActionInfoObject(buttonTitle = "foo title",
+                iconName = "fooImage",
                 reminderIdentifier = "remindLater",
                 reminderPrompt = "Remind me later to do stuff",
                 reminderAlert = "Time to do stuff")
@@ -125,7 +129,7 @@ open class ButtonTest {
 
     @Test
     fun testReminderButtonWithDefaults() {
-        val button = ReminderButtonObject(reminderIdentifier = "remindLater")
+        val button = ReminderButtonActionInfoObject(reminderIdentifier = "remindLater")
         val inputString = """
             {
                 "button": {
@@ -154,8 +158,8 @@ open class ButtonTest {
 
     @Test
     fun testWebViewButton() {
-        val button = WebViewButtonObject(buttonTitle = "foo title",
-                icon = FetchableImage("fooImage"),
+        val button = WebViewButtonActionInfoObject(buttonTitle = "foo title",
+                iconName = "fooImage",
                 url = "learnMore",
                 title = "Learn More about this assessment",
                 closeButtonTitle = "Exit")
@@ -194,8 +198,8 @@ open class ButtonTest {
 
     @Test
     fun testWebViewButton_BackButtonStyle_Footer() {
-        val button = WebViewButtonObject(buttonTitle = "foo title",
-                icon = FetchableImage("fooImage"),
+        val button = WebViewButtonActionInfoObject(buttonTitle = "foo title",
+                iconName = "fooImage",
                 url = "learnMore",
                 closeButtonTitle = "Exit")
         assertEquals(ButtonStyle.Footer("Exit"), button.backButtonStyle)
@@ -203,8 +207,8 @@ open class ButtonTest {
 
     @Test
     fun testWebViewButton_BackButtonStyle_BackArrow() {
-        val buttonA = WebViewButtonObject(buttonTitle = "foo title",
-                icon = FetchableImage("fooImage"),
+        val buttonA = WebViewButtonActionInfoObject(buttonTitle = "foo title",
+                iconName = "fooImage",
                 url = "learnMore",
                 usesBackButton = true)
         assertEquals(ButtonStyle.NavigationHeader.Back, buttonA.backButtonStyle)
@@ -213,8 +217,8 @@ open class ButtonTest {
 
     @Test
     fun testWebViewButton_BackButtonStyle_CloseX() {
-        val buttonA = WebViewButtonObject(buttonTitle = "foo title",
-                icon = FetchableImage("fooImage"),
+        val buttonA = WebViewButtonActionInfoObject(buttonTitle = "foo title",
+                iconName = "fooImage",
                 url = "learnMore",
                 usesBackButton = false)
         assertEquals(ButtonStyle.NavigationHeader.Close, buttonA.backButtonStyle)
@@ -222,7 +226,7 @@ open class ButtonTest {
 
     @Test
     fun testVideoViewButton() {
-        val button = VideoViewButtonObject("foo title", FetchableImage("fooImage"),"learnMore", title = "Learn More about this assessment")
+        val button = VideoViewButtonActionInfoObject("foo title", "fooImage","learnMore", title = "Learn More about this assessment")
         val inputString = """
             {
                 "button": {

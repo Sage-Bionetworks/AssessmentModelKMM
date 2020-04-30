@@ -54,7 +54,7 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
     @SerialName("shouldHideActions")
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
-    override var buttonMap: Map<ButtonAction, Button> = mapOf()
+    override var buttonMap: Map<ButtonAction, ButtonActionInfo> = mapOf()
 
     @SerialName("nextStepIdentifier")
     override var nextNodeIdentifier: String? = null
