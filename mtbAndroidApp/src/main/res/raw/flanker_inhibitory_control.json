@@ -36,6 +36,10 @@
             "title" : "Arrows",
             "text" : "This activity asks you to focus on key information.",
             "type" : "flankerInstruction",
+            "image"  : {
+                "type":"fetchable",
+                "imageName" : "flanker_instruction"
+            },
             "actions" : { "goForward": { "type":"default", "buttonTitle": "Get Started" },
                 "cancel": { "type":"default", "iconName":"Cancel-White"}
             },

@@ -34,7 +34,7 @@ open class MtbAssessmentFragment : AssessmentFragment() {
     override fun getFragmentForStep(step: Step): Fragment {
         //Determine which fragment to laod for the given step
         when(step) {
-            is MtbStep -> return DebugStepFragment()
+            is FormStep -> return DebugStepFragment()
             else -> return super.getFragmentForStep(step)
         }
     }
