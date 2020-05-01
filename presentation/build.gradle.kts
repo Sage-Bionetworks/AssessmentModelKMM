@@ -1,10 +1,12 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("com.github.dcendents.android-maven")
+    id ("maven-publish")
 }
+
 android {
     compileSdkVersion(29)
-    buildToolsVersion = "29.0.2"
 
     defaultConfig {
         minSdkVersion(19)
@@ -29,9 +31,8 @@ android {
 }
 
 dependencies {
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
-    implementation(project(":assessmentModel"))
+    api(project(":assessmentModel"))
 
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
