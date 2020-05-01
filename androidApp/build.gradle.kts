@@ -34,6 +34,10 @@ android {
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
+kotlin {
+    android()
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":presentation"))
