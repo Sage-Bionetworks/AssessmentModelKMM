@@ -271,7 +271,7 @@ interface Step : Node {
 /**
  * [OverviewStep] extends [Step] to include general overview information about an [Assessment].
  */
-interface OverviewStep : StandardPermissionsStep {
+interface OverviewStep : PermissionStep {
 
     /**
      * Detail text to display for the node in a localized string. For an overview step, the detail is readwrite.
@@ -297,21 +297,12 @@ interface OverviewStep : StandardPermissionsStep {
 }
 
 /**
- * A generic configuration object with information about a given permission. The permission can be used by the
- * app to handle gracefully requesting authorization from the user for access to sensors, services, and hardware
- * required by the app.
- */
-interface Permission {
-    // TODO: syoung 01/27/2020 implement the class that describes permissions.
-}
-
-/**
- * [StandardPermissionsStep] extends the [Step] to include information about an activity including what permissions are
+ * [PermissionStep] extends the [Step] to include information about an activity including what permissions are
  * required by this step or assessment. Without these preconditions, the [Assessment] cannot measure or collect the data
  * needed for this assessment.
  */
-interface StandardPermissionsStep : Step, ContentNode {
-    // TODO: syoung 01/27/2020 implement the class that describes permissions.
+interface PermissionStep : Step, ContentNode {
+    val permissions: List<PermissionInfo>?
 }
 
 /**

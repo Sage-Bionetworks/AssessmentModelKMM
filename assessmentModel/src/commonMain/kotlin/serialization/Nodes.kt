@@ -215,12 +215,23 @@ data class OverviewStepObject(
     override val identifier: String,
     override val resultIdentifier: String? = null,
     override var imageInfo: ImageInfo? = null,
-    override var icons: List<ImageInfoObject>? = null
+    override var icons: List<ImageInfoObject>? = null,
+    override var permissions: List<PermissionInfoObject>? = null
 ) : StepObject(), OverviewStep {
     override var learnMore: ButtonActionInfo?
         get() = buttonMap[ButtonAction.Navigation.LearnMore]
         set(value) = setButton(ButtonAction.Navigation.LearnMore, value)
 }
+
+@Serializable
+data class PermissionInfoObject(
+    override val permissionType: PermissionType,
+    override val optional: Boolean = false,
+    override val requiresBackground: Boolean = false,
+    override val reason: String? = null,
+    override val restrictedMessage: String? = null,
+    override val deniedMessage: String? = null
+) : PermissionInfo
 
 @Serializable
 data class ImageInfoObject(

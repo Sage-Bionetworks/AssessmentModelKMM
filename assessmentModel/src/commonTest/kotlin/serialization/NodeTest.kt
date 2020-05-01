@@ -417,7 +417,14 @@ open class NodeTest : NodeSerializationTestHelper() {
                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
                             "cancel": { "type": "default", "iconName" : "closeX" }
                            },
-               "icons" : [ {"icon": "cuteDogs", "title": "Cute Dogs"} ]
+               "icons" : [ {"icon": "cuteDogs", "title": "Cute Dogs"} ],                
+               "permissions":[
+                    {
+                        "permissionType":"motion",
+                        "reason":"Access to Motion and Fitness sensors is used to measure the phone's orientation.",
+                        "optional":true
+                   }
+                ]
            }
            """
         val original = OverviewStepObject("foo")
@@ -428,6 +435,11 @@ open class NodeTest : NodeSerializationTestHelper() {
             ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
             ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.icons = listOf(ImageInfoObject("cuteDogs", "Cute Dogs"))
+        original.permissions = listOf(PermissionInfoObject(
+            permissionType = PermissionType.Standard.Motion,
+            optional = true,
+            reason = "Access to Motion and Fitness sensors is used to measure the phone's orientation."
+        ))
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -435,15 +447,18 @@ open class NodeTest : NodeSerializationTestHelper() {
         val decoded = jsonCoder.parse(serializer, inputString)
 
         assertTrue(decoded is OverviewStepObject)
+        assertEquals(original, decoded)
         assertEqualContentNodes(original, decoded)
         assertEquals(original.icons, decoded.icons)
 
         assertTrue(restored is OverviewStepObject)
+        assertEquals(original, restored)
         assertEqualContentNodes(original, restored)
         assertEquals(original.icons, restored.icons)
 
         val copy = original.copy()
         copy.copyFrom(original)
+        assertEquals(original, copy)
         assertEqualContentNodes(original, copy)
         assertEquals(original.icons, copy.icons)
     }

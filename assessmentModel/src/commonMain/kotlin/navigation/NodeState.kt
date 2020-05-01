@@ -29,14 +29,14 @@ interface RootNodeController {
      * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
      */
     fun handleGoForward(nodeState: NodeState,
-                        requestedPermissions: Set<Permission>? = null,
+                        requestedPermissions: Set<PermissionInfo>? = null,
                         asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
      * Handle going back to the given [nodeState] with appropriate UI, View, and animations.
      */
     fun handleGoBack(nodeState: NodeState,
-                     requestedPermissions: Set<Permission>? = null,
+                     requestedPermissions: Set<PermissionInfo>? = null,
                      asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
@@ -71,19 +71,19 @@ interface NodeState {
     /**
      * Method to call when the participant taps the "Next" button or a timed step is completed.
      */
-    fun goForward(requestedPermissions: Set<Permission>? = null,
+    fun goForward(requestedPermissions: Set<PermissionInfo>? = null,
                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
      * Method to call when the participant taps the "Back" button or the active step gets a signal to go back to the
      * previous node in the navigation.
      */
-    fun goBackward(requestedPermissions: Set<Permission>? = null,
+    fun goBackward(requestedPermissions: Set<PermissionInfo>? = null,
                    asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 }
 
 fun NodeState.goIn(direction: NavigationPoint.Direction,
-                   requestedPermissions: Set<Permission>? = null,
+                   requestedPermissions: Set<PermissionInfo>? = null,
                    asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
     if (direction == NavigationPoint.Direction.Forward) {
         goForward(requestedPermissions, asyncActionNavigations)
@@ -138,7 +138,7 @@ interface BranchNodeState : NodeState {
      * Called from the child node to send the call back up the chain to the parent.
      */
     fun moveToNextNode(direction: NavigationPoint.Direction,
-                       requestedPermissions: Set<Permission>? = null,
+                       requestedPermissions: Set<PermissionInfo>? = null,
                        asyncActionNavigations: Set<AsyncActionNavigation>? = null)
 
     /**
@@ -150,12 +150,12 @@ interface BranchNodeState : NodeState {
 interface LeafNodeState : NodeState {
     override val parent: BranchNodeState
 
-    override fun goForward(requestedPermissions: Set<Permission>?,
+    override fun goForward(requestedPermissions: Set<PermissionInfo>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
         parent.moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
     }
 
-    override fun goBackward(requestedPermissions: Set<Permission>?,
+    override fun goBackward(requestedPermissions: Set<PermissionInfo>?,
                             asyncActionNavigations: Set<AsyncActionNavigation>?) {
         parent.moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
     }
@@ -181,18 +181,18 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         set(value) { _rootNodeController = value }
     private var _rootNodeController: RootNodeController? = null
 
-    override fun goForward(requestedPermissions: Set<Permission>?,
+    override fun goForward(requestedPermissions: Set<PermissionInfo>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
         lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
     }
 
-    override fun goBackward(requestedPermissions: Set<Permission>?,
+    override fun goBackward(requestedPermissions: Set<PermissionInfo>?,
                             asyncActionNavigations: Set<AsyncActionNavigation>?) {
         lowestBranch().moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
     }
 
     override fun moveToNextNode(direction: NavigationPoint.Direction,
-                                requestedPermissions: Set<Permission>?,
+                                requestedPermissions: Set<PermissionInfo>?,
                                 asyncActionNavigations: Set<AsyncActionNavigation>?) {
         val next = getNextNode(direction) ?: return
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
@@ -302,8 +302,8 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Union the requested permissions and async actions with the returned navigation point.
      */
     open fun unionNavigationSets(navigationPoint: NavigationPoint,
-                            requestedPermissions: Set<Permission>?,
-                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
+                                 requestedPermissions: Set<PermissionInfo>?,
+                                 asyncActionNavigations: Set<AsyncActionNavigation>?) {
         if (requestedPermissions != null) {
             TODO("syoung 02/05/2020 Add unit test")
             //navigationPoint.requestedPermissions = requestedPermissions.plus(navigationPoint.requestedPermissions ?: setOf())

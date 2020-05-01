@@ -48,7 +48,7 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
         return (node is Step)
     }
 
-    override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
         //Update the LiveData stream with the new node
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
@@ -59,7 +59,7 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
             )
     }
 
-    override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
@@ -89,7 +89,7 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
      */
     data class ShowNodeState(val nodeState: NodeState,
                              val direction: NavigationPoint.Direction,
-                             val requestedPermissions: Set<Permission>?,
+                             val requestedPermissions: Set<PermissionInfo>?,
                              val asyncActionNavigations: Set<AsyncActionNavigation>?)
 
 }
