@@ -4,10 +4,9 @@ plugins {
     id( "com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.github.dcendents.android-maven")
+    id ("maven-publish")
 }
-
-group = "org.sagebionetworks.assessmentmodel"
-version = 1.0
 
 android {
     compileSdkVersion(29)
@@ -36,7 +35,9 @@ dependencies {
 }
 
 kotlin {
-   android("androidLib")
+   android("androidLib") {
+       publishLibraryVariants("release", "debug")
+   }
    
    val buildForDevice = project.findProperty("device") as? Boolean ?: false
    val iosTarget = if(buildForDevice) iosArm64("ios") else iosX64("ios")
