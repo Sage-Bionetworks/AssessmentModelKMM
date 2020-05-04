@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import org.sagebionetworks.assessmentmodel.FormStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.northwestern.MtbSerialization
 import org.sagebionetworks.assessmentmodel.northwestern.MtbStep
