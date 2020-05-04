@@ -215,7 +215,7 @@ data class OverviewStepObject(
     override val identifier: String,
     override val resultIdentifier: String? = null,
     override var imageInfo: ImageInfo? = null,
-    override var icons: List<ImageInfoObject>? = null,
+    override var icons: List<IconInfoObject>? = null,
     override var permissions: List<PermissionInfoObject>? = null
 ) : StepObject(), OverviewStep {
     override var learnMore: ButtonActionInfo?
@@ -232,22 +232,6 @@ data class PermissionInfoObject(
     override val restrictedMessage: String? = null,
     override val deniedMessage: String? = null
 ) : PermissionInfo
-
-@Serializable
-data class ImageInfoObject(
-    @SerialName("icon")
-    override val imageName: String,
-    @SerialName("title")
-    override val label: String? = null,
-    override val bundleIdentifier: String? = null,
-    override var packageName: String? = null,
-    override val rawFileExtension: String? = null
-) : ImageInfo {
-    @Transient
-    override var decoderBundle: Any? = null
-    override val versionString: String?
-        get() = null
-}
 
 @Serializable
 @SerialName("form")

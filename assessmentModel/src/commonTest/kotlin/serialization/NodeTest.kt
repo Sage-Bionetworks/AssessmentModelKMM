@@ -434,7 +434,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.buttonMap = mapOf(
             ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
             ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
-        original.icons = listOf(ImageInfoObject("cuteDogs", "Cute Dogs"))
+        original.icons = listOf(IconInfoObject("cuteDogs", "Cute Dogs"))
         original.permissions = listOf(PermissionInfoObject(
             permissionType = PermissionType.Standard.Motion,
             optional = true,
