@@ -98,8 +98,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("foo", runUUIDString = result.runUUIDString)
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
@@ -111,8 +110,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("bar", runUUIDString = result.runUUIDString)
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -389,16 +387,14 @@ open class NodeTest : NodeSerializationTestHelper() {
     fun testInstructionStep_Result_NullResultId() {
         val original = InstructionStepObject("foo")
         val result = original.createResult()
-        val expected = ResultObject("foo")
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
     fun testInstructionStep_Result_WithResultId() {
         val original = InstructionStepObject("foo", resultIdentifier = "bar")
         val result = original.createResult()
-        val expected = ResultObject("bar")
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -664,8 +660,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = BranchNodeResultObject("foo")
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
@@ -677,8 +672,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = BranchNodeResultObject("bar")
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
     }
 
     /**
