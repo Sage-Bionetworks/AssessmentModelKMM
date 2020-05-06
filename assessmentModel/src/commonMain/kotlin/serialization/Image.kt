@@ -11,6 +11,21 @@ val imageSerializersModule = SerializersModule {
     }
 }
 
+// This serialization is included for reverse compatibility to existing JSON for an Overview step. syoung 05/04/2020
+@Serializable
+data class IconInfoObject(
+    @SerialName("icon")
+    override val imageName: String,
+    @SerialName("title")
+    override val label: String? = null,
+    override val bundleIdentifier: String? = null,
+    override var packageName: String? = null,
+    override val rawFileExtension: String? = null,
+    @Transient
+    override var decoderBundle: Any? = null,
+    override val versionString: String? = null
+) : ImageInfo
+
 @Serializable
 @SerialName("fetchable")
 data class FetchableImage(override val imageName: String,

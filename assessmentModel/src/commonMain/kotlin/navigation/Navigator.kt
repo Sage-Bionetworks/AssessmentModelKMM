@@ -71,7 +71,7 @@ interface Navigator {
 data class NavigationPoint(val node: Node?,
                            val branchResult: BranchNodeResult,
                            val direction: Direction = Direction.Forward,
-                           var requestedPermissions: Set<Permission>? = null,
+                           var requestedPermissions: Set<PermissionInfo>? = null,
                            var asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
     @Serializable
     enum class Direction {

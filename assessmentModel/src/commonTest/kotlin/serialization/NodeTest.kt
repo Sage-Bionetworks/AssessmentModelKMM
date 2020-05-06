@@ -1,9 +1,12 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
@@ -95,8 +98,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("foo", runUUIDString = result.runUUIDString)
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
@@ -108,8 +110,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = AssessmentResultObject("bar", runUUIDString = result.runUUIDString)
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -320,6 +321,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "fullInstructionsOnly": true,
                "spokenInstructions": {"start": "Start now"},
+               "nextStepIdentifier": "ragu",
                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
                             "cancel": { "type": "default", "iconName" : "closeX" }
                            },
@@ -341,6 +343,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.detail = "Some text. This is a test."
         original.footnote = "This is a footnote."
         original.fullInstructionsOnly = true
+        original.nextNodeIdentifier = "ragu"
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
                 ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
@@ -365,25 +368,95 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertTrue(decoded is InstructionStepObject)
         assertEqualOptionalStep(original, decoded)
         assertEqualContentNodes(original, decoded)
+        assertEquals(original.nextNodeIdentifier, decoded.nextNodeIdentifier)
+
         assertTrue(restored is InstructionStepObject)
         assertEqualOptionalStep(original, restored)
         assertEqualContentNodes(original, restored)
+        assertEquals(original.nextNodeIdentifier, restored.nextNodeIdentifier)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEqualOptionalStep(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.nextNodeIdentifier, copy.nextNodeIdentifier)
+
     }
 
     @Test
     fun testInstructionStep_Result_NullResultId() {
         val original = InstructionStepObject("foo")
         val result = original.createResult()
-        val expected = ResultObject("foo")
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
     fun testInstructionStep_Result_WithResultId() {
         val original = InstructionStepObject("foo", resultIdentifier = "bar")
         val result = original.createResult()
-        val expected = ResultObject("bar")
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
+    }
+
+    /**
+     * OverviewStepObject
+     */
+
+    @Test
+    fun testOverviewStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "overview",
+               "title": "Hello World!",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+               "icons" : [ {"icon": "cuteDogs", "title": "Cute Dogs"} ],                
+               "permissions":[
+                    {
+                        "permissionType":"motion",
+                        "reason":"Access to Motion and Fitness sensors is used to measure the phone's orientation.",
+                        "optional":true
+                   }
+                ]
+           }
+           """
+        val original = OverviewStepObject("foo")
+        original.title = "Hello World!"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.buttonMap = mapOf(
+            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
+        original.icons = listOf(IconInfoObject("cuteDogs", "Cute Dogs"))
+        original.permissions = listOf(PermissionInfoObject(
+            permissionType = PermissionType.Standard.Motion,
+            optional = true,
+            reason = "Access to Motion and Fitness sensors is used to measure the phone's orientation."
+        ))
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is OverviewStepObject)
+        assertEquals(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertEquals(original.icons, decoded.icons)
+
+        assertTrue(restored is OverviewStepObject)
+        assertEquals(original, restored)
+        assertEqualContentNodes(original, restored)
+        assertEquals(original.icons, restored.icons)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.icons, copy.icons)
     }
 
     /**
@@ -431,12 +504,25 @@ open class NodeTest : NodeSerializationTestHelper() {
         val restored = jsonCoder.parse(serializer, jsonString)
         val decoded = jsonCoder.parse(serializer, inputString)
 
+
         assertTrue(decoded is SimpleQuestionObject)
         assertEqualStep(original, decoded)
         assertEqualContentNodes(original, decoded)
+        assertEquals(original.optional, decoded.optional)
+        assertEquals(original.surveyRules, decoded.surveyRules)
+
         assertTrue(restored is SimpleQuestionObject)
         assertEqualStep(original, restored)
         assertEqualContentNodes(original, restored)
+        assertEquals(original.optional, restored.optional)
+        assertEquals(original.surveyRules, restored.surveyRules)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEqualStep(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEquals(original.optional, copy.optional)
+        assertEquals(original.surveyRules, copy.surveyRules)
     }
 
     /**
@@ -574,8 +660,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = BranchNodeResultObject("foo")
-        assertEquals(expected, result)
+        assertEquals("foo", result.identifier)
     }
 
     @Test
@@ -587,8 +672,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
-        val expected = BranchNodeResultObject("bar")
-        assertEquals(expected, result)
+        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -683,7 +767,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertSame(bundle, imageInfo.decoderBundle)
         assertEquals(packageName, imageInfo.packageName)
     }
-
 
     @Test
     fun testTransformSection() {

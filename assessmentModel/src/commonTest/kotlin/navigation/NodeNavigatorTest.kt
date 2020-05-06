@@ -809,11 +809,11 @@ open class NavigationTestHelper {
             return (node is Step)
         }
 
-        override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
             show(nodeState, NavigationPoint.Direction.Backward)
         }
 
-        override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<Permission>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
             show(nodeState, NavigationPoint.Direction.Forward)
         }
 
