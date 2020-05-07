@@ -11,6 +11,11 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.*
 
+//In order to extend abstract classes such as StepObject
+// the serializable classes need to be in the same project module.
+// Due to this bug: https://github.com/Kotlin/kotlinx.serialization/issues/576
+
+
 object MtbSerialization {
     object SerializersModule {
         val default =
