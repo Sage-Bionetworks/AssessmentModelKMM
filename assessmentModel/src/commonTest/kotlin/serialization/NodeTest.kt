@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
+import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
@@ -38,6 +39,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                 "shouldHideActions": ["goBackward"],
                 "progressMarkers": ["step1","step2"],
+                "asyncActions"      : [
+                                      {
+                                      "identifier"              : "shakeItUp",
+                                      "type"                    : "motion"
+                                      }
+                                      ],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -59,7 +66,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                 versionString = "1.2.3",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
+                        buildInstructionStep("step2", "Step 2")),
+                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp")))
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
         original.detail = "Some text. This is a test."
@@ -607,6 +615,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                 "shouldHideActions": ["goBackward"],
                 "progressMarkers": ["step1","step2"],
+                "asyncActions"      : [
+                      {
+                      "identifier"              : "shakeItUp",
+                      "type"                    : "motion"
+                      }
+                      ],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -626,7 +640,9 @@ open class NodeTest : NodeSerializationTestHelper() {
                 identifier = "foobar",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
+                        buildInstructionStep("step2", "Step 2")),
+                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp"))
+        )
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
         original.detail = "Some text. This is a test."

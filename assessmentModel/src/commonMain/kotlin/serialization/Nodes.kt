@@ -166,8 +166,10 @@ data class AssessmentObject(
     override val children: List<Node>,
     override val versionString: String? = null,
     override val resultIdentifier: String? = null,
-    override var estimatedMinutes: Int = 0
-) : NodeContainerObject(), Assessment {
+    override var estimatedMinutes: Int = 0,
+    @SerialName("asyncActions")
+    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
         imageInfo?.copyResourceInfo(resourceInfo)
@@ -184,8 +186,10 @@ data class SectionObject(
     override val identifier: String,
     @SerialName("steps")
     override val children: List<Node>,
-    override val resultIdentifier: String? = null
-) : NodeContainerObject(), Section {
+    override val resultIdentifier: String? = null,
+    @SerialName("asyncActions")
+    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+) : NodeContainerObject(), Section, AsyncActionContainer {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
         imageInfo?.copyResourceInfo(resourceInfo)
         val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }

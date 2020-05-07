@@ -200,13 +200,6 @@ interface NodeContainer : BranchNode {
 fun NodeContainer.allNodeIdentifiers(): List<String> = children.map { it.identifier }
 
 /**
- * [AsyncActionConfiguration] defines general configuration for an asynchronous action that should be run in
- * the background. Depending upon the parameters and how the action is set up, this could be something that is run
- * continuously or else is paused or reset based on a timeout interval.
- */
-interface AsyncActionConfiguration : ResultMapElement
-
-/**
  * An [AsyncActionContainer] is a node that contains the model description for asynchronous background actions that
  * should be started when this [Node] in the [Assessment] is presented to the user.
  */

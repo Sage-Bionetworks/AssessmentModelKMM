@@ -2,7 +2,9 @@ package org.sagebionetworks.assessmentmodel
 
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
-/// [ViewTheme] tells the UI where to find the view controller or fragment to use when instantiating a [Step].
+/**
+ * [ViewTheme] tells the UI where to find the view controller or fragment to use when instantiating a [Step].
+ */
 interface ViewTheme : ResourceInfo {
 
     // MARK: Apple
