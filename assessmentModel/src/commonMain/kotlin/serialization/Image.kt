@@ -60,7 +60,7 @@ data class AnimatedImage(override val imageNames: List<String>,
 }
 
 /**
- * [ImageTheme] is a [FrameLayout] that was developed for SageResearch-Apple and uses a serialization strategy where
+ * [ImageTheme] is a [DrawableLayout] that was developed for SageResearch-Apple and uses a serialization strategy where
  * layout is defined by the image placement and size (where applicable) rather than using specific image constraints.
  */
 interface ImageTheme : DrawableLayout {
@@ -96,7 +96,7 @@ object ImageNameSerializer : KSerializer<FetchableImage> {
  *
  */
 @Serializable
-sealed class ImagePlacement() : StringEnum {
+sealed class ImagePlacement : StringEnum {
 
     /**
      * This class defines a set of image placements that are defined within this framework as standard.

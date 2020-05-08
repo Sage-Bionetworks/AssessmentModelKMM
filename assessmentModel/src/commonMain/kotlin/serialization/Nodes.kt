@@ -3,7 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -359,7 +358,7 @@ data class ComparableSurveyRuleObject(
  */
 
 @Serializable
-abstract class BaseActiveStepObject() : StepObject(), ActiveStep {
+abstract class BaseActiveStepObject : StepObject(), ActiveStep {
     override var requiresBackgroundAudio: Boolean = false
     override var shouldEndOnInterrupt: Boolean = false
     @SerialName("image")
@@ -367,8 +366,8 @@ abstract class BaseActiveStepObject() : StepObject(), ActiveStep {
     @SerialName("commands")
     private var commandStrings: Set<String> = setOf()
 
-    override var commands: Set<ActiveUIStepCommand>
-        get() = ActiveUIStepCommand.fromStrings(commandStrings)
+    override var commands: Set<ActiveStepCommand>
+        get() = ActiveStepCommand.fromStrings(commandStrings)
         set(value) { commandStrings = value.map { it.name.decapitalize() }.toSet() }
 
     override fun copyFrom(original: ContentNode) {

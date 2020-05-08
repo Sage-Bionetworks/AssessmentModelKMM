@@ -1,10 +1,5 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.StringFormat
-
 // TODO: syoung 01/21/2020 Implement a localization strategy
 
 object Localization {

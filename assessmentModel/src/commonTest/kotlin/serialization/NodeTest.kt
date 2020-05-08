@@ -1,12 +1,9 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -62,9 +59,9 @@ open class NodeTest : NodeSerializationTestHelper() {
                 imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.commands = setOf(
-            ActiveUIStepCommand.PlaySoundOnStart,
-            ActiveUIStepCommand.VibrateOnStart,
-            ActiveUIStepCommand.VibrateOnFinish)
+            ActiveStepCommand.PlaySoundOnStart,
+            ActiveStepCommand.VibrateOnStart,
+            ActiveStepCommand.VibrateOnFinish)
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -90,11 +87,11 @@ open class NodeTest : NodeSerializationTestHelper() {
 
     fun testActiveCommands_Pairs_Serialization() {
         val stringSet = setOf("playSound", "vibrate", "transitionAutomatically")
-        val commands = ActiveUIStepCommand.fromStrings(stringSet)
-        var expected = setOf(
-            ActiveUIStepCommand.PlaySoundOnStart, ActiveUIStepCommand.PlaySoundOnFinish,
-            ActiveUIStepCommand.VibrateOnStart, ActiveUIStepCommand.VibrateOnFinish,
-            ActiveUIStepCommand.StartTimerAutomatically, ActiveUIStepCommand.ContinueOnFinish
+        val commands = ActiveStepCommand.fromStrings(stringSet)
+        val expected = setOf(
+            ActiveStepCommand.PlaySoundOnStart, ActiveStepCommand.PlaySoundOnFinish,
+            ActiveStepCommand.VibrateOnStart, ActiveStepCommand.VibrateOnFinish,
+            ActiveStepCommand.StartTimerAutomatically, ActiveStepCommand.ContinueOnFinish
         )
         assertEquals(expected, commands)
     }
@@ -107,13 +104,13 @@ open class NodeTest : NodeSerializationTestHelper() {
             "shouldDisableIdleTimer",
             "speakWarningOnPause"
         )
-        val commands = ActiveUIStepCommand.fromStrings(stringSet)
-        var expected = setOf(
-            ActiveUIStepCommand.PlaySoundOnStart, ActiveUIStepCommand.PlaySoundOnFinish,
-            ActiveUIStepCommand.VibrateOnStart, ActiveUIStepCommand.VibrateOnFinish,
-            ActiveUIStepCommand.StartTimerAutomatically, ActiveUIStepCommand.ContinueOnFinish,
-            ActiveUIStepCommand.ShouldDisableIdleTimer,
-            ActiveUIStepCommand.SpeakWarningOnPause
+        val commands = ActiveStepCommand.fromStrings(stringSet)
+        val expected = setOf(
+            ActiveStepCommand.PlaySoundOnStart, ActiveStepCommand.PlaySoundOnFinish,
+            ActiveStepCommand.VibrateOnStart, ActiveStepCommand.VibrateOnFinish,
+            ActiveStepCommand.StartTimerAutomatically, ActiveStepCommand.ContinueOnFinish,
+            ActiveStepCommand.ShouldDisableIdleTimer,
+            ActiveStepCommand.SpeakWarningOnPause
         )
         assertEquals(expected, commands)
     }
@@ -403,9 +400,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
         original.commands = setOf(
-            ActiveUIStepCommand.PlaySoundOnStart,
-            ActiveUIStepCommand.VibrateOnStart,
-            ActiveUIStepCommand.VibrateOnFinish)
+            ActiveStepCommand.PlaySoundOnStart,
+            ActiveStepCommand.VibrateOnStart,
+            ActiveStepCommand.VibrateOnFinish)
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)

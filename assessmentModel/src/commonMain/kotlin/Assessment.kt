@@ -10,17 +10,6 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 
-/**
- * A [Session] includes one or more [assessments] that are logically grouped together.
- *
- * The SageResearch equivalent is an `RSDTaskGroup`.
- *
- * TODO: syoung 01/28/2020 Flesh out the interface for a session including how to get its result.
- */
-interface Session {
-    val assessments: List<Assessment>
-}
-
 interface BranchNode : Node {
 
     /**
@@ -346,14 +335,10 @@ interface FormStep : Step, ContentNode {
 interface ResultSummaryStep : Step, ContentNode {
 
     /**
-     * Text to display as the title above the result.
+     * Localized text to display as the title above the result. This is separate from the [title], [subtitle], and
+     * [detail] fields that may be shown below the result to add more description to what the result means.
      */
     val resultTitle: String?
-
-    /**
-     * The localized unit to display for this result.
-     */
-    val unitText: String?
 
     /**
      * A link list that describes the path in an [AssessmentResult] down which to look for the result to use as the
@@ -378,7 +363,7 @@ interface ActiveStep : Step {
      * The set of commands to apply to this active step. These indicate actions to fire at the beginning and end of
      * the step such as playing a sound as well as whether or not to automatically start and finish the step.
      */
-    val commands: Set<ActiveUIStepCommand>
+    val commands: Set<ActiveStepCommand>
 
     /**
      * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
@@ -401,7 +386,7 @@ interface CountdownStep : OptionalStep, ActiveStep
 
 /**
  * A set of commands that can be set on an [ActiveStep]. Typically, these deal with desired step behavior during
- * transitions to start, finish, interrupt, and pause.
+ * timer transitions to start, finish, interrupt, and pause.
  *
  * - [PlaySoundOnStart]: Play a default sound when the step starts.
  * - [PlaySoundOnFinish]: Play a default sound when the step finishes.
@@ -416,7 +401,7 @@ interface CountdownStep : OptionalStep, ActiveStep
  *
  * - [SpeakWarningOnPause]: Speak a warning when the pause button is tapped.
  */
-enum class ActiveUIStepCommand : StringEnum {
+enum class ActiveStepCommand : StringEnum {
     PlaySoundOnStart, PlaySoundOnFinish,
     VibrateOnStart, VibrateOnFinish,
     StartTimerAutomatically, ContinueOnFinish,
@@ -431,7 +416,7 @@ enum class ActiveUIStepCommand : StringEnum {
             "vibrate" to setOf(VibrateOnStart, VibrateOnFinish)
         ))
 
-        fun fromStrings(strings: Set<String>) : Set<ActiveUIStepCommand>
+        fun fromStrings(strings: Set<String>) : Set<ActiveStepCommand>
                 = strings.mapNotNull { mapping[it] }.flatten().toSet()
     }
 }

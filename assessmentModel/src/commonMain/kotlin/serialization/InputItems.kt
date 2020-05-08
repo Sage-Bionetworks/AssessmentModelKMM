@@ -38,8 +38,7 @@ val inputItemSerializersModule = SerializersModule {
 }
 
 /**
- * A [InputItemObject] is intended to implement shared code for serialization of the simple data types. This will
- * work to deserialize some of the existing input items that use the [DataType] to define their type.
+ * A [InputItemObject] is intended to implement shared code for serialization of the simple data types.
  */
 @Serializable
 abstract class InputItemObject : InputItem {
@@ -228,18 +227,18 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
  * TODO: syoung 02/25/2020 Implement input items for Measurement types.
  */
 
-/**
- * A measurement type is a human-data measurement such as height or weight.
- */
-enum class MeasurementType : StringEnum {
-    Height, Weight, BloodPressure;
-}
-
-/**
- * The measurement range is used to determine units that are appropriate to the size of the person.
- */
-enum class MeasurementRange : StringEnum {
-    Adult, Child, Infant;
-}
+///**
+// * A measurement type is a human-data measurement such as height or weight.
+// */
+//enum class MeasurementType : StringEnum {
+//    Height, Weight, BloodPressure;
+//}
+//
+///**
+// * The measurement range is used to determine units that are appropriate to the size of the person.
+// */
+//enum class MeasurementRange : StringEnum {
+//    Adult, Child, Infant;
+//}
 
 
