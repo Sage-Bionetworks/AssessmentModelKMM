@@ -68,7 +68,7 @@ open class QuestionStateImpl(override val node: Question, override val parent: B
     }
 }
 
-abstract class AbstractQuestionFieldStateImpl() : QuestionFieldState {
+abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
 
     /**
      * -- Initialization

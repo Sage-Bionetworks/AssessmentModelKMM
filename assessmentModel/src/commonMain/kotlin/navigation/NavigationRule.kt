@@ -44,8 +44,7 @@ interface SurveyNavigationRule : DirectNavigationRule, ResultMapElement {
             nextIdentifier
         } else {
             val result = branchResult.pathHistoryResults.lastOrNull { it.identifier == this.resultId() }
-            surveyRules?.let { rules ->
-                rules.mapNotNull { it.evaluateRuleWith(result) }.firstOrNull() }
+            surveyRules?.mapNotNull { it.evaluateRuleWith(result) }?.firstOrNull()
         }
     }
 }

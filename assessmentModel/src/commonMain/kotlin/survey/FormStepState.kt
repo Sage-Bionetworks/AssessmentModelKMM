@@ -44,7 +44,7 @@ open class FormStepStateImpl(override val node: FormStep, override val parent: B
      * Get the result for the node and add to the collection if needed.
      */
     fun resultFor(node: Node) : Result {
-        return previousResultFor(node).let { it } ?: run {
+        return previousResultFor(node) ?: run {
             val result = node.createResult()
             currentResult.inputResults.add(result)
             result

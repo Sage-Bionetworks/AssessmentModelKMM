@@ -111,7 +111,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     @Test
     fun testNodeAfter_Exit_WithSkip() {
         val nodeList = buildNodeList(7, 1, "step").toList()
-        nodeList[2].nextNodeIdentifier = ReservedNavigationIdentifier.exit.name
+        nodeList[2].nextNodeIdentifier = ReservedNavigationIdentifier.Exit.name
 
         val assessmentObject = AssessmentObject("foo", nodeList)
         val navigator = assessmentObject.getNavigator()
@@ -530,7 +530,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testGoForward_Exit_SectionNavigation() {
         val nodeA = InstructionStepObject("stepA")
         val nodeListB = buildNodeList(5, 1, "stepB").toList()
-        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.exit.name
+        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.Exit.name
         val nodeB = SectionObject("stepB", nodeListB)
         val nodeListC = buildNodeList(3, 1, "stepC").toList()
         val nodeC = SectionObject("stepC", nodeListC)
@@ -701,7 +701,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testGoBackward_StepB3_FromNextSection_SectionNavigation() {
         val nodeA = InstructionStepObject("stepA")
         val nodeListB = buildNodeList(5, 1, "stepB").toList()
-        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.nextSection.name
+        nodeListB[2].nextNodeIdentifier = ReservedNavigationIdentifier.NextSection.name
         val nodeB = SectionObject("stepB", nodeListB)
         val nodeListC = buildNodeList(3, 1, "stepC").toList()
         val nodeC = SectionObject("stepC", nodeListC)

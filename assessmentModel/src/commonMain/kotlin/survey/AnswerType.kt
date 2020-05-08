@@ -130,7 +130,6 @@ abstract class AnswerType {
             BaseType.INTEGER -> INTEGER
             BaseType.STRING -> STRING
         }
-        fun nullJsonElement() = JsonNull
     }
 }
 

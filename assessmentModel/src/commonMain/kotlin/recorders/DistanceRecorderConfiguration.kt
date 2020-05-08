@@ -7,7 +7,6 @@ import org.sagebionetworks.assessmentmodel.PermissionInfo
 import org.sagebionetworks.assessmentmodel.PermissionType
 import org.sagebionetworks.assessmentmodel.RecorderConfiguration
 import org.sagebionetworks.assessmentmodel.SampleRecord
-import org.sagebionetworks.assessmentmodel.serialization.PermissionInfoObject
 
 /**
  * The [DistanceRecorderConfiguration] is used to define the configuration for a recorder used to track the distance

@@ -2,7 +2,6 @@ package org.sagebionetworks.assessmentmodel.recorders
 
 import kotlinx.serialization.*
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.serialization.PermissionInfoObject
 
 /**
  * The [MotionRecorderConfiguration] is used to define the configuration properties for motion sensors. The actual

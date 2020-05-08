@@ -2,7 +2,7 @@ package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
@@ -341,11 +341,11 @@ interface ResultSummaryStep : Step, ContentNode {
     val resultTitle: String?
 
     /**
-     * A link list that describes the path in an [AssessmentResult] down which to look for the result to use as the
-     * answer to the result. If [null], then the application UI must define a custom presentation for showing the
+     * A link list that describes the path in an [BranchNodeResult] down which to look for the result to use as the
+     * answer to the result. If `null`, then the application UI must define a custom presentation for showing the
      * result.
      */
-    val scoringResultNodeIdentifier: NodeIdentifierPath?
+    val scoringResultPath: IdentifierPath?
 }
 
 /**
