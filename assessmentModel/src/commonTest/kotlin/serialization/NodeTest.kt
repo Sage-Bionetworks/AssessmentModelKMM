@@ -4,6 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -601,7 +602,11 @@ open class NodeTest : NodeSerializationTestHelper() {
                         "reason":"Access to Motion and Fitness sensors is used to measure the phone's orientation.",
                         "optional":true
                    }
-                ]
+                ],
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
            }
            """
         val original = OverviewStepObject("foo")
@@ -617,6 +622,10 @@ open class NodeTest : NodeSerializationTestHelper() {
             optional = true,
             reason = "Access to Motion and Fitness sensors is used to measure the phone's orientation."
         ))
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -639,6 +648,83 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, copy)
         assertEquals(original.icons, copy.icons)
     }
+
+
+    /**
+     * ResultSummaryStepObject
+     */
+
+    @Test
+    fun testNodeIdentifierPath() {
+        val root = IdentifierPath("TestTask/sectionB/roo")
+        assertEquals("TestTask", root.identifier)
+        val section = root.child
+        assertNotNull(section)
+        assertEquals("sectionB", section.identifier)
+        val child = section.child
+        assertNotNull(child)
+        assertEquals("roo", child.identifier)
+        assertNull(child.child)
+    }
+
+    @Test
+    fun testResultSummaryStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "feedback",
+               "scoringResultPath": "TestTask/sectionB/roo",
+               "resultTitle": "Your score is",
+               "title": "Hello World!",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+           }
+           """
+        val original = ResultSummaryStepObject(
+            identifier = "foo",
+            scoringResultPath = IdentifierPath("TestTask/sectionB/roo")
+        )
+        original.resultTitle = "Your score is"
+        original.title = "Hello World!"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.buttonMap = mapOf(
+            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ResultSummaryStepObject)
+        assertEquals(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertEqualStep(original, decoded)
+
+        assertTrue(restored is ResultSummaryStepObject)
+        assertEquals(original, restored)
+        assertEqualContentNodes(original, restored)
+        assertEqualStep(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEqualStep(original, copy)
+    }
+
 
     /**
      * SimpleQuestion

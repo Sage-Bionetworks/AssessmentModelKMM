@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
@@ -35,6 +36,7 @@ val nodeSerializersModule = SerializersModule {
         InstructionStepObject::class with InstructionStepObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         OverviewStepObject::class with OverviewStepObject.serializer()
+        ResultSummaryStepObject::class with ResultSummaryStepObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
         StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
@@ -202,7 +204,7 @@ data class SectionObject(
 }
 
 /**
- * ContentNode
+ * Information steps
  */
 
 @Serializable
@@ -219,10 +221,11 @@ data class InstructionStepObject(
 @SerialName("overview")
 data class OverviewStepObject(
     override val identifier: String,
-    override val resultIdentifier: String? = null,
+    @SerialName("image")
     override var imageInfo: ImageInfo? = null,
     override var icons: List<IconInfoObject>? = null,
-    override var permissions: List<PermissionInfoObject>? = null
+    override var permissions: List<PermissionInfoObject>? = null,
+    override val resultIdentifier: String? = null
 ) : StepObject(), OverviewStep {
     override var learnMore: ButtonActionInfo?
         get() = buttonMap[ButtonAction.Navigation.LearnMore]
@@ -240,6 +243,21 @@ data class PermissionInfoObject(
 ) : PermissionInfo
 
 @Serializable
+@SerialName("feedback")
+data class ResultSummaryStepObject(
+    override val identifier: String,
+    override val scoringResultPath: IdentifierPath? = null,
+    override var resultTitle: String? = null,
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null,
+    override val resultIdentifier: String? = null
+) : StepObject(), ResultSummaryStep
+
+/**
+ * Survey steps
+ */
+
+@Serializable
 @SerialName("form")
 data class FormStepObject(
     override val identifier: String,
@@ -252,10 +270,6 @@ data class FormStepObject(
     @SerialName("inputFields")
     override val children: List<Node>
 ) : StepObject(), FormStep
-
-/**
- * Question
- */
 
 @Serializable
 abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
