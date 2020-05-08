@@ -27,9 +27,11 @@ import kotlin.collections.toMutableMap
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
+        ActiveStepObject::class with ActiveStepObject.serializer()
         AssessmentObject::class with AssessmentObject.serializer()
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
         ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
+        CountdownStepObject::class with CountdownStepObject.serializer()
         FormStepObject::class with FormStepObject.serializer()
         InstructionStepObject::class with InstructionStepObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
@@ -94,13 +96,14 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
 
 @Serializable
 abstract class StepObject : NodeObject(), Step {
-    override var spokenInstructions: Map<String, String>? = null
+    override var spokenInstructions: Map<SpokenInstructionTiming, String>? = null
     override var viewTheme: ViewThemeObject? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
-        if (original is Step) {
+        if (original is StepObject) {
             this.spokenInstructions = original.spokenInstructions
+            this.viewTheme = original.viewTheme
         }
     }
 }
@@ -350,3 +353,48 @@ data class ComparableSurveyRuleObject(
     override val ruleOperator: SurveyRuleOperator? = null,
     override val accuracy: Double = 0.00001
 ) : ComparableSurveyRule
+
+/**
+ * Active steps
+ */
+
+@Serializable
+abstract class BaseActiveStepObject() : StepObject(), ActiveStep {
+    override var requiresBackgroundAudio: Boolean = false
+    override var shouldEndOnInterrupt: Boolean = false
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null
+    @SerialName("commands")
+    private var commandStrings: Set<String> = setOf()
+
+    override var commands: Set<ActiveUIStepCommand>
+        get() = ActiveUIStepCommand.fromStrings(commandStrings)
+        set(value) { commandStrings = value.map { it.name.decapitalize() }.toSet() }
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is BaseActiveStepObject) {
+            this.requiresBackgroundAudio = original.requiresBackgroundAudio
+            this.shouldEndOnInterrupt = original.shouldEndOnInterrupt
+            this.imageInfo = original.imageInfo
+            this.commandStrings = original.commandStrings
+        }
+    }
+}
+
+@Serializable
+@SerialName("active")
+data class ActiveStepObject(
+    override val identifier: String,
+    override val duration: Double,
+    override val resultIdentifier: String? = null
+) : BaseActiveStepObject()
+
+@Serializable
+@SerialName("countdown")
+data class CountdownStepObject(
+    override val identifier: String,
+    override val duration: Double,
+    override val resultIdentifier: String? = null,
+    override val fullInstructionsOnly: Boolean = false
+) : BaseActiveStepObject(), CountdownStep

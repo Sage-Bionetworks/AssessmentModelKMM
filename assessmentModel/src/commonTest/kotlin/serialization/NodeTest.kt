@@ -17,6 +17,109 @@ open class NodeTest : NodeSerializationTestHelper() {
     private val jsonCoder = Serialization.JsonCoder.default
 
     /**
+     * ActiveStepObject
+     */
+
+    @Test
+    fun testActiveStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "active",
+               "title": "Hello World!",
+               "duration": 30,
+               "requiresBackgroundAudio": true,
+               "shouldEndOnInterrupt": true,
+               "commands": ["playSoundOnStart", "vibrate"],
+               "spokenInstructions" : { "start": "Start moving",
+                                        "1.5": "Up",
+                                        "3.0": "Down",
+                                        "10": "Keep going",
+                                        "halfway": "Halfway there",
+                                        "countdown": "5",
+                                        "end": "Stop moving"},
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+            }
+           """
+        val original = ActiveStepObject("foo", 30.0)
+        original.title = "Hello World!"
+        original.spokenInstructions = mapOf(
+            SpokenInstructionTiming.Keyword.Start to "Start moving",
+            SpokenInstructionTiming.TimeInterval(1.5) to "Up",
+            SpokenInstructionTiming.TimeInterval(3.0) to "Down",
+            SpokenInstructionTiming.TimeInterval(10.0) to "Keep going",
+            SpokenInstructionTiming.Keyword.Halfway to "Halfway there",
+            SpokenInstructionTiming.Keyword.Countdown to "5",
+            SpokenInstructionTiming.Keyword.End to "Stop moving"
+        )
+        original.requiresBackgroundAudio = true
+        original.shouldEndOnInterrupt = true
+        original.imageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+        original.commands = setOf(
+            ActiveUIStepCommand.PlaySoundOnStart,
+            ActiveUIStepCommand.VibrateOnStart,
+            ActiveUIStepCommand.VibrateOnFinish)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ActiveStepObject)
+        assertEquals(original, decoded)
+        assertEqualActiveStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        assertTrue(restored is ActiveStepObject)
+        assertEquals(original, restored)
+        assertEqualActiveStep(original, restored)
+        assertEqualContentNodes(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualActiveStep(original, copy)
+        assertEqualContentNodes(original, copy)
+    }
+
+    fun testActiveCommands_Pairs_Serialization() {
+        val stringSet = setOf("playSound", "vibrate", "transitionAutomatically")
+        val commands = ActiveUIStepCommand.fromStrings(stringSet)
+        var expected = setOf(
+            ActiveUIStepCommand.PlaySoundOnStart, ActiveUIStepCommand.PlaySoundOnFinish,
+            ActiveUIStepCommand.VibrateOnStart, ActiveUIStepCommand.VibrateOnFinish,
+            ActiveUIStepCommand.StartTimerAutomatically, ActiveUIStepCommand.ContinueOnFinish
+        )
+        assertEquals(expected, commands)
+    }
+
+    fun testActiveCommands_Enum_Serialization() {
+        val stringSet = setOf(
+            "playSoundOnStart", "playSoundOnFinish",
+            "vibrateOnStart", "vibrateOnFinish",
+            "startTimerAutomatically", "continueOnFinish",
+            "shouldDisableIdleTimer",
+            "speakWarningOnPause"
+        )
+        val commands = ActiveUIStepCommand.fromStrings(stringSet)
+        var expected = setOf(
+            ActiveUIStepCommand.PlaySoundOnStart, ActiveUIStepCommand.PlaySoundOnFinish,
+            ActiveUIStepCommand.VibrateOnStart, ActiveUIStepCommand.VibrateOnFinish,
+            ActiveUIStepCommand.StartTimerAutomatically, ActiveUIStepCommand.ContinueOnFinish,
+            ActiveUIStepCommand.ShouldDisableIdleTimer,
+            ActiveUIStepCommand.SpeakWarningOnPause
+        )
+        assertEquals(expected, commands)
+    }
+
+
+    /**
      * AssessmentObject
      */
 
@@ -253,6 +356,80 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     /**
+     * CountdownStepObject
+     */
+
+    @Test
+    fun testCountdownStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "resultIdentifier": "bar",
+               "type": "countdown",
+               "fullInstructionsOnly": true,
+               "title": "Hello World!",
+               "duration": 30,
+               "requiresBackgroundAudio": true,
+               "shouldEndOnInterrupt": true,
+               "commands": ["playSoundOnStart", "vibrate"],
+               "spokenInstructions" : { "start": "Start moving",
+                                        "1.5": "Up",
+                                        "3.0": "Down",
+                                        "10": "Keep going",
+                                        "halfway": "Halfway there",
+                                        "countdown": "5",
+                                        "end": "Stop moving"},
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+            }
+           """
+        val original = CountdownStepObject("foo", 30.0, "bar", true)
+        original.title = "Hello World!"
+        original.spokenInstructions = mapOf(
+            SpokenInstructionTiming.Keyword.Start to "Start moving",
+            SpokenInstructionTiming.TimeInterval(1.5) to "Up",
+            SpokenInstructionTiming.TimeInterval(3.0) to "Down",
+            SpokenInstructionTiming.TimeInterval(10.0) to "Keep going",
+            SpokenInstructionTiming.Keyword.Halfway to "Halfway there",
+            SpokenInstructionTiming.Keyword.Countdown to "5",
+            SpokenInstructionTiming.Keyword.End to "Stop moving"
+        )
+        original.requiresBackgroundAudio = true
+        original.shouldEndOnInterrupt = true
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
+        original.commands = setOf(
+            ActiveUIStepCommand.PlaySoundOnStart,
+            ActiveUIStepCommand.VibrateOnStart,
+            ActiveUIStepCommand.VibrateOnFinish)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is CountdownStepObject)
+        assertEquals(original, decoded)
+        assertEqualActiveStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        assertTrue(restored is CountdownStepObject)
+        assertEquals(original, restored)
+        assertEqualActiveStep(original, restored)
+        assertEqualContentNodes(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualActiveStep(original, copy)
+        assertEqualContentNodes(original, copy)
+    }
+
+    /**
      * FormStepObject
      */
 
@@ -360,7 +537,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
-        original.spokenInstructions = mapOf("start" to "Start now")
+        original.spokenInstructions = mapOf(SpokenInstructionTiming.Keyword.Start to "Start now")
         original.viewTheme = ViewThemeObject(
             viewIdentifier = "Moo",
             storyboardIdentifier = "Ba",
@@ -388,7 +565,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualOptionalStep(original, copy)
         assertEqualContentNodes(original, copy)
         assertEquals(original.nextNodeIdentifier, copy.nextNodeIdentifier)
-
     }
 
     @Test
@@ -1047,6 +1223,15 @@ open class NodeSerializationTestHelper {
     fun assertEqualStep(expected: Step, actual: Step) {
         assertEqualNodes(expected, actual)
         assertEquals(expected.spokenInstructions, actual.spokenInstructions)
+        assertEquals(expected.viewTheme, actual.viewTheme)
+    }
+
+    fun assertEqualActiveStep(expected: ActiveStep, actual: ActiveStep) {
+        assertEqualStep(expected, actual)
+        assertEquals(expected.duration, actual.duration)
+        assertEquals(expected.commands, actual.commands)
+        assertEquals(expected.shouldEndOnInterrupt, actual.shouldEndOnInterrupt)
+        assertEquals(expected.requiresBackgroundAudio, actual.requiresBackgroundAudio)
     }
 
     fun buildInstructionStep(identifier: String, title: String): InstructionStepObject {
