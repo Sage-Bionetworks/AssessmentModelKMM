@@ -38,7 +38,7 @@ val inputItemSerializersModule = SerializersModule {
 }
 
 /**
- * A [InputItemObject] is intended to implement shared code for serialization of the simple data types.
+ * An [InputItemObject] is intended to implement shared code for serialization of the simple data types.
  */
 @Serializable
 abstract class InputItemObject : InputItem {
@@ -240,5 +240,4 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
 //enum class MeasurementRange : StringEnum {
 //    Adult, Child, Infant;
 //}
-
 
