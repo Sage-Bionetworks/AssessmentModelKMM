@@ -25,7 +25,7 @@ data class MotionRecorderConfiguration(
     val recorderTypes: Set<MotionRecorderType> = setOf(MotionRecorderType.Accelerometer, MotionRecorderType.Gyro),
     @SerialName("frequency")
     val samplingFrequency: Double? = null
-) : RecorderConfiguration {
+) : TableRecorderConfiguration {
     @Transient
     override val permissions: List<PermissionInfo>? = listOf(
         PermissionType.Standard.Motion.createPermissionInfo(false, requiresBackground, reason))

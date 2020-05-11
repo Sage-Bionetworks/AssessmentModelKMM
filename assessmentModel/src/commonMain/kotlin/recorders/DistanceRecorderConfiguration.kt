@@ -3,10 +3,7 @@ package org.sagebionetworks.assessmentmodel.recorders
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import org.sagebionetworks.assessmentmodel.PermissionInfo
-import org.sagebionetworks.assessmentmodel.PermissionType
-import org.sagebionetworks.assessmentmodel.RecorderConfiguration
-import org.sagebionetworks.assessmentmodel.SampleRecord
+import org.sagebionetworks.assessmentmodel.*
 
 /**
  * The [DistanceRecorderConfiguration] is used to define the configuration for a recorder used to track the distance
@@ -30,7 +27,7 @@ data class DistanceRecorderConfiguration(
     override val stopStepIdentifier: String? = null,
     override val shouldDeletePrevious: Boolean = true,
     override val usesCSVEncoding : Boolean = false
-) : RecorderConfiguration {
+) : TableRecorderConfiguration {
     override val requiresBackground: Boolean
         get() = true
     @Transient

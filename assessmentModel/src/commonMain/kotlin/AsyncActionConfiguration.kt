@@ -54,6 +54,9 @@ interface RecorderConfiguration : AsyncActionConfiguration {
      */
     val shouldDeletePrevious: Boolean
         get() = true
+}
+
+interface TableRecorderConfiguration : RecorderConfiguration {
 
     /**
      * Set the flag to `true` to encode the samples as a CSV file. Default = `false`.
