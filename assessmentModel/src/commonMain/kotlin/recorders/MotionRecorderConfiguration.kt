@@ -89,9 +89,11 @@ enum class MotionRecorderType : StringEnum {
 
 /**
  * A [MotionRecord] is a serializable implementation of a [SampleRecord] that can be used to record a sample from one
- * of the motion sensors or calculated vectors. All properties on the record ard defined as `null` to allow using this
- * same serialization object to define both path markers that are added to the data stream to mark step transitions
- * and the results of the sensor.
+ * of the motion sensors or calculated vectors. Path markers are added to the data stream to mark step transitions
+ * using this same serialization object by setting all properties on the record to null.
+ *
+ * Additionally, setting unused properties to `null` allows the records to all serialize as a single class type, be
+ * recorded using a comma-delimited table, and does not require polymorphic serialization.
  *
  * If the [sensorType] is `null` then this is a path marker. Other values included here are only applicable to certain
  * sensors. This data structure allows for defining all records within a single file.
