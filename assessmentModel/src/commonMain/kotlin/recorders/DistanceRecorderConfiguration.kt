@@ -10,8 +10,10 @@ import org.sagebionetworks.assessmentmodel.*
  * a person travelled. Typically, this is used by an assessment to measure the participant's cardiorespiratory fitness.
  *
  * If included, the [motionStepIdentifier] is used to tell the distance recorder which step to mark as the "in motion"
- * step. If non-null, then the recorder uses this step to record distance travelled while the other steps in the task
- * are assumed to be standing still.
+ * step. If non-null, then the recorder will calculate [DistanceRecord.totalDistance] travelled only while this step is
+ * the current step by summing the [DistanceRecord.relativeDistance] values. All other steps included in the recorder
+ * are assumed to be steps where the participant is directed to stand still and that the recorder is being used to
+ * measure compliance.
  */
 @Serializable
 @SerialName("distance")
