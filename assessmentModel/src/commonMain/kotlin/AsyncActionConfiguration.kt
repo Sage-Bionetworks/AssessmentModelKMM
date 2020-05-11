@@ -15,7 +15,7 @@ interface AsyncActionConfiguration : ResultMapElement {
 }
 
 /**
- * [RecorderConfiguration] is used to configure a recorder. For example, recording accelerometer data or video.
+ * [RecorderConfiguration] is used to configure a recorder--for example, when recording accelerometer data or video.
  */
 interface RecorderConfiguration : AsyncActionConfiguration {
 
