@@ -54,7 +54,7 @@ sealed class DatePart(isoKey: String) : DateTimePart(isoKey) {
     object Month: DatePart("MM")
     object Day: DatePart("dd")
     companion object {
-        val separator: String = "-"
+        const val separator: String = "-"
         fun values(): List<DatePart> = listOf(Year, Month, Day)
     }
 }
@@ -64,7 +64,7 @@ sealed class TimePart(isoKey: String) : DateTimePart(isoKey) {
     object Minute: TimePart("mm")
     object Second: TimePart("SS.SSS")
     companion object {
-        val separator: String = ":"
+        const val separator: String = ":"
         fun values(): List<TimePart> = listOf(Hour, Minute, Second)
     }
 }

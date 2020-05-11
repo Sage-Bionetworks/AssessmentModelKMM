@@ -75,8 +75,8 @@ interface InputItem {
 
     /**
      * The kind of object to expect for the serialization of the answer associated with this [InputItem]. Typically,
-     * this will be a [AnswerType.Base] of some type, but it is possible for the [InputItem] to translate to an object
-     * rather than a primitive.
+     * this will be a [BaseType], but it is possible for the [InputItem] to translate to an object rather than a
+     * primitive.
      *
      * For example, the question could be about blood pressure where the participant answers the question with a string
      * of "120/70" but the [QuestionState] is responsible for translating that into a data class with systolic and
@@ -272,8 +272,9 @@ interface DateTimeFormatOptions {
     val maximumValue: String?
     val codingFormat: String
 
-    val dateTimeParts: List<DateTimePart>
-        get() = DateTimePart.partsFor(codingFormat)
+    // TODO: syoung 05/08/2020 Decide on how to support dates on Android.
+//    val dateTimeParts: List<DateTimePart>
+//        get() = DateTimePart.partsFor(codingFormat)
 }
 
 object PassThruTextValidator : TextValidator<String> {

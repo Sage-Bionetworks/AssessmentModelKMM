@@ -3,7 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -11,6 +10,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
@@ -27,13 +27,16 @@ import kotlin.collections.toMutableMap
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
+        ActiveStepObject::class with ActiveStepObject.serializer()
         AssessmentObject::class with AssessmentObject.serializer()
         ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
         ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
+        CountdownStepObject::class with CountdownStepObject.serializer()
         FormStepObject::class with FormStepObject.serializer()
         InstructionStepObject::class with InstructionStepObject.serializer()
         MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
         OverviewStepObject::class with OverviewStepObject.serializer()
+        ResultSummaryStepObject::class with ResultSummaryStepObject.serializer()
         SimpleQuestionObject::class with SimpleQuestionObject.serializer()
         SectionObject::class with SectionObject.serializer()
         StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
@@ -94,13 +97,14 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
 
 @Serializable
 abstract class StepObject : NodeObject(), Step {
-    override var spokenInstructions: Map<String, String>? = null
+    override var spokenInstructions: Map<SpokenInstructionTiming, String>? = null
     override var viewTheme: ViewThemeObject? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
-        if (original is Step) {
+        if (original is StepObject) {
             this.spokenInstructions = original.spokenInstructions
+            this.viewTheme = original.viewTheme
         }
     }
 }
@@ -166,8 +170,10 @@ data class AssessmentObject(
     override val children: List<Node>,
     override val versionString: String? = null,
     override val resultIdentifier: String? = null,
-    override var estimatedMinutes: Int = 0
-) : NodeContainerObject(), Assessment {
+    override var estimatedMinutes: Int = 0,
+    @SerialName("asyncActions")
+    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
         imageInfo?.copyResourceInfo(resourceInfo)
@@ -184,8 +190,10 @@ data class SectionObject(
     override val identifier: String,
     @SerialName("steps")
     override val children: List<Node>,
-    override val resultIdentifier: String? = null
-) : NodeContainerObject(), Section {
+    override val resultIdentifier: String? = null,
+    @SerialName("asyncActions")
+    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+) : NodeContainerObject(), Section, AsyncActionContainer {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
         imageInfo?.copyResourceInfo(resourceInfo)
         val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonCoder) }
@@ -196,7 +204,7 @@ data class SectionObject(
 }
 
 /**
- * ContentNode
+ * Information steps
  */
 
 @Serializable
@@ -213,10 +221,11 @@ data class InstructionStepObject(
 @SerialName("overview")
 data class OverviewStepObject(
     override val identifier: String,
-    override val resultIdentifier: String? = null,
+    @SerialName("image")
     override var imageInfo: ImageInfo? = null,
     override var icons: List<IconInfoObject>? = null,
-    override var permissions: List<PermissionInfoObject>? = null
+    override var permissions: List<PermissionInfoObject>? = null,
+    override val resultIdentifier: String? = null
 ) : StepObject(), OverviewStep {
     override var learnMore: ButtonActionInfo?
         get() = buttonMap[ButtonAction.Navigation.LearnMore]
@@ -234,6 +243,21 @@ data class PermissionInfoObject(
 ) : PermissionInfo
 
 @Serializable
+@SerialName("feedback")
+data class ResultSummaryStepObject(
+    override val identifier: String,
+    override val scoringResultPath: IdentifierPath? = null,
+    override var resultTitle: String? = null,
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null,
+    override val resultIdentifier: String? = null
+) : StepObject(), ResultSummaryStep
+
+/**
+ * Survey steps
+ */
+
+@Serializable
 @SerialName("form")
 data class FormStepObject(
     override val identifier: String,
@@ -246,10 +270,6 @@ data class FormStepObject(
     @SerialName("inputFields")
     override val children: List<Node>
 ) : StepObject(), FormStep
-
-/**
- * Question
- */
 
 @Serializable
 abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
@@ -346,3 +366,48 @@ data class ComparableSurveyRuleObject(
     override val ruleOperator: SurveyRuleOperator? = null,
     override val accuracy: Double = 0.00001
 ) : ComparableSurveyRule
+
+/**
+ * Active steps
+ */
+
+@Serializable
+abstract class BaseActiveStepObject : StepObject(), ActiveStep {
+    override var requiresBackgroundAudio: Boolean = false
+    override var shouldEndOnInterrupt: Boolean = false
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null
+    @SerialName("commands")
+    private var commandStrings: Set<String> = setOf()
+
+    override var commands: Set<ActiveStepCommand>
+        get() = ActiveStepCommand.fromStrings(commandStrings)
+        set(value) { commandStrings = value.map { it.name.decapitalize() }.toSet() }
+
+    override fun copyFrom(original: ContentNode) {
+        super.copyFrom(original)
+        if (original is BaseActiveStepObject) {
+            this.requiresBackgroundAudio = original.requiresBackgroundAudio
+            this.shouldEndOnInterrupt = original.shouldEndOnInterrupt
+            this.imageInfo = original.imageInfo
+            this.commandStrings = original.commandStrings
+        }
+    }
+}
+
+@Serializable
+@SerialName("active")
+data class ActiveStepObject(
+    override val identifier: String,
+    override val duration: Double,
+    override val resultIdentifier: String? = null
+) : BaseActiveStepObject()
+
+@Serializable
+@SerialName("countdown")
+data class CountdownStepObject(
+    override val identifier: String,
+    override val duration: Double,
+    override val resultIdentifier: String? = null,
+    override val fullInstructionsOnly: Boolean = false
+) : BaseActiveStepObject(), CountdownStep

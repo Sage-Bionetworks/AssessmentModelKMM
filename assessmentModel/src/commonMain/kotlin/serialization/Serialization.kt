@@ -13,6 +13,7 @@ object Serialization {
     object SerializersModule {
         val default =
                 answerTypeSerializersModule +
+                asyncActionSerializersModule +
                 buttonSerializersModule +
                 inputItemSerializersModule +
                 imageSerializersModule +

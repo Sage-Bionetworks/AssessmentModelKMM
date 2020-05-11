@@ -61,7 +61,7 @@ abstract class AnswerType {
         override val serialKind: SerialKind
             get() = StructureKind.LIST
         override fun jsonElementFor(value: Any): JsonElement {
-            val elements: kotlin.collections.List<JsonElement> = if (value is Collection<*>) {
+            val elements: List<JsonElement> = if (value is Collection<*>) {
                 value.mapNotNull { it?.let { baseType.jsonElementFor(it) } }.toList()
             } else {
                 listOf(super.jsonElementFor(value))
@@ -130,7 +130,6 @@ abstract class AnswerType {
             BaseType.INTEGER -> INTEGER
             BaseType.STRING -> STRING
         }
-        fun nullJsonElement() = JsonNull
     }
 }
 

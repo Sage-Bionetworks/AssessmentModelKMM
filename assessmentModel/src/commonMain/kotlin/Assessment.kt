@@ -1,24 +1,14 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import org.sagebionetworks.assessmentmodel.navigation.NodeIdentifierPath
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
-
-/**
- * A [Session] includes one or more [assessments] that are logically grouped together.
- *
- * The SageResearch equivalent is an `RSDTaskGroup`.
- *
- * TODO: syoung 01/28/2020 Flesh out the interface for a session including how to get its result.
- */
-interface Session {
-    val assessments: List<Assessment>
-}
 
 interface BranchNode : Node {
 
@@ -200,13 +190,6 @@ interface NodeContainer : BranchNode {
 fun NodeContainer.allNodeIdentifiers(): List<String> = children.map { it.identifier }
 
 /**
- * [AsyncActionConfiguration] defines general configuration for an asynchronous action that should be run in
- * the background. Depending upon the parameters and how the action is set up, this could be something that is run
- * continuously or else is paused or reset based on a timeout interval.
- */
-interface AsyncActionConfiguration : ResultMapElement
-
-/**
  * An [AsyncActionContainer] is a node that contains the model description for asynchronous background actions that
  * should be started when this [Node] in the [Assessment] is presented to the user.
  */
@@ -259,7 +242,7 @@ interface Step : Node {
      * }
      * ```
      */
-    val spokenInstructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String with a sealed class
+    val spokenInstructions: Map<SpokenInstructionTiming, String>?
 
     /**
      * The [ViewTheme] to use to provide a custom view for this step.
@@ -327,62 +310,6 @@ interface OptionalStep : Step {
 interface InstructionStep : OptionalStep, ContentNode
 
 /**
- * [ActiveStep] extends the [Step] to include a [duration] and [commands]. This is used for the case where a step has
- * an action such as "start walking", "tap the screen", or "get ready".
- */
-interface ActiveStep : Step {
-
-    /**
-     * The duration of time to run the step. If `0`, then this value is ignored.
-     */
-    val duration: Double
-
-    /**
-     * The set of commands to apply to this active step. These indicate actions to fire at the beginning and end of
-     * the step such as playing a sound as well as whether or not to automatically start and finish the step.
-     */
-    val commands: Set<String> // TODO: syoung 01/27/2020 replace String with a data class
-
-    /**
-     * A mapping of the localized text shown in an instruction label to the time marker for when the instruction label
-     * should be set to the given text. Time markers can be defined by a set of key words or as time intervals.
-     *
-     * For example, an active step may show the user a progress indicator with text prompts that are timed to match
-     * a set of spoken instructions or add a prompt to tell the participant what to do.
-     *
-     * - Example:
-     * ```
-     * {
-     *      "start": "Walk forward",
-     *      "10": "Keep walking",
-     *      "halfway": "Turn around and walk back",
-     *      "20": "Almost done",
-     *      "end": "All done!"
-     * }
-     * ```
-     */
-    val instructions: Map<String, String>?  // TODO: syoung 01/27/2020 replace String key with a sealed class
-
-    /**
-     * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
-     * has the mute switch turned on.
-     */
-    val requiresBackgroundAudio: Boolean
-
-    /**
-     * Should the assessment end early if the assessment is interrupted by a phone call?
-     */
-    val shouldEndOnInterrupt : Boolean
-}
-
-/**
- * A [CountdownStep] is a subtype of the [ActiveStep] that may only be displayed when showing the full instructions.
- * Typically, this type of step is shown using a label that displays a countdown to displaying the [ActiveStep] that
- * follows it.
- */
-interface CountdownStep : OptionalStep, ActiveStep
-
-/**
  * A [FormStep] is a container of other nodes where design of the form *requires* displaying all the components on a
  * single screen.
  *
@@ -408,19 +335,132 @@ interface FormStep : Step, ContentNode {
 interface ResultSummaryStep : Step, ContentNode {
 
     /**
-     * Text to display as the title above the result.
+     * Localized text to display as the title above the result. This is separate from the [title], [subtitle], and
+     * [detail] fields that may be shown below the result to add more description to what the result means.
      */
     val resultTitle: String?
 
     /**
-     * The localized unit to display for this result.
-     */
-    val unitText: String?
-
-    /**
-     * A link list that describes the path in an [AssessmentResult] down which to look for the result to use as the
-     * answer to the result. If [null], then the application UI must define a custom presentation for showing the
+     * A linked list that describes the path in a [BranchNodeResult] down which to look for the result to use as the
+     * answer to the result. If `null`, then the application UI must define a custom presentation for showing the
      * result.
      */
-    val scoringResultNodeIdentifier: NodeIdentifierPath?
+    val scoringResultPath: IdentifierPath?
+}
+
+/**
+ * [ActiveStep] extends the [Step] to include a [duration] and [commands]. This is used for the case where a step has
+ * an action such as "start walking", "tap the screen", or "get ready".
+ */
+interface ActiveStep : Step {
+
+    /**
+     * The duration of time to run the step. If `0`, then this value is ignored.
+     */
+    val duration: Double
+
+    /**
+     * The set of commands to apply to this active step. These indicate actions to fire at the beginning and end of
+     * the step such as playing a sound as well as whether or not to automatically start and finish the step.
+     */
+    val commands: Set<ActiveStepCommand>
+
+    /**
+     * Whether or not the step uses audio, such as the speech synthesizer, that should play whether or not the user
+     * has the mute switch turned on.
+     */
+    val requiresBackgroundAudio: Boolean
+
+    /**
+     * Should the assessment end early if the assessment is interrupted by a phone call?
+     */
+    val shouldEndOnInterrupt : Boolean
+}
+
+/**
+ * A [CountdownStep] is a subtype of the [ActiveStep] that may only be displayed when showing the full instructions.
+ * Typically, this type of step is shown using a label that displays a countdown to displaying the [ActiveStep] that
+ * follows it.
+ */
+interface CountdownStep : OptionalStep, ActiveStep
+
+/**
+ * A set of commands that can be set on an [ActiveStep]. Typically, these deal with desired step behavior during
+ * timer transitions to start, finish, interrupt, and pause.
+ *
+ * - [PlaySoundOnStart]: Play a default sound when the step starts.
+ * - [PlaySoundOnFinish]: Play a default sound when the step finishes.
+ *
+ * - [VibrateOnStart]: Vibrate when the step starts.
+ * - [VibrateOnFinish]: Vibrate when the step finishes.
+ *
+ * - [StartTimerAutomatically]: Start the count down timer automatically when the step start.
+ * - [ContinueOnFinish]: Transition automatically when the step finishes.
+ *
+ * - [ShouldDisableIdleTimer]: Disable the idle timer if included.
+ *
+ * - [SpeakWarningOnPause]: Speak a warning when the pause button is tapped.
+ */
+enum class ActiveStepCommand : StringEnum {
+    PlaySoundOnStart, PlaySoundOnFinish,
+    VibrateOnStart, VibrateOnFinish,
+    StartTimerAutomatically, ContinueOnFinish,
+    ShouldDisableIdleTimer,
+    SpeakWarningOnPause,
+    ;
+
+    companion object {
+        private val mapping = values().map { it.name.decapitalize() to setOf(it) }.toMap().plus(mapOf(
+            "playSound" to setOf(PlaySoundOnStart, PlaySoundOnFinish),
+            "transitionAutomatically" to setOf(StartTimerAutomatically, ContinueOnFinish),
+            "vibrate" to setOf(VibrateOnStart, VibrateOnFinish)
+        ))
+
+        fun fromStrings(strings: Set<String>) : Set<ActiveStepCommand>
+                = strings.mapNotNull { mapping[it] }.flatten().toSet()
+    }
+}
+
+/**
+ * The [SpokenInstructionTiming] is a serializable class used to describe the timing of spoken instructions.
+ */
+@Serializable
+sealed class SpokenInstructionTiming : StringEnum {
+
+    /**
+     * - [Start]: Speak the instruction at the start of the step.
+     * - [Halfway]: Speak the instruction at the halfway point.
+     * - [Countdown]: Speak a countdown.
+     * - [End]: Speak the instruction at the end of the step.
+     */
+    sealed class Keyword(override val name: String) : SpokenInstructionTiming() {
+        object Start : Keyword("start")
+        object Halfway : Keyword("halfway")
+        object Countdown : Keyword("countdown")
+        object End : Keyword("end")
+        companion object {
+            fun values() = arrayOf(Start, Halfway, Countdown, End)
+        }
+    }
+
+    /**
+     * The [TimeInterval] denotes a time (in seconds) from when the step timer started until the instruction should
+     * be spoken. For example, `10.0` should be spoken once when the timer fires after the 10th second.
+     */
+    data class TimeInterval(val time: Double) : SpokenInstructionTiming() {
+        override val name: String
+            get() = time.toString()
+    }
+
+    @Serializer(forClass = SpokenInstructionTiming::class)
+    companion object : KSerializer<SpokenInstructionTiming> {
+        override val descriptor: SerialDescriptor = PrimitiveDescriptor("SpokenInstructionTiming", PrimitiveKind.STRING)
+        override fun deserialize(decoder: Decoder): SpokenInstructionTiming {
+            val name = decoder.decodeString()
+            return Keyword.values().matching(name) ?: TimeInterval(name.toDouble())
+        }
+        override fun serialize(encoder: Encoder, value: SpokenInstructionTiming) {
+            encoder.encodeString(value.name)
+        }
+    }
 }

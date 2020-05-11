@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
+import org.sagebionetworks.assessmentmodel.serialization.PermissionInfoObject
 
 /**
  * A generic configuration object with information about a given permission. The permission can be used by the
@@ -80,6 +81,9 @@ sealed class PermissionType() : StringEnum {
     }
 
     data class Custom(override val name: String) : PermissionType()
+
+    fun createPermissionInfo(optional: Boolean = false, requiresBackground: Boolean = false, reason: String? = null)
+            = PermissionInfoObject(this, optional, requiresBackground, reason)
 
     // TODO: syoung 01/23/2020 Keep an eye out for improvements to serialization of "inline" values. Currently Kotlin
     //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the

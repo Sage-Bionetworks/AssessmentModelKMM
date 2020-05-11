@@ -46,7 +46,7 @@ interface Navigator {
     fun allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult): Boolean
 
     /**
-     * Returns the [Progress] of the assessment from the given [currentNode] with the given [branchResult]. If [null]
+     * Returns the [Progress] of the assessment from the given [currentNode] with the given [branchResult]. If `null`
      * then progress should not be shown for this [currentNode] of assessment.
      */
     fun progress(currentNode: Node, branchResult: BranchNodeResult): Progress?

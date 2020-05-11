@@ -1,12 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
+import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
@@ -14,6 +13,109 @@ import kotlin.test.*
 open class NodeTest : NodeSerializationTestHelper() {
 
     private val jsonCoder = Serialization.JsonCoder.default
+
+    /**
+     * ActiveStepObject
+     */
+
+    @Test
+    fun testActiveStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "active",
+               "title": "Hello World!",
+               "duration": 30,
+               "requiresBackgroundAudio": true,
+               "shouldEndOnInterrupt": true,
+               "commands": ["playSoundOnStart", "vibrate"],
+               "spokenInstructions" : { "start": "Start moving",
+                                        "1.5": "Up",
+                                        "3.0": "Down",
+                                        "10": "Keep going",
+                                        "halfway": "Halfway there",
+                                        "countdown": "5",
+                                        "end": "Stop moving"},
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+            }
+           """
+        val original = ActiveStepObject("foo", 30.0)
+        original.title = "Hello World!"
+        original.spokenInstructions = mapOf(
+            SpokenInstructionTiming.Keyword.Start to "Start moving",
+            SpokenInstructionTiming.TimeInterval(1.5) to "Up",
+            SpokenInstructionTiming.TimeInterval(3.0) to "Down",
+            SpokenInstructionTiming.TimeInterval(10.0) to "Keep going",
+            SpokenInstructionTiming.Keyword.Halfway to "Halfway there",
+            SpokenInstructionTiming.Keyword.Countdown to "5",
+            SpokenInstructionTiming.Keyword.End to "Stop moving"
+        )
+        original.requiresBackgroundAudio = true
+        original.shouldEndOnInterrupt = true
+        original.imageInfo = AnimatedImage(
+                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+                imagePlacement = ImagePlacement.Standard.TopBackground,
+                animationDuration = 2.0)
+        original.commands = setOf(
+            ActiveStepCommand.PlaySoundOnStart,
+            ActiveStepCommand.VibrateOnStart,
+            ActiveStepCommand.VibrateOnFinish)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ActiveStepObject)
+        assertEquals(original, decoded)
+        assertEqualActiveStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        assertTrue(restored is ActiveStepObject)
+        assertEquals(original, restored)
+        assertEqualActiveStep(original, restored)
+        assertEqualContentNodes(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualActiveStep(original, copy)
+        assertEqualContentNodes(original, copy)
+    }
+
+    fun testActiveCommands_Pairs_Serialization() {
+        val stringSet = setOf("playSound", "vibrate", "transitionAutomatically")
+        val commands = ActiveStepCommand.fromStrings(stringSet)
+        val expected = setOf(
+            ActiveStepCommand.PlaySoundOnStart, ActiveStepCommand.PlaySoundOnFinish,
+            ActiveStepCommand.VibrateOnStart, ActiveStepCommand.VibrateOnFinish,
+            ActiveStepCommand.StartTimerAutomatically, ActiveStepCommand.ContinueOnFinish
+        )
+        assertEquals(expected, commands)
+    }
+
+    fun testActiveCommands_Enum_Serialization() {
+        val stringSet = setOf(
+            "playSoundOnStart", "playSoundOnFinish",
+            "vibrateOnStart", "vibrateOnFinish",
+            "startTimerAutomatically", "continueOnFinish",
+            "shouldDisableIdleTimer",
+            "speakWarningOnPause"
+        )
+        val commands = ActiveStepCommand.fromStrings(stringSet)
+        val expected = setOf(
+            ActiveStepCommand.PlaySoundOnStart, ActiveStepCommand.PlaySoundOnFinish,
+            ActiveStepCommand.VibrateOnStart, ActiveStepCommand.VibrateOnFinish,
+            ActiveStepCommand.StartTimerAutomatically, ActiveStepCommand.ContinueOnFinish,
+            ActiveStepCommand.ShouldDisableIdleTimer,
+            ActiveStepCommand.SpeakWarningOnPause
+        )
+        assertEquals(expected, commands)
+    }
+
 
     /**
      * AssessmentObject
@@ -38,6 +140,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                 "shouldHideActions": ["goBackward"],
                 "progressMarkers": ["step1","step2"],
+                "asyncActions"      : [
+                                      {
+                                      "identifier"              : "shakeItUp",
+                                      "type"                    : "motion"
+                                      }
+                                      ],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -59,7 +167,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                 versionString = "1.2.3",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
+                        buildInstructionStep("step2", "Step 2")),
+                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp")))
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
         original.detail = "Some text. This is a test."
@@ -245,6 +354,80 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     /**
+     * CountdownStepObject
+     */
+
+    @Test
+    fun testCountdownStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "resultIdentifier": "bar",
+               "type": "countdown",
+               "fullInstructionsOnly": true,
+               "title": "Hello World!",
+               "duration": 30,
+               "requiresBackgroundAudio": true,
+               "shouldEndOnInterrupt": true,
+               "commands": ["playSoundOnStart", "vibrate"],
+               "spokenInstructions" : { "start": "Start moving",
+                                        "1.5": "Up",
+                                        "3.0": "Down",
+                                        "10": "Keep going",
+                                        "halfway": "Halfway there",
+                                        "countdown": "5",
+                                        "end": "Stop moving"},
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+            }
+           """
+        val original = CountdownStepObject("foo", 30.0, "bar", true)
+        original.title = "Hello World!"
+        original.spokenInstructions = mapOf(
+            SpokenInstructionTiming.Keyword.Start to "Start moving",
+            SpokenInstructionTiming.TimeInterval(1.5) to "Up",
+            SpokenInstructionTiming.TimeInterval(3.0) to "Down",
+            SpokenInstructionTiming.TimeInterval(10.0) to "Keep going",
+            SpokenInstructionTiming.Keyword.Halfway to "Halfway there",
+            SpokenInstructionTiming.Keyword.Countdown to "5",
+            SpokenInstructionTiming.Keyword.End to "Stop moving"
+        )
+        original.requiresBackgroundAudio = true
+        original.shouldEndOnInterrupt = true
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
+        original.commands = setOf(
+            ActiveStepCommand.PlaySoundOnStart,
+            ActiveStepCommand.VibrateOnStart,
+            ActiveStepCommand.VibrateOnFinish)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is CountdownStepObject)
+        assertEquals(original, decoded)
+        assertEqualActiveStep(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        assertTrue(restored is CountdownStepObject)
+        assertEquals(original, restored)
+        assertEqualActiveStep(original, restored)
+        assertEqualContentNodes(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualActiveStep(original, copy)
+        assertEqualContentNodes(original, copy)
+    }
+
+    /**
      * FormStepObject
      */
 
@@ -352,7 +535,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
-        original.spokenInstructions = mapOf("start" to "Start now")
+        original.spokenInstructions = mapOf(SpokenInstructionTiming.Keyword.Start to "Start now")
         original.viewTheme = ViewThemeObject(
             viewIdentifier = "Moo",
             storyboardIdentifier = "Ba",
@@ -380,7 +563,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualOptionalStep(original, copy)
         assertEqualContentNodes(original, copy)
         assertEquals(original.nextNodeIdentifier, copy.nextNodeIdentifier)
-
     }
 
     @Test
@@ -420,7 +602,11 @@ open class NodeTest : NodeSerializationTestHelper() {
                         "reason":"Access to Motion and Fitness sensors is used to measure the phone's orientation.",
                         "optional":true
                    }
-                ]
+                ],
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
            }
            """
         val original = OverviewStepObject("foo")
@@ -436,6 +622,10 @@ open class NodeTest : NodeSerializationTestHelper() {
             optional = true,
             reason = "Access to Motion and Fitness sensors is used to measure the phone's orientation."
         ))
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.stringify(serializer, original)
@@ -458,6 +648,83 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, copy)
         assertEquals(original.icons, copy.icons)
     }
+
+
+    /**
+     * ResultSummaryStepObject
+     */
+
+    @Test
+    fun testNodeIdentifierPath() {
+        val root = IdentifierPath("TestTask/sectionB/roo")
+        assertEquals("TestTask", root.identifier)
+        val section = root.child
+        assertNotNull(section)
+        assertEquals("sectionB", section.identifier)
+        val child = section.child
+        assertNotNull(child)
+        assertEquals("roo", child.identifier)
+        assertNull(child.child)
+    }
+
+    @Test
+    fun testResultSummaryStep_Serialization() {
+        val inputString = """
+           {
+               "identifier": "foo",
+               "type": "feedback",
+               "scoringResultPath": "TestTask/sectionB/roo",
+               "resultTitle": "Your score is",
+               "title": "Hello World!",
+               "detail": "Some text. This is a test.",
+               "footnote": "This is a footnote.",
+               "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+                            "cancel": { "type": "default", "iconName" : "closeX" }
+                           },
+               "image"  : {    "type" : "animated",
+                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+                               "placementType" : "topBackground",
+                               "animationDuration" : 2}
+           }
+           """
+        val original = ResultSummaryStepObject(
+            identifier = "foo",
+            scoringResultPath = IdentifierPath("TestTask/sectionB/roo")
+        )
+        original.resultTitle = "Your score is"
+        original.title = "Hello World!"
+        original.detail = "Some text. This is a test."
+        original.footnote = "This is a footnote."
+        original.buttonMap = mapOf(
+            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
+            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
+        original.imageInfo = AnimatedImage(
+            imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
+            imagePlacement = ImagePlacement.Standard.TopBackground,
+            animationDuration = 2.0)
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.stringify(serializer, original)
+        val restored = jsonCoder.parse(serializer, jsonString)
+        val decoded = jsonCoder.parse(serializer, inputString)
+
+        assertTrue(decoded is ResultSummaryStepObject)
+        assertEquals(original, decoded)
+        assertEqualContentNodes(original, decoded)
+        assertEqualStep(original, decoded)
+
+        assertTrue(restored is ResultSummaryStepObject)
+        assertEquals(original, restored)
+        assertEqualContentNodes(original, restored)
+        assertEqualStep(original, restored)
+
+        val copy = original.copy()
+        copy.copyFrom(original)
+        assertEquals(original, copy)
+        assertEqualContentNodes(original, copy)
+        assertEqualStep(original, copy)
+    }
+
 
     /**
      * SimpleQuestion
@@ -607,6 +874,12 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                 "shouldHideActions": ["goBackward"],
                 "progressMarkers": ["step1","step2"],
+                "asyncActions"      : [
+                      {
+                      "identifier"              : "shakeItUp",
+                      "type"                    : "motion"
+                      }
+                      ],
                 "steps": [
                     {
                         "identifier": "step1",
@@ -626,7 +899,9 @@ open class NodeTest : NodeSerializationTestHelper() {
                 identifier = "foobar",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
+                        buildInstructionStep("step2", "Step 2")),
+                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp"))
+        )
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
         original.detail = "Some text. This is a test."
@@ -1031,6 +1306,15 @@ open class NodeSerializationTestHelper {
     fun assertEqualStep(expected: Step, actual: Step) {
         assertEqualNodes(expected, actual)
         assertEquals(expected.spokenInstructions, actual.spokenInstructions)
+        assertEquals(expected.viewTheme, actual.viewTheme)
+    }
+
+    fun assertEqualActiveStep(expected: ActiveStep, actual: ActiveStep) {
+        assertEqualStep(expected, actual)
+        assertEquals(expected.duration, actual.duration)
+        assertEquals(expected.commands, actual.commands)
+        assertEquals(expected.shouldEndOnInterrupt, actual.shouldEndOnInterrupt)
+        assertEquals(expected.requiresBackgroundAudio, actual.requiresBackgroundAudio)
     }
 
     fun buildInstructionStep(identifier: String, title: String): InstructionStepObject {

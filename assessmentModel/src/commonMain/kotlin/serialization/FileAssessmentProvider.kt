@@ -85,9 +85,6 @@ data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
 
     @Transient
     override var decoderBundle: Any? = null
-
-    fun jsonString(): String =
-            Serialization.JsonCoder.default.stringify(AssessmentGroupInfoObject.serializer(), this)
 }
 
 /**
@@ -97,6 +94,4 @@ data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
 class FileAssessmentProvider(override val fileLoader: FileLoader,
                              private val assessmentGroupInfo: AssessmentGroupInfo,
                              override var jsonCoder: Json = Serialization.JsonCoder.default)
-    : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo {
-
-}
+    : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo

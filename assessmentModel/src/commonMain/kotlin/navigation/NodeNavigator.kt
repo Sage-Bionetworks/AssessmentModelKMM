@@ -73,9 +73,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         get() = node.children
 
     private fun shouldExitEarly(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): Boolean
-        = nextNodeIdentifier(currentNode, parentResult, isPeeking)?.let {
-            it.toLowerCase() == ReservedNavigationIdentifier.exit.name.toLowerCase()
-        } ?: false
+        = ReservedNavigationIdentifier.Exit.matching(nextNodeIdentifier(currentNode, parentResult, isPeeking))
 
     private fun nextNodeIdentifier(currentNode: Node?, parentResult: BranchNodeResult, isPeeking: Boolean): String?
         = currentNode?.let { navigationRuleFor(it, parentResult) }?.nextNodeIdentifier(parentResult, isPeeking)
@@ -104,7 +102,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
                 if (idx - 1 >= 0) children[idx - 1] else null
             }
             else -> {
-                var currentResultIndex = parentResult.path.indexOfLast {
+                val currentResultIndex = parentResult.path.indexOfLast {
                     it.identifier == currentNode.identifier && it.direction == NavigationPoint.Direction.Forward
                 }
                 if (currentResultIndex <= 0) null else {
