@@ -341,7 +341,7 @@ interface ResultSummaryStep : Step, ContentNode {
     val resultTitle: String?
 
     /**
-     * A link list that describes the path in an [BranchNodeResult] down which to look for the result to use as the
+     * A linked list that describes the path in a [BranchNodeResult] down which to look for the result to use as the
      * answer to the result. If `null`, then the application UI must define a custom presentation for showing the
      * result.
      */
@@ -464,4 +464,3 @@ sealed class SpokenInstructionTiming : StringEnum {
         }
     }
 }
-
