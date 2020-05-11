@@ -49,7 +49,7 @@ interface RecorderConfiguration : AsyncActionConfiguration {
         get() = false
 
     /**
-     * Should the file used in a previous run of a recording be deleted or should a unique file name be used to
+     * Should the file used in a previous run of a recording be deleted? If false, a unique file name will be used to
      * identify the file when a step is repeated? Default = `true`.
      */
     val shouldDeletePrevious: Boolean
