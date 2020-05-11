@@ -49,7 +49,7 @@ data class MotionRecorderConfiguration(
  *   - [Magnetometer]: Raw magnetometer reading.
  *
  * - Calculated values:
- *   - [Attitude]: Calculated orientation of the device using the gyro and magnetometer (if appropriate).
+ *   - [Attitude]: Calculated orientation of the device using the motion sensors and magnetometer (if appropriate).
  *   - [Gravity]: Calculated vector for the direction of gravity in the coordinates of the device.
  *   - [MagneticField]: The magnetic field vector with respect to the device for devices with a magnetometer.
  *   - [RotationRate]: The rotation rate of the device for devices with a gyro.
