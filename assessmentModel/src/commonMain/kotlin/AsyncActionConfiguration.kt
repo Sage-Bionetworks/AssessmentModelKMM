@@ -99,7 +99,7 @@ interface SampleRecord {
      * syoung 04/24/2019 Per request from Sage Bionetworks' research scientists, this timestamp is "zeroed"
      * to when the recorder is started. It should be calculated by offsetting the
      * `ProcessInfo.processInfo.systemUptime` from the monotonic clock time to account for gaps in the
-     * sampling due to the application becoming inactive. For example, if the participant accepts a phone
+     * sampling due to the application becoming inactive, for example if the participant accepts a phone
      * call while the recorder is running.
      */
     val timestamp: Double?
