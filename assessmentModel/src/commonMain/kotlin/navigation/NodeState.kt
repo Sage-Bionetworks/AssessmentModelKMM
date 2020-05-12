@@ -309,8 +309,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             //navigationPoint.requestedPermissions = requestedPermissions.plus(navigationPoint.requestedPermissions ?: setOf())
         }
         if (asyncActionNavigations != null) {
-            TODO("syoung 02/05/2020 Add unit test")
-            //navigationPoint.asyncActionNavigations = asyncActionNavigations.union(navigationPoint.asyncActionNavigations ?: setOf())
+            navigationPoint.asyncActionNavigations = asyncActionNavigations.union(navigationPoint.asyncActionNavigations ?: setOf())
         }
     }
 

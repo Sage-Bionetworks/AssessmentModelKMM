@@ -16,7 +16,17 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         } else if (shouldExitEarly(currentNode, branchResult, false)) {
             direction = NavigationPoint.Direction.Exit
         }
-        return NavigationPoint(node = next, branchResult = branchResult, direction = direction)
+        val start = next?.let { backgroundActionsToStart(it, currentNode == null) }?.toSet()
+        val stop = backgroundActionsToStop(next)?.toSet()
+        val asyncActionNavigations = if (start != null || stop != null) {
+            setOf(AsyncActionNavigation(node.identifier, start, stop))
+        } else null
+        return NavigationPoint(
+            node = next,
+            branchResult = branchResult,
+            direction = direction,
+            asyncActionNavigations = asyncActionNavigations
+        )
     }
 
     override fun nodeBefore(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
@@ -111,5 +121,20 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
                 }
             }
         }
+    }
+
+    // MARK: Async action handling
+
+    open val asyncActionContainer: AsyncActionContainer?
+        get() = (node as? AsyncActionContainer)
+
+    open fun backgroundActionsToStart(nextNode: Node, isFirstNode: Boolean): List<AsyncActionConfiguration>?
+            = asyncActionContainer?.backgroundActions?.filter {
+        (nextNode.identifier == it.startStepIdentifier) || (isFirstNode && it.startStepIdentifier == null)
+    }
+
+    open fun backgroundActionsToStop(nextNode: Node?): List<AsyncActionConfiguration>?
+            = asyncActionContainer?.backgroundActions?.filter {
+        (it is RecorderConfiguration) && (nextNode?.identifier == it.stopStepIdentifier)
     }
 }
