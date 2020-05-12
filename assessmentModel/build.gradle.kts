@@ -92,6 +92,8 @@ tasks.register("copyFramework") {
     }
 }
 
+apply("../config/artifact-deploy.gradle")
+
 //TODO: syoung 03/24/2020 Figure out why getting a warning that this was already added.
 //tasks.register("iosTest")  {
 //    val  device = project.findProperty("iosDevice") as? String ?: "iPhone 8"
