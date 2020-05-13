@@ -49,6 +49,10 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/Sage-Bionetworks/AssessmentModel-KotlinNative.git'
         githubRepo = 'Sage-Bionetworks/AssessmentModel-KotlinNative'
+
+        version {
+            name = System.getenv('bintrayVersionName') //Bintray logical version name
+        }
     }
 }
 

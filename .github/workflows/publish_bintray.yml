@@ -19,4 +19,6 @@ jobs:
         env:
           bintrayUser: ${{ secrets.BINTRAY_USER }}
           bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
+          bintrayVersionName: ${{ github.event.release.tag_name }}
+          testSecret: ${{ secrets.TEST_SECRET }}
         run: ./gradlew bintrayUpload
