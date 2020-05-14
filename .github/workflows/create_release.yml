@@ -1,4 +1,4 @@
-name: Publish Bintray
+name: Create Release
 on:
   push:
     # Sequence of patterns matched against refs/tags
