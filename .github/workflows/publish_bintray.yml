@@ -1,11 +1,7 @@
 name: Publish Bintray
 on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0
-#  release:
-#    types: [published]
+  release:
+    types: [published]
 
 jobs:
   publish:
@@ -23,17 +19,6 @@ jobs:
         env:
           bintrayUser: ${{ secrets.BINTRAY_USER }}
           bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
-          bintrayVersionName: ${{ github.ref }}
+          bintrayVersionName: ${{ github.event.release.tag_name }}
           testSecret: ${{ secrets.TEST_SECRET }}
-        run:
-          ./gradlew bintrayUpload
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: true
+        run: ./gradlew bintrayUpload
