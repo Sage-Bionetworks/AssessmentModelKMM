@@ -25,3 +25,12 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: true
+      - name: Grant Permission to Execute
+        run: chmod +x gradlew
+      - name: Publish Library
+        env:
+          bintrayUser: ${{ secrets.BINTRAY_USER }}
+          bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
+          bintrayVersionName: ${{ github.ref }}
+          testSecret: ${{ secrets.TEST_SECRET }}
+        run: ./gradlew bintrayUpload
