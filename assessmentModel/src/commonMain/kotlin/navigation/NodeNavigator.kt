@@ -16,16 +16,11 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         } else if (shouldExitEarly(currentNode, branchResult, false)) {
             direction = NavigationPoint.Direction.Exit
         }
-        val start = next?.let { backgroundActionsToStart(it, currentNode == null) }?.toSet()
-        val stop = backgroundActionsToStop(next)?.toSet()
-        val asyncActionNavigations = if (start != null || stop != null) {
-            setOf(AsyncActionNavigation(node.identifier, start, stop))
-        } else null
         return NavigationPoint(
             node = next,
             branchResult = branchResult,
             direction = direction,
-            asyncActionNavigations = asyncActionNavigations
+            asyncActionNavigations = asyncActionNavigations(currentNode, next, branchResult)
         )
     }
 
@@ -128,13 +123,32 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     open val asyncActionContainer: AsyncActionContainer?
         get() = (node as? AsyncActionContainer)
 
-    open fun backgroundActionsToStart(nextNode: Node, isFirstNode: Boolean): List<AsyncActionConfiguration>?
-            = asyncActionContainer?.backgroundActions?.filter {
-        (nextNode.identifier == it.startStepIdentifier) || (isFirstNode && it.startStepIdentifier == null)
+    protected open fun asyncActionNavigations(previousNode: Node?,
+                                              nextNode: Node?,
+                                              parentResult: BranchNodeResult) : Set<AsyncActionNavigation>? {
+        val start = asyncActionContainer?.backgroundActionsToStart(previousNode, nextNode)
+        val stop = asyncActionContainer?.backgroundActionsToStop(previousNode, nextNode)
+        return if (!start.isNullOrEmpty() || !stop.isNullOrEmpty()) {
+            setOf(AsyncActionNavigation(node.identifier, start, stop))
+        } else null
     }
+}
 
-    open fun backgroundActionsToStop(nextNode: Node?): List<AsyncActionConfiguration>?
-            = asyncActionContainer?.backgroundActions?.filter {
-        (it is RecorderConfiguration) && (nextNode?.identifier == it.stopStepIdentifier)
+internal fun <T> Collection<T>?.toNonEmptySet() : Set<T>?
+    = if (this.isNullOrEmpty()) null else this.toSet()
+
+internal fun AsyncActionContainer.filterBackgroundActions(func: (it : AsyncActionConfiguration) -> Boolean)
+        : Set<AsyncActionConfiguration>?
+    = this.backgroundActions?.filter(func).toNonEmptySet()
+
+fun AsyncActionContainer.backgroundActionsToStart(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
+    = nextNode?.let { node ->
+    filterBackgroundActions {
+        (node.identifier == it.startStepIdentifier) || ((previousNode == null) && it.startStepIdentifier == null)
     }
+}
+
+fun AsyncActionContainer.backgroundActionsToStop(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
+    = filterBackgroundActions {
+    (it is RecorderConfiguration) && (nextNode?.identifier == it.stopStepIdentifier)
 }

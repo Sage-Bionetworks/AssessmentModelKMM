@@ -135,7 +135,7 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
         // There are no permissions to request that are *not* associated with an async action.
         assertNull(point.requestedPermissions)
 
-        val expectedActions = setOf(AsyncActionNavigation("foo", setOf(configA, configC), setOf()))
+        val expectedActions = setOf(AsyncActionNavigation("foo", setOf(configA, configC), null))
         assertEquals(expectedActions, point.asyncActionNavigations)
     }
 
