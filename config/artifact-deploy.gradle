@@ -51,7 +51,7 @@ bintray {
         githubRepo = 'Sage-Bionetworks/AssessmentModel-KotlinNative'
 
         version {
-            name = System.getenv('bintrayVersionName')?.replace("/refs/tags/", "") //Bintray logical version name
+            name = System.getenv('bintrayVersionName')?.replace("refs/tags/", "") //Bintray logical version name
         }
     }
 }
