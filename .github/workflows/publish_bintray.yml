@@ -25,9 +25,7 @@ jobs:
           bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
           bintrayVersionName: ${{ github.ref }}
           testSecret: ${{ secrets.TEST_SECRET }}
-          GITHUB_CONTEXT: ${{ toJson(github) }}
         run:
-          echo "$GITHUB_CONTEXT"
           ./gradlew bintrayUpload
       - name: Create Release
         id: create_release
@@ -37,9 +35,5 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
           draft: false
           prerelease: true
