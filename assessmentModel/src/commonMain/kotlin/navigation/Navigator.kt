@@ -67,6 +67,10 @@ interface Navigator {
  *
  * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
  * are permissions that are required to run an async action.
+ *
+ * The [asyncActionNavigations] includes a list of async actions to start or stop with this step transition. These
+ * actions are just the configuration. It is up to the view controller or fragment to determine how and if they are
+ * supported.
  */
 data class NavigationPoint(val node: Node?,
                            val branchResult: BranchNodeResult,
@@ -117,7 +121,7 @@ data class AsyncActionNavigation(val sectionIdentifier: String? = null,
 fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<AsyncActionNavigation> {
     val ret = this.toMutableSet()
     values.filter { !it.isEmpty() }.forEach { value ->
-        val existing = this.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
+        val existing = ret.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
         if (existing == null) {
             ret.add(value)
         } else {
@@ -127,6 +131,7 @@ fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<As
             val valueStop = value.stopAsyncActions ?: setOf()
             val start = existingStart.plus(valueStart).minus(valueStop)
             val stop = existingStop.plus(valueStop).minus(valueStart)
+            ret.remove(existing)
             ret.add(AsyncActionNavigation(value.sectionIdentifier,
                     if (start.count() > 0) start else null,
                     if (stop.count() > 0) stop else null))

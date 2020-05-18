@@ -1,9 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
-import org.sagebionetworks.assessmentmodel.Node
 import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.SurveyRuleOperator
 import org.sagebionetworks.assessmentmodel.survey.compareTo
