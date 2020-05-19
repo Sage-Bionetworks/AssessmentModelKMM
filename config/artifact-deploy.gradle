@@ -60,14 +60,20 @@ if (!project.ext.properties.containsKey("artifactId")) {
     ext.artifactId = project.name
 }
 
-afterEvaluate {
-    project.publishing.publications.all {
-        // rename artifacts
-        groupId = groupId
-        if (it.name.contains('metadata')) {
-            artifactId = artifactId
-        } else {
-            artifactId = "$artifactId-$name"
+publishing {
+    repositories {
+        maven {
+            name = 'bintray'
+            def bintrayUsername = 'sage-bionetworks'
+            def bintrayRepoName = 'AssessmentModel-KotlinNative'
+            def bintrayPackageName = project.name
+            def version = project.version
+            url = "https://api.bintray.com/content/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/$version/;publish=1"
+
+            credentials {
+                username = System.getenv('bintrayUser')
+                password = System.getenv('bintrayApiKey')
+            }
         }
     }
 }
