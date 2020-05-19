@@ -30,31 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'maven-publish'
-
-bintray {
-    user = System.getenv('bintrayUser')
-    key = System.getenv('bintrayApiKey')
-
-    configurations = ['archives']
-
-    publish = true // autopublish
-
-    pkg {
-        userOrg = 'sage-bionetworks'
-        repo = 'AssessmentModel-KotlinNative'
-        name = project.name
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Sage-Bionetworks/AssessmentModel-KotlinNative.git'
-        githubRepo = 'Sage-Bionetworks/AssessmentModel-KotlinNative'
-
-        version {
-            name = System.getenv('bintrayVersionName')?.replace("refs/tags/", "") //Bintray logical version name
-        }
-    }
-}
 
 if (!project.ext.properties.containsKey("artifactId")) {
     ext.artifactId = project.name
