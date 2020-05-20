@@ -43,3 +43,17 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                artifactId = "presentation"
+                from(components["release"])
+            }
+        }
+    }
+
+}
+
+apply("../config/artifact-deploy.gradle")

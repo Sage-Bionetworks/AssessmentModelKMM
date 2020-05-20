@@ -13,7 +13,7 @@ buildscript {
 
 allprojects {
     group = "org.sagebionetworks.assessmentmodel"
-    version = "1.0"
+    version = "0.1.16"
 
     repositories {
         jcenter()
