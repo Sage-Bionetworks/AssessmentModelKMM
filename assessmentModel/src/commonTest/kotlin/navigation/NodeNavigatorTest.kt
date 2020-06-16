@@ -800,7 +800,7 @@ open class NavigationTestHelper {
         // then add checks that the dates are being updated properly to mark begin/end of steps.
 
         override var startDateString: String = DateGenerator.nowString()
-        override var endDateString: String = DateGenerator.nowString()
+        override var endDateString: String? = null
 
         override fun copyResult(identifier: String): Result = copy(identifier = identifier)
     }

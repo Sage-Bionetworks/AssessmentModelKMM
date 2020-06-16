@@ -27,7 +27,7 @@ data class AnswerResultObject(override val identifier: String,
                               @SerialName("startDate")
                               override var startDateString: String = DateGenerator.nowString(),
                               @SerialName("endDate")
-                              override var endDateString: String = DateGenerator.nowString()) : AnswerResult {
+                              override var endDateString: String? = null) : AnswerResult {
     override fun copyResult(identifier: String): AnswerResult = this.copy(identifier = identifier)
 }
 
@@ -44,7 +44,7 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")
-                                  override var endDateString: String = DateGenerator.nowString(),
+                                  override var endDateString: String? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null)
@@ -61,7 +61,7 @@ data class ResultObject(override val identifier: String,
                         @SerialName("startDate")
                         override var startDateString: String = DateGenerator.nowString(),
                         @SerialName("endDate")
-                        override var endDateString: String = DateGenerator.nowString(),
+                        override var endDateString: String? = null,
                         @SerialName("skipToIdentifier")
                         override var nextNodeIdentifier: String? = null) : Result, ResultNavigationRule {
     override fun copyResult(identifier: String): Result = this.copy(identifier = identifier)
@@ -74,7 +74,7 @@ data class CollectionResultObject(override val identifier: String,
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")
-                                  override var endDateString: String = DateGenerator.nowString(),
+                                  override var endDateString: String? = null,
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null) : CollectionResult, ResultNavigationRule {
     override fun copyResult(identifier: String): CollectionResult = this.copy(
@@ -92,7 +92,7 @@ data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("startDate")
                                   override var startDateString: String = DateGenerator.nowString(),
                                   @SerialName("endDate")
-                                  override var endDateString: String = DateGenerator.nowString(),
+                                  override var endDateString: String? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null) : BranchNodeResult, ResultNavigationRule {

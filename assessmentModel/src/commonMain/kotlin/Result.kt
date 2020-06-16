@@ -30,7 +30,7 @@ interface Result {
     /**
      * The end date timestamp for the result.
      */
-    var endDateString: String
+    var endDateString: String?
 }
 
 fun MutableSet<Result>.copyResults() = map { it.copyResult() }.toMutableSet()
