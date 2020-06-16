@@ -26,31 +26,62 @@ open class ResultTest {
     @UnstableDefault
     @Test
     fun testParentNodeResult() {
-        val result1 = ResultObject("result1")
-        val result2 = ResultObject("result2")
-        val result3 = BranchNodeResultObject(identifier = "result3",
-                pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
-                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
-        val result4 = CollectionResultObject(identifier = "result4",
-                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")))
-
-        val original = BranchNodeResultObject("testResult", pathHistoryResults = mutableListOf(result1, result2, result3, result4))
+        val result1 = ResultObject("result1", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val result2 = ResultObject("result2", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val resultA = ResultObject("resultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val resultB = ResultObject("resultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val asyncResultA = ResultObject("asyncResultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val asyncResultB = ResultObject("asyncResultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val result3 = BranchNodeResultObject(
+            identifier = "result3",
+            pathHistoryResults = mutableListOf(resultA, resultB),
+            inputResults = mutableSetOf(asyncResultA, asyncResultB),
+            startDateString = "2020-01-21T12:00:00.000+7000",
+            endDateString = "2020-01-21T12:05:00.000+7000"
+        )
+        val result4 = CollectionResultObject(
+            identifier = "result4",
+            inputResults = mutableSetOf(asyncResultA, asyncResultB),
+            startDateString = "2020-01-21T12:00:00.000+7000",
+            endDateString = "2020-01-21T12:05:00.000+7000"
+        )
+        val original = BranchNodeResultObject(
+            identifier = "testResult",
+            pathHistoryResults = mutableListOf(result1, result2, result3, result4),
+            startDateString = "2020-01-21T12:00:00.000+7000",
+            endDateString = "2020-01-21T12:05:00.000+7000"
+        )
         val inputString = """
             {
                 "identifier": "testResult",
+                "startDate": "2020-01-21T12:00:00.000+7000",
+                "endDate": "2020-01-21T12:05:00.000+7000",
                 "stepHistory": [
-                    {"identifier": "result1","type": "base"},
-                    {"identifier": "result2","type": "base"},
+                    {"identifier": "result1","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                    {"identifier": "result2","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
                     {
                         "identifier": "result3",
-                        "type": "task",
-                        "stepHistory": [{"identifier": "resultA","type": "base"},{"identifier": "resultB","type": "base"}],
-                        "asyncResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
+                        "type": "section",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "stepHistory": [
+                            {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                            {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                        ],
+                        "asyncResults": [
+                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                        ]
                     },
                     {
                         "identifier": "result4",
                         "type": "collection",
-                        "inputResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "inputResults": [
+                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                        ]
                     }
                 ]
             }   
@@ -82,9 +113,14 @@ open class ResultTest {
     @UnstableDefault
     @Test
     fun testAssessmentResult() {
+        val resultA = ResultObject("resultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val resultB = ResultObject("resultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val asyncResultA = ResultObject("asyncResultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val asyncResultB = ResultObject("asyncResultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+
         val original = AssessmentResultObject(identifier = "testResult",
-                pathHistoryResults = mutableListOf(ResultObject("resultA"), ResultObject("resultB")),
-                inputResults = mutableSetOf(ResultObject("asyncResultA"), ResultObject("asyncResultB")),
+                pathHistoryResults = mutableListOf(resultA, resultB),
+                inputResults = mutableSetOf(asyncResultA, asyncResultB),
                 runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
                 startDateString = "2020-01-21T12:00:00.000+7000",
                 endDateString = "2020-01-21T12:05:00.000+7000"
@@ -95,8 +131,14 @@ open class ResultTest {
                 "taskRunUUID": "4cb0580-3cdb-11ea-b77f-2e728ce88125",
                 "startDate": "2020-01-21T12:00:00.000+7000",
                 "endDate": "2020-01-21T12:05:00.000+7000",
-                "stepHistory": [{"identifier": "resultA","type": "base"},{"identifier": "resultB","type": "base"}],
-                "asyncResults": [{"identifier": "asyncResultA","type": "base"},{"identifier": "asyncResultB","type": "base"}]
+                "stepHistory": [
+                    {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                    {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                ],
+                "asyncResults": [
+                    {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                    {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                ]
             }
             """.trimIndent()
 
@@ -158,12 +200,15 @@ open class ResultTest {
 
     @Test
     fun testAnswerResult_Boolean() {
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true)))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
             { "result": 
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "boolean"
                         },
@@ -184,12 +229,15 @@ open class ResultTest {
 
     @Test
     fun testAnswerResult_Decimal() {
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2)))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "number"
                         },
@@ -210,12 +258,15 @@ open class ResultTest {
 
     @Test
     fun testAnswerResult_Int() {
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3)))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
             { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "integer"
                         },
@@ -237,12 +288,15 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Map() {
         val originalValue = JsonObject(mapOf("a" to JsonLiteral(3.2), "b" to JsonLiteral("boo")))
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.OBJECT, originalValue))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.OBJECT, originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "object"
                         },
@@ -264,12 +318,15 @@ open class ResultTest {
     @Test
     fun testAnswerResult_String() {
         val originalValue = JsonPrimitive("goo")
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.STRING, originalValue))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.STRING, originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "string"
                         },
@@ -291,12 +348,15 @@ open class ResultTest {
     @Test
     fun testAnswerResult_DateYearMonth() {
         val originalValue = JsonPrimitive("2020-02")
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "dateTime",
                             "codingFormat": "yyyy-MM"
@@ -319,12 +379,15 @@ open class ResultTest {
     @Test
     fun testAnswerResult_ListInt() {
         val originalValue = JsonArray(listOf(JsonPrimitive(2), JsonPrimitive(5)))
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "array",
                             "baseType": "integer"
@@ -347,12 +410,15 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Measurement() {
         val originalValue = JsonPrimitive(10.2)
-        val original = TestResultWrapper(AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue))
+        val original = TestResultWrapper(
+            AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
+                        "startDate": "2020-01-21T12:00:00.000+7000",
+                        "endDate": "2020-01-21T12:05:00.000+7000",
                         "answerType" : {
                             "type": "measurement",
                             "unit": "cm"
@@ -376,11 +442,6 @@ open class ResultTest {
      * Result - copyResult
      */
 
-//    AnswerResultObject::class with AnswerResultObject.serializer()
-//    AssessmentResultObject::class with AssessmentResultObject.serializer()
-//    BranchNodeResultObject::class with BranchNodeResultObject.serializer()
-//    CollectionResultObject::class with CollectionResultObject.serializer()
-//    ResultObject::class with ResultObject.serializer()
     @Test
     fun testResultObject_copyResult() {
         val original = ResultObject("foo")
