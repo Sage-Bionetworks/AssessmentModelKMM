@@ -767,8 +767,8 @@ class NodeNavigatorTest : NavigationTestHelper() {
         // The expected behavior is that the step result should only be included *once*.
         nodeState.goForward()
 
-        val expectedPathResults = listOf<Result>(testResult)
-        assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
+        val actualPath = nodeState.currentResult.pathHistoryResults.map { it.identifier }
+        assertEquals(listOf("step1"), actualPath)
     }
 
     @Test
@@ -778,12 +778,11 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeState = BranchNodeStateImpl(assessmentObject)
         nodeState.rootNodeController = rootNodeController
         nodeState.goForward()
-        val testResult = ResultObject("step1")
         // The expected behavior is that the step result should be added.
         nodeState.goForward()
 
-        val expectedPathResults = listOf<Result>(testResult)
-        assertEquals(expectedPathResults, nodeState.currentResult.pathHistoryResults)
+        val actualPath = nodeState.currentResult.pathHistoryResults.map { it.identifier }
+        assertEquals(listOf("step1"), actualPath)
     }
 }
 
@@ -793,7 +792,16 @@ open class NavigationTestHelper {
      * Helper methods
      */
 
-    data class TestResult(override val identifier: String, val answer: String) : Result {
+    data class TestResult(override val identifier: String,
+                          val answer: String
+    ) : Result {
+
+        // TODO: syoung 06/16/2020 Once timestamp generation is implemented for Android (which is the platform used for test)
+        // then add checks that the dates are being updated properly to mark begin/end of steps.
+
+        override var startDateString: String = DateGenerator.nowString()
+        override var endDateString: String? = null
+
         override fun copyResult(identifier: String): Result = copy(identifier = identifier)
     }
 

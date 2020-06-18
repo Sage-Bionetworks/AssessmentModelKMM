@@ -21,6 +21,16 @@ interface Result {
      * [Assessment] element.
      */
     val identifier: String
+
+    /**
+     * The start date timestamp for the result.
+     */
+    var startDateString: String
+
+    /**
+     * The end date timestamp for the result.
+     */
+    var endDateString: String?
 }
 
 fun MutableSet<Result>.copyResults() = map { it.copyResult() }.toMutableSet()
@@ -81,16 +91,6 @@ interface AssessmentResult : BranchNodeResult {
      * [Assessment.versionString].
      */
     val versionString: String?
-
-    /**
-     * The start date timestamp for the result.
-     */
-    var startDateString: String
-
-    /**
-     * The end date timestamp for the result.
-     */
-    var endDateString: String
 }
 
 /**

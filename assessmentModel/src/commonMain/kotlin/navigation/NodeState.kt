@@ -196,6 +196,8 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
                                 asyncActionNavigations: Set<AsyncActionNavigation>?) {
         val next = getNextNode(direction) ?: return
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
+        // Before moving to the next node (or ending the task), mark the end data for the current node.
+        currentChild?.currentResult?.endDateString = DateGenerator.nowString()
         if (next.node != null) {
             // Go to next node if it is not null.
             moveTo(next)
@@ -221,6 +223,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             // child and hand off control to the root node controller.
             getLeafNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
+                // Mark the start/end timestamps before displaying the node.
+                nodeState.currentResult.startDateString = DateGenerator.nowString()
+                nodeState.currentResult.endDateString = null
                 if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
                     controller.handleGoForward(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
                 } else {
@@ -245,6 +250,8 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * exiting the entire run or just that this section is finished.
      */
     open fun finish(navigationPoint: NavigationPoint) {
+        // When finishing, mark the end date for the current result.
+        currentResult.endDateString = DateGenerator.nowString()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
                 exitEarly(navigationPoint.asyncActionNavigations)

@@ -29,6 +29,6 @@ actual object UUIDGenerator {
 }
 
 actual object DateGenerator {
-    actual fun nowString(): String = "TODO: Implement"
+    actual fun nowString(): String = UUID.randomUUID().toString()   // TODO: syoung 06/16/2020 Replace with a timestamp using Android library
     actual fun currentYear(): Int = 2020    // TODO: syoung 02/18/2020 Figure out how to access current year. now() methods are all version >= 26
 }
