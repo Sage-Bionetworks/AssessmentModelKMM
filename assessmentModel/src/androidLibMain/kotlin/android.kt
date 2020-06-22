@@ -2,6 +2,9 @@ package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -29,6 +32,6 @@ actual object UUIDGenerator {
 }
 
 actual object DateGenerator {
-    actual fun nowString(): String = UUID.randomUUID().toString()   // TODO: syoung 06/16/2020 Replace with a timestamp using Android library
-    actual fun currentYear(): Int = 2020    // TODO: syoung 02/18/2020 Figure out how to access current year. now() methods are all version >= 26
+    actual fun nowString(): String = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+    actual fun currentYear(): Int = LocalDate.now().year
 }
