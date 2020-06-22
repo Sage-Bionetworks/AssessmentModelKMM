@@ -12,6 +12,7 @@ android {
     compileSdkVersion(29)
     defaultConfig {
         minSdkVersion(19)
+        multiDexEnabled = true //Required when setting minSdkVersion to 20 or lower
     }
     buildTypes {
         getByName("release") {
@@ -19,9 +20,15 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    compileOptions {
+        coreLibraryDesugaringEnabled = true
+        sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+        targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.5")
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
@@ -48,6 +55,7 @@ kotlin {
          if (!buildForDevice) {
             embedBitcode("disable")
          }
+          
       }
    }
 
