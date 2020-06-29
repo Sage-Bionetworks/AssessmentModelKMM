@@ -403,11 +403,20 @@ data class ActiveStepObject(
     override val resultIdentifier: String? = null
 ) : BaseActiveStepObject()
 
+// CountdownStepObject will have a default timer of 5 seconds,
+// as well as an auto transition to next page.
 @Serializable
 @SerialName("countdown")
 data class CountdownStepObject(
     override val identifier: String,
-    override val duration: Double,
+    override val duration: Double = 5.0,
     override val resultIdentifier: String? = null,
     override val fullInstructionsOnly: Boolean = false
-) : BaseActiveStepObject(), CountdownStep
+) : BaseActiveStepObject(), CountdownStep {
+    override var commands: Set<ActiveStepCommand>
+        get() = super.commands union
+                        setOf(
+                            ActiveStepCommand.StartTimerAutomatically,
+                            ActiveStepCommand.ContinueOnFinish)
+        set(value) { super.commands = value }
+}
