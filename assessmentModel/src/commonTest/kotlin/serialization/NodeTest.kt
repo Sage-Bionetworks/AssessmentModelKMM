@@ -358,6 +358,26 @@ open class NodeTest : NodeSerializationTestHelper() {
      */
 
     @Test
+    fun testCountdownStep_DefaultParams() {
+        // Check default situation that duration = 5.0, and
+        // commands contains auto transition.
+        val original = CountdownStepObject("foo", resultIdentifier = "bar", fullInstructionsOnly = true)
+        original.title = "Hello World!"
+
+        assertEquals(5.0, original.duration)
+        assertEquals(setOf(ActiveStepCommand.ContinueOnFinish, ActiveStepCommand.StartTimerAutomatically), original.commands)
+
+        // Test that the auto transition always exists in the commands.
+        original.commands.plus(ActiveStepCommand.PlaySoundOnFinish)
+        assertTrue(original.commands.contains(ActiveStepCommand.ContinueOnFinish))
+        assertTrue(original.commands.contains(ActiveStepCommand.StartTimerAutomatically))
+
+        original.commands = setOf()
+        assertTrue(original.commands.contains(ActiveStepCommand.ContinueOnFinish))
+        assertTrue(original.commands.contains(ActiveStepCommand.StartTimerAutomatically))
+    }
+
+    @Test
     fun testCountdownStep_Serialization() {
         val inputString = """
            {
