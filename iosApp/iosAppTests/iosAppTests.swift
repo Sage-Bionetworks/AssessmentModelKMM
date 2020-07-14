@@ -69,8 +69,7 @@ class iosAppTests: XCTestCase {
     
     func testAnswerResult_Serialization() {
         let answerType = AnswerType.INTEGER()
-        let jsonValue = answerType.jsonElementFor(value: 3)
-        let result = AnswerResultObject(identifier: "foo", answerType: answerType, jsonValue: jsonValue)
+        let result = answerType.createAnswerResult(identifier: "foo", value: 3)
         do {
             let dictionary = try result.jsonObject() as NSDictionary
             let expectedJson: NSDictionary = [
@@ -79,7 +78,9 @@ class iosAppTests: XCTestCase {
                             "answerType" : [
                                 "type": "integer"
                             ],
-                            "value" : 3
+                            "value" : 3,
+                            "startDate" : result.startDateString,
+                            "endDate" : NSNull()
                         ]
             XCTAssertEqual(expectedJson, dictionary)
         } catch let err {

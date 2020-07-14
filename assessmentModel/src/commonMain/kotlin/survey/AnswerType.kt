@@ -6,6 +6,7 @@ import kotlinx.serialization.modules.SerializersModule
 import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
+import org.sagebionetworks.assessmentmodel.serialization.AnswerResultObject
 
 /**
  * TODO: syoung 02/18/2020 Deprecate SageResearch `RSDFormDataType` and `RSDResultAnswerType`.
@@ -39,6 +40,13 @@ abstract class AnswerType {
         get() = baseType.serialKind
 
     open fun jsonElementFor(value: Any): JsonElement = baseType.jsonElementFor(value)
+
+    /**
+     * Convenience method for use with iOS apps that cannot use default values in the initializer.
+     * syoung 07/09/2020
+     */
+    open fun createAnswerResult(identifier: String, value: Any): AnswerResult
+            = AnswerResultObject(identifier, this, jsonElementFor(value))
 
     @Serializable
     @SerialName("measurement")
