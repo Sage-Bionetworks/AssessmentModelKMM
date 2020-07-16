@@ -139,7 +139,7 @@ internal fun <T> Collection<T>?.toNonEmptySet() : Set<T>?
 
 internal fun AsyncActionContainer.filterBackgroundActions(func: (it : AsyncActionConfiguration) -> Boolean)
         : Set<AsyncActionConfiguration>?
-    = this.backgroundActions?.filter(func).toNonEmptySet()
+    = this.backgroundActions.filter(func).toNonEmptySet()
 
 fun AsyncActionContainer.backgroundActionsToStart(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
     = nextNode?.let { node ->

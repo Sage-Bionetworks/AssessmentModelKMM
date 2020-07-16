@@ -115,7 +115,7 @@ class JsonElementDecoder(val jsonString: String) {
     @Throws
     fun decodeObject(): JsonElement {
         try {
-            return jsonCoder.parseJson(jsonString) as JsonElement
+            return jsonCoder.parseJson(jsonString)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
