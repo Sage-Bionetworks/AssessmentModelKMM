@@ -8,5 +8,5 @@
 
 ../gradlew -p ../assessmentModel copyFramework -Pkotlin.build.type="RELEASE" -Pdevice="true"
 ../gradlew -p ../assessmentModel copyFramework -Pkotlin.build.type="RELEASE" -Pdevice="false"
-xcodebuild -create-xcframework -framework ../assessmentModel/build/bin/iosArm64/releaseFramework/AssessmentModel.framework -framework ../assessmentModel/build/bin/iosX64/releaseFramework/AssessmentModel.framework -output ../assessmentModel/build/bin/xcframework/AssessmentModel.xcframework
+xcodebuild -create-xcframework -framework ../assessmentModel/build/bin/iosArm64/releaseFramework/AssessmentModel.framework -framework ../assessmentModel/build/bin/iosX64/releaseFramework/AssessmentModel.framework -output ./AssessmentModel/AssessmentModel.xcframework
 
