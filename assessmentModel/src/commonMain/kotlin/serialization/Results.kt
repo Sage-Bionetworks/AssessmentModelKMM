@@ -34,6 +34,8 @@ data class AnswerResultObject(override val identifier: String,
 @Serializable
 @SerialName("assessment")
 data class AssessmentResultObject(override val identifier: String,
+                                  override val assessmentIdentifier: String? = null,
+                                  override val schemaIdentifier: String? = null,
                                   override val versionString: String? = null,
                                   @SerialName("stepHistory")
                                   override var pathHistoryResults: MutableList<Result> = mutableListOf(),

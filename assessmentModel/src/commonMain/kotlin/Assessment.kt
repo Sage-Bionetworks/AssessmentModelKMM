@@ -43,8 +43,11 @@ interface Assessment : BranchNode, ContentNode {
     val estimatedMinutes: Int
 
     // Override the default implementation to return an [AssessmentResult]
-    override fun createResult(): AssessmentResult
-            = AssessmentResultObject(resultId(), versionString)
+    override fun createResult(): AssessmentResult = AssessmentResultObject(
+        identifier = resultId(),
+        assessmentIdentifier = identifier,
+        schemaIdentifier = resultId(),
+        versionString = versionString)
 
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment
 }
