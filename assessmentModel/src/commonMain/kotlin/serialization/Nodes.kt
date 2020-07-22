@@ -132,8 +132,7 @@ abstract class IconNodeObject : NodeObject() {
 data class TransformableNodeObject(
     override val identifier: String,
     override val resourceName: String,
-    override val versionString: String? = null,
-    override val resultIdentifier: String? = null
+    override val versionString: String? = null
 ) : IconNodeObject(), TransformableNode
 
 @Serializable
@@ -143,7 +142,7 @@ data class TransformableAssessmentObject(
     override val resourceName: String,
     override val versionString: String? = null,
     override val estimatedMinutes: Int = 0,
-    override val resultIdentifier: String? = null
+    override val schemaIdentifier: String? = null
 ) : IconNodeObject(), TransformableAssessment
 
 /**
@@ -169,7 +168,7 @@ data class AssessmentObject(
     @SerialName("steps")
     override val children: List<Node>,
     override val versionString: String? = null,
-    override val resultIdentifier: String? = null,
+    override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
     @SerialName("asyncActions")
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
@@ -190,7 +189,6 @@ data class SectionObject(
     override val identifier: String,
     @SerialName("steps")
     override val children: List<Node>,
-    override val resultIdentifier: String? = null,
     @SerialName("asyncActions")
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
@@ -211,7 +209,6 @@ data class SectionObject(
 @SerialName("instruction")
 data class InstructionStepObject(
     override val identifier: String,
-     override val resultIdentifier: String? = null,
      @SerialName("image")
      override var imageInfo: ImageInfo? = null,
      override var fullInstructionsOnly: Boolean = false
@@ -224,8 +221,7 @@ data class OverviewStepObject(
     @SerialName("image")
     override var imageInfo: ImageInfo? = null,
     override var icons: List<IconInfoObject>? = null,
-    override var permissions: List<PermissionInfoObject>? = null,
-    override val resultIdentifier: String? = null
+    override var permissions: List<PermissionInfoObject>? = null
 ) : StepObject(), OverviewStep {
     override var learnMore: ButtonActionInfo?
         get() = buttonMap[ButtonAction.Navigation.LearnMore]
@@ -249,8 +245,7 @@ data class ResultSummaryStepObject(
     override val scoringResultPath: IdentifierPath? = null,
     override var resultTitle: String? = null,
     @SerialName("image")
-    override var imageInfo: ImageInfo? = null,
-    override val resultIdentifier: String? = null
+    override var imageInfo: ImageInfo? = null
 ) : StepObject(), ResultSummaryStep
 
 /**
@@ -261,7 +256,6 @@ data class ResultSummaryStepObject(
 @SerialName("form")
 data class FormStepObject(
     override val identifier: String,
-    override val resultIdentifier: String? = null,
     @SerialName("image")
     override val imageInfo: ImageInfo? = null,
     // TODO: syoung 04/22/2020 iOS defines the child nodes as "inputFields" but may want to change that?
@@ -295,7 +289,6 @@ abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
 data class SimpleQuestionObject(
     override val identifier: String,
     override val inputItem: InputItem,
-    override val resultIdentifier: String? = null,
     override var skipCheckbox: SkipCheckboxInputItem? = null
 ) : QuestionObject(), SimpleQuestion
 
@@ -304,7 +297,6 @@ data class SimpleQuestionObject(
 data class MultipleInputQuestionObject(
     override val identifier: String,
     override val inputItems: List<InputItem>,
-    override val resultIdentifier: String? = null,
     override var sequenceSeparator: String? = null,
     override var skipCheckbox: SkipCheckboxInputItem? = null
 ) : QuestionObject(), MultipleInputQuestion
@@ -315,7 +307,6 @@ data class ChoiceQuestionObject(
     override val identifier: String,
     override val choices: List<ChoiceOptionObject>,
     override val baseType: BaseType = BaseType.STRING,
-    override val resultIdentifier: String? = null,
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = true,
     override var uiHint: UIHint = UIHint.Choice.ListItem
@@ -327,7 +318,6 @@ data class StringChoiceQuestionObject(
     override val identifier: String,
     @SerialName("choices")
     val items: List<String>,
-    override val resultIdentifier: String? = null,
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = true,
     override var uiHint: UIHint = UIHint.Choice.ListItem
@@ -344,7 +334,6 @@ data class ComboBoxQuestionObject(
     override val identifier: String,
     override val choices: List<ChoiceOptionObject>,
     override val otherInputItem: InputItem = defaultOtherInputItem,
-    override val resultIdentifier: String? = null,
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = false,
     override var uiHint: UIHint = UIHint.Choice.Checkbox
@@ -399,8 +388,7 @@ abstract class BaseActiveStepObject : StepObject(), ActiveStep {
 @SerialName("active")
 data class ActiveStepObject(
     override val identifier: String,
-    override val duration: Double,
-    override val resultIdentifier: String? = null
+    override val duration: Double
 ) : BaseActiveStepObject()
 
 // CountdownStepObject will have a default timer of 5 seconds,
@@ -410,7 +398,6 @@ data class ActiveStepObject(
 data class CountdownStepObject(
     override val identifier: String,
     override val duration: Double = 5.0,
-    override val resultIdentifier: String? = null,
     override val fullInstructionsOnly: Boolean = false
 ) : BaseActiveStepObject(), CountdownStep {
     override var commands: Set<ActiveStepCommand>

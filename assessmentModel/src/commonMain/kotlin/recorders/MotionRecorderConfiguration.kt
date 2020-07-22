@@ -11,7 +11,6 @@ import org.sagebionetworks.assessmentmodel.*
 @SerialName("motion")
 data class MotionRecorderConfiguration(
     override val identifier: String,
-    override val resultIdentifier: String? = null,
     @SerialName("description")
     override val comment: String? = null,
     override val reason: String? = null,

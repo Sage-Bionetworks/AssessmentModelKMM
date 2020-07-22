@@ -16,7 +16,6 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
         override val permissions: List<PermissionInfo>? = null,
         override val reason: String? = null,
         override val optional: Boolean = true,
-        override val resultIdentifier: String? = null,
         override val comment: String? = null
     ) : RecorderConfiguration
 
