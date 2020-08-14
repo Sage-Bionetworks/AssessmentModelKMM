@@ -87,7 +87,7 @@ interface AssessmentResult : BranchNodeResult {
     var runUUIDString: String
 
     /**
-     * A unique identifier for a [Assessment] model associated with this result. This is explicitly
+     * A unique identifier for an [Assessment] model associated with this result. This is explicitly
      * included so that the [identifier] can be associated as per the needs of the developers and
      * to allow for changes to the API that are not important to the researcher.
      */
