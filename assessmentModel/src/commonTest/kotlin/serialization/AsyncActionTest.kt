@@ -21,7 +21,6 @@ open class AsyncActionTest {
     fun testDistanceRecorderConfiguration_Serialization() {
         val config = DistanceRecorderConfiguration(
             identifier = "foo",
-            resultIdentifier = "bar",
             motionStepIdentifier = "magoo",
             startStepIdentifier = "baloo",
             stopStepIdentifier = "too",
@@ -33,7 +32,6 @@ open class AsyncActionTest {
                 "config": {
                     "type": "distance",
                     "identifier": "foo",
-                    "resultIdentifier": "bar",
                     "startStepIdentifier": "baloo",
                     "stopStepIdentifier": "too",
                     "motionStepIdentifier": "magoo",
@@ -107,7 +105,6 @@ open class AsyncActionTest {
     fun testMotionRecorderConfiguration_Serialization() {
         val config = MotionRecorderConfiguration(
             identifier = "foo",
-            resultIdentifier = "bar",
             startStepIdentifier = "baloo",
             stopStepIdentifier = "too",
             requiresBackground = true,
@@ -121,7 +118,6 @@ open class AsyncActionTest {
                 "config": {
                     "type": "motion",
                     "identifier": "foo",
-                    "resultIdentifier": "bar",
                     "startStepIdentifier": "baloo",
                     "stopStepIdentifier": "too",
                     "requiresBackgroundAudio": true,

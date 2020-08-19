@@ -36,6 +36,12 @@ interface Assessment : BranchNode, ContentNode {
     val versionString: String?
 
     /**
+     * The [schemaIdentifier] is used to allow a group of [Assessment] models to all map to the same
+     * table in a data base.
+     */
+    val schemaIdentifier: String?
+
+    /**
      * The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not
      * defined. Where provided, it can be used by an application to indicate to the participant approximately how
      * long an assessment is expected to take to complete.
@@ -43,8 +49,11 @@ interface Assessment : BranchNode, ContentNode {
     val estimatedMinutes: Int
 
     // Override the default implementation to return an [AssessmentResult]
-    override fun createResult(): AssessmentResult
-            = AssessmentResultObject(resultId(), versionString)
+    override fun createResult(): AssessmentResult = AssessmentResultObject(
+        identifier = resultId(),
+        assessmentIdentifier = identifier,
+        schemaIdentifier = schemaIdentifier,
+        versionString = versionString)
 
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment
 }
@@ -53,9 +62,6 @@ interface Assessment : BranchNode, ContentNode {
  * A result map element is an element in the [Assessment] model that defines the expectations for a [Result] associated
  * with this element. It can define a user-facing step, a section (which may or may not map to a view), a background
  * web service, a sensor recorder, or any other piece of data collected by the overall [Assessment].
- *
- * The [identifier] is used to build the input model mapping and the [resultIdentifier] is used to build an output model
- * with the same hierarchy where all the elements of the model conform to the [Result] protocol.
  */
 interface ResultMapElement {
 
@@ -63,12 +69,6 @@ interface ResultMapElement {
      * The identifier for the node.
      */
     val identifier: String
-
-    /**
-     * The identifier to use for the [Result] (if any) associated with this node. If null, the [identifier] will be
-     * used instead.
-     */
-    val resultIdentifier: String?
 
     /**
      * The [comment] is *not* intended to be user-facing and is a field that allows the [Assessment] designer to add
@@ -85,7 +85,7 @@ interface ResultMapElement {
 /**
  * Convenience method for accessing the result identifier associated with a given node.
  */
-fun ResultMapElement.resultId() : String = resultIdentifier ?: identifier
+fun ResultMapElement.resultId() : String = identifier
 
 /**
  * A [Node] is any object defined within the structure of an [Assessment] that is used to display a sequence of [Step]

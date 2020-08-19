@@ -16,18 +16,10 @@ class QuestionTest : NavigationTestHelper() {
      */
 
     @Test
-    fun testChoiceQuestion_Result_NullResultId() {
+    fun testChoiceQuestion_Result() {
         val original = ChoiceQuestionObject("foo", listOf())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertEquals(original.answerType, result.answerType)
-    }
-
-    @Test
-    fun testChoiceQuestion_Result_WithResultId() {
-        val original = ChoiceQuestionObject("foo", listOf(), resultIdentifier = "bar")
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -80,18 +72,10 @@ class QuestionTest : NavigationTestHelper() {
      */
 
     @Test
-    fun testComboBoxQuestion_Result_NullResultId() {
+    fun testComboBoxQuestion_Result() {
         val original = ComboBoxQuestionObject("foo", listOf())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertEquals(original.answerType, result.answerType)
-    }
-
-    @Test
-    fun testComboBoxQuestion_Result_WithResultId() {
-        val original = ComboBoxQuestionObject("foo", listOf(), resultIdentifier = "bar")
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -145,18 +129,10 @@ class QuestionTest : NavigationTestHelper() {
      */
 
     @Test
-    fun testMultipleInputQuestion_Result_NullResultId() {
+    fun testMultipleInputQuestion_Result() {
         val original = MultipleInputQuestionObject("foo", inputItems = listOf(StringTextInputItemObject(), StringTextInputItemObject()))
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertEquals(original.answerType, result.answerType)
-    }
-
-    @Test
-    fun testMultipleInputQuestion_Result_WithResultId() {
-        val original = MultipleInputQuestionObject("foo", inputItems = listOf(StringTextInputItemObject(), StringTextInputItemObject()), resultIdentifier = "bar")
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
         assertEquals(original.answerType, result.answerType)
     }
 
@@ -217,18 +193,10 @@ class QuestionTest : NavigationTestHelper() {
      */
 
     @Test
-    fun testSimpleQuestion_Result_NullResultId() {
+    fun testSimpleQuestion_Result() {
         val original = SimpleQuestionObject("foo", inputItem = StringTextInputItemObject())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-        assertEquals(original.answerType, result.answerType)
-    }
-
-    @Test
-    fun testSimpleQuestion_Result_WithResultId() {
-        val original = SimpleQuestionObject("foo", inputItem = StringTextInputItemObject(), resultIdentifier = "bar")
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
         assertEquals(original.answerType, result.answerType)
     }
 

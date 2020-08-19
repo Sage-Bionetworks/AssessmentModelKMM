@@ -128,7 +128,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 "type": "assessment",
                 "identifier": "foo",
                 "versionString": "1.2.3",
-                "resultIdentifier":"bar",
                 "title": "Hello World!",
                 "subtitle": "Subtitle",
                 "detail": "Some text. This is a test.",
@@ -163,7 +162,6 @@ open class NodeTest : NodeSerializationTestHelper() {
 
         val original = AssessmentObject(
                 identifier = "foo",
-                resultIdentifier = "bar",
                 versionString = "1.2.3",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
@@ -200,7 +198,7 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     @Test
-    fun testAssessment_Result_NullResultId() {
+    fun testAssessment_Result() {
         val original = AssessmentObject(
                 identifier = "foo",
                 children = listOf(
@@ -208,18 +206,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-    }
-
-    @Test
-    fun testAssessment_Result_WithResultId() {
-        val original = AssessmentObject(
-                identifier = "foo",
-                resultIdentifier = "bar",
-                children = listOf(
-                        buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -361,7 +347,7 @@ open class NodeTest : NodeSerializationTestHelper() {
     fun testCountdownStep_DefaultParams() {
         // Check default situation that duration = 5.0, and
         // commands contains auto transition.
-        val original = CountdownStepObject("foo", resultIdentifier = "bar", fullInstructionsOnly = true)
+        val original = CountdownStepObject("foo", fullInstructionsOnly = true)
         original.title = "Hello World!"
 
         assertEquals(5.0, original.duration)
@@ -382,7 +368,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         val inputString = """
            {
                "identifier": "foo",
-               "resultIdentifier": "bar",
                "type": "countdown",
                "fullInstructionsOnly": true,
                "title": "Hello World!",
@@ -403,7 +388,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                                "animationDuration" : 2}
             }
            """
-        val original = CountdownStepObject("foo", 30.0, "bar", true)
+        val original = CountdownStepObject("foo", 30.0, true)
         original.title = "Hello World!"
         original.spokenInstructions = mapOf(
             SpokenInstructionTiming.Keyword.Start to "Start moving",
@@ -586,17 +571,10 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     @Test
-    fun testInstructionStep_Result_NullResultId() {
+    fun testInstructionStep_Result() {
         val original = InstructionStepObject("foo")
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-    }
-
-    @Test
-    fun testInstructionStep_Result_WithResultId() {
-        val original = InstructionStepObject("foo", resultIdentifier = "bar")
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -948,7 +926,7 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     @Test
-    fun testSection_Result_NullResultId() {
+    fun testSection_Result() {
         val original = SectionObject(
                 identifier = "foo",
                 children = listOf(
@@ -956,18 +934,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                         buildInstructionStep("step2", "Step 2")))
         val result = original.createResult()
         assertEquals("foo", result.identifier)
-    }
-
-    @Test
-    fun testSection_Result_WithResultId() {
-        val original = SectionObject(
-                identifier = "foo",
-                resultIdentifier = "bar",
-                children = listOf(
-                        buildInstructionStep("step1", "Step 1"),
-                        buildInstructionStep("step2", "Step 2")))
-        val result = original.createResult()
-        assertEquals("bar", result.identifier)
     }
 
     /**
@@ -1209,7 +1175,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 "type": "assessment",
                 "identifier": "foo",
                 "versionString": "1.2.3",
-                "resultIdentifier":"bar",
                 "title": "Hello World!",
                 "subtitle": "Subtitle",
                 "icon": "fooIcon",
@@ -1240,7 +1205,6 @@ open class NodeTest : NodeSerializationTestHelper() {
 
         val original = AssessmentObject(
                 identifier = "foo",
-                resultIdentifier = "bar",
                 versionString = "1.2.3",
                 children = listOf(
                         originalStep1,
@@ -1281,7 +1245,6 @@ open class NodeSerializationTestHelper {
 
     fun assertEqualResultMapElement(expected: ResultMapElement, actual: ResultMapElement) {
         assertEquals(expected.identifier, actual.identifier)
-        assertEquals(expected.resultIdentifier, actual.resultIdentifier)
         assertEquals(expected.comment, actual.comment)
     }
 
