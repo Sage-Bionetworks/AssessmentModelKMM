@@ -27,7 +27,6 @@ abstract class SerializableButtonActionInfo : ButtonActionInfo, ResourceInfo {
     @Transient
     override var decoderBundle: Any? = null
 
-    @Transient
     override val imageInfo: ImageInfo? by lazy {
         iconName?.let {
             FetchableImage(

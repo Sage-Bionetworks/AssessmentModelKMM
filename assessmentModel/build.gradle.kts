@@ -46,8 +46,10 @@ kotlin {
        publishLibraryVariants("release", "debug")
    }
    
-   val buildForDevice = project.findProperty("device") as? Boolean ?: false
+   val buildForDevice = (project.findProperty("device") as? String) == "true"
    val iosTarget = if(buildForDevice) iosArm64("ios") else iosX64("ios")
+    println("property.device=${project.findProperty("device")}")
+    println("buildForDevice=$buildForDevice")
    iosTarget.binaries {
       framework {
           baseName = "AssessmentModel"
@@ -55,7 +57,10 @@ kotlin {
          if (!buildForDevice) {
             embedBitcode("disable")
          }
-          
+          // Include DSYM in the release build
+          freeCompilerArgs += "-Xg0"
+          // Include Generics in the module header.
+          freeCompilerArgs += "-Xobjc-generics"
       }
    }
 
@@ -82,23 +87,33 @@ kotlin {
        }
 
     }
-}
 
-tasks.register("copyFramework") {
-    val buildType = project.findProperty("kotlin.build.type") as? String ?: "DEBUG"
-    dependsOn("link${buildType.toLowerCase().capitalize()}FrameworkIos")
+    tasks.register("copyFramework") {
+        val buildType = project.findProperty("kotlin.build.type") as? String ?: "DEBUG"
+        dependsOn("link${buildType.toLowerCase().capitalize()}FrameworkIos")
 
-    doLast {
-        val srcFile = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getFramework(buildType).outputFile
-        val targetDir = project.property("configuration.build.dir")!!
-        copy {
-            from(srcFile.parent)
-            into(targetDir)
-            include( "AssessmentModel.framework/**")
-            include("AssessmentModel.framework.dSYM")
+        doLast {
+            val srcFile = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getFramework(buildType).outputFile
+            var targetDir = project.findProperty("configuration.build.dir") as? String
+            if (targetDir == null) {
+                targetDir = if (buildForDevice) {
+                    srcFile.parent.replace("/ios/", "/iosArm64/")
+                } else {
+                    srcFile.parent.replace("/ios/", "/iosX64/")
+                }
+            }
+            println("copy from ${srcFile.parent} \nto $targetDir")
+            copy {
+                from(srcFile.parent)
+                into(targetDir)
+                include( "AssessmentModel.framework/**")
+                include("AssessmentModel.framework.dSYM")
+            }
         }
     }
 }
+
+
 
 apply("../config/artifact-deploy.gradle")
 
