@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.*
 
 /**
@@ -47,7 +52,8 @@ sealed class UIHint : StringEnum {
             override fun values(): Array<Choice>
                     = arrayOf(ListItem, Checkmark, Checkbox, RadioButton)
 
-            override val descriptor: SerialDescriptor = PrimitiveDescriptor("Choice", PrimitiveKind.STRING)
+            override val descriptor: SerialDescriptor =
+                PrimitiveSerialDescriptor("Choice", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): Choice {
                 val name = decoder.decodeString()
                 return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -117,7 +123,8 @@ sealed class UIHint : StringEnum {
             override fun values(): Array<TextField>
                     = arrayOf(Default, MultipleLine, Popover)
 
-            override val descriptor: SerialDescriptor = PrimitiveDescriptor("TextField", PrimitiveKind.STRING)
+            override val descriptor: SerialDescriptor =
+                PrimitiveSerialDescriptor("TextField", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): TextField {
                 val name = decoder.decodeString()
                 return TextField.values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -143,7 +150,7 @@ sealed class UIHint : StringEnum {
     @Serializer(forClass = UIHint::class)
     companion object : KSerializer<UIHint> {
         override val descriptor: SerialDescriptor
-                = PrimitiveDescriptor("UIHint", PrimitiveKind.STRING)
+                = PrimitiveSerialDescriptor("UIHint", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): UIHint {
             val name = decoder.decodeString()
             return valueOf(name)

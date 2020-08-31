@@ -7,7 +7,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
@@ -27,32 +28,32 @@ import kotlin.collections.toMutableMap
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
-        ActiveStepObject::class with ActiveStepObject.serializer()
-        AssessmentObject::class with AssessmentObject.serializer()
-        ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
-        ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
-        CountdownStepObject::class with CountdownStepObject.serializer()
-        FormStepObject::class with FormStepObject.serializer()
-        InstructionStepObject::class with InstructionStepObject.serializer()
-        MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
-        OverviewStepObject::class with OverviewStepObject.serializer()
-        ResultSummaryStepObject::class with ResultSummaryStepObject.serializer()
-        SimpleQuestionObject::class with SimpleQuestionObject.serializer()
-        SectionObject::class with SectionObject.serializer()
-        StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
-        TransformableAssessmentObject::class with TransformableAssessmentObject.serializer()
-        TransformableNodeObject::class with TransformableNodeObject.serializer()
+        subclass(ActiveStepObject::class)
+        subclass(AssessmentObject::class)
+        subclass(ChoiceQuestionObject::class)
+        subclass(ComboBoxQuestionObject::class)
+        subclass(CountdownStepObject::class)
+        subclass(FormStepObject::class)
+        subclass(InstructionStepObject::class)
+        subclass(MultipleInputQuestionObject::class)
+        subclass(OverviewStepObject::class)
+        subclass(ResultSummaryStepObject::class)
+        subclass(SimpleQuestionObject::class)
+        subclass(SectionObject::class)
+        subclass(StringChoiceQuestionObject::class)
+        subclass(TransformableAssessmentObject::class)
+        subclass(TransformableNodeObject::class)
     }
     polymorphic(Assessment::class) {
-        AssessmentObject::class with AssessmentObject.serializer()
-        TransformableAssessmentObject::class with TransformableAssessmentObject.serializer()
+        subclass(AssessmentObject::class)
+        subclass(TransformableAssessmentObject::class)
     }
     polymorphic(Question::class) {
-        ChoiceQuestionObject::class with ChoiceQuestionObject.serializer()
-        ComboBoxQuestionObject::class with ComboBoxQuestionObject.serializer()
-        MultipleInputQuestionObject::class with MultipleInputQuestionObject.serializer()
-        SimpleQuestionObject::class with SimpleQuestionObject.serializer()
-        StringChoiceQuestionObject::class with StringChoiceQuestionObject.serializer()
+        subclass(ChoiceQuestionObject::class)
+        subclass(ComboBoxQuestionObject::class)
+        subclass(MultipleInputQuestionObject::class)
+        subclass(SimpleQuestionObject::class)
+        subclass(StringChoiceQuestionObject::class)
     }
 }
 

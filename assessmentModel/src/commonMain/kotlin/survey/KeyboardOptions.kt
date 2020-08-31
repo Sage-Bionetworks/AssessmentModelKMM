@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
 
@@ -44,7 +49,8 @@ enum class AutoCapitalizationType : StringEnum {
 
     @Serializer(forClass = AutoCapitalizationType::class)
     companion object : KSerializer<AutoCapitalizationType>{
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("AutoCapitalizationType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("AutoCapitalizationType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCapitalizationType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -61,7 +67,8 @@ enum class AutoCorrectionType : StringEnum {
 
     @Serializer(forClass = AutoCorrectionType::class)
     companion object : KSerializer<AutoCorrectionType>{
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("AutoCorrectionType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("AutoCorrectionType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCorrectionType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -78,7 +85,8 @@ enum class SpellCheckingType : StringEnum {
 
     @Serializer(forClass = SpellCheckingType::class)
     companion object : KSerializer<SpellCheckingType>{
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("KeyboardType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): SpellCheckingType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -107,7 +115,8 @@ enum class KeyboardType : StringEnum {
 
     @Serializer(forClass = KeyboardType::class)
     companion object : KSerializer<KeyboardType>{
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("KeyboardType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): KeyboardType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${ values() }")

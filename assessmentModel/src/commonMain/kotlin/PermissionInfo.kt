@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.serialization.PermissionInfoObject
 
 /**
@@ -92,7 +97,7 @@ sealed class PermissionType() : StringEnum {
     @Serializer(forClass = PermissionType::class)
     companion object : KSerializer<PermissionType> {
         override val descriptor: SerialDescriptor
-                = PrimitiveDescriptor("SensorType", PrimitiveKind.STRING)
+                = PrimitiveSerialDescriptor("SensorType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): PermissionType {
             val name = decoder.decodeString()
             return valueOf(name)

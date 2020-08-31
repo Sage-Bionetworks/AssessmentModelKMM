@@ -1,8 +1,9 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.*
+import kotlinx.serialization.parse
+import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
@@ -22,8 +23,6 @@ open class ResultTest {
     /**
      * Collection-type results
      */
-
-    @UnstableDefault
     @Test
     fun testParentNodeResult() {
         val result1 = ResultObject("result1", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
@@ -87,30 +86,29 @@ open class ResultTest {
             }   
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(BranchNodeResultObject.serializer(), original)
-        val restored = jsonCoder.parse(BranchNodeResultObject.serializer(), jsonString)
-        val decoded = jsonCoder.parse(BranchNodeResultObject.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(BranchNodeResultObject.serializer(), original)
+        val restored = jsonCoder.decodeFromString(BranchNodeResultObject.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(BranchNodeResultObject.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
-        val jsonWrapper = Json.parseJson(jsonString).jsonObject
-        assertEquals("testResult", jsonWrapper.getPrimitiveOrNull("identifier")?.content)
-        val pathHistory = jsonWrapper.getArrayOrNull("stepHistory")
+        val jsonWrapper = Json.parseToJsonElement(jsonString).jsonObject
+        assertEquals("testResult", jsonWrapper["identifier"]?.jsonPrimitive?.content)
+        val pathHistory = jsonWrapper["stepHistory"]?.jsonArray
         assertNotNull(pathHistory)
         assertEquals(4, pathHistory.count())
         val r1 = pathHistory.firstOrNull()?.jsonObject
         assertNotNull(r1)
-        assertEquals("result1", r1.getPrimitiveOrNull("identifier")?.content)
-        assertEquals("base", r1.getPrimitiveOrNull("type")?.content)
+        assertEquals("result1", r1["identifier"]?.jsonPrimitive?.content)
+        assertEquals("base", r1["type"]?.jsonPrimitive?.content)
         val r4 = pathHistory.lastOrNull()?.jsonObject
         assertNotNull(r4)
-        assertEquals("result4", r4.getPrimitiveOrNull("identifier")?.content)
-        assertEquals("collection", r4.getPrimitiveOrNull("type")?.content)
+        assertEquals("result4", r4["identifier"]?.jsonPrimitive?.content)
+        assertEquals("collection", r4["type"]?.jsonPrimitive?.content)
     }
 
-    @UnstableDefault
     @Test
     fun testAssessmentResult() {
         val resultA = ResultObject("resultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
@@ -142,33 +140,33 @@ open class ResultTest {
             }
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(AssessmentResultObject.serializer(), original)
-        val restored = jsonCoder.parse(AssessmentResultObject.serializer(), jsonString)
-        val decoded = jsonCoder.parse(AssessmentResultObject.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(AssessmentResultObject.serializer(), original)
+        val restored = jsonCoder.decodeFromString(AssessmentResultObject.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(AssessmentResultObject.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
-        val jsonWrapper = Json.parseJson(jsonString).jsonObject
-        assertEquals("testResult", jsonWrapper.getPrimitiveOrNull("identifier")?.content)
-        assertEquals("4cb0580-3cdb-11ea-b77f-2e728ce88125", jsonWrapper.getPrimitiveOrNull("taskRunUUID")?.content)
-        assertEquals("2020-01-21T12:00:00.000+7000", jsonWrapper.getPrimitiveOrNull("startDate")?.content)
-        assertEquals("2020-01-21T12:05:00.000+7000", jsonWrapper.getPrimitiveOrNull("endDate")?.content)
-        val pathHistory = jsonWrapper.getArrayOrNull("stepHistory")
+        val jsonWrapper = Json.parseToJsonElement(jsonString).jsonObject
+        assertEquals("testResult", jsonWrapper["identifier"]?.jsonPrimitive?.content)
+        assertEquals("4cb0580-3cdb-11ea-b77f-2e728ce88125", jsonWrapper["taskRunUUID"]?.jsonPrimitive?.content)
+        assertEquals("2020-01-21T12:00:00.000+7000", jsonWrapper["startDate"]?.jsonPrimitive?.content)
+        assertEquals("2020-01-21T12:05:00.000+7000", jsonWrapper["endDate"]?.jsonPrimitive?.content)
+        val pathHistory = jsonWrapper["stepHistory"]?.jsonArray
         assertNotNull(pathHistory)
         assertEquals(2, pathHistory.count())
         val r1 = pathHistory.firstOrNull()?.jsonObject
         assertNotNull(r1)
-        assertEquals("resultA", r1.getPrimitiveOrNull("identifier")?.content)
-        assertEquals("base", r1.getPrimitiveOrNull("type")?.content)
-        val asyncResults = jsonWrapper.getArrayOrNull("asyncResults")
+        assertEquals("resultA", r1["identifier"]?.jsonPrimitive?.content)
+        assertEquals("base", r1["type"]?.jsonPrimitive?.content)
+        val asyncResults = jsonWrapper["asyncResults"]?.jsonArray
         assertNotNull(asyncResults)
         assertEquals(2, asyncResults.count())
         val ar1 = asyncResults.firstOrNull()?.jsonObject
         assertNotNull(ar1)
-        assertEquals("asyncResultA", ar1.getPrimitiveOrNull("identifier")?.content)
-        assertEquals("base", ar1.getPrimitiveOrNull("type")?.content)
+        assertEquals("asyncResultA", ar1["identifier"]?.jsonPrimitive?.content)
+        assertEquals("base", ar1["type"]?.jsonPrimitive?.content)
     }
 
     /**
@@ -218,9 +216,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -247,9 +245,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -276,9 +274,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -287,7 +285,7 @@ open class ResultTest {
 
     @Test
     fun testAnswerResult_Map() {
-        val originalValue = JsonObject(mapOf("a" to JsonLiteral(3.2), "b" to JsonLiteral("boo")))
+        val originalValue = JsonObject(mapOf("a" to JsonPrimitive(3.2), "b" to JsonPrimitive("boo")))
         val original = TestResultWrapper(
             AnswerResultObject("foo", AnswerType.OBJECT, originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
         val inputString = """
@@ -306,9 +304,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -336,9 +334,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -367,9 +365,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -398,9 +396,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -429,9 +427,9 @@ open class ResultTest {
         """.trimIndent()
 
         val serializer = TestResultWrapper.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)

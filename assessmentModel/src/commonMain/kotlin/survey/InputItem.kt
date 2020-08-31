@@ -3,6 +3,7 @@ package org.sagebionetworks.assessmentmodel.survey
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
 import org.sagebionetworks.assessmentmodel.serialization.*
 
 /**
@@ -281,5 +282,5 @@ object PassThruTextValidator : TextValidator<String> {
     override fun valueFor(text: String): FormattedValue<String>? = FormattedValue(text)
     override fun localizedStringFor(value: String?): FormattedValue<String> = FormattedValue(value)
     override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
-    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.primitive?.contentOrNull
+    override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.jsonPrimitive?.content
 }

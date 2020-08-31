@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.serialization.json.jsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.databinding.TextInputViewBinding
 import org.sagebionetworks.assessmentmodel.survey.*
 
@@ -33,7 +34,7 @@ class TextInputView : LinearLayout {
         textInputLayout.hint = inputItemState.inputItem.placeholder
         if (inputItemState.selected) {
             textInput.setText(
-                inputItemState.textValidator.valueFor(inputItemState.currentAnswer?.primitive).toString()
+                inputItemState.textValidator.valueFor(inputItemState.currentAnswer?.jsonPrimitive).toString()
             )
         }
     }

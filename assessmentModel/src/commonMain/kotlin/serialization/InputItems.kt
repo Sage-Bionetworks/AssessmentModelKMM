@@ -4,36 +4,37 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
-        CheckboxInputItemObject::class with CheckboxInputItemObject.serializer()
-        DateInputItemObject::class with DateInputItemObject.serializer()
-        DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
-        IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
-        SkipCheckboxInputItemObject::class with SkipCheckboxInputItemObject.serializer()
-        StringTextInputItemObject::class with StringTextInputItemObject.serializer()
-        TimeInputItemObject::class with TimeInputItemObject.serializer()
-        YearTextInputItemObject::class with YearTextInputItemObject.serializer()
+        subclass(CheckboxInputItemObject::class)
+        subclass(DateInputItemObject::class)
+        subclass(DecimalTextInputItemObject::class)
+        subclass(IntegerTextInputItemObject::class)
+        subclass(SkipCheckboxInputItemObject::class)
+        subclass(StringTextInputItemObject::class)
+        subclass(TimeInputItemObject::class)
+        subclass(YearTextInputItemObject::class)
     }
     polymorphic(KeyboardTextInputItem::class) {
-        DateInputItemObject::class with DateInputItemObject.serializer()
-        DecimalTextInputItemObject::class with DecimalTextInputItemObject.serializer()
-        IntegerTextInputItemObject::class with IntegerTextInputItemObject.serializer()
-        StringTextInputItemObject::class with StringTextInputItemObject.serializer()
-        TimeInputItemObject::class with TimeInputItemObject.serializer()
-        YearTextInputItemObject::class with YearTextInputItemObject.serializer()
+        subclass(DateInputItemObject::class)
+        subclass(DecimalTextInputItemObject::class)
+        subclass(IntegerTextInputItemObject::class)
+        subclass(StringTextInputItemObject::class)
+        subclass(TimeInputItemObject::class)
+        subclass(YearTextInputItemObject::class)
     }
     polymorphic(SkipCheckboxInputItem::class) {
-        SkipCheckboxInputItemObject::class with SkipCheckboxInputItemObject.serializer()
+        subclass(SkipCheckboxInputItemObject::class)
     }
     polymorphic(DateTimeFormatOptions::class) {
-        DateFormatOptions::class with DateFormatOptions.serializer()
-        TimeFormatOptions::class with TimeFormatOptions.serializer()
+        subclass(DateFormatOptions::class)
+        subclass(TimeFormatOptions::class)
     }
 }
 

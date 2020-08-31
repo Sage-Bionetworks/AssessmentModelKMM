@@ -40,10 +40,10 @@ actual abstract class NumberFormatter<T> actual constructor(formatOptions: Numbe
 
 actual class IntFormatter actual constructor(formatOptions: NumberFormatOptions<Int>) : NumberFormatter<Int>(formatOptions = formatOptions) {
     override fun toType(value: Number?): Int? = value?.toInt()
-    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.intOrNull
+    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.jsonPrimitive?.intOrNull
 }
 
 actual class DoubleFormatter actual constructor(formatOptions: NumberFormatOptions<Double>) : NumberFormatter<Double>(formatOptions = formatOptions) {
     override fun toType(value: Number?): Double? = value?.toDouble()
-    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.doubleOrNull
+    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.jsonPrimitive?.doubleOrNull
 }

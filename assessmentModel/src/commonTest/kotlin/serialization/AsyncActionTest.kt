@@ -42,9 +42,9 @@ open class AsyncActionTest {
             """.trimIndent()
 
         val original = TestAsyncActionConfigurationWrapper(config)
-        val jsonString = jsonCoder.stringify(TestAsyncActionConfigurationWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestAsyncActionConfigurationWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestAsyncActionConfigurationWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestAsyncActionConfigurationWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestAsyncActionConfigurationWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestAsyncActionConfigurationWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -88,9 +88,9 @@ open class AsyncActionTest {
             }    
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(DistanceRecord.serializer(), original)
-        val restored = jsonCoder.parse(DistanceRecord.serializer(), jsonString)
-        val decoded = jsonCoder.parse(DistanceRecord.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(DistanceRecord.serializer(), original)
+        val restored = jsonCoder.decodeFromString(DistanceRecord.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(DistanceRecord.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -130,9 +130,9 @@ open class AsyncActionTest {
             """.trimIndent()
 
         val original = TestAsyncActionConfigurationWrapper(config)
-        val jsonString = jsonCoder.stringify(TestAsyncActionConfigurationWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestAsyncActionConfigurationWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestAsyncActionConfigurationWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestAsyncActionConfigurationWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestAsyncActionConfigurationWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestAsyncActionConfigurationWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -170,9 +170,9 @@ open class AsyncActionTest {
             }    
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(MotionRecord.serializer(), original)
-        val restored = jsonCoder.parse(MotionRecord.serializer(), jsonString)
-        val decoded = jsonCoder.parse(MotionRecord.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(MotionRecord.serializer(), original)
+        val restored = jsonCoder.decodeFromString(MotionRecord.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(MotionRecord.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)

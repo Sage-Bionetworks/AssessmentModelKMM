@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonLiteral
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.*
 import kotlin.math.abs
 
@@ -123,8 +124,8 @@ enum class SurveyRuleOperator : StringEnum {
 
 fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, accuracy: Double = 0.00001) : Boolean {
     val jsonValue = value ?: JsonNull
-    return (jsonValue as? JsonLiteral)?.let { jsonLiteral ->
-        (this as? JsonLiteral)?.compareTo(jsonLiteral, operator, accuracy)
+    return (jsonValue as? JsonPrimitive)?.let { jsonLiteral ->
+        (this as? JsonPrimitive)?.compareTo(jsonLiteral, operator, accuracy)
     } ?: when (operator) {
         SurveyRuleOperator.Always -> true
         SurveyRuleOperator.Skip -> this == JsonNull && jsonValue == JsonNull
@@ -134,11 +135,11 @@ fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, acc
     }
 }
 
-internal fun JsonLiteral.compareTo(value: JsonLiteral, operator: SurveyRuleOperator, accuracy: Double) : Boolean
-        = (this.body as? Comparable<*>)?.compareTo(value, operator, accuracy) ?: false
+internal fun JsonPrimitive.compareTo(value: JsonPrimitive, operator: SurveyRuleOperator, accuracy: Double) : Boolean
+        = (this.content as? Comparable<*>)?.compareTo(value, operator, accuracy) ?: false
 
-internal fun <T> Comparable<T>.compareTo(value: JsonLiteral, operator: SurveyRuleOperator, accuracy: Double) : Boolean
-        = @Suppress("UNCHECKED_CAST")(value.body as? T)?.let { jsonValue ->
+internal fun <T> Comparable<T>.compareTo(value: JsonPrimitive, operator: SurveyRuleOperator, accuracy: Double) : Boolean
+        = @Suppress("UNCHECKED_CAST")(value.content as? T)?.let { jsonValue ->
     val isEqual = this.equalsWithAccuracy(jsonValue, accuracy)
     when (operator) {
         SurveyRuleOperator.Always -> true

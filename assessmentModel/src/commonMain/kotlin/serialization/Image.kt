@@ -1,13 +1,19 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
 
 val imageSerializersModule = SerializersModule {
     polymorphic(ImageInfo::class) {
-        FetchableImage::class with FetchableImage.serializer()
-        AnimatedImage::class with AnimatedImage.serializer()
+        subclass(FetchableImage::class)
+        subclass(AnimatedImage::class)
     }
 }
 
@@ -71,7 +77,7 @@ interface ImageTheme : DrawableLayout {
 @Serializer(forClass = FetchableImage::class)
 object ImageNameSerializer : KSerializer<FetchableImage> {
     override val descriptor: SerialDescriptor
-            = PrimitiveDescriptor("ImageName", PrimitiveKind.STRING)
+            = PrimitiveSerialDescriptor("ImageName", PrimitiveKind.STRING)
     override fun deserialize(decoder: Decoder): FetchableImage {
         return FetchableImage(decoder.decodeString())
     }
@@ -149,7 +155,7 @@ sealed class ImagePlacement : StringEnum {
     @Serializer(forClass = ImagePlacement::class)
     companion object : KSerializer<ImagePlacement> {
         override val descriptor: SerialDescriptor
-                = PrimitiveDescriptor("ImagePlacement", PrimitiveKind.STRING)
+                = PrimitiveSerialDescriptor("ImagePlacement", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ImagePlacement {
             val name = decoder.decodeString()
             return valueOf(name)
