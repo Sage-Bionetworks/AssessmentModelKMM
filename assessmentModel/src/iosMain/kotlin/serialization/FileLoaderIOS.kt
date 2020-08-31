@@ -4,6 +4,8 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.parse
+import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.Assessment
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
@@ -45,11 +47,11 @@ abstract class KotlinDecodable(val decoder: KotlinDecoder) {
 }
 
 class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-    @Throws
+    @Throws(Throwable::class)
     fun decodeObject(): AssessmentGroupWrapper {
         try {
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
-            val group = decoder.jsonCoder.parse(serializer, jsonString)
+            val group = decoder.jsonCoder.decodeFromString(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
@@ -62,7 +64,7 @@ data class AssessmentGroupWrapper(val assessmentGroupInfo: AssessmentGroupInfo, 
 
 class AssessmentLoader(private val placeholder: Assessment,
                        private val decoder: KotlinDecoder) : Assessment by placeholder {
-    @Throws
+    @Throws(Throwable::class)
     fun decodeObject(): Assessment {
         try {
             return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonCoder)
@@ -73,11 +75,11 @@ class AssessmentLoader(private val placeholder: Assessment,
 }
 
 class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-    @Throws
+    @Throws(Throwable::class)
     fun decodeObject(): Assessment {
         try {
             val serializer = PolymorphicSerializer(Assessment::class)
-            val placeholder = decoder.jsonCoder.parse(serializer, jsonString)
+            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
             return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonCoder)
         } catch (err: Exception) {
             throw Throwable(err.message)
@@ -87,11 +89,11 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
 
 class ResultEncoder(val result: Result) {
     var jsonCoder: Json = Serialization.JsonCoder.default
-    @Throws
+    @Throws(Throwable::class)
     fun encodeObject(): String {
         try {
             val serializer = PolymorphicSerializer(Result::class)
-            return jsonCoder.stringify(serializer, result)
+            return jsonCoder.encodeToString(serializer, result)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
@@ -100,10 +102,10 @@ class ResultEncoder(val result: Result) {
 
 class JsonElementEncoder(val jsonElement: JsonElement) {
     var jsonCoder: Json = Serialization.JsonCoder.default
-    @Throws
+    @Throws(Throwable::class)
     fun encodeObject(): String {
         try {
-            return jsonCoder.stringify(JsonElement.serializer(), jsonElement)
+            return jsonCoder.encodeToString(JsonElement.serializer(), jsonElement)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
@@ -112,10 +114,10 @@ class JsonElementEncoder(val jsonElement: JsonElement) {
 
 class JsonElementDecoder(val jsonString: String) {
     var jsonCoder: Json = Serialization.JsonCoder.default
-    @Throws
+    @Throws(Throwable::class)
     fun decodeObject(): JsonElement {
         try {
-            return jsonCoder.parseJson(jsonString)
+            return jsonCoder.parseToJsonElement(jsonString)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
