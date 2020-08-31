@@ -3,15 +3,15 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.Assessment
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
-import platform.Foundation.*
+import platform.Foundation.NSBundle
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.stringWithContentsOfURL
 
 class FileLoaderIOS() : FileLoader {
     override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String {
