@@ -44,7 +44,22 @@ open class AssessmentFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
-        initAssessmentViewModel()
+        val assessmentId = arguments!!.getString(ARG_ASSESSMENT_ID_KEY)!!
+        val resourceName = arguments!!.getString(ARG_RESOURCE_NAME)!!
+        val packageName = arguments!!.getString(ARG_PACKAGE_NAME)!!
+
+        val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: packageName)
+        val assessmentGroup = AssessmentGroupInfoObject(
+            assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
+            packageName = packageName
+        )
+
+        val assessmentProvider =
+            FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
+        viewModel = ViewModelProvider(
+            this, AssessmentViewModelFactory()
+                .create(assessmentId, assessmentProvider)
+        ).getViewModel()
         super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
     }
 
@@ -64,25 +79,7 @@ open class AssessmentFragment : Fragment() {
         viewModel.start()
     }
 
-    open fun initAssessmentViewModel() {
-        val assessmentId = arguments!!.getString(ARG_ASSESSMENT_ID_KEY)!!
-        val resourceName = arguments!!.getString(ARG_RESOURCE_NAME)!!
-        val packageName = arguments!!.getString(ARG_PACKAGE_NAME)!!
-
-        val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: packageName)
-        val assessmentGroup = AssessmentGroupInfoObject(
-            assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
-            packageName = packageName
-        )
-
-        val assessmentProvider =
-            FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
-        viewModel = ViewModelProvider(
-            this, AssessmentViewModelFactory()
-                .create(assessmentId, assessmentProvider)
-        )
-            .get(AssessmentViewModel::class.java)
-    }
+    open fun ViewModelProvider.getViewModel() = this.get(AssessmentViewModel::class.java)
 
     private fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
         if (NavigationPoint.Direction.Exit == showNodeState.direction) {
