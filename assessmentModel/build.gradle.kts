@@ -67,7 +67,6 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-            implementation( "org.jetbrains.kotlin:kotlin-stdlib-common")
              api ("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
          }
       }
@@ -78,7 +77,6 @@ kotlin {
          }
       }
        sourceSets["androidLibMain"].dependencies {
-           implementation("org.jetbrains.kotlin:kotlin-stdlib")
            api( "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
            implementation("androidx.appcompat:appcompat:1.1.0")
        }
