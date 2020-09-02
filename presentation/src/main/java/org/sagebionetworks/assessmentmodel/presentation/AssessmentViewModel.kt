@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
-import org.sagebionetworks.assessmentmodel.presentation.mtbAssesssmentTest.MtbAssessmentViewModel
 
 open class AssessmentViewModel(
     val assessmentIdentifier: String,
@@ -123,7 +122,7 @@ open class AssessmentViewModel(
  */
 open class AssessmentViewModelFactory() {
 
-  open  fun create(
+    open fun create(
         assessmentIdentifier: String,
         assessmentProvider: AssessmentProvider
     ): ViewModelProvider.Factory {
