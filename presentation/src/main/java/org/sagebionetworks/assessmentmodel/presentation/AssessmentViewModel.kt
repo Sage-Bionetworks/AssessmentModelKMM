@@ -8,7 +8,10 @@ import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
-class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvider: AssessmentProvider) : ViewModel(), RootNodeController {
+open class AssessmentViewModel(
+    val assessmentIdentifier: String,
+    val assessmentProvider: AssessmentProvider
+) : ViewModel(), RootNodeController {
 
     //TODO: This should probably be done asynchronously -nbrown 02/06/20
     private var _assessment: Assessment? = null
@@ -20,7 +23,7 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
     }
 
     private var isStarted = false
-    private val assessmentNodeState = BranchNodeStateImpl(loadAssessment()!!, null)
+    open val assessmentNodeState = BranchNodeStateImpl(loadAssessment()!!, null)
     private val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
     val currentNodeStateLiveData: LiveData<ShowNodeState> = currentNodeStateMutableLiveData
 
@@ -41,14 +44,24 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
     }
 
     fun cancel() {
-        assessmentNodeState.finish(NavigationPoint(null, assessmentNodeState.currentResult, NavigationPoint.Direction.Exit))
+        assessmentNodeState.finish(
+            NavigationPoint(
+                null,
+                assessmentNodeState.currentResult,
+                NavigationPoint.Direction.Exit
+            )
+        )
     }
 
     override fun canHandle(node: Node): Boolean {
         return (node is Step)
     }
 
-    override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun handleGoForward(
+        nodeState: NodeState,
+        requestedPermissions: Set<PermissionInfo>?,
+        asyncActionNavigations: Set<AsyncActionNavigation>?
+    ) {
         //Update the LiveData stream with the new node
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
@@ -59,7 +72,11 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
             )
     }
 
-    override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun handleGoBack(
+        nodeState: NodeState,
+        requestedPermissions: Set<PermissionInfo>?,
+        asyncActionNavigations: Set<AsyncActionNavigation>?
+    ) {
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
@@ -87,13 +104,14 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
     /**
      * Data class for LiveData stream.
      */
-    data class ShowNodeState(val nodeState: NodeState,
-                             val direction: NavigationPoint.Direction,
-                             val requestedPermissions: Set<PermissionInfo>?,
-                             val asyncActionNavigations: Set<AsyncActionNavigation>?)
+    data class ShowNodeState(
+        val nodeState: NodeState,
+        val direction: NavigationPoint.Direction,
+        val requestedPermissions: Set<PermissionInfo>?,
+        val asyncActionNavigations: Set<AsyncActionNavigation>?
+    )
 
 }
-
 
 
 /**
@@ -102,9 +120,12 @@ class AssessmentViewModel(val assessmentIdentifier: String, val assessmentProvid
  * Providing ViewModelProvider.Factory allows us to inject dependencies and pass parameters
  * to an instance since the Android framework controls the instantiation of ViewModels.
  */
-class AssessmentViewModelFactory() {
+open class AssessmentViewModelFactory() {
 
-    fun create(assessmentIdentifier: String, assessmentProvider: AssessmentProvider): ViewModelProvider.Factory {
+    open fun create(
+        assessmentIdentifier: String,
+        assessmentProvider: AssessmentProvider
+    ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(AssessmentViewModel::class.java)) {
@@ -112,6 +133,7 @@ class AssessmentViewModelFactory() {
                     @Suppress("UNCHECKED_CAST")
                     return AssessmentViewModel(assessmentIdentifier, assessmentProvider) as T
                 }
+
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
         }
