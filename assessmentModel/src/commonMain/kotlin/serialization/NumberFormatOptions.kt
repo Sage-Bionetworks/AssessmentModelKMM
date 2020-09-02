@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.DateGenerator
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
@@ -49,7 +54,8 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
 
         @Serializer(forClass = Style::class)
         companion object : KSerializer<Style> {
-            override val descriptor: SerialDescriptor = PrimitiveDescriptor("Style", PrimitiveKind.STRING)
+            override val descriptor: SerialDescriptor =
+                PrimitiveSerialDescriptor("Style", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): Style {
                 val name = decoder.decodeString()
 

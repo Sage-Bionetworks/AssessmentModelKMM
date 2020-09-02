@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel.recorders
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.*
 
 /**
@@ -62,7 +67,8 @@ enum class MotionRecorderType : StringEnum {
 
     @Serializer(forClass = MotionRecorderType::class)
     companion object : KSerializer<MotionRecorderType> {
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("MotionRecorderType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("MotionRecorderType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): MotionRecorderType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")

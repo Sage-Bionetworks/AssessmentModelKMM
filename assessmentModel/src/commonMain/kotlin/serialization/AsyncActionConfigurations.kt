@@ -1,6 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.AsyncActionConfiguration
 import org.sagebionetworks.assessmentmodel.recorders.DistanceRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
@@ -11,7 +11,7 @@ import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
  */
 val asyncActionSerializersModule = SerializersModule {
     polymorphic(AsyncActionConfiguration::class) {
-        DistanceRecorderConfiguration::class with DistanceRecorderConfiguration.serializer()
-        MotionRecorderConfiguration::class with MotionRecorderConfiguration.serializer()
+        subclass(DistanceRecorderConfiguration::class)// with DistanceRecorderConfiguration.serializer()
+        subclass(MotionRecorderConfiguration::class)// with MotionRecorderConfiguration.serializer()
     }
 }

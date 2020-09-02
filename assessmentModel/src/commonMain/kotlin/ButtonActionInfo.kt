@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
 /**
@@ -174,7 +179,7 @@ sealed class ButtonAction() : StringEnum {
     @Serializer(forClass = ButtonAction::class)
     companion object : KSerializer<ButtonAction> {
         override val descriptor: SerialDescriptor
-                = PrimitiveDescriptor("ButtonAction", PrimitiveKind.STRING)
+                = PrimitiveSerialDescriptor("ButtonAction", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ButtonAction {
             val name = decoder.decodeString()
             return valueOf(name)

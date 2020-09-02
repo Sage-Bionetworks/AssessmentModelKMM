@@ -1,6 +1,9 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
+import kotlinx.serialization.parse
+import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.ButtonActionInfo
 import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.ButtonStyle
@@ -39,20 +42,20 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("default", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("fooImage", jsonWrapper.getPrimitiveOrNull("iconName")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("default", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("foo title", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("fooImage", jsonWrapper["iconName"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -70,21 +73,21 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("navigation", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("fooImage", jsonWrapper.getPrimitiveOrNull("iconName")?.content)
-        assertEquals("skipToMaFoo", jsonWrapper.getPrimitiveOrNull("skipToIdentifier")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("navigation", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("foo title", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("fooImage", jsonWrapper["iconName"]?.jsonPrimitive?.content)
+        assertEquals("skipToMaFoo", jsonWrapper["skipToIdentifier"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -108,23 +111,23 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("fooImage", jsonWrapper.getPrimitiveOrNull("iconName")?.content)
-        assertEquals("remindLater", jsonWrapper.getPrimitiveOrNull("reminderIdentifier")?.content)
-        assertEquals("Remind me later to do stuff", jsonWrapper.getPrimitiveOrNull("reminderPrompt")?.content)
-        assertEquals("Time to do stuff", jsonWrapper.getPrimitiveOrNull("reminderAlert")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("reminder", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("foo title", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("fooImage", jsonWrapper["iconName"]?.jsonPrimitive?.content)
+        assertEquals("remindLater", jsonWrapper["reminderIdentifier"]?.jsonPrimitive?.content)
+        assertEquals("Remind me later to do stuff", jsonWrapper["reminderPrompt"]?.jsonPrimitive?.content)
+        assertEquals("Time to do stuff", jsonWrapper["reminderAlert"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -140,20 +143,20 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("reminder", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("\$remindMeLaterButtonTitle\$", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("remindLater", jsonWrapper.getPrimitiveOrNull("reminderIdentifier")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("reminder", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("\$remindMeLaterButtonTitle\$", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("remindLater", jsonWrapper["reminderIdentifier"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -177,23 +180,23 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("webView", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("fooImage", jsonWrapper.getPrimitiveOrNull("iconName")?.content)
-        assertEquals("learnMore", jsonWrapper.getPrimitiveOrNull("url")?.content)
-        assertEquals("Learn More about this assessment", jsonWrapper.getPrimitiveOrNull("title")?.content)
-        assertEquals("Exit", jsonWrapper.getPrimitiveOrNull("closeButtonTitle")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("webView", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("foo title", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("fooImage", jsonWrapper["iconName"]?.jsonPrimitive?.content)
+        assertEquals("learnMore", jsonWrapper["url"]?.jsonPrimitive?.content)
+        assertEquals("Learn More about this assessment", jsonWrapper["title"]?.jsonPrimitive?.content)
+        assertEquals("Exit", jsonWrapper["closeButtonTitle"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -240,22 +243,22 @@ open class ButtonTest {
             """.trimIndent()
 
         val original = TestButtonWrapper(button)
-        val jsonString = jsonCoder.stringify(TestButtonWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("button")
-        assertEquals("videoView", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("foo title", jsonWrapper.getPrimitiveOrNull("buttonTitle")?.content)
-        assertEquals("fooImage", jsonWrapper.getPrimitiveOrNull("iconName")?.content)
-        assertEquals("learnMore", jsonWrapper.getPrimitiveOrNull("url")?.content)
-        assertEquals("Learn More about this assessment", jsonWrapper.getPrimitiveOrNull("title")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("button").jsonObject
+        assertEquals("videoView", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("foo title", jsonWrapper["buttonTitle"]?.jsonPrimitive?.content)
+        assertEquals("fooImage", jsonWrapper["iconName"]?.jsonPrimitive?.content)
+        assertEquals("learnMore", jsonWrapper["url"]?.jsonPrimitive?.content)
+        assertEquals("Learn More about this assessment", jsonWrapper["title"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -264,9 +267,9 @@ open class ButtonTest {
         val inputString = """{"buttonStyle":{"type":"header.back"}}"""
 
         val original = TestButtonStyleWrapper(buttonStyle)
-        val jsonString = jsonCoder.stringify(TestButtonStyleWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonStyleWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonStyleWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonStyleWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -280,9 +283,9 @@ open class ButtonTest {
         val inputString = """{"buttonStyle":{"type":"header.close"}}"""
 
         val original = TestButtonStyleWrapper(buttonStyle)
-        val jsonString = jsonCoder.stringify(TestButtonStyleWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonStyleWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonStyleWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonStyleWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -296,9 +299,9 @@ open class ButtonTest {
         val inputString = """{"buttonStyle":{"type":"footer","buttonTitle":"Foo"}}"""
 
         val original = TestButtonStyleWrapper(buttonStyle)
-        val jsonString = jsonCoder.stringify(TestButtonStyleWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestButtonStyleWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestButtonStyleWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestButtonStyleWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestButtonStyleWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -314,9 +317,14 @@ open class ButtonTest {
             val inputString = """{"buttonAction":"$name"}"""
 
             val original = TestButtonActionWrapper(it)
-            val jsonString = jsonCoder.stringify(TestButtonActionWrapper.serializer(), original)
-            val restored = jsonCoder.parse(TestButtonActionWrapper.serializer(), jsonString)
-            val decoded = jsonCoder.parse(TestButtonActionWrapper.serializer(), inputString)
+            val jsonString = jsonCoder.encodeToString(
+                TestButtonActionWrapper.serializer(),
+                original
+            )
+            val restored =
+                jsonCoder.decodeFromString(TestButtonActionWrapper.serializer(), jsonString)
+            val decoded =
+                jsonCoder.decodeFromString(TestButtonActionWrapper.serializer(), inputString)
 
             // Look to see that the restored, decoded, and original all are equal
             assertEquals(original, restored)

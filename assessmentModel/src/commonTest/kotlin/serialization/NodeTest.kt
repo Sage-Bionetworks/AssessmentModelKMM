@@ -3,6 +3,8 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.parse
+import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
@@ -65,9 +67,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             ActiveStepCommand.VibrateOnFinish)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is ActiveStepObject)
         assertEquals(original, decoded)
@@ -180,9 +182,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.progressMarkers = listOf("step1", "step2")
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is AssessmentObject)
         assertContainerNode(original, decoded)
@@ -259,9 +261,9 @@ open class NodeTest : NodeSerializationTestHelper() {
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is ChoiceQuestionObject)
         assertEqualStep(original, decoded)
@@ -327,9 +329,9 @@ open class NodeTest : NodeSerializationTestHelper() {
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is ComboBoxQuestionObject)
         assertEqualStep(original, decoded)
@@ -411,9 +413,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             ActiveStepCommand.VibrateOnFinish)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is CountdownStepObject)
         assertEquals(original, decoded)
@@ -481,9 +483,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is FormStepObject)
         assertFormStepNode(original, decoded)
@@ -549,9 +551,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         )
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is InstructionStepObject)
         assertEqualOptionalStep(original, decoded)
@@ -626,9 +628,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is OverviewStepObject)
         assertEquals(original, decoded)
@@ -702,9 +704,9 @@ open class NodeTest : NodeSerializationTestHelper() {
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is ResultSummaryStepObject)
         assertEquals(original, decoded)
@@ -765,9 +767,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.surveyRules = listOf(ComparableSurveyRuleObject(JsonPrimitive(1900)))
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
 
         assertTrue(decoded is SimpleQuestionObject)
@@ -840,9 +842,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is MultipleInputQuestionObject)
         assertEqualStep(original, decoded)
@@ -912,9 +914,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.progressMarkers = listOf("step1", "step2")
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is SectionObject)
         assertContainerNode(original, decoded)
@@ -973,9 +975,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.imageInfo = FetchableImage("fooIcon")
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableNodeObject)
         assertEqualContentNodes(original, decoded)
@@ -1120,9 +1122,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.imageInfo = FetchableImage("fooIcon")
 
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableAssessmentObject)
         assertEqualContentNodes(original, decoded)
@@ -1155,9 +1157,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.imageInfo = FetchableImage("fooIcon")
 
         val serializer = PolymorphicSerializer(Assessment::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableAssessmentObject)
         assertEqualContentNodes(original, decoded)

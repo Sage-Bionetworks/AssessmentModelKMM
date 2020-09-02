@@ -42,7 +42,7 @@ actual class IntFormatter actual constructor(formatOptions: NumberFormatOptions<
     override fun toNSNumber(value: Int): NSNumber = NSNumber(value)
     override fun toType(value: NSNumber?): Int? = value?.intValue
     override fun jsonValueFor(value: Int?): JsonElement? = JsonPrimitive(value)
-    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.int
+    override fun valueFor(jsonValue: JsonElement?): Int? = jsonValue?.jsonPrimitive?.int
 }
 
 @ExperimentalUnsignedTypes
@@ -51,5 +51,5 @@ actual class DoubleFormatter actual constructor(formatOptions: NumberFormatOptio
     override fun toNSNumber(value: Double): NSNumber = NSNumber(value)
     override fun toType(value: NSNumber?): Double? = value?.doubleValue
     override fun jsonValueFor(value: Double?): JsonElement? = JsonPrimitive(value)
-    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.double
+    override fun valueFor(jsonValue: JsonElement?): Double? = jsonValue?.jsonPrimitive?.double
 }
