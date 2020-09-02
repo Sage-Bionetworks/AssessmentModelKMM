@@ -56,10 +56,7 @@ open class AssessmentFragment : Fragment() {
 
         val assessmentProvider =
             FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
-        viewModel = ViewModelProvider(
-            this, AssessmentViewModelFactory()
-                .create(assessmentId, assessmentProvider)
-        ).getViewModel()
+        viewModel = initViewModel(assessmentId, assessmentProvider)
         super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
     }
 
@@ -79,7 +76,11 @@ open class AssessmentFragment : Fragment() {
         viewModel.start()
     }
 
-    open fun ViewModelProvider.getViewModel() = this.get(AssessmentViewModel::class.java)
+    open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider) =
+        ViewModelProvider(
+            this, AssessmentViewModelFactory()
+                .create(assessmentId, assessmentProvider)
+        ).get(AssessmentViewModel::class.java)
 
     private fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
         if (NavigationPoint.Direction.Exit == showNodeState.direction) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
+import org.sagebionetworks.assessmentmodel.presentation.mtbAssesssmentTest.MtbAssessmentViewModel
 
 open class AssessmentViewModel(
     val assessmentIdentifier: String,
@@ -120,9 +121,9 @@ open class AssessmentViewModel(
  * Providing ViewModelProvider.Factory allows us to inject dependencies and pass parameters
  * to an instance since the Android framework controls the instantiation of ViewModels.
  */
-class AssessmentViewModelFactory() {
+open class AssessmentViewModelFactory() {
 
-    fun create(
+  open  fun create(
         assessmentIdentifier: String,
         assessmentProvider: AssessmentProvider
     ): ViewModelProvider.Factory {
@@ -133,6 +134,7 @@ class AssessmentViewModelFactory() {
                     @Suppress("UNCHECKED_CAST")
                     return AssessmentViewModel(assessmentIdentifier, assessmentProvider) as T
                 }
+
                 throw IllegalArgumentException("Unknown ViewModel class")
             }
         }
