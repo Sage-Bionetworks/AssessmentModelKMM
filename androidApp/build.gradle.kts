@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.multiplatform")
     id("kotlin-android-extensions")
+    id("org.jetbrains.dokka")
 }
 
 android {
