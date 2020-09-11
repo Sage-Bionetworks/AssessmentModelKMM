@@ -1,0 +1,10 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+org.sagebionetworks.assessmentmodel
+org.sagebionetworks.assessmentmodel.navigation
+org.sagebionetworks.assessmentmodel.recorders
+org.sagebionetworks.assessmentmodel.resourcemanagement
+org.sagebionetworks.assessmentmodel.serialization
+org.sagebionetworks.assessmentmodel.survey
+

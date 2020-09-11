@@ -11,6 +11,15 @@ buildscript {
     }
 }
 
+plugins {
+
+    id("org.jetbrains.dokka") version "1.4.0"
+}
+
+tasks.dokkaHtmlMultiModule {
+    outputDirectory.set(rootDir.resolve("docs"))
+}
+
 allprojects {
     group = "org.sagebionetworks.assessmentmodel"
     version = "0.3.0"

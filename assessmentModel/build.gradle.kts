@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.github.dcendents.android-maven")
     id ("maven-publish")
+    id("org.jetbrains.dokka")
 }
 
 android {

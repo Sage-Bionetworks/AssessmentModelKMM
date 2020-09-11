@@ -1,0 +1,7 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+org.sagebionetworks.assessmentmodel.presentation
+org.sagebionetworks.assessmentmodel.presentation.inputs
+org.sagebionetworks.assessmentmodel.presentation.views
+
