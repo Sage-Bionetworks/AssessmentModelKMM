@@ -89,16 +89,15 @@ open class AssessmentViewModel(
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
-        //TODO: -nbrown 02/13/2020
-        if (FinishedReason.EarlyExit == reason) {
-            currentNodeStateMutableLiveData.value =
-                ShowNodeState(
-                    nodeState,
-                    NavigationPoint.Direction.Exit,
-                    null,
-                    null
-                )
-        }
+
+        //Trigger the UI to finish
+        currentNodeStateMutableLiveData.value =
+            ShowNodeState(
+                nodeState,
+                NavigationPoint.Direction.Exit,
+                null,
+                null
+            )
     }
 
     /**
