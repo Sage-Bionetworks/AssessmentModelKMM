@@ -24,7 +24,7 @@ open class AssessmentViewModel(
 
     private var isStarted = false
     open val assessmentNodeState = BranchNodeStateImpl(loadAssessment()!!, null)
-    private val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
+    protected val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
     val currentNodeStateLiveData: LiveData<ShowNodeState> = currentNodeStateMutableLiveData
 
     fun start() {
