@@ -2,7 +2,6 @@
   "type": "assessment",
   "identifier": "foo",
   "versionString": "1.2.3",
-  "resultIdentifier":"bar",
   "title": "Hello World!",
   "subtitle": "Subtitle",
   "detail": "Some text. This is a test.",
