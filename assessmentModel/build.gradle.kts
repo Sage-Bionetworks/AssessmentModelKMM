@@ -69,7 +69,7 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
          }
       }
       commonTest {
@@ -79,11 +79,11 @@ kotlin {
          }
       }
        sourceSets["androidLibMain"].dependencies {
-           api( "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
            implementation("androidx.appcompat:appcompat:1.1.0")
        }
        sourceSets["iosMain"].dependencies {
-           api( "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+           api( "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0-RC2")
        }
 
     }
