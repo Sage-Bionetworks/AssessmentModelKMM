@@ -2,6 +2,7 @@
   "type": "assessment",
   "identifier": "foo",
   "versionString": "1.2.3",
+  "schemaIdentifier":"bar",
   "title": "Hello World!",
   "subtitle": "Subtitle",
   "detail": "Some text. This is a test.",
