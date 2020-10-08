@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonLiteral
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.serialization.AnswerResultObject
 import org.sagebionetworks.assessmentmodel.serialization.ChoiceItemWrapper
