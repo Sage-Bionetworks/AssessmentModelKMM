@@ -25,6 +25,7 @@ object Serialization {
     object JsonCoder {
         val default = Json{
                 serializersModule = SerializersModule.default
+                encodeDefaults = true
         }
     }
 }
