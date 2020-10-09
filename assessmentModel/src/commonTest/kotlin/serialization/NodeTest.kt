@@ -3,8 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
