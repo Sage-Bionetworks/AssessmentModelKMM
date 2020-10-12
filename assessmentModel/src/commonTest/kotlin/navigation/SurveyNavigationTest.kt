@@ -2,8 +2,6 @@ package org.sagebionetworks.assessmentmodel.navigation
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.SurveyRuleOperator
 import org.sagebionetworks.assessmentmodel.survey.compareTo

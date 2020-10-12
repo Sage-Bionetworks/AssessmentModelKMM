@@ -5,8 +5,6 @@ import kotlinx.serialization.json.double
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.ImageInfo
 import kotlin.test.*
 

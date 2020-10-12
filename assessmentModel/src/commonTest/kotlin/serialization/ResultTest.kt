@@ -2,12 +2,9 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
-import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
-import org.sagebionetworks.assessmentmodel.survey.SurveyRuleOperator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
