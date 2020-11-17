@@ -1,0 +1,41 @@
+{
+    "identifier": "textfield",
+    "type": "assessment",
+    "steps": [
+              {
+              "identifier": "numbers",
+              "type": "multipleInputQuestion",
+              "detail": "These inputs use a formatter to parse the entered text.",
+              "inputItems": [{
+                              "identifier": "minNeg2Max3",
+                              "type": "integer",
+                              "fieldLabel": "Pick a number between -2 and +3",
+                              "uiHint": "textfield",
+                              "formatOptions" : {   "minimumValue" : -2,
+                                            "maximumValue" : 3,
+                                            "stepInterval" : 1}
+                              },
+                              {
+                              "identifier": "min0Max10",
+                              "type": "integer",
+                              "fieldLabel": "Pick a number between 0 and 10",
+                              "uiHint": "textfield",
+                              "formatOptions" : {
+                                  "minimumValue" : 0,
+                                  "maximumValue" : 10}
+                              }
+                              ]
+              },
+              {
+              "identifier": "year",
+              "type": "simpleQuestion",
+              "title": "Enter a year",
+              "detail": "Enter a year in the past.",
+              "inputItem": {
+                              "type": "year",
+                              "uiHint": "textfield",
+                              "formatOptions": { "allowFuture": false }
+                              }
+              }
+              ]
+}
