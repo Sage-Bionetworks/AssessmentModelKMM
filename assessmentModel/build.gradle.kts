@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
@@ -69,7 +69,7 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
          }
       }
       commonTest {
