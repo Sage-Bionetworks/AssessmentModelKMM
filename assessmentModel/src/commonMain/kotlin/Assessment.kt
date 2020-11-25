@@ -123,6 +123,11 @@ interface Node : ResultMapElement {
      * Unpack (and potentially replace) the node and set up any required resource pointers.
      */
     fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node = this
+
+    /**
+     * Does this [Node] support backward navigation?
+     */
+    fun canGoBack() = !hideButtons.contains(ButtonAction.Navigation.GoBackward)
 }
 
 /**
@@ -313,6 +318,19 @@ interface OptionalStep : Step {
  * a single screen.
  */
 interface InstructionStep : OptionalStep, ContentNode
+
+/**
+ * A [CompletionStep] is an interface used to mark a node as a step that is only shown to the participant if they
+ * have completed the [Assessment] and there are no more results to be included.
+ */
+interface CompletionStep : Step {
+
+    /**
+     * Completion steps assume that if and only if the navigation button is explicitly included,
+     * can the step go back.
+     */
+    override fun canGoBack(): Boolean = buttonMap.containsKey(ButtonAction.Navigation.GoBackward)
+}
 
 /**
  * A [FormStep] is a container of other nodes where design of the form *requires* displaying all the components on a
