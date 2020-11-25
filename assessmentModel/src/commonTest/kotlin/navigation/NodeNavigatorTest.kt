@@ -277,6 +277,8 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val result = buildResult(assessmentObject, 4)
         addResults(result, nodeList, 3, 2)
 
+        val node = nodeList[2]
+        assertEquals(listOf(), node.hideButtons)
         assertTrue(navigator.allowBackNavigation(nodeList[2], result))
 
         val point = navigator.nodeBefore(nodeList[2], result)
@@ -359,6 +361,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedPath, topResult.path)
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -384,6 +387,43 @@ class NodeNavigatorTest : NavigationTestHelper() {
 
         assertTrue(testRootNodeController.finished_called)
         assertEquals(nodeState, testRootNodeController.finished_nodeState)
+
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
+        assertFalse(testRootNodeController.finishedCalledBeforeSave)
+    }
+
+    @Test
+    fun testGoForward_CompletionStep_FlatLinearNavigation() {
+        val nodeList: MutableList<Node> = buildNodeList(5, 1, "step").toMutableList()
+        val lastNode = TestCompletionStep("completion")
+        nodeList.add(lastNode)
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+
+        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "completion"), 6)
+        val expectedIdentifiers = listOf("step1", "step2", "step3", "step4", "step5", "completion")
+        val expectedPath = expectedIdentifiers.map { PathMarker(it, NavigationPoint.Direction.Forward) }
+
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
+
+        assertFalse(testRootNodeController.infiniteLoop)
+        assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
+
+        val topResult = nodeState.currentResult
+        // The path history should be up to but not including the current result
+        assertEquals(expectedIdentifiers, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
+        // The node chains should include each node in the list to the testRootNodeController.stepTo value.
+        assertEquals(expectedIdentifiers, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
+        // Path should include all forward traverse.
+        assertEquals(expectedPath, topResult.path)
+
+        assertFalse(testRootNodeController.finished_called)
+
+        assertFalse(lastNode.canGoBack())
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
     }
 
     @Test
@@ -415,11 +455,13 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
     fun testGoForward_FirstSection_SectionNavigation() {
-        val nodeListB = buildNodeList(5, 1, "stepB").toList()
+        val nodeListB: MutableList<Node> = buildNodeList(4, 1, "stepB").toMutableList()
+        nodeListB.add(TestCompletionStep("stepB5"))
         val nodeB = SectionObject("stepB", nodeListB)
         val nodeListC = buildNodeList(3, 1, "stepC").toList()
         val nodeC = SectionObject("stepC", nodeListC)
@@ -427,9 +469,9 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val assessmentObject = AssessmentObject("foo", listOf(nodeB, nodeC, nodeD))
         val nodeState = BranchNodeStateImpl(assessmentObject)
 
-        val expectedChain = listOf("stepB1", "stepB2", "stepB3")
+        val expectedChain = listOf("stepB1", "stepB2", "stepB3", "stepB4", "stepB5")
         val expectedResult = listOf<String>()
-        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "stepB3"), expectedChain.count())
+        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "stepB5"), expectedChain.count())
 
         nodeState.rootNodeController = testRootNodeController
         nodeState.goForward()
@@ -445,6 +487,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -476,6 +519,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
 
         // Test that calling goForward() on the root will still go forward
         println("reset stepTo")
@@ -524,6 +568,84 @@ class NodeNavigatorTest : NavigationTestHelper() {
 
         assertTrue(testRootNodeController.finished_called)
         assertEquals(nodeState, testRootNodeController.finished_nodeState)
+
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
+        assertFalse(testRootNodeController.finishedCalledBeforeSave)
+    }
+
+    @Test
+    fun testGoForward_Completion_SectionNavigation() {
+        val nodeA = InstructionStepObject("stepA")
+        val nodeListB = buildNodeList(5, 1, "stepB").toList()
+        val nodeB = SectionObject("stepB", nodeListB)
+        val nodeListC = buildNodeList(3, 1, "stepC").toList()
+        val nodeC = SectionObject("stepC", nodeListC)
+        val nodeD = TestCompletionStep("stepD")
+        val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC, nodeD))
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+
+        val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3", "stepB4", "stepB5", "stepC1", "stepC2", "stepC3", "stepD")
+        val expectedResults = listOf("stepA", "stepB", "stepC", "stepD")
+        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "stepD"), expectedChain.count())
+
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
+
+        assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
+        assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
+
+        val topResult = nodeState.currentResult
+        // The path history should be up to but not including the current node
+        assertEquals(nodeD, nodeState.currentChild?.node)
+        assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
+        // The node chains should include each node in the list to the testRootNodeController.stepTo value.
+        assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
+
+        assertFalse(testRootNodeController.finished_called)
+
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
+        assertFalse(testRootNodeController.finishedCalledBeforeSave)
+    }
+
+    @Test
+    fun testGoForward_CompletionInSection_SectionNavigation() {
+        val nodeA = InstructionStepObject("stepA")
+        val nodeListB: MutableList<Node> = buildNodeList(4, 1, "stepB").toMutableList()
+        nodeListB.add(TestCompletionStep("stepB5"))
+        val nodeB = SectionObject("stepB", nodeListB)
+        val nodeListC: MutableList<Node> = buildNodeList(2, 1, "stepC").toMutableList()
+        nodeListC.add(TestCompletionStep("stepC3"))
+        val nodeC = SectionObject("stepC", nodeListC)
+        val assessmentObject = AssessmentObject("foo", listOf(nodeA, nodeB, nodeC))
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+
+        val expectedChain = listOf("stepA", "stepB1", "stepB2", "stepB3", "stepB4", "stepB5", "stepC1", "stepC2", "stepC3")
+        val expectedResults = listOf("stepA", "stepB", "stepC")
+        val testRootNodeController = TestRootNodeController(mapOf(NavigationPoint.Direction.Forward to "stepC3"), expectedChain.count())
+
+        nodeState.rootNodeController = testRootNodeController
+        nodeState.goForward()
+
+        assertEquals(testRootNodeController.expectedCount, testRootNodeController.nodeChain.count())
+        assertFalse(testRootNodeController.infiniteLoop, "stepTo method may have hit an infinite loop")
+
+        val topResult = nodeState.currentResult
+        assertEquals(expectedResults, topResult.pathHistoryResults.map { it.identifier }, "${topResult.pathHistoryResults}")
+        // The node chains should include each node in the list to the testRootNodeController.stepTo value.
+        assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
+
+        val lastResult = topResult.pathHistoryResults.last()
+        assertTrue(lastResult is BranchNodeResult)
+        val expectedResultsC = listOf("stepC1", "stepC2", "stepC3")
+        assertEquals(expectedResultsC, lastResult.pathHistoryResults.map { it.identifier }, "${lastResult.pathHistoryResults}")
+
+        assertFalse(testRootNodeController.finished_called)
+
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
+        assertFalse(testRootNodeController.finishedCalledBeforeSave)
     }
 
     @Test
@@ -557,6 +679,10 @@ class NodeNavigatorTest : NavigationTestHelper() {
 
         assertTrue(testRootNodeController.finished_called)
         assertEquals(nodeState, testRootNodeController.finished_nodeState)
+
+        assertTrue(testRootNodeController.readyToSave_called)
+        assertEquals(nodeState, testRootNodeController.readyToSave_nodeState)
+        assertFalse(testRootNodeController.finishedCalledBeforeSave)
     }
 
     /**
@@ -589,6 +715,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedIdentifiers, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -624,6 +751,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -659,6 +787,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -695,6 +824,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     @Test
@@ -731,6 +861,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(expectedChain, testRootNodeController.nodeChain.map { it.node.identifier }, "${testRootNodeController.nodeChain}")
 
         assertFalse(testRootNodeController.finished_called)
+        assertFalse(testRootNodeController.readyToSave_called)
     }
 
     /**
@@ -786,6 +917,13 @@ class NodeNavigatorTest : NavigationTestHelper() {
     }
 }
 
+private data class TestCompletionStep(override val identifier: String,
+                                      override val comment: String? = null,
+                                      override val hideButtons: List<ButtonAction> = listOf(),
+                                      override val buttonMap: Map<ButtonAction, ButtonActionInfo> = mapOf(),
+                                      override val spokenInstructions: Map<SpokenInstructionTiming, String>? = null
+) : CompletionStep
+
 open class NavigationTestHelper {
 
     /**
@@ -812,6 +950,10 @@ open class NavigationTestHelper {
         var finished_called = false
         var finished_nodeState: NodeState? = null
         var finished_reason: FinishedReason? = null
+        var readyToSave_called = false
+        var readyToSave_nodeState: NodeState? = null
+        var readyToSave_reason: FinishedReason? = null
+        var finishedCalledBeforeSave = false
 
         override fun canHandle(node: Node): Boolean {
             return (node is Step)
@@ -823,6 +965,12 @@ open class NavigationTestHelper {
 
         override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
             show(nodeState, NavigationPoint.Direction.Forward)
+        }
+
+        override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
+            readyToSave_called = true
+            readyToSave_nodeState = nodeState
+            readyToSave_reason = reason
         }
 
         private fun show(nodeState: NodeState, direction: NavigationPoint.Direction) {
@@ -841,6 +989,7 @@ open class NavigationTestHelper {
             finished_called = true
             finished_nodeState = nodeState
             finished_reason = reason
+            finishedCalledBeforeSave = !readyToSave_called
         }
     }
 

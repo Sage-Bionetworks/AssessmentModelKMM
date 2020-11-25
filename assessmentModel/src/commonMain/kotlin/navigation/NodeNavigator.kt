@@ -35,7 +35,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     }
 
     override fun allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult): Boolean {
-        return previousNode(currentNode, branchResult) != null
+        return currentNode.canGoBack() && (previousNode(currentNode, branchResult) != null)
     }
 
     override fun progress(currentNode: Node, branchResult: BranchNodeResult): Progress? {
@@ -127,7 +127,8 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
                                               nextNode: Node?,
                                               parentResult: BranchNodeResult) : Set<AsyncActionNavigation>? {
         val start = asyncActionContainer?.backgroundActionsToStart(previousNode, nextNode)
-        val stop = asyncActionContainer?.backgroundActionsToStop(previousNode, nextNode)
+        val stopNode = nextNode?.let { if (this.isCompleted(it, parentResult)) null else it }
+        val stop = asyncActionContainer?.backgroundActionsToStop(stopNode)
         return if (!start.isNullOrEmpty() || !stop.isNullOrEmpty()) {
             setOf(AsyncActionNavigation(node.identifier, start, stop))
         } else null
@@ -148,7 +149,11 @@ fun AsyncActionContainer.backgroundActionsToStart(previousNode: Node?, nextNode:
     }
 }
 
-fun AsyncActionContainer.backgroundActionsToStop(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
-    = filterBackgroundActions {
-    (it is RecorderConfiguration) && (nextNode?.identifier == it.stopStepIdentifier)
-}
+fun AsyncActionContainer.backgroundActionsToStop(nextNode: Node?) : Set<AsyncActionConfiguration>?
+    = filterBackgroundActions { it.shouldStop(nextNode) }
+
+fun AsyncActionConfiguration.shouldStop(nextNode: Node?) : Boolean
+    = when (this) {
+        is RecorderConfiguration -> (nextNode?.identifier == this.stopStepIdentifier)
+        else -> (nextNode == null)
+    }

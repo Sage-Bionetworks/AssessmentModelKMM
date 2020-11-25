@@ -50,6 +50,19 @@ interface Navigator {
      * then progress should not be shown for this [currentNode] of assessment.
      */
     fun progress(currentNode: Node, branchResult: BranchNodeResult): Progress?
+
+    /**
+     * Returns whether or not the [Assessment] is completed and ready for the results to be saved
+     * (uploaded to a server, for example). This method should *only* return true if all the results
+     * associated with this [Assessment] have been added to the result set.
+     */
+    fun isCompleted(currentNode: Node, branchResult: BranchNodeResult): Boolean {
+        return if (this.allowBackNavigation(currentNode, branchResult)) false
+        else when (currentNode) {
+            is CompletionStep -> true
+            else -> false
+        }
+    }
 }
 
 /**
