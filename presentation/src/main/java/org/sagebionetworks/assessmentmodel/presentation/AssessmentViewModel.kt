@@ -86,6 +86,12 @@ open class AssessmentViewModel(
             )
     }
 
+    override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
+        val resultString = nodeState.currentResult.toString()
+        Log.d("Save Result", resultString)
+        // syoung 11/25/2020 In an application, this is the callback for uploading the results.
+    }
+
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
