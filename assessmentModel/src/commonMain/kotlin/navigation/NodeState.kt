@@ -323,8 +323,12 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         if (hasMarkedFinalResult) return
         this.hasMarkedFinalResult = true
         currentResult.endDateString = DateGenerator.nowString()
+        didMarkFinalResult()
     }
     private var hasMarkedFinalResult = false
+
+    protected open fun didMarkFinalResult() {
+    }
 
     /**
      * Finish any navigation required at this level. This will check to see if the returned navigation point requires
