@@ -1,18 +1,15 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
-import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 
 val fileProviderSerializersModule = SerializersModule {
     polymorphic(AssessmentGroupInfo::class) {
-        AssessmentGroupInfoObject::class with AssessmentGroupInfoObject.serializer()
+        subclass(AssessmentGroupInfoObject::class)
     }
 }
 
@@ -29,7 +26,7 @@ interface TransformableNode : ContentNode, AssetInfo {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = fileLoader.loadFile(this, resourceInfo)
-        val unpackedNode = jsonCoder.parse(serializer, jsonString)
+        val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
         return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
     }
 }
@@ -45,7 +42,7 @@ interface TransformableAssessment : Assessment, TransformableNode {
     override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment {
         val serializer = PolymorphicSerializer(Assessment::class)
         val jsonString = fileLoader.loadFile(this, resourceInfo)
-        val unpackedNode = jsonCoder.parse(serializer, jsonString)
+        val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
         return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
     }
 

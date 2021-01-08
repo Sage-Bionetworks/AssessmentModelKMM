@@ -1,6 +1,10 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.sagebionetworks.assessmentmodel.ImageInfo
 import kotlin.test.*
 
@@ -20,19 +24,19 @@ open class ImageTest {
         val inputString = """{"image":{"type":"fetchable","imageName":"before"}}"""
 
         val original = TestImageWrapper(image)
-        val jsonString = jsonCoder.stringify(TestImageWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestImageWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestImageWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestImageWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestImageWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestImageWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("image")
-        assertEquals("fetchable", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("before", jsonWrapper.getPrimitiveOrNull("imageName")?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("image").jsonObject
+        assertEquals("fetchable", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("before", jsonWrapper["imageName"]?.jsonPrimitive?.content)
     }
 
     @Test
@@ -41,25 +45,25 @@ open class ImageTest {
         val inputString = """{"image":{"type":"fetchable","imageName":"before","label":"Foo","placementType":"backgroundBefore","size":{"width":20.0,"height":40.0}}}"""
 
         val original = TestImageWrapper(image)
-        val jsonString = jsonCoder.stringify(TestImageWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestImageWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestImageWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestImageWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestImageWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestImageWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("image")
-        assertEquals("fetchable", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals("before", jsonWrapper.getPrimitiveOrNull("imageName")?.content )
-        assertEquals("Foo", jsonWrapper.getPrimitiveOrNull("label")?.content)
-        assertEquals("backgroundBefore", jsonWrapper.getPrimitiveOrNull("placementType")?.content)
-        val sizeObject = jsonWrapper.getObjectOrNull("size")
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("image").jsonObject
+        assertEquals("fetchable", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("before", jsonWrapper["imageName"]?.jsonPrimitive?.content)
+        assertEquals("Foo", jsonWrapper["label"]?.jsonPrimitive?.content)
+        assertEquals("backgroundBefore", jsonWrapper["placementType"]?.jsonPrimitive?.content)
+        val sizeObject = jsonWrapper.getValue("size").jsonObject
         assertNotNull(sizeObject)
-        assertEquals(20.0, sizeObject.getPrimitiveOrNull("width")?.double)
-        assertEquals(40.0, sizeObject.getPrimitiveOrNull("height")?.double)
+        assertEquals(20.0, sizeObject["width"]?.jsonPrimitive?.double)
+        assertEquals(40.0, sizeObject["height"]?.jsonPrimitive?.double)
     }
 
     @Test
@@ -68,22 +72,22 @@ open class ImageTest {
         val inputString = """{"image":{"type":"animated","imageNames":["before", "after"],"animationDuration":0.25}}"""
 
         val original = TestImageWrapper(image)
-        val jsonString = jsonCoder.stringify(TestImageWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestImageWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestImageWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestImageWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestImageWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestImageWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("image")
-        assertEquals("animated", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals(0.25, jsonWrapper.getPrimitiveOrNull("animationDuration")?.double)
-        val imageNames = jsonWrapper.getArrayOrNull("imageNames")
-        assertEquals("before", imageNames?.firstOrNull()?.primitive?.content)
-        assertEquals("after", imageNames?.lastOrNull()?.primitive?.content)
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("image").jsonObject
+        assertEquals("animated", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals(0.25, jsonWrapper["animationDuration"]?.jsonPrimitive?.double)
+        val imageNames = jsonWrapper["imageNames"]?.jsonArray
+        assertEquals("before", imageNames?.firstOrNull()?.jsonPrimitive?.content)
+        assertEquals("after", imageNames?.lastOrNull()?.jsonPrimitive?.content)
     }
 
     @Test
@@ -92,28 +96,28 @@ open class ImageTest {
         val inputString = """{"image":{"type":"animated","imageNames":["before", "after"],"animationDuration":0.25,"animationRepeatCount":1,"label":"Foo","placementType":"iconBefore","size":{"width":20.0,"height":40.0}}}"""
 
         val original = TestImageWrapper(image)
-        val jsonString = jsonCoder.stringify(TestImageWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestImageWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestImageWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestImageWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestImageWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestImageWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
         assertEquals(original, decoded)
 
         // Check the keys and look to see that they match the expected type
-        val jsonOutput = jsonCoder.parseJson(jsonString)
-        val jsonWrapper = jsonOutput.jsonObject.getObject("image")
-        assertEquals("animated", jsonWrapper.getPrimitiveOrNull("type")?.content)
-        assertEquals(0.25, jsonWrapper.getPrimitiveOrNull("animationDuration")?.double)
-        val imageNames = jsonWrapper.getArrayOrNull("imageNames")
-        assertEquals("before", imageNames?.firstOrNull()?.primitive?.content)
-        assertEquals("after", imageNames?.lastOrNull()?.primitive?.content)
-        assertEquals("Foo", jsonWrapper.getPrimitiveOrNull("label")?.content)
-        assertEquals("iconBefore", jsonWrapper.getPrimitiveOrNull("placementType")?.content)
-        val sizeObject = jsonWrapper.getObjectOrNull("size")
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("image").jsonObject
+        assertEquals("animated", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals(0.25, jsonWrapper["animationDuration"]?.jsonPrimitive?.double)
+        val imageNames = jsonWrapper["imageNames"]?.jsonArray
+        assertEquals("before", imageNames?.firstOrNull()?.jsonPrimitive?.content)
+        assertEquals("after", imageNames?.lastOrNull()?.jsonPrimitive?.content)
+        assertEquals("Foo", jsonWrapper["label"]?.jsonPrimitive?.content)
+        assertEquals("iconBefore", jsonWrapper["placementType"]?.jsonPrimitive?.content)
+        val sizeObject = jsonWrapper.getValue("size").jsonObject
         assertNotNull(sizeObject)
-        assertEquals(20.0, sizeObject.getPrimitiveOrNull("width")?.double)
-        assertEquals(40.0, sizeObject.getPrimitiveOrNull("height")?.double)
+        assertEquals(20.0, sizeObject["width"]?.jsonPrimitive?.double)
+        assertEquals(40.0, sizeObject["height"]?.jsonPrimitive?.double)
     }
 
     @Test
@@ -124,9 +128,12 @@ open class ImageTest {
             val inputString = """{"placement":"$name"}"""
 
             val original = TestImagePlacementWrapper(it)
-            val jsonString = jsonCoder.stringify(TestImagePlacementWrapper.serializer(), original)
-            val restored = jsonCoder.parse(TestImagePlacementWrapper.serializer(), jsonString)
-            val decoded = jsonCoder.parse(TestImagePlacementWrapper.serializer(), inputString)
+            val jsonString =
+                jsonCoder.encodeToString(TestImagePlacementWrapper.serializer(), original)
+            val restored =
+                jsonCoder.decodeFromString(TestImagePlacementWrapper.serializer(), jsonString)
+            val decoded =
+                jsonCoder.decodeFromString(TestImagePlacementWrapper.serializer(), inputString)
 
             // Look to see that the restored, decoded, and original all are equal
             assertEquals(original, restored)

@@ -1,6 +1,11 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * The [IdentifierPath] is intended as a light-weight serializable linked list for describing a path to a node or
@@ -22,7 +27,7 @@ data class IdentifierPath(val path: String) {
     @Serializer(forClass = IdentifierPath::class)
     companion object : KSerializer<IdentifierPath> {
         override val descriptor: SerialDescriptor
-                = PrimitiveDescriptor("NodeIdentifierPath", PrimitiveKind.STRING)
+                = PrimitiveSerialDescriptor("NodeIdentifierPath", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): IdentifierPath = IdentifierPath(decoder.decodeString())
         override fun serialize(encoder: Encoder, value: IdentifierPath) = encoder.encodeString(value.path)
     }

@@ -30,9 +30,9 @@ open class InputItemsTest {
                 }
             """.trimIndent()
 
-        val jsonString = jsonCoder.stringify(KeyboardOptionsObject.serializer(), original)
-        val restored = jsonCoder.parse(KeyboardOptionsObject.serializer(), jsonString)
-        val decoded = jsonCoder.parse(KeyboardOptionsObject.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(KeyboardOptionsObject.serializer(), original)
+        val restored = jsonCoder.decodeFromString(KeyboardOptionsObject.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(KeyboardOptionsObject.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(original, restored)
@@ -52,9 +52,9 @@ open class InputItemsTest {
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["list","checkmark","checkbox","radiobutton"]}"""
 
-        val jsonString = jsonCoder.stringify(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestUIHintWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
@@ -68,9 +68,9 @@ open class InputItemsTest {
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["disclosureArrow","button","link"]}"""
 
-        val jsonString = jsonCoder.stringify(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestUIHintWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
@@ -84,9 +84,9 @@ open class InputItemsTest {
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["textfield","multipleLine","popover"]}"""
 
-        val jsonString = jsonCoder.stringify(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestUIHintWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
@@ -100,9 +100,9 @@ open class InputItemsTest {
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["foo","picker"]}"""
 
-        val jsonString = jsonCoder.stringify(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.parse(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(TestUIHintWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
@@ -118,9 +118,9 @@ open class InputItemsTest {
         val original = UIHintTextFieldWrapper(UIHint.TextField.values().toList())
         val inputString = """{"types":["textfield","multipleLine","popover"]}"""
 
-        val jsonString = jsonCoder.stringify(UIHintTextFieldWrapper.serializer(), original)
-        val restored = jsonCoder.parse(UIHintTextFieldWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.parse(UIHintTextFieldWrapper.serializer(), inputString)
+        val jsonString = jsonCoder.encodeToString(UIHintTextFieldWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
         assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
@@ -138,9 +138,9 @@ open class InputItemsTest {
         val original = CheckboxInputItemObject(resultIdentifier = "pickMe", fieldLabel = "Pick me!")
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -161,9 +161,9 @@ open class InputItemsTest {
                 detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -181,9 +181,9 @@ open class InputItemsTest {
                 detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -201,9 +201,9 @@ open class InputItemsTest {
                 detail = "more info")
 
         val serializer = ChoiceOptionObject.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -238,9 +238,9 @@ open class InputItemsTest {
                         codingFormat = "yyyy-MM"))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -270,9 +270,9 @@ open class InputItemsTest {
                         codingFormat = "yyyy-MM"))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -288,9 +288,9 @@ open class InputItemsTest {
         val original = DateInputItemObject()
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -328,9 +328,9 @@ open class InputItemsTest {
         original.invalidMessage = InvalidMessageObject("You must enter an integer between 0 and 1000")
 
         val serializer = DoubleFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -396,9 +396,9 @@ open class InputItemsTest {
         original.formatOptions.invalidMessage = InvalidMessageObject("You must enter an integer between 0 and 1000")
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -418,9 +418,9 @@ open class InputItemsTest {
         assertEquals(KeyboardOptionsObject.DecimalEntryOptions, original.keyboardOptions)
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -456,9 +456,9 @@ open class InputItemsTest {
         original.invalidMessage = InvalidMessageObject("You must enter an integer between 0 and 1000")
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -475,9 +475,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.Decimal)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -490,9 +490,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.Currency)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -505,9 +505,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.Percent)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -520,9 +520,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.Scientific)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -535,9 +535,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.SpellOut)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -550,9 +550,9 @@ open class InputItemsTest {
         val original = IntFormatOptions(NumberFormatOptions.Style.OrdinalNumber)
 
         val serializer = IntFormatOptions.serializer()
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -621,9 +621,9 @@ open class InputItemsTest {
         original.formatOptions.invalidMessage = InvalidMessageObject("You must enter an integer between 0 and 1000")
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -643,9 +643,9 @@ open class InputItemsTest {
         assertEquals(KeyboardOptionsObject.NumberEntryOptions, original.keyboardOptions)
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -661,9 +661,9 @@ open class InputItemsTest {
         val original = SkipCheckboxInputItemObject("Pick me!", JsonPrimitive(-1))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -703,9 +703,9 @@ open class InputItemsTest {
         original.regExValidator = RegExValidator("[A:D]", InvalidMessageObject("Only ABCD are valid letters."))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -721,9 +721,9 @@ open class InputItemsTest {
         val original = StringTextInputItemObject()
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -757,9 +757,9 @@ open class InputItemsTest {
                         codingFormat = "HH:mm"))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -789,9 +789,9 @@ open class InputItemsTest {
                         codingFormat = "HH:mm"))
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -807,9 +807,9 @@ open class InputItemsTest {
         val original = TimeInputItemObject()
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -843,9 +843,9 @@ open class InputItemsTest {
         original.formatOptions = YearFormatOptions(allowFuture = false, minimumYear = 1900)
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)
@@ -861,9 +861,9 @@ open class InputItemsTest {
         val original = YearTextInputItemObject()
 
         val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.stringify(serializer, original)
-        val restored = jsonCoder.parse(serializer, jsonString)
-        val decoded = jsonCoder.parse(serializer, inputString)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertEquals(original, restored)
         assertEquals(original, decoded)

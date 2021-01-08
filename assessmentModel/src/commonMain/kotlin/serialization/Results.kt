@@ -3,18 +3,18 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.ResultNavigationRule
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val resultSerializersModule = SerializersModule {
     polymorphic(Result::class) {
-        AnswerResultObject::class with AnswerResultObject.serializer()
-        AssessmentResultObject::class with AssessmentResultObject.serializer()
-        BranchNodeResultObject::class with BranchNodeResultObject.serializer()
-        CollectionResultObject::class with CollectionResultObject.serializer()
-        ResultObject::class with ResultObject.serializer()
+        subclass(AnswerResultObject::class)
+        subclass(AssessmentResultObject::class)
+        subclass(BranchNodeResultObject::class)
+        subclass(CollectionResultObject::class)
+        subclass(ResultObject::class)
     }
 }
 

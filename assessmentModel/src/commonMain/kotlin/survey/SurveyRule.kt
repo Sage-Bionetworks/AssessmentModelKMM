@@ -2,9 +2,7 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonLiteral
-import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.*
 import kotlin.math.abs
 
@@ -63,7 +61,7 @@ interface ComparableSurveyRule : SurveyRule {
         val operator = ruleOperator ?: if (matchingAnswer == JsonNull) SurveyRuleOperator.Skip else SurveyRuleOperator.Equal
         val skipTo = skipToIdentifier ?: ReservedNavigationIdentifier.Exit.name
         val jsonValue = answerResult.jsonValue
-        if (jsonValue == null) {
+        if (jsonValue == null || jsonValue == JsonNull) {
             if (operator == SurveyRuleOperator.Skip) skipTo else null
         } else if (jsonValue.compareTo(matchingAnswer, operator, accuracy)) {
             skipTo
@@ -123,8 +121,8 @@ enum class SurveyRuleOperator : StringEnum {
 
 fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, accuracy: Double = 0.00001) : Boolean {
     val jsonValue = value ?: JsonNull
-    return (jsonValue as? JsonLiteral)?.let { jsonLiteral ->
-        (this as? JsonLiteral)?.compareTo(jsonLiteral, operator, accuracy)
+    return (jsonValue as? JsonPrimitive)?.let { jsonLiteral ->
+        (this as? JsonPrimitive)?.compareTo(jsonLiteral, operator, accuracy)
     } ?: when (operator) {
         SurveyRuleOperator.Always -> true
         SurveyRuleOperator.Skip -> this == JsonNull && jsonValue == JsonNull
@@ -134,26 +132,21 @@ fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, acc
     }
 }
 
-internal fun JsonLiteral.compareTo(value: JsonLiteral, operator: SurveyRuleOperator, accuracy: Double) : Boolean
-        = (this.body as? Comparable<*>)?.compareTo(value, operator, accuracy) ?: false
-
-internal fun <T> Comparable<T>.compareTo(value: JsonLiteral, operator: SurveyRuleOperator, accuracy: Double) : Boolean
-        = @Suppress("UNCHECKED_CAST")(value.body as? T)?.let { jsonValue ->
-    val isEqual = this.equalsWithAccuracy(jsonValue, accuracy)
-    when (operator) {
+internal fun JsonPrimitive.compareTo(value: JsonPrimitive, operator: SurveyRuleOperator, accuracy: Double) : Boolean {
+    var isEqual = this.content == value.content
+    this.doubleOrNull?.let {
+        value.doubleOrNull?.let { v ->
+            isEqual = abs(it - v) <= accuracy
+        }
+    }
+    return when (operator) {
         SurveyRuleOperator.Always -> true
-        SurveyRuleOperator.Skip -> false
+        SurveyRuleOperator.Skip -> this == JsonNull && value == JsonNull
         SurveyRuleOperator.NotEqual -> !isEqual
         SurveyRuleOperator.Equal -> isEqual
-        SurveyRuleOperator.GreaterThan -> !isEqual && this > jsonValue
-        SurveyRuleOperator.GreaterThanEqual -> isEqual || this >= jsonValue
-        SurveyRuleOperator.LessThan -> !isEqual && this < jsonValue
-        SurveyRuleOperator.LessThanEqual -> isEqual || this <= jsonValue
+        SurveyRuleOperator.GreaterThan -> !isEqual && this.content > value.content
+        SurveyRuleOperator.GreaterThanEqual -> isEqual || this.content >= value.content
+        SurveyRuleOperator.LessThan -> !isEqual && this.content < value.content
+        SurveyRuleOperator.LessThanEqual -> isEqual || this.content <= value.content
     }
-} ?: false
-
-internal fun <T> Comparable<T>.equalsWithAccuracy(value: T, accuracy: Double) : Boolean {
-    return (this as? Double)?.let {
-        abs(this - (value as Number).toDouble()) <= accuracy
-    } ?: run { this == value }
 }

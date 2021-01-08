@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":assessmentModel/androidLibDebug": [], ":assessmentModel/androidLibMain": [], ":assessmentModel/androidLibRelease": [], ":assessmentModel/commonMain": [], ":assessmentModel/iosMain": [":assessmentModel/commonMain"]}'

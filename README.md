@@ -5,6 +5,8 @@ sample app implementations can be found inside the [androidApp/](androidApp/) re
 
 More information on Kotlin native can be found in [multiplatform documentation](http://kotlinlang.org/docs/reference/building-mpp-with-gradle.html).
 
+Class documentation can be [here](https://sage-bionetworks.github.io/AssessmentModel-KotlinNative/-modules.html).
+
 ## iOS
 
 To compile the project from Xcode just open `iosApp/iosApp.xcodeproj` and run the application.

@@ -43,6 +43,20 @@ interface RootNodeController {
      * Handle finishing the [Assessment]. Save state and dismiss the view.
      */
     fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error? = null)
+
+    /**
+     * Handle saving the results. Typically, this will mean uploading the results to a server.
+     * When the [Assessment] finishes normally, this method will be called *before* [handleFinished].
+     *
+     * *Before* saving the results, the controller should check that any background recorders have
+     * been stopped and their results have been added to the result set. Because this can often take
+     * time and require hand-off between background and UI threads, this is best handled by the
+     * controller rather than the state machine that is managing navigation. Practically speaking,
+     * managing UI/UX around sensors is platform-specific and attempting to have the [NodeState]
+     * manage this tends to lead to obfuscation and bugs. syoung 11/24/2020
+     *
+     */
+    fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState)
 }
 
 enum class FinishedReason {
@@ -136,6 +150,8 @@ interface BranchNodeState : NodeState {
 
     /**
      * Called from the child node to send the call back up the chain to the parent.
+     *
+     * WARNING: This method should *only* be called by the [currentChild].
      */
     fun moveToNextNode(direction: NavigationPoint.Direction,
                        requestedPermissions: Set<PermissionInfo>? = null,
@@ -143,6 +159,8 @@ interface BranchNodeState : NodeState {
 
     /**
      * Allow for chaining up to the top node state when the navigation should end early.
+     *
+     * WARNING: This method should *only* be called by the [currentChild].
      */
     fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
 }
@@ -209,6 +227,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     /**
      * Move to the given node.
      *
+     * Warning: If you override this method, you should still call through to super to allow the
+     * base class to manage its internal navigation state.
+     *
      * Throws: [NullPointerException] if the [NavigationPoint.node] or [rootNodeController] are null.
      */
     open fun moveTo(navigationPoint: NavigationPoint) {
@@ -226,6 +247,10 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
                 // Mark the start/end timestamps before displaying the node.
                 nodeState.currentResult.startDateString = DateGenerator.nowString()
                 nodeState.currentResult.endDateString = null
+                // Check if the "ready-to-save" state should be changed.
+                if (navigator.isCompleted(nodeState.node, currentResult)) {
+                    callUpReadyToSaveChain()
+                }
                 if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
                     controller.handleGoForward(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
                 } else {
@@ -246,25 +271,98 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     }
 
     /**
+     * Mark the final result end date timestamp for *this* level of the node state. Then check if
+     * this is the root node state and if it is, handle calling "readyToSave" on the
+     * [rootNodeController]. Otherwise, check to see if the parent node state is "done" with it's
+     * navigation (ie. this node is the last in the chain) and if so, call up the chain recursively.
+     *
+     * Note: This is marked as private b/c I don't want developers to call it directly from their
+     * subclass implementations. Because it is recursive *and* uses a flag to ensure that the
+     * "readyToSave" message is only called once by the root, it is brittle if called in a way that
+     * is not how I intend for it to be used. If you break the chain by *not* using a subclass of
+     * this implementation of [BranchNodeState] or by overriding one of the methods that calls this
+     * and not calling through to super, then it is up to the developer who subclasses this to
+     * handle calling the "readyToSave" method to ensure that the [rootNodeController] cleans up
+     * and uploads the results. ie. There is no Kotlin equivalent to "fileprivate". syoung 11/24/2020
+     */
+    private fun callUpReadyToSaveChain() {
+        appendChildResultIfNeeded()
+        markFinalResultIfNeeded()
+        if (parent == null) {
+            callReadyToSaveIfNeeded(FinishedReason.Complete)
+        } else if ((parent is BranchNodeStateImpl) &&
+            !parent.navigator.hasNodeAfter(this.node, parent.currentResult)) {
+            parent.callUpReadyToSaveChain()
+        }
+    }
+
+    /**
+     * Call the [rootNodeController.handleReadyToSave()] method.
+     *
+     * Note: This method is marked as private because it uses a flag to ensure that the "readyToSave"
+     * message is only sent *once*. Additionally, it should only be called by the top-level node
+     * state. This makes it a bit brittle and so I don't want it called outside of this code file.
+     * syoung 11/24/2020
+     */
+    private fun callReadyToSaveIfNeeded(reason: FinishedReason) {
+        if (parent != null) throw Exception("Invalid assumption. This method should only be called on the root node.")
+        if (hasCalledReadyToSave) return
+        this.hasCalledReadyToSave = true
+        rootNodeController?.handleReadyToSave(reason, this)
+    }
+    private var hasCalledReadyToSave = false
+
+    /**
+     * Mark the result with the end timestamp.
+     *
+     * Note: This method is marked as private because it uses a flag to ensure that the end date
+     * timestamp is only marked *once*. This makes it a bit brittle and so I don't want it called
+     * outside of this code file. syoung 11/24/2020
+     */
+    private fun markFinalResultIfNeeded() {
+        if (hasMarkedFinalResult) return
+        this.hasMarkedFinalResult = true
+        currentResult.endDateString = DateGenerator.nowString()
+        didMarkFinalResult()
+    }
+    private var hasMarkedFinalResult = false
+
+    protected open fun didMarkFinalResult() {
+    }
+
+    /**
      * Finish any navigation required at this level. This will check to see if the returned navigation point requires
      * exiting the entire run or just that this section is finished.
+     *
+     * Warning: If you override this method, you should still call through to super to allow the
+     * base class to manage its internal navigation state.
      */
     open fun finish(navigationPoint: NavigationPoint) {
         // When finishing, mark the end date for the current result.
-        currentResult.endDateString = DateGenerator.nowString()
+        markFinalResultIfNeeded()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
                 exitEarly(navigationPoint.asyncActionNavigations)
-            parent == null ->
+            parent == null -> {
+                callReadyToSaveIfNeeded(FinishedReason.Complete)
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
+            }
             else ->
                 parent.moveToNextNode(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
         }
     }
 
+    /**
+     * Exit the [Assessment] early.
+     *
+     * Warning: If you override this method, you should still call through to super to allow the
+     * base class to manage its internal navigation state.
+     */
     override fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?) {
         appendChildResultIfNeeded()
+        markFinalResultIfNeeded()
         if (parent == null) {
+            callReadyToSaveIfNeeded(FinishedReason.EarlyExit)
             rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
         } else {
             parent.exitEarly(asyncActionNavigations)

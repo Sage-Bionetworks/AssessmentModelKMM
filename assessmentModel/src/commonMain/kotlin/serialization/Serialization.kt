@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import org.sagebionetworks.assessmentmodel.survey.answerTypeSerializersModule
@@ -24,9 +23,10 @@ object Serialization {
 
     }
     object JsonCoder {
-        val default = Json(
-                context = Serialization.SerializersModule.default,
-                configuration = JsonConfiguration.Stable)
+        val default = Json{
+                serializersModule = SerializersModule.default
+                encodeDefaults = true
+        }
     }
 }
 

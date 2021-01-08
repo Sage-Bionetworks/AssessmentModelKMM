@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.multiplatform")
     id("kotlin-android-extensions")
+    id("org.jetbrains.dokka")
 }
 
 android {
@@ -12,6 +13,7 @@ android {
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
     }
     buildTypes {
         getByName("release") {
@@ -31,6 +33,14 @@ android {
         getByName("test").java.srcDirs("src/main/kotlin")
     }
 
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled = true
+        // Sets Java compatibility to Java 8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
@@ -46,6 +56,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
 
     testImplementation("junit:junit:4.12")
 }

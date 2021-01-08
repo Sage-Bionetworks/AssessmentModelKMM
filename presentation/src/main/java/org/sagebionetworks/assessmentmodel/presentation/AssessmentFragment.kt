@@ -40,29 +40,30 @@ open class AssessmentFragment : Fragment() {
     }
 
 
-
     lateinit var viewModel: AssessmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
         val assessmentId = arguments!!.getString(ARG_ASSESSMENT_ID_KEY)!!
         val resourceName = arguments!!.getString(ARG_RESOURCE_NAME)!!
         val packageName = arguments!!.getString(ARG_PACKAGE_NAME)!!
 
-        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
         val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: packageName)
         val assessmentGroup = AssessmentGroupInfoObject(
             assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
-            packageName = packageName)
-        val assessmentProvider = FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
-        viewModel = ViewModelProvider(
-            this, AssessmentViewModelFactory()
-                .create(assessmentId, assessmentProvider))
-            .get(AssessmentViewModel::class.java)
+            packageName = packageName
+        )
+
+        val assessmentProvider =
+            FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
+        viewModel = initViewModel(assessmentId, assessmentProvider)
         super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.assessment_fragment, container, false)
     }
 
@@ -70,15 +71,24 @@ open class AssessmentFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.currentNodeStateLiveData
-                .observe(this.viewLifecycleOwner, Observer<AssessmentViewModel.ShowNodeState>
-                { showNodeState -> this.showStep(showNodeState) })
+            .observe(this.viewLifecycleOwner, Observer<AssessmentViewModel.ShowNodeState>
+            { showNodeState -> this.showStep(showNodeState) })
         viewModel.start()
     }
+
+    open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider) =
+        ViewModelProvider(
+            this, AssessmentViewModelFactory()
+                .create(assessmentId, assessmentProvider)
+        ).get(AssessmentViewModel::class.java)
 
     private fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
         if (NavigationPoint.Direction.Exit == showNodeState.direction) {
             val resultIntent = Intent()
-            resultIntent.putExtra(ASSESSMENT_RESULT, showNodeState.nodeState.currentResult.toString())
+            resultIntent.putExtra(
+                ASSESSMENT_RESULT,
+                showNodeState.nodeState.currentResult.toString()
+            )
             activity?.setResult(Activity.RESULT_CANCELED, resultIntent)
             activity?.finish()
             return
@@ -87,18 +97,18 @@ open class AssessmentFragment : Fragment() {
         val stepFragment = this.getFragmentForStep(showNodeState.nodeState.node as Step)
         val transaction = childFragmentManager.beginTransaction()
         transaction
-                .replace(R.id.step_fragment_container, stepFragment)
-                .commit()
+            .replace(R.id.step_fragment_container, stepFragment)
+            .commit()
         childFragmentManager.executePendingTransactions()
     }
 
-    open fun getJsonLoader() : Json {
+    open fun getJsonLoader(): Json {
         return Serialization.JsonCoder.default
     }
 
     open fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
-        when(step) {
+        when (step) {
             is SimpleQuestion -> return TextQuestionStepFragment()
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()

@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     id("com.github.dcendents.android-maven")
     id ("maven-publish")
+    id("org.jetbrains.dokka")
 }
 
 android {
@@ -21,6 +22,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

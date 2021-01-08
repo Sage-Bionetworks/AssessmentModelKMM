@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.github.dcendents.android-maven")
     id ("maven-publish")
+    id("org.jetbrains.dokka")
 }
 
 android {
@@ -16,7 +17,8 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
+            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -28,7 +30,7 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
@@ -67,8 +69,7 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-            implementation( "org.jetbrains.kotlin:kotlin-stdlib-common")
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:0.20.0")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
          }
       }
       commonTest {
@@ -78,12 +79,9 @@ kotlin {
          }
       }
        sourceSets["androidLibMain"].dependencies {
-           implementation("org.jetbrains.kotlin:kotlin-stdlib")
-           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
            implementation("androidx.appcompat:appcompat:1.1.0")
        }
        sourceSets["iosMain"].dependencies {
-           api( "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.20.0")
        }
 
     }

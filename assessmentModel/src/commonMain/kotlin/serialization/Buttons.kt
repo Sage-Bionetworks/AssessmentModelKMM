@@ -6,17 +6,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
 val buttonSerializersModule = SerializersModule {
     polymorphic(ButtonActionInfo::class) {
-        ButtonActionInfoObject::class with ButtonActionInfoObject.serializer()
-        NavigationButtonActionInfoObject::class with NavigationButtonActionInfoObject.serializer()
-        ReminderButtonActionInfoObject::class with ReminderButtonActionInfoObject.serializer()
-        WebViewButtonActionInfoObject::class with WebViewButtonActionInfoObject.serializer()
-        VideoViewButtonActionInfoObject::class with VideoViewButtonActionInfoObject.serializer()
+        subclass(ButtonActionInfoObject::class)
+        subclass(NavigationButtonActionInfoObject::class)
+        subclass(ReminderButtonActionInfoObject::class)
+        subclass(WebViewButtonActionInfoObject::class)
+        subclass(VideoViewButtonActionInfoObject::class)
     }
 }
 

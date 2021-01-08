@@ -1,8 +1,12 @@
 package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
@@ -14,14 +18,14 @@ import org.sagebionetworks.assessmentmodel.serialization.AnswerResultObject
 
 val answerTypeSerializersModule = SerializersModule {
     polymorphic(AnswerType::class) {
-        AnswerType.DateTime::class with AnswerType.DateTime.serializer()
-        AnswerType.Array::class with AnswerType.Array.serializer()
-        AnswerType.Measurement::class with AnswerType.Measurement.serializer()
-        AnswerType.OBJECT::class with AnswerType.OBJECT.serializer()
-        AnswerType.STRING::class with AnswerType.STRING.serializer()
-        AnswerType.BOOLEAN::class with AnswerType.BOOLEAN.serializer()
-        AnswerType.INTEGER::class with AnswerType.INTEGER.serializer()
-        AnswerType.DECIMAL::class with AnswerType.DECIMAL.serializer()
+        subclass(AnswerType.DateTime::class)
+        subclass(AnswerType.Array::class)
+        subclass(AnswerType.Measurement::class)
+        subclass(AnswerType.OBJECT::class)
+        subclass(AnswerType.STRING::class)
+        subclass(AnswerType.BOOLEAN::class)
+        subclass(AnswerType.INTEGER::class)
+        subclass(AnswerType.DECIMAL::class)
     }
 }
 
@@ -202,7 +206,8 @@ enum class BaseType : StringEnum {
 
     @Serializer(forClass = BaseType::class)
     companion object : KSerializer<BaseType> {
-        override val descriptor: SerialDescriptor = PrimitiveDescriptor("SerialType", PrimitiveKind.STRING)
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("SerialType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): BaseType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
