@@ -82,7 +82,7 @@ open class AssessmentFragment : Fragment() {
                 .create(assessmentId, assessmentProvider)
         ).get(AssessmentViewModel::class.java)
 
-    private fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
+    open fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
         if (NavigationPoint.Direction.Exit == showNodeState.direction) {
             val resultIntent = Intent()
             resultIntent.putExtra(
