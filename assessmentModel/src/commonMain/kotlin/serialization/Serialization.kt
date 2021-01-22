@@ -30,6 +30,14 @@ object Serialization {
     }
 }
 
+open class JsonProvider {
+
+    fun getJson(assessmentIdentifier: String): Json {
+        return Serialization.JsonCoder.default
+    }
+
+}
+
 /**
  * Notes on serialization
  *

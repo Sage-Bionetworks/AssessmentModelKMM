@@ -61,7 +61,7 @@ interface Assessment : BranchNode, ContentNode {
         schemaIdentifier = schemaIdentifier,
         versionString = versionString)
 
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Assessment
 }
 
 /**
@@ -123,7 +123,7 @@ interface Node : ResultMapElement {
     /**
      * Unpack (and potentially replace) the node and set up any required resource pointers.
      */
-    fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node = this
+    fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Node = this
 
     /**
      * Does this [Node] support backward navigation?
@@ -169,9 +169,9 @@ interface ContentNode : Node {
     val footnote: String?
         get() = null
 
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Node {
         imageInfo?.copyResourceInfo(resourceInfo)
-        return super.unpack(fileLoader, resourceInfo, jsonCoder)
+        return super.unpack(fileLoader, resourceInfo, jsonProvider)
     }
 }
 
@@ -284,9 +284,9 @@ interface OverviewStep : PermissionStep {
      */
     val icons: List<ImageInfo>?
 
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Node {
         icons?.forEach { it.copyResourceInfo(resourceInfo) }
-        return super.unpack(fileLoader, resourceInfo, jsonCoder)
+        return super.unpack(fileLoader, resourceInfo, jsonProvider)
     }
 }
 

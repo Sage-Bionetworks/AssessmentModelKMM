@@ -24,11 +24,12 @@ interface TransformableNode : ContentNode, AssetInfo {
     override val rawFileExtension: String?
         get() = "json"
 
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Node {
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = fileLoader.loadFile(this, resourceInfo)
+        val jsonCoder = jsonProvider.getJson(this.identifier)
         val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
+        return unpackedNode.unpack(fileLoader, resourceInfo, jsonProvider)
     }
 }
 
@@ -40,11 +41,12 @@ interface TransformableNode : ContentNode, AssetInfo {
  * [TransformableAssessment] that is vended from a server.
  */
 interface TransformableAssessment : Assessment, TransformableNode {
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment {
+    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Assessment {
         val serializer = PolymorphicSerializer(Assessment::class)
         val jsonString = fileLoader.loadFile(this, resourceInfo)
+        val jsonCoder = jsonProvider.getJson(this.identifier)
         val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
+        return unpackedNode.unpack(fileLoader, resourceInfo, jsonProvider)
     }
 
     override fun getNavigator(nodeState: BranchNodeState): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
@@ -61,14 +63,14 @@ interface AssessmentGroupInfo {
 
 interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
     val fileLoader: FileLoader
-    val jsonCoder: Json
+    val jsonProvider: JsonProvider
 
     override fun canLoadAssessment(assessmentIdentifier: String): Boolean =
             assessments.any { it.identifier == assessmentIdentifier }
 
     override fun loadAssessment(assessmentIdentifier: String): Assessment? {
         return assessments.firstOrNull { it.identifier == assessmentIdentifier }?.let {
-            return it.unpack(fileLoader, resourceInfo, jsonCoder)
+            return it.unpack(fileLoader, resourceInfo, jsonProvider)
         }
     }
 }
@@ -91,5 +93,5 @@ data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
  */
 class FileAssessmentProvider(override val fileLoader: FileLoader,
                              private val assessmentGroupInfo: AssessmentGroupInfo,
-                             override var jsonCoder: Json = Serialization.JsonCoder.default)
+                             override var jsonProvider: JsonProvider = JsonProvider())
     : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo

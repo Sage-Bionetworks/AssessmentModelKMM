@@ -9,14 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.BranchNode
 import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
-import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
-import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 

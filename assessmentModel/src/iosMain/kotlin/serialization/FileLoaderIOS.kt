@@ -34,7 +34,7 @@ fun ResourceInfo.bundle() : NSBundle
  */
 class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
     var fileLoader: FileLoader = FileLoaderIOS()
-    var jsonCoder: Json = Serialization.JsonCoder.default
+    var jsonProvider: JsonProvider = JsonProvider()
 
     override var decoderBundle: Any? = bundle
     override var packageName: String? = null
@@ -51,7 +51,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
     fun decodeObject(): AssessmentGroupWrapper {
         try {
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
-            val group = decoder.jsonCoder.decodeFromString(serializer, jsonString)
+            val group = decoder.jsonProvider.getJson("defaultSerializer").decodeFromString(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
@@ -67,7 +67,7 @@ class AssessmentLoader(private val placeholder: Assessment,
     @Throws(Throwable::class)
     fun decodeObject(): Assessment {
         try {
-            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonCoder)
+            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonProvider)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
@@ -79,8 +79,8 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
     fun decodeObject(): Assessment {
         try {
             val serializer = PolymorphicSerializer(Assessment::class)
-            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
-            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonCoder)
+            val placeholder = decoder.jsonProvider.getJson("defaultSerializer").decodeFromString(serializer, jsonString)
+            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonProvider)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }

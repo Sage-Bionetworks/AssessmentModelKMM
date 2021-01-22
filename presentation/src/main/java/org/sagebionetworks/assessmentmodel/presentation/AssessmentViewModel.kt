@@ -1,11 +1,12 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.Node
+import org.sagebionetworks.assessmentmodel.PermissionInfo
+import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class AssessmentViewModel(
@@ -75,26 +76,6 @@ open class AssessmentViewModel(
                 asyncActionNavigations
             )
     }
-
-//    override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
-//        val resultString = nodeState.currentResult.toString()
-//        Log.d("Save Result", resultString)
-//        // syoung 11/25/2020 In an application, this is the callback for uploading the results.
-//    }
-//
-//    override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
-//        val resultString = nodeState.currentResult.toString()
-//        Log.d("Result", resultString)
-//
-//        //Trigger the UI to finish
-//        currentNodeStateMutableLiveData.value =
-//            ShowNodeState(
-//                nodeState,
-//                NavigationPoint.Direction.Exit,
-//                null,
-//                null
-//            )
-//    }
 
     /**
      * Data class for LiveData stream.

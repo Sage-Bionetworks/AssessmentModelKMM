@@ -16,6 +16,9 @@ open class RootAssessmentViewModel(
     protected val assessmentLoadedMutableLiveData: MutableLiveData<BranchNodeState> = MutableLiveData()
     val assessmentLoadedLiveData: LiveData<BranchNodeState> = assessmentLoadedMutableLiveData
 
+    protected val assessmentFinishedMutableLiveData: MutableLiveData<FinishedState> = MutableLiveData()
+    val assessmentFinishedLiveData: LiveData<FinishedState> = assessmentFinishedMutableLiveData
+
     init {
         viewModelScope.launch {
             val assessment = assessmentProvider.loadAssessment(assessmentIdentifier)
@@ -23,9 +26,7 @@ open class RootAssessmentViewModel(
             assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
-
     }
-
 
     override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
         val resultString = nodeState.currentResult.toString()
@@ -37,8 +38,22 @@ open class RootAssessmentViewModel(
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
 
-        //TODO: Trigger UI to finish, should also check that any saving is done - nbrown 01/21/21
+        //TODO: Before triggering UI to finish, should also check that any saving is done - nbrown 01/21/21
+
+        assessmentFinishedMutableLiveData.value =
+            FinishedState(nodeState, reason, error)
+
     }
+
+    /**
+     * Data class for LiveData stream.
+     */
+    data class FinishedState(
+        val nodeState: NodeState,
+        val finishedReason: FinishedReason,
+        val error: Error?
+    )
+
 }
 
 

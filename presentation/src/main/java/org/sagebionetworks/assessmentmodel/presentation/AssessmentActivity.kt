@@ -1,12 +1,15 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
+import org.sagebionetworks.assessmentmodel.navigation.FinishedReason
+import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.serialization.*
 
 open class AssessmentActivity: AppCompatActivity() {
@@ -26,6 +29,7 @@ open class AssessmentActivity: AppCompatActivity() {
     lateinit var viewModel: RootAssessmentViewModel
     var assessmentFragmentProvider: AssessmentFragmentProvider? = null
     var customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    val jsonProvider: JsonProvider = JsonProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (intent.hasExtra(ARG_THEME)) {
@@ -42,26 +46,42 @@ open class AssessmentActivity: AppCompatActivity() {
         )
 
         val assessmentProvider =
-            FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader(assessmentId))
+            FileAssessmentProvider(fileLoader, assessmentGroup, jsonProvider)
 
         viewModel = initViewModel(assessmentId, assessmentProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData
             .observe(this, Observer<BranchNodeState>
             { nodeState -> this.handleAssessmentLoaded(nodeState) })
 
+        viewModel.assessmentFinishedLiveData
+            .observe(this, Observer<RootAssessmentViewModel.FinishedState>
+            { finished -> this.handleAssessmentFinished(finished) })
+
+
+
         super.onCreate(savedInstanceState)
     }
 
-    private fun handleAssessmentLoaded(rootNodeState: BranchNodeState) {
-        val fragment = assessmentFragmentProvider?.fragmentFor(rootNodeState.node)?: AssessmentFragment.newFragmentInstance()
-        supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
+    private fun handleAssessmentFinished(finishedState: RootAssessmentViewModel.FinishedState) {
+        val resultCode = if (finishedState.finishedReason == FinishedReason.Complete) {
+            Activity.RESULT_OK
+        } else {
+            Activity.RESULT_CANCELED
+        }
+        val resultIntent = Intent()
+        resultIntent.putExtra(
+            AssessmentFragment.ASSESSMENT_RESULT,
+            finishedState.nodeState.currentResult.toString()
+        )
+        setResult(resultCode, resultIntent)
+        finish()
+        return
     }
 
-
-
-    open fun getJsonLoader(assessmentId: String): Json {
-        //TODO: This should be a mapping of assessmentIds to Json coders -nbrown 01/21/21
-        return Serialization.JsonCoder.default
+    private fun handleAssessmentLoaded(rootNodeState: BranchNodeState) {
+        rootNodeState.rootNodeController = viewModel
+        val fragment = assessmentFragmentProvider?.fragmentFor(rootNodeState.node)?: AssessmentFragment.newFragmentInstance()
+        supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
     }
 
     open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
