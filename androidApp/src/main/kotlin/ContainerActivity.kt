@@ -35,9 +35,9 @@ class ContainerActivity: AppCompatActivity() {
         row.taskName.text = title
         row.buttonStartTask.setOnClickListener {
             val intent = Intent(this, AssessmentActivity::class.java)
-            intent.putExtra(AssessmentFragment.ARG_ASSESSMENT_ID_KEY, assessmentId)
-            intent.putExtra(AssessmentFragment.ARG_RESOURCE_NAME, resourceName)
-            intent.putExtra(AssessmentFragment.ARG_PACKAGE_NAME, this.packageName)
+            intent.putExtra(AssessmentActivity.ARG_ASSESSMENT_ID_KEY, assessmentId)
+            intent.putExtra(AssessmentActivity.ARG_RESOURCE_NAME, resourceName)
+            intent.putExtra(AssessmentActivity.ARG_PACKAGE_NAME, this.packageName)
             if (theme > 0) {
                 intent.putExtra(AssessmentActivity.ARG_THEME, theme)
             }

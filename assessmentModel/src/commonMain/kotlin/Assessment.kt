@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
@@ -20,7 +21,7 @@ interface BranchNode : Node {
     /**
      * The [Navigator] for this assessment.
      */
-    fun getNavigator(): Navigator
+    fun getNavigator(nodeState: BranchNodeState): Navigator
 
     // Override the default implementation to return a [BranchNodeResult]
     override fun createResult(): BranchNodeResult
@@ -191,7 +192,7 @@ interface NodeContainer : BranchNode {
      */
     val progressMarkers: List<String>?
 
-    override fun getNavigator(): Navigator = NodeNavigator(this)
+    override fun getNavigator(nodeState: BranchNodeState): Navigator = NodeNavigator(this)
 }
 
 /**

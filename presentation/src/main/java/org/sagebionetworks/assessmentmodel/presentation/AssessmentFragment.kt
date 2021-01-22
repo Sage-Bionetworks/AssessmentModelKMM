@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
+import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
+import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.serialization.*
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
@@ -23,18 +25,7 @@ open class AssessmentFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newFragmentInstance(assessmentId: String, resourceName: String, packageName: String) =
-            AssessmentFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_ASSESSMENT_ID_KEY, assessmentId)
-                    putString(ARG_RESOURCE_NAME, resourceName)
-                    putString(ARG_PACKAGE_NAME, packageName)
-                }
-            }
-
-        const val ARG_ASSESSMENT_ID_KEY = "assessment_id_key"
-        const val ARG_RESOURCE_NAME = "resource_name"
-        const val ARG_PACKAGE_NAME = "package_name"
+        fun newFragmentInstance() = AssessmentFragment()
 
         const val ASSESSMENT_RESULT = "AsssessmentResult"
     }
@@ -43,20 +34,24 @@ open class AssessmentFragment : Fragment() {
     lateinit var viewModel: AssessmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // TODO: syoung 03/10/2020 Move this to a singleton, factory, registry, etc.
-        val assessmentId = arguments!!.getString(ARG_ASSESSMENT_ID_KEY)!!
-        val resourceName = arguments!!.getString(ARG_RESOURCE_NAME)!!
-        val packageName = arguments!!.getString(ARG_PACKAGE_NAME)!!
 
-        val fileLoader = FileLoaderAndroid(resources, context?.packageName ?: packageName)
-        val assessmentGroup = AssessmentGroupInfoObject(
-            assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
-            packageName = packageName
-        )
+        var nodeState: BranchNodeState? = null
+        var stateProvider: CustomBranchNodeStateProvider? = null
+        if (parentFragment is AssessmentFragment) {
+            (parentFragment as AssessmentFragment).let {
+                nodeState = it.viewModel.currentNodeStateLiveData.value!!.nodeState as? BranchNodeState
+                stateProvider = it.viewModel.branchNodeStateProvider
+            }
+        } else if (activity is AssessmentActivity) {
+            (activity as? AssessmentActivity)?.let {
+                nodeState = it.viewModel.assessmentNodeState
+                stateProvider = it.viewModel.branchNodeStateProvider
+            }
+            nodeState = (activity as AssessmentActivity).viewModel.assessmentNodeState
+        }
 
-        val assessmentProvider =
-            FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader())
-        viewModel = initViewModel(assessmentId, assessmentProvider)
+
+        viewModel = initViewModel(nodeState!!, stateProvider)
         super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
     }
 
@@ -76,10 +71,10 @@ open class AssessmentFragment : Fragment() {
         viewModel.start()
     }
 
-    open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider) =
+    open fun initViewModel(branchNodeState: BranchNodeState, branchNodeStateProvider: CustomBranchNodeStateProvider?) =
         ViewModelProvider(
             this, AssessmentViewModelFactory()
-                .create(assessmentId, assessmentProvider)
+                .create(branchNodeState, branchNodeStateProvider)
         ).get(AssessmentViewModel::class.java)
 
     open fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
@@ -93,6 +88,9 @@ open class AssessmentFragment : Fragment() {
             activity?.finish()
             return
         }
+        //If this is an assessment node, load the necessary assessmentFragment
+        //The viewmodel of this fragment will need to be set as the nodeUiController of the nodeState
+        //Viewmodel should probably have activity scope
 
         val stepFragment = this.getFragmentForStep(showNodeState.nodeState.node as Step)
         val transaction = childFragmentManager.beginTransaction()

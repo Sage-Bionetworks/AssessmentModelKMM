@@ -9,28 +9,19 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class AssessmentViewModel(
-    val assessmentIdentifier: String,
-    val assessmentProvider: AssessmentProvider
-) : ViewModel(), RootNodeController {
+    val assessmentNodeState: BranchNodeState,
+    val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
+) : ViewModel(), NodeUIController {
 
-    //TODO: This should probably be done asynchronously -nbrown 02/06/20
-    private var _assessment: Assessment? = null
-    fun loadAssessment(): Assessment? {
-        if (_assessment == null) {
-            _assessment = assessmentProvider.loadAssessment(assessmentIdentifier)
-        }
-        return _assessment
-    }
 
     private var isStarted = false
-    open val assessmentNodeState = BranchNodeStateImpl(loadAssessment()!!, null)
     protected val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
     val currentNodeStateLiveData: LiveData<ShowNodeState> = currentNodeStateMutableLiveData
 
     fun start() {
         if (!isStarted) {
             isStarted = true
-            assessmentNodeState.rootNodeController = this
+            assessmentNodeState.nodeUIController = this
             goForward()
         }
     }
@@ -86,25 +77,25 @@ open class AssessmentViewModel(
             )
     }
 
-    override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
-        val resultString = nodeState.currentResult.toString()
-        Log.d("Save Result", resultString)
-        // syoung 11/25/2020 In an application, this is the callback for uploading the results.
-    }
-
-    override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
-        val resultString = nodeState.currentResult.toString()
-        Log.d("Result", resultString)
-
-        //Trigger the UI to finish
-        currentNodeStateMutableLiveData.value =
-            ShowNodeState(
-                nodeState,
-                NavigationPoint.Direction.Exit,
-                null,
-                null
-            )
-    }
+//    override fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState) {
+//        val resultString = nodeState.currentResult.toString()
+//        Log.d("Save Result", resultString)
+//        // syoung 11/25/2020 In an application, this is the callback for uploading the results.
+//    }
+//
+//    override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+//        val resultString = nodeState.currentResult.toString()
+//        Log.d("Result", resultString)
+//
+//        //Trigger the UI to finish
+//        currentNodeStateMutableLiveData.value =
+//            ShowNodeState(
+//                nodeState,
+//                NavigationPoint.Direction.Exit,
+//                null,
+//                null
+//            )
+//    }
 
     /**
      * Data class for LiveData stream.
@@ -128,15 +119,15 @@ open class AssessmentViewModel(
 open class AssessmentViewModelFactory() {
 
     open fun create(
-        assessmentIdentifier: String,
-        assessmentProvider: AssessmentProvider
+        assessmentNodeState: BranchNodeState,
+        branchNodeStateProvider: CustomBranchNodeStateProvider? = null
     ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(AssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return AssessmentViewModel(assessmentIdentifier, assessmentProvider) as T
+                    return AssessmentViewModel(assessmentNodeState, branchNodeStateProvider) as T
                 }
 
                 throw IllegalArgumentException("Unknown ViewModel class")

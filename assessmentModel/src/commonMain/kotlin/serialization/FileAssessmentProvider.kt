@@ -4,6 +4,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 
@@ -46,7 +47,7 @@ interface TransformableAssessment : Assessment, TransformableNode {
         return unpackedNode.unpack(fileLoader, resourceInfo, jsonCoder)
     }
 
-    override fun getNavigator(): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
+    override fun getNavigator(nodeState: BranchNodeState): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
 }
 
 /**
