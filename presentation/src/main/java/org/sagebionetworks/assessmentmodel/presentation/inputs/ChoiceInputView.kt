@@ -26,7 +26,7 @@ class ChoiceInputView : LinearLayout {
     val choiceBindingList: MutableList<ChoiceItemBinding> = mutableListOf()
 
     fun setup(questionState: QuestionState) {
-        assert(questionState is ChoiceQuestion)
+        assert(questionState.node is ChoiceQuestion)
         val inflater = LayoutInflater.from(context)
         for (inputState in questionState.itemStates) {
             //TODO: Handle otherInputItem -nbrown 03/26/20
