@@ -24,6 +24,8 @@ open class AssessmentActivity: AppCompatActivity() {
     }
 
     lateinit var viewModel: RootAssessmentViewModel
+    var assessmentFragmentProvider: AssessmentFragmentProvider? = null
+    var customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (intent.hasExtra(ARG_THEME)) {
@@ -42,7 +44,7 @@ open class AssessmentActivity: AppCompatActivity() {
         val assessmentProvider =
             FileAssessmentProvider(fileLoader, assessmentGroup, getJsonLoader(assessmentId))
 
-        viewModel = initViewModel(assessmentId, assessmentProvider, getCustomBranchNodeStateProvider())
+        viewModel = initViewModel(assessmentId, assessmentProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData
             .observe(this, Observer<BranchNodeState>
             { nodeState -> this.handleAssessmentLoaded(nodeState) })
@@ -51,18 +53,15 @@ open class AssessmentActivity: AppCompatActivity() {
     }
 
     private fun handleAssessmentLoaded(rootNodeState: BranchNodeState) {
-        //TODO: Determine which fragment to launch -nbrown 01/21/21
-        val fragment = AssessmentFragment.newFragmentInstance()
+        val fragment = assessmentFragmentProvider?.fragmentFor(rootNodeState.node)?: AssessmentFragment.newFragmentInstance()
         supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
     }
+
+
 
     open fun getJsonLoader(assessmentId: String): Json {
         //TODO: This should be a mapping of assessmentIds to Json coders -nbrown 01/21/21
         return Serialization.JsonCoder.default
-    }
-
-    open fun getCustomBranchNodeStateProvider(): CustomBranchNodeStateProvider? {
-        return null
     }
 
     open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =

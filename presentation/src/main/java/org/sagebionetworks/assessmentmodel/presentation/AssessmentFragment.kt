@@ -33,8 +33,10 @@ open class AssessmentFragment : Fragment() {
 
 
     lateinit var viewModel: AssessmentViewModel
+    var assessmentFragmentProvider: AssessmentFragmentProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        assessmentFragmentProvider = (activity as? AssessmentActivity)?.assessmentFragmentProvider
 
         var nodeState: BranchNodeState? = null
         if (parentFragment is AssessmentFragment) {
@@ -85,9 +87,20 @@ open class AssessmentFragment : Fragment() {
             activity?.finish()
             return
         }
+
         //If this is an assessment node, load the necessary assessmentFragment
-        //The viewmodel of this fragment will need to be set as the nodeUiController of the nodeState
-        //Viewmodel should probably have activity scope
+        val curNode = showNodeState.nodeState.node
+        (curNode as? BranchNode)?.let {
+            assessmentFragmentProvider?.fragmentFor(it)?.let {fragment ->
+                val transaction = childFragmentManager.beginTransaction()
+                transaction
+                    .replace(R.id.step_fragment_container, fragment)
+                    .commit()
+                childFragmentManager.executePendingTransactions()
+                return
+            }
+        }
+
 
         val stepFragment = this.getFragmentForStep(showNodeState.nodeState.node as Step)
         val transaction = childFragmentManager.beginTransaction()
