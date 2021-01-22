@@ -20,6 +20,7 @@ open class RootAssessmentViewModel(
         viewModelScope.launch {
             val assessment = assessmentProvider.loadAssessment(assessmentIdentifier)
             assessmentNodeState = branchNodeStateProvider?.customNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
+            assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
 

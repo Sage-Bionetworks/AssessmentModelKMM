@@ -134,6 +134,8 @@ fun BranchNodeState.lowestBranch() : BranchNodeState {
 
 interface BranchNodeState : NodeState {
 
+    var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
+
     var nodeUIController: NodeUIController?
 
     /**
@@ -210,9 +212,15 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     private var _rootNodeController: RootNodeController? = null
 
     override var nodeUIController: NodeUIController?
-        get() = parent?.nodeUIController ?: _nodeUiController
+        //If we have a NodeUIController use it, otherwise defer to our parent.
+        get() =  _nodeUiController?: parent?.nodeUIController
         set(value) { _nodeUiController = value }
     private var _nodeUiController: NodeUIController? = null
+
+    override var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
+        get() = parent?.customBranchNodeStateProvider?: _customBranchNodeStateProvider
+        set(value) {_customBranchNodeStateProvider = value}
+    private var _customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
 
     override fun goForward(requestedPermissions: Set<PermissionInfo>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
@@ -418,7 +426,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * class looks for conformance to the [BranchNode] interface.
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
-        return (navigationPoint.node as? BranchNode)?.let { BranchNodeStateImpl(it, this) }
+        return (navigationPoint.node as? BranchNode)?.let {
+            customBranchNodeStateProvider?.customNodeStateFor(it, this)?: BranchNodeStateImpl(it, this)
+        }
     }
 
     /**

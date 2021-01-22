@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.serialization.json.Json
+import org.sagebionetworks.assessmentmodel.BranchNode
 import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
@@ -36,22 +37,18 @@ open class AssessmentFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         var nodeState: BranchNodeState? = null
-        var stateProvider: CustomBranchNodeStateProvider? = null
         if (parentFragment is AssessmentFragment) {
             (parentFragment as AssessmentFragment).let {
                 nodeState = it.viewModel.currentNodeStateLiveData.value!!.nodeState as? BranchNodeState
-                stateProvider = it.viewModel.branchNodeStateProvider
             }
         } else if (activity is AssessmentActivity) {
             (activity as? AssessmentActivity)?.let {
                 nodeState = it.viewModel.assessmentNodeState
-                stateProvider = it.viewModel.branchNodeStateProvider
             }
-            nodeState = (activity as AssessmentActivity).viewModel.assessmentNodeState
         }
 
 
-        viewModel = initViewModel(nodeState!!, stateProvider)
+        viewModel = initViewModel(nodeState!!)
         super.onCreate(savedInstanceState) //Needs to be called after viewModel is initialized
     }
 
@@ -71,10 +68,10 @@ open class AssessmentFragment : Fragment() {
         viewModel.start()
     }
 
-    open fun initViewModel(branchNodeState: BranchNodeState, branchNodeStateProvider: CustomBranchNodeStateProvider?) =
+    open fun initViewModel(branchNodeState: BranchNodeState) =
         ViewModelProvider(
             this, AssessmentViewModelFactory()
-                .create(branchNodeState, branchNodeStateProvider)
+                .create(branchNodeState)
         ).get(AssessmentViewModel::class.java)
 
     open fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
@@ -98,10 +95,6 @@ open class AssessmentFragment : Fragment() {
             .replace(R.id.step_fragment_container, stepFragment)
             .commit()
         childFragmentManager.executePendingTransactions()
-    }
-
-    open fun getJsonLoader(): Json {
-        return Serialization.JsonCoder.default
     }
 
     open fun getFragmentForStep(step: Step): Fragment {

@@ -9,8 +9,7 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class AssessmentViewModel(
-    val assessmentNodeState: BranchNodeState,
-    val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    val assessmentNodeState: BranchNodeState
 ) : ViewModel(), NodeUIController {
 
 
@@ -119,15 +118,14 @@ open class AssessmentViewModel(
 open class AssessmentViewModelFactory() {
 
     open fun create(
-        assessmentNodeState: BranchNodeState,
-        branchNodeStateProvider: CustomBranchNodeStateProvider? = null
+        assessmentNodeState: BranchNodeState
     ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(AssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return AssessmentViewModel(assessmentNodeState, branchNodeStateProvider) as T
+                    return AssessmentViewModel(assessmentNodeState) as T
                 }
 
                 throw IllegalArgumentException("Unknown ViewModel class")
