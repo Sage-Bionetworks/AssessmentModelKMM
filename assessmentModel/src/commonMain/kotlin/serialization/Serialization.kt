@@ -30,6 +30,10 @@ object Serialization {
     }
 }
 
+/**
+ * The [JsonProvider] allows for [assessment] specific [Json] deserialization when loading an
+ * [assessment] containing other [assessments].
+ */
 open class JsonProvider {
 
     fun getJson(assessmentIdentifier: String): Json {

@@ -40,7 +40,8 @@ interface NodeUIController {
 }
 
 /**
- * The [RootNodeController] is a platform-specific implementation of the UI that is described by the [Assessment] model.
+ * The [RootNodeController] is a platform-specific implementation of the save and finish logic
+ * associated with running the [Assessment] model.
  */
 interface RootNodeController {
 
@@ -134,12 +135,18 @@ fun BranchNodeState.lowestBranch() : BranchNodeState {
 
 interface BranchNodeState : NodeState {
 
+    /**
+     * Used to optionally provide custom [BranchNodeState] implementations for a custom [BranchNode]
+     */
     var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
-
-    var nodeUIController: NodeUIController?
 
     /**
      * The controller for running the full flow of steps and nodes.
+     */
+    var nodeUIController: NodeUIController?
+
+    /**
+     * The controller for finishing and saving the full flow of steps and nodes.
      */
     var rootNodeController: RootNodeController?
 
@@ -174,7 +181,7 @@ interface BranchNodeState : NodeState {
      */
     fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
 
-    open fun finish(navigationPoint: NavigationPoint)
+    fun finish(navigationPoint: NavigationPoint)
 }
 
 interface LeafNodeState : NodeState {
@@ -263,9 +270,6 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             currentResult.path.add(pathMarker)
         }
         if (controller.canHandle(node)) {
-            //controller should also have the option of handling a branch node and returning a custom BranchNodeState.
-                //
-
             // If the controller can handle the node state then it is responsible for showing it. Just set the current
             // child and hand off control to the root node controller.
             getLeafNodeState(navigationPoint)?.let { nodeState ->
