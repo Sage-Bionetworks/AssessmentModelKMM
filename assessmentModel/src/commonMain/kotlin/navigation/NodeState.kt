@@ -256,7 +256,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Throws: [NullPointerException] if the [NavigationPoint.node] or [rootNodeController] are null.
      */
     open fun moveTo(navigationPoint: NavigationPoint) {
-        val controller = nodeUIController ?: throw NullPointerException("Unexpected null rootNodeController")
+        val controller = nodeUIController ?: throw NullPointerException("Unexpected null nodeUiController")
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
         val pathMarker = PathMarker(node.identifier, navigationPoint.direction)
         if (currentResult.path.lastOrNull() != pathMarker) {
