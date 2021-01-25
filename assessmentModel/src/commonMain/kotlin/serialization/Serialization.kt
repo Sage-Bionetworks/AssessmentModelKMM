@@ -42,7 +42,7 @@ interface ModuleInfoProvider {
 
     fun getResourceInfo(assessmentIdentifier: String): ResourceInfo
 
-    fun getJsonDecoder(assessmentIdentifier: String): Json
+    fun getJsonDecoder(assessmentIdentifier: String?): Json
 }
 
 /**
@@ -58,7 +58,7 @@ open class ModuleInfoProviderImpl(
         return defaultResourceInfo
     }
 
-    override fun getJsonDecoder(assessmentIdentifier: String): Json {
+    override fun getJsonDecoder(assessmentIdentifier: String?): Json {
         return Serialization.JsonCoder.default
     }
 

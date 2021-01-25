@@ -33,8 +33,7 @@ fun ResourceInfo.bundle() : NSBundle
  * an assessment and/or an assessment group.
  */
 class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
-    var fileLoader: FileLoader = FileLoaderIOS()
-    var jsonProvider: JsonProvider = JsonProvider()
+    var moduleInfoProvider: ModuleInfoProvider = ModuleInfoProviderImpl(FileLoaderIOS(), this)
 
     override var decoderBundle: Any? = bundle
     override var packageName: String? = null
@@ -51,7 +50,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
     fun decodeObject(): AssessmentGroupWrapper {
         try {
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
-            val group = decoder.jsonProvider.getJson("defaultSerializer").decodeFromString(serializer, jsonString)
+            val group = decoder.moduleInfoProvider.getJsonDecoder(null).decodeFromString(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
@@ -67,7 +66,7 @@ class AssessmentLoader(private val placeholder: Assessment,
     @Throws(Throwable::class)
     fun decodeObject(): Assessment {
         try {
-            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonProvider)
+            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getJsonDecoder(placeholder.identifier))
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
@@ -79,8 +78,8 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
     fun decodeObject(): Assessment {
         try {
             val serializer = PolymorphicSerializer(Assessment::class)
-            val placeholder = decoder.jsonProvider.getJson("defaultSerializer").decodeFromString(serializer, jsonString)
-            return placeholder.unpack(decoder.fileLoader, decoder, decoder.jsonProvider)
+            val placeholder = decoder.moduleInfoProvider.getJsonDecoder(null).decodeFromString(serializer, jsonString)
+            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getJsonDecoder(placeholder.identifier))
         } catch (err: Exception) {
             throw Throwable(err.message)
         }

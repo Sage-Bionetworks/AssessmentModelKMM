@@ -1016,7 +1016,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
         val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val decoded = transform.unpack(fileLoader, resourceInfo, JsonProvider())
+        val moduleInfoProvider = ModuleInfoProviderImpl(fileLoader, resourceInfo)
+        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, moduleInfoProvider.getJsonDecoder(null))
 
         assertTrue(decoded is InstructionStepObject)
         assertEqualStep(original, decoded)
@@ -1085,7 +1086,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
         val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val decoded = transform.unpack(fileLoader, resourceInfo, JsonProvider())
+        val moduleInfoProvider = ModuleInfoProviderImpl(fileLoader, resourceInfo)
+        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, moduleInfoProvider.getJsonDecoder(null))
 
         assertTrue(decoded is SectionObject)
         assertContainerNode(original, decoded)
@@ -1219,7 +1221,8 @@ open class NodeTest : NodeSerializationTestHelper() {
         val transform = TransformableAssessmentObject(identifier = "foo", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
         val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val decoded = transform.unpack(fileLoader, resourceInfo, JsonProvider())
+        val moduleInfoProvider = ModuleInfoProviderImpl(fileLoader, resourceInfo)
+        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, moduleInfoProvider.getJsonDecoder(null))
 
         assertTrue(decoded is AssessmentObject)
         assertContainerNode(original, decoded)
