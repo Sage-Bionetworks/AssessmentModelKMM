@@ -175,9 +175,9 @@ data class AssessmentObject(
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): AssessmentObject {
+    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
         imageInfo?.copyResourceInfo(resourceInfo)
-        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonProvider) }
+        val copyChildren = children.map { it.unpack(moduleInfoProvider, resourceInfo, jsonCoder) }
         val copy = copy(children = copyChildren)
         copy.copyFrom(this)
         return copy
@@ -193,9 +193,9 @@ data class SectionObject(
     @SerialName("asyncActions")
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): SectionObject {
+    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
         imageInfo?.copyResourceInfo(resourceInfo)
-        val copyChildren = children.map { it.unpack(fileLoader, resourceInfo, jsonProvider) }
+        val copyChildren = children.map { it.unpack(moduleInfoProvider, resourceInfo, jsonCoder) }
         val copy = copy(children = copyChildren)
         copy.copyFrom(this)
         return copy

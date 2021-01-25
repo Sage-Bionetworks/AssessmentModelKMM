@@ -3,6 +3,8 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
+import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.answerTypeSerializersModule
 
 /**
@@ -31,12 +33,32 @@ object Serialization {
 }
 
 /**
- * The [JsonProvider] allows for [assessment] specific [Json] deserialization when loading an
- * [assessment] containing other [assessments].
+ * The [ModuleInfoProvider] provides methods to lookup the necessary [ResourceInfo] and [Json] to
+ * load an [Assessment] using the provide the platform specific [FileLoader].
  */
-open class JsonProvider {
+interface ModuleInfoProvider {
 
-    fun getJson(assessmentIdentifier: String): Json {
+    val fileLoader: FileLoader
+
+    fun getResourceInfo(assessmentIdentifier: String): ResourceInfo
+
+    fun getJsonDecoder(assessmentIdentifier: String): Json
+}
+
+/**
+ * Default implementation of [ModuleInfoProvider] which can be extended to provide custom json decoders
+ * and [ResourceInfo].
+ */
+open class ModuleInfoProviderImpl(
+    override val fileLoader: FileLoader,
+    private val defaultResourceInfo: ResourceInfo
+): ModuleInfoProvider {
+
+    override fun getResourceInfo(assessmentIdentifier: String): ResourceInfo {
+        return defaultResourceInfo
+    }
+
+    override fun getJsonDecoder(assessmentIdentifier: String): Json {
         return Serialization.JsonCoder.default
     }
 

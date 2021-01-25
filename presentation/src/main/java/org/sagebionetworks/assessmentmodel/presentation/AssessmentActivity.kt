@@ -10,6 +10,7 @@ import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.FinishedReason
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 
 open class AssessmentActivity: AppCompatActivity() {
@@ -29,7 +30,6 @@ open class AssessmentActivity: AppCompatActivity() {
     lateinit var viewModel: RootAssessmentViewModel
     var assessmentFragmentProvider: AssessmentFragmentProvider? = null
     var customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
-    val jsonProvider: JsonProvider = JsonProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (intent.hasExtra(ARG_THEME)) {
@@ -37,16 +37,22 @@ open class AssessmentActivity: AppCompatActivity() {
         }
         val assessmentId = intent.getStringExtra(ARG_ASSESSMENT_ID_KEY)!!
         val resourceName = intent.getStringExtra(ARG_RESOURCE_NAME)!!
-        val customPackageName = intent.getStringExtra(ARG_PACKAGE_NAME)
+        val packageName = intent.getStringExtra(ARG_PACKAGE_NAME) ?: this.packageName
 
-        val fileLoader = FileLoaderAndroid(resources, customPackageName ?: this.packageName)
+        val fileLoader = FileLoaderAndroid(resources, packageName)
         val assessmentGroup = AssessmentGroupInfoObject(
             assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
             packageName = packageName
         )
+        val defaultResourceInfo = object : ResourceInfo {
+            override var decoderBundle: Any? = null
+            override val bundleIdentifier: String? = null
+            override var packageName: String? = packageName
+        }
+        val moduleInfoProvider = ModuleInfoProviderImpl(fileLoader, defaultResourceInfo)
 
         val assessmentProvider =
-            FileAssessmentProvider(fileLoader, assessmentGroup, jsonProvider)
+            FileAssessmentProvider(moduleInfoProvider, assessmentGroup, moduleInfoProvider.getJsonDecoder(assessmentId))
 
         viewModel = initViewModel(assessmentId, assessmentProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData

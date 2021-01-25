@@ -24,12 +24,13 @@ interface TransformableNode : ContentNode, AssetInfo {
     override val rawFileExtension: String?
         get() = "json"
 
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Node {
+    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
+        val curResourceInfo = moduleInfoProvider.getResourceInfo(this.identifier)
         val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = fileLoader.loadFile(this, resourceInfo)
-        val jsonCoder = jsonProvider.getJson(this.identifier)
+        val jsonString = moduleInfoProvider.fileLoader.loadFile(this, resourceInfo)
+        val curJsonCoder = moduleInfoProvider.getJsonDecoder(this.identifier)
         val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(fileLoader, resourceInfo, jsonProvider)
+        return unpackedNode.unpack(moduleInfoProvider, curResourceInfo, curJsonCoder)
     }
 }
 
@@ -41,12 +42,14 @@ interface TransformableNode : ContentNode, AssetInfo {
  * [TransformableAssessment] that is vended from a server.
  */
 interface TransformableAssessment : Assessment, TransformableNode {
-    override fun unpack(fileLoader: FileLoader, resourceInfo: ResourceInfo, jsonProvider: JsonProvider): Assessment {
+
+    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment {
+        val curResourceInfo = moduleInfoProvider.getResourceInfo(this.identifier)
         val serializer = PolymorphicSerializer(Assessment::class)
-        val jsonString = fileLoader.loadFile(this, resourceInfo)
-        val jsonCoder = jsonProvider.getJson(this.identifier)
+        val jsonString = moduleInfoProvider.fileLoader.loadFile(this, resourceInfo)
+        val curJsonCoder = moduleInfoProvider.getJsonDecoder(this.identifier)
         val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(fileLoader, resourceInfo, jsonProvider)
+        return unpackedNode.unpack(moduleInfoProvider, curResourceInfo, curJsonCoder)
     }
 
     override fun getNavigator(nodeState: BranchNodeState): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
@@ -62,15 +65,15 @@ interface AssessmentGroupInfo {
 }
 
 interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
-    val fileLoader: FileLoader
-    val jsonProvider: JsonProvider
+    val moduleInfoProvider: ModuleInfoProvider
+    val jsonCoder: Json
 
     override fun canLoadAssessment(assessmentIdentifier: String): Boolean =
             assessments.any { it.identifier == assessmentIdentifier }
 
     override fun loadAssessment(assessmentIdentifier: String): Assessment? {
         return assessments.firstOrNull { it.identifier == assessmentIdentifier }?.let {
-            return it.unpack(fileLoader, resourceInfo, jsonProvider)
+            return it.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
         }
     }
 }
@@ -91,7 +94,8 @@ data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
  * The [FileAssessmentProvider] is a wrapper for a [fileLoader] and [assessmentGroupInfo] to allow for unpacking an
  * [Assessment] using a platform-specific resource management strategy.
  */
-class FileAssessmentProvider(override val fileLoader: FileLoader,
+class FileAssessmentProvider(override val moduleInfoProvider: ModuleInfoProvider,
                              private val assessmentGroupInfo: AssessmentGroupInfo,
-                             override var jsonProvider: JsonProvider = JsonProvider())
+                             override var jsonCoder: Json
+)
     : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo
