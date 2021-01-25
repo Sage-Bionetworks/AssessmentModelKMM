@@ -220,12 +220,12 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
 
     override var nodeUIController: NodeUIController?
         //If we have a NodeUIController use it, otherwise defer to our parent.
-        get() =  _nodeUiController?: parent?.nodeUIController
+        get() =  _nodeUiController ?: parent?.nodeUIController
         set(value) { _nodeUiController = value }
     private var _nodeUiController: NodeUIController? = null
 
     override var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
-        get() = parent?.customBranchNodeStateProvider?: _customBranchNodeStateProvider
+        get() = parent?.customBranchNodeStateProvider ?: _customBranchNodeStateProvider
         set(value) {_customBranchNodeStateProvider = value}
     private var _customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
 
@@ -431,7 +431,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return (navigationPoint.node as? BranchNode)?.let {
-            customBranchNodeStateProvider?.customNodeStateFor(it, this)?: BranchNodeStateImpl(it, this)
+            customBranchNodeStateProvider?.customNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
         }
     }
 

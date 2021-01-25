@@ -28,13 +28,12 @@ interface BranchNode : Node {
             = BranchNodeResultObject(resultId())
 }
 
-/**
- * An [Assessment] is used to define the model information used to gather assessment (measurement) data needed for a
- * given study. It can include both the information needed to display a [Step] sequence to the participant as well as
- * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
- * used to inform the results.
- */
-interface Assessment : BranchNode, ContentNode {
+interface AssessmentInfo {
+
+    /**
+     * The [identifier] for the assessment.
+     */
+    val identifier: String
 
     /**
      * The [versionString] may be a semantic version, timestamp, or sequential revision integer.
@@ -46,6 +45,16 @@ interface Assessment : BranchNode, ContentNode {
      * table in a data base.
      */
     val schemaIdentifier: String?
+
+}
+
+/**
+ * An [Assessment] is used to define the model information used to gather assessment (measurement) data needed for a
+ * given study. It can include both the information needed to display a [Step] sequence to the participant as well as
+ * the [AsyncActionConfiguration] data used to set up asynchronous actions such as sensors or web services that can be
+ * used to inform the results.
+ */
+interface Assessment : BranchNode, ContentNode, AssessmentInfo {
 
     /**
      * The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not

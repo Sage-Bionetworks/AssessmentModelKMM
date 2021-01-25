@@ -6,10 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.serialization.json.Json
+import org.sagebionetworks.assessmentmodel.AssessmentInfo
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.FinishedReason
-import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 
@@ -40,8 +41,9 @@ open class AssessmentActivity: AppCompatActivity() {
         val packageName = intent.getStringExtra(ARG_PACKAGE_NAME) ?: this.packageName
 
         val fileLoader = FileLoaderAndroid(resources, packageName)
+        val assessmentInfo = TransformableAssessmentObject(assessmentId, resourceName)
         val assessmentGroup = AssessmentGroupInfoObject(
-            assessments = listOf(TransformableAssessmentObject(assessmentId, resourceName)),
+            assessments = listOf(assessmentInfo),
             packageName = packageName
         )
         val defaultResourceInfo = object : ResourceInfo {
@@ -49,10 +51,13 @@ open class AssessmentActivity: AppCompatActivity() {
             override val bundleIdentifier: String? = null
             override var packageName: String? = packageName
         }
-        val moduleInfoProvider = ModuleInfoProviderImpl(fileLoader, defaultResourceInfo)
+        val moduleInfoProvider = object : ModuleInfoProvider { override val fileLoader = fileLoader
+            override fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo? = null
+            override fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json? = null
+        }
 
         val assessmentProvider =
-            FileAssessmentProvider(moduleInfoProvider, assessmentGroup, moduleInfoProvider.getJsonDecoder(assessmentId))
+            FileAssessmentProvider(moduleInfoProvider, assessmentGroup, moduleInfoProvider.getRegisteredJsonDecoder(assessmentInfo) ?: Serialization.JsonCoder.default)
 
         viewModel = initViewModel(assessmentId, assessmentProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData

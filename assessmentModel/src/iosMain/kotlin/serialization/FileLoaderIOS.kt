@@ -4,6 +4,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.Assessment
+import org.sagebionetworks.assessmentmodel.AssessmentInfo
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
@@ -33,7 +34,11 @@ fun ResourceInfo.bundle() : NSBundle
  * an assessment and/or an assessment group.
  */
 class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
-    var moduleInfoProvider: ModuleInfoProvider = ModuleInfoProviderImpl(FileLoaderIOS(), this)
+    var moduleInfoProvider: ModuleInfoProvider = object : ModuleInfoProvider { override val fileLoader = FileLoaderIOS()
+        override fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo? = null
+        override fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json? = null
+    }
+    var jsonCoder: Json = Serialization.JsonCoder.default
 
     override var decoderBundle: Any? = bundle
     override var packageName: String? = null
@@ -50,7 +55,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
     fun decodeObject(): AssessmentGroupWrapper {
         try {
             val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
-            val group = decoder.moduleInfoProvider.getJsonDecoder(null).decodeFromString(serializer, jsonString)
+            val group = decoder.jsonCoder.decodeFromString(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
             return AssessmentGroupWrapper(group, assessments)
@@ -66,7 +71,7 @@ class AssessmentLoader(private val placeholder: Assessment,
     @Throws(Throwable::class)
     fun decodeObject(): Assessment {
         try {
-            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getJsonDecoder(placeholder.identifier))
+            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }
@@ -78,8 +83,8 @@ class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBund
     fun decodeObject(): Assessment {
         try {
             val serializer = PolymorphicSerializer(Assessment::class)
-            val placeholder = decoder.moduleInfoProvider.getJsonDecoder(null).decodeFromString(serializer, jsonString)
-            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getJsonDecoder(placeholder.identifier))
+            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
+            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
         } catch (err: Exception) {
             throw Throwable(err.message)
         }

@@ -25,12 +25,10 @@ interface TransformableNode : ContentNode, AssetInfo {
         get() = "json"
 
     override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
-        val curResourceInfo = moduleInfoProvider.getResourceInfo(this.identifier)
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = moduleInfoProvider.fileLoader.loadFile(this, resourceInfo)
-        val curJsonCoder = moduleInfoProvider.getJsonDecoder(this.identifier)
         val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(moduleInfoProvider, curResourceInfo, curJsonCoder)
+        return unpackedNode.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
     }
 }
 
@@ -44,12 +42,15 @@ interface TransformableNode : ContentNode, AssetInfo {
 interface TransformableAssessment : Assessment, TransformableNode {
 
     override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment {
-        val curResourceInfo = moduleInfoProvider.getResourceInfo(this.identifier)
-        val serializer = PolymorphicSerializer(Assessment::class)
-        val jsonString = moduleInfoProvider.fileLoader.loadFile(this, resourceInfo)
-        val curJsonCoder = moduleInfoProvider.getJsonDecoder(this.identifier)
-        val unpackedNode = jsonCoder.decodeFromString(serializer, jsonString)
-        return unpackedNode.unpack(moduleInfoProvider, curResourceInfo, curJsonCoder)
+        val assessment = moduleInfoProvider.getRegisteredAssessment(this)
+        return if (assessment != null) assessment else {
+            val curResourceInfo = moduleInfoProvider.getRegisteredResourceInfo(this) ?: resourceInfo
+            val serializer = PolymorphicSerializer(Assessment::class)
+            val jsonString = moduleInfoProvider.fileLoader.loadFile(this, resourceInfo)
+            val curJsonCoder = moduleInfoProvider.getRegisteredJsonDecoder(this) ?: jsonCoder
+            val unpackedNode = curJsonCoder.decodeFromString(serializer, jsonString)
+            unpackedNode.unpack(moduleInfoProvider, curResourceInfo, curJsonCoder)
+        }
     }
 
     override fun getNavigator(nodeState: BranchNodeState): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")

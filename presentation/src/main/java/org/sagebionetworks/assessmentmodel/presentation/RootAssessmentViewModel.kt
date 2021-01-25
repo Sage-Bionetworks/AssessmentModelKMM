@@ -38,7 +38,7 @@ open class RootAssessmentViewModel(
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
 
-        //TODO: Before triggering UI to finish, should also check that any saving is done - nbrown 01/21/21
+        //TODO: Before triggering UI to finish, should also check that any clean up is done - nbrown 01/21/21
 
         assessmentFinishedMutableLiveData.value =
             FinishedState(nodeState, reason, error)
