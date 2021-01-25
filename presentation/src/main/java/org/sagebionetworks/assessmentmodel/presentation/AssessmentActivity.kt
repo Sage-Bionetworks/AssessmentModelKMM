@@ -59,7 +59,7 @@ open class AssessmentActivity: AppCompatActivity() {
         val assessmentProvider =
             FileAssessmentProvider(moduleInfoProvider, assessmentGroup, moduleInfoProvider.getRegisteredJsonDecoder(assessmentInfo) ?: Serialization.JsonCoder.default)
 
-        viewModel = initViewModel(assessmentId, assessmentProvider, customBranchNodeStateProvider)
+        viewModel = initViewModel(assessmentInfo, assessmentProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData
             .observe(this, Observer<BranchNodeState>
             { nodeState -> this.handleAssessmentLoaded(nodeState) })
@@ -95,10 +95,10 @@ open class AssessmentActivity: AppCompatActivity() {
         supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
     }
 
-    open fun initViewModel(assessmentId: String, assessmentProvider: FileAssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
+    open fun initViewModel(assessmentInfo: AssessmentInfo, assessmentProvider: FileAssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
         ViewModelProvider(
             this, RootAssessmentViewModelFactory()
-                .create(assessmentId, assessmentProvider, customBranchNodeStateProvider)
+                .create(assessmentInfo, assessmentProvider, customBranchNodeStateProvider)
         ).get(RootAssessmentViewModel::class.java)
 
 

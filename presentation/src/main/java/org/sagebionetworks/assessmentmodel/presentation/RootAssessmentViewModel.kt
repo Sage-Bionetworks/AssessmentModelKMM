@@ -7,7 +7,7 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class RootAssessmentViewModel(
-    val assessmentIdentifier: String,
+    val assessmentInfo: AssessmentInfo,
     val assessmentProvider: AssessmentProvider,
     val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
 ) : ViewModel(), RootNodeController {
@@ -21,7 +21,7 @@ open class RootAssessmentViewModel(
 
     init {
         viewModelScope.launch {
-            val assessment = assessmentProvider.loadAssessment(assessmentIdentifier)
+            val assessment = assessmentProvider.loadAssessment(assessmentInfo)
             assessmentNodeState = branchNodeStateProvider?.customNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
             assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
@@ -66,7 +66,7 @@ open class RootAssessmentViewModel(
 open class RootAssessmentViewModelFactory() {
 
     open fun create(
-        assessmentIdentifier: String,
+        assessmentInfo: AssessmentInfo,
         assessmentProvider: AssessmentProvider,
         branchNodeStateProvider: CustomBranchNodeStateProvider?
     ): ViewModelProvider.Factory {
@@ -75,7 +75,7 @@ open class RootAssessmentViewModelFactory() {
                 if (modelClass.isAssignableFrom(RootAssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return RootAssessmentViewModel(assessmentIdentifier, assessmentProvider, branchNodeStateProvider) as T
+                    return RootAssessmentViewModel(assessmentInfo, assessmentProvider, branchNodeStateProvider) as T
                 }
 
                 throw IllegalArgumentException("Unknown ViewModel class")
