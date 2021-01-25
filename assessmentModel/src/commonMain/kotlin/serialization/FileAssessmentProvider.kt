@@ -69,11 +69,11 @@ interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
     val moduleInfoProvider: ModuleInfoProvider
     val jsonCoder: Json
 
-    override fun canLoadAssessment(assessmentIdentifier: String): Boolean =
-            assessments.any { it.identifier == assessmentIdentifier }
+    override fun canLoadAssessment(assessmentInfo: AssessmentInfo): Boolean =
+            assessments.any { it.identifier == assessmentInfo.identifier && it.versionString == assessmentInfo.versionString }
 
-    override fun loadAssessment(assessmentIdentifier: String): Assessment? {
-        return assessments.firstOrNull { it.identifier == assessmentIdentifier }?.let {
+    override fun loadAssessment(assessmentInfo: AssessmentInfo): Assessment? {
+        return assessments.firstOrNull { it.identifier == assessmentInfo.identifier && it.versionString == assessmentInfo.versionString}?.let {
             return it.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
         }
     }

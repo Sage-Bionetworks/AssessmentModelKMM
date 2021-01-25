@@ -3,12 +3,12 @@ package org.sagebionetworks.assessmentmodel
 interface AssessmentProvider {
 
     /**
-     * Can this provider load an assessment associated with the given identifier?
+     * Can this provider load an assessment associated with the given [AssessmentInfo]?
      */
-    fun canLoadAssessment(assessmentIdentifier: String): Boolean
+    fun canLoadAssessment(assessmentInfo: AssessmentInfo): Boolean
 
     /**
-     * Load an [Assessment] based on its identifier.
+     * Load an [Assessment] based on its [AssessmentInfo].
      */
-    fun loadAssessment(assessmentIdentifier: String): Assessment?
+    fun loadAssessment(assessmentInfo: AssessmentInfo): Assessment?
 }
