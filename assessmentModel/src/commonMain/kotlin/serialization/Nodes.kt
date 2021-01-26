@@ -13,7 +13,7 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ModuleInfoProvider
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*

@@ -11,7 +11,7 @@ import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ModuleInfoProvider
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*

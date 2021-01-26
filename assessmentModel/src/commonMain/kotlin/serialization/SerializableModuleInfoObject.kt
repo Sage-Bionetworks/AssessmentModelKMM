@@ -8,9 +8,9 @@ import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 
-val fileProviderSerializersModule = SerializersModule {
-    polymorphic(AssessmentGroupInfo::class) {
-        subclass(AssessmentGroupInfoObject::class)
+val moduleInfoSerializersModule = SerializersModule {
+    polymorphic(ModuleInfo::class) {
+        subclass(ModuleInfoObject::class)
     }
 }
 
@@ -56,47 +56,26 @@ interface TransformableAssessment : Assessment, TransformableNode {
     override fun getNavigator(nodeState: BranchNodeState): Navigator = throw IllegalStateException("Attempted to get a navigator without first unpacking the Assessment.")
 }
 
-/**
- * The [AssessmentGroupInfo] is a way of collecting a group of assessments that are shared within a given module where
- * they should use the same [resourceInfo] to load any of the assessments within the [assessments] included in this group.
- */
-interface AssessmentGroupInfo {
-    val assessments: List<Assessment>
-    val resourceInfo: ResourceInfo
-}
-
-interface ResourceAssessmentProvider : AssessmentGroupInfo, AssessmentProvider {
-    val moduleInfoProvider: ModuleInfoProvider
-    val jsonCoder: Json
-
-    override fun canLoadAssessment(assessmentInfo: AssessmentInfo): Boolean =
-            assessments.any { it.identifier == assessmentInfo.identifier && it.versionString == assessmentInfo.versionString }
-
-    override fun loadAssessment(assessmentInfo: AssessmentInfo): Assessment? {
-        return assessments.firstOrNull { it.identifier == assessmentInfo.identifier && it.versionString == assessmentInfo.versionString}?.let {
-            return it.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
-        }
-    }
-}
-
 @Serializable
 @SerialName("assessmentGroupInfo")
-data class AssessmentGroupInfoObject(override val assessments: List<Assessment>,
-                                     override var packageName: String? = null,
-                                     override val bundleIdentifier: String? = null): ResourceInfo, AssessmentGroupInfo {
+data class ModuleInfoObject(override val assessments: List<Assessment>,
+                            override var packageName: String? = null,
+                            override val bundleIdentifier: String? = null): ResourceInfo,
+    ModuleInfo {
     override val resourceInfo: ResourceInfo
         get() = this
 
     @Transient
     override var decoderBundle: Any? = null
+
+
 }
 
 /**
- * The [FileAssessmentProvider] is a wrapper for a [fileLoader] and [assessmentGroupInfo] to allow for unpacking an
+ * The [SerializableModuleInfoObject] is a wrapper for a [fileLoader] and [moduleInfo] to allow for unpacking an
  * [Assessment] using a platform-specific resource management strategy.
  */
-class FileAssessmentProvider(override val moduleInfoProvider: ModuleInfoProvider,
-                             private val assessmentGroupInfo: AssessmentGroupInfo,
-                             override var jsonCoder: Json
+class SerializableModuleInfoObject(private val moduleInfo: ModuleInfo,
+                                   override val jsonCoder: Json = Serialization.JsonCoder.default
 )
-    : ResourceAssessmentProvider, AssessmentGroupInfo by assessmentGroupInfo
+    : SerializableModuleInfo, ModuleInfo by moduleInfo

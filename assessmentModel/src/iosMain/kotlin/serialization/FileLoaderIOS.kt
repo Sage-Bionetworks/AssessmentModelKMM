@@ -6,9 +6,7 @@ import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.Assessment
 import org.sagebionetworks.assessmentmodel.AssessmentInfo
 import org.sagebionetworks.assessmentmodel.Result
-import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import platform.Foundation.NSBundle
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
@@ -54,7 +52,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
     @Throws(Throwable::class)
     fun decodeObject(): AssessmentGroupWrapper {
         try {
-            val serializer = PolymorphicSerializer(AssessmentGroupInfo::class)
+            val serializer = PolymorphicSerializer(ModuleInfo::class)
             val group = decoder.jsonCoder.decodeFromString(serializer, jsonString)
             group.resourceInfo.decoderBundle = decoder.decoderBundle
             val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
@@ -64,7 +62,7 @@ class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBun
         }
     }
 }
-data class AssessmentGroupWrapper(val assessmentGroupInfo: AssessmentGroupInfo, val assessments: List<AssessmentLoader>)
+data class AssessmentGroupWrapper(val moduleInfo: ModuleInfo, val assessments: List<AssessmentLoader>)
 
 class AssessmentLoader(private val placeholder: Assessment,
                        private val decoder: KotlinDecoder) : Assessment by placeholder {

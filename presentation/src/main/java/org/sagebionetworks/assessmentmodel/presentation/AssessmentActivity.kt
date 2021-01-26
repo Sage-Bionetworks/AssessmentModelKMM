@@ -6,11 +6,13 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.AssessmentInfo
+import org.sagebionetworks.assessmentmodel.AssessmentProvider
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.FinishedReason
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ModuleInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ModuleInfoProvider
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 
@@ -42,7 +44,7 @@ open class AssessmentActivity: AppCompatActivity() {
 
         val fileLoader = FileLoaderAndroid(resources, packageName)
         val assessmentInfo = TransformableAssessmentObject(assessmentId, resourceName)
-        val assessmentGroup = AssessmentGroupInfoObject(
+        val assessmentGroup = ModuleInfoObject(
             assessments = listOf(assessmentInfo),
             packageName = packageName
         )
@@ -51,15 +53,15 @@ open class AssessmentActivity: AppCompatActivity() {
             override val bundleIdentifier: String? = null
             override var packageName: String? = packageName
         }
-        val moduleInfoProvider = object : ModuleInfoProvider { override val fileLoader = fileLoader
-            override fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo? = null
-            override fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json? = null
+        val moduleInfo = SerializableModuleInfoObject(assessmentGroup)
+        val moduleInfoProvider = object : ModuleInfoProvider {
+            override val fileLoader = fileLoader
+            override val modules: List<ModuleInfo> = listOf(moduleInfo)
         }
 
-        val assessmentProvider =
-            FileAssessmentProvider(moduleInfoProvider, assessmentGroup, moduleInfoProvider.getRegisteredJsonDecoder(assessmentInfo) ?: Serialization.JsonCoder.default)
+        // TODO: syoung 01/25/2021 Refactor this to have the activity take the [ModuleInfoProvider] as a setup input.
 
-        viewModel = initViewModel(assessmentInfo, assessmentProvider, customBranchNodeStateProvider)
+        viewModel = initViewModel(assessmentInfo, moduleInfoProvider, customBranchNodeStateProvider)
         viewModel.assessmentLoadedLiveData
             .observe(this, Observer<BranchNodeState>
             { nodeState -> this.handleAssessmentLoaded(nodeState) })
@@ -95,7 +97,7 @@ open class AssessmentActivity: AppCompatActivity() {
         supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
     }
 
-    open fun initViewModel(assessmentInfo: AssessmentInfo, assessmentProvider: FileAssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
+    open fun initViewModel(assessmentInfo: AssessmentInfo, assessmentProvider: AssessmentProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
         ViewModelProvider(
             this, RootAssessmentViewModelFactory()
                 .create(assessmentInfo, assessmentProvider, customBranchNodeStateProvider)
