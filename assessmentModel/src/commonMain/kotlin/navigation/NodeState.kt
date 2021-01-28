@@ -181,7 +181,6 @@ interface BranchNodeState : NodeState {
      */
     fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
 
-    fun finish(navigationPoint: NavigationPoint)
 }
 
 interface LeafNodeState : NodeState {
@@ -367,7 +366,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Warning: If you override this method, you should still call through to super to allow the
      * base class to manage its internal navigation state.
      */
-    override fun finish(navigationPoint: NavigationPoint) {
+    fun finish(navigationPoint: NavigationPoint) {
         // When finishing, mark the end date for the current result.
         markFinalResultIfNeeded()
         when {

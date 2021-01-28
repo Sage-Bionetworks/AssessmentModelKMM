@@ -35,13 +35,7 @@ open class AssessmentViewModel(
     }
 
     fun cancel() {
-        assessmentNodeState.finish(
-            NavigationPoint(
-                null,
-                assessmentNodeState.currentResult,
-                NavigationPoint.Direction.Exit
-            )
-        )
+        assessmentNodeState.exitEarly(null)
     }
 
     override fun canHandle(node: Node): Boolean {
