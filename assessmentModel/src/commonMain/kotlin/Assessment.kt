@@ -226,6 +226,9 @@ interface Node : ResultMapElement {
     fun canGoBack() = !hideButtons.contains(ButtonAction.Navigation.GoBackward)
 }
 
+/**
+ * [ContentInfo] is a subset of information that may be displayed about an [Assessment] or [Node].
+ */
 interface ContentInfo  {
 
     /**
