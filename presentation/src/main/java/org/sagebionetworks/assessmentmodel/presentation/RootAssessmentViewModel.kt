@@ -7,8 +7,8 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class RootAssessmentViewModel(
-    val assessmentInfo: AssessmentInfo,
-    val assessmentProvider: AssessmentProvider,
+    val assessmentPlaceholder: AssessmentPlaceholder,
+    val registryProvider: AssessmentRegistryProvider,
     val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
 ) : ViewModel(), RootNodeController {
 
@@ -21,7 +21,7 @@ open class RootAssessmentViewModel(
 
     init {
         viewModelScope.launch {
-            val assessment = assessmentProvider.loadAssessment(assessmentInfo)
+            val assessment = registryProvider.loadAssessment(assessmentPlaceholder)
             assessmentNodeState = branchNodeStateProvider?.customNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
             assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
@@ -66,8 +66,8 @@ open class RootAssessmentViewModel(
 open class RootAssessmentViewModelFactory() {
 
     open fun create(
-        assessmentInfo: AssessmentInfo,
-        assessmentProvider: AssessmentProvider,
+        assessmentInfo: AssessmentPlaceholder,
+        assessmentProvider: AssessmentRegistryProvider,
         branchNodeStateProvider: CustomBranchNodeStateProvider?
     ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {

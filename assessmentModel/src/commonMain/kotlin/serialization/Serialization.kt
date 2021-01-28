@@ -3,10 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
-import org.sagebionetworks.assessmentmodel.Assessment
-import org.sagebionetworks.assessmentmodel.AssessmentInfo
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.answerTypeSerializersModule
 
 /**
@@ -22,9 +18,7 @@ object Serialization {
                 imageSerializersModule +
                 nodeSerializersModule +
                 resultSerializersModule +
-                fileProviderSerializersModule +
                 SerializersModule {}    // Marker for the end of the list. Used to make github read more cleanly.
-
     }
     object JsonCoder {
         val default = Json{
@@ -32,25 +26,6 @@ object Serialization {
                 encodeDefaults = true
         }
     }
-}
-
-/**
- * The [ModuleInfoProvider] provides methods to lookup the necessary [ResourceInfo] and [Json] to
- * load an [Assessment] using the provide the platform specific [FileLoader].
- */
-interface ModuleInfoProvider {
-
-    val fileLoader: FileLoader
-
-    fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo?
-
-    fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json?
-
-    /**
-     * Allows the provider to return an [Assessment] (for the given [assessmentInfo]) that is not
-     * encoded as a JSON serialized object.
-     */
-    fun getRegisteredAssessment(assessmentInfo: AssessmentInfo): Assessment? = null
 }
 
 /**

@@ -946,9 +946,16 @@ open class NodeTest : NodeSerializationTestHelper() {
                 = jsonMap[assetInfo.resourceName] ?: error("JSON mapping not found for $assetInfo")
     }
 
-    data class TestResourceInfo(override var packageName: String? = null,
-                                override var decoderBundle: Any? = null,
-                                override val bundleIdentifier: String? = null) : ResourceInfo
+    data class TestEmbeddedJsonModuleInfo(
+        override var packageName: String? = null,
+        override var decoderBundle: Any? = null,
+        override val bundleIdentifier: String? = null,
+        override val assessments: List<TransformableAssessment> = listOf(),
+        override val jsonCoder: Json = Serialization.JsonCoder.default
+    ) : ResourceInfo, EmbeddedJsonModuleInfo {
+        override val resourceInfo: ResourceInfo
+            get() = this
+    }
 
     data class TestResourceBundle(val bundleIdentifier: String? = null)
 
@@ -958,10 +965,7 @@ open class NodeTest : NodeSerializationTestHelper() {
             {
                 "identifier": "foo",
                 "resourceName": "foo_test",
-                "type": "transform",
-                "title": "Hello World!",
-                "subtitle": "Subtitle",
-                "icon": "fooIcon"
+                "type": "transform"
             }
             """
 
@@ -969,9 +973,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 identifier = "foo",
                 resourceName = "foo_test"
         )
-        original.title = "Hello World!"
-        original.subtitle = "Subtitle"
-        original.imageInfo = FetchableImage("fooIcon")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -979,11 +980,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableNodeObject)
-        assertEqualContentNodes(original, decoded)
         assertEqualNodes(original, decoded)
 
         assertTrue(restored is TransformableNodeObject)
-        assertEqualContentNodes(original, restored)
         assertEqualNodes(original, restored)
     }
 
@@ -1001,6 +1000,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                                   }
            }
            """
+        // syoung 01/28/2021 Currently, an InstructionStepObject does not inherit *any* properties
+        // from the transform
         val original = InstructionStepObject(identifier = "foo")
         original.title = "Hello World!"
         val originalImageInfo = AnimatedImage(
@@ -1014,11 +1015,11 @@ open class NodeTest : NodeSerializationTestHelper() {
         originalImageInfo.decoderBundle = bundle
         originalImageInfo.packageName = packageName
 
-        val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
+        val transform = TransformableNodeObject(identifier = "bar", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
-        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val moduleInfoProvider = getModuleInfoProvider(fileLoader)
-        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, Serialization.JsonCoder.default)
+        val moduleInfo = TestEmbeddedJsonModuleInfo(packageName = packageName, decoderBundle = bundle)
+        val registryProvider = getRegistryProvider(fileLoader, listOf(moduleInfo))
+        val decoded = transform.unpack(null, moduleInfo, registryProvider)
 
         assertTrue(decoded is InstructionStepObject)
         assertEqualStep(original, decoded)
@@ -1063,7 +1064,7 @@ open class NodeTest : NodeSerializationTestHelper() {
             """
 
         val original = SectionObject(
-                identifier = "foobar",
+                identifier = "foo",
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")))
@@ -1086,9 +1087,9 @@ open class NodeTest : NodeSerializationTestHelper() {
 
         val transform = TransformableNodeObject(identifier = "foo", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
-        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val moduleInfoProvider = getModuleInfoProvider(fileLoader)
-        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, Serialization.JsonCoder.default)
+        val moduleInfo = TestEmbeddedJsonModuleInfo(packageName = packageName, decoderBundle = bundle)
+        val registryProvider = getRegistryProvider(fileLoader, listOf(moduleInfo))
+        val decoded = transform.unpack(null, moduleInfo, registryProvider)
 
         assertTrue(decoded is SectionObject)
         assertContainerNode(original, decoded)
@@ -1109,8 +1110,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 "resourceName": "foo_test",
                 "type": "transformableAssessment",
                 "title": "Hello World!",
-                "subtitle": "Subtitle",
-                "icon": "fooIcon"
+                "subtitle": "Subtitle"
             }
             """
 
@@ -1118,9 +1118,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 identifier = "foo",
                 resourceName = "foo_test"
         )
-        original.title = "Hello World!"
-        original.subtitle = "Subtitle"
-        original.imageInfo = FetchableImage("fooIcon")
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -1128,11 +1125,9 @@ open class NodeTest : NodeSerializationTestHelper() {
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableAssessmentObject)
-        assertEqualContentNodes(original, decoded)
         assertEqualNodes(original, decoded)
 
         assertTrue(restored is TransformableAssessmentObject)
-        assertEqualContentNodes(original, restored)
         assertEqualNodes(original, restored)
     }
 
@@ -1144,39 +1139,37 @@ open class NodeTest : NodeSerializationTestHelper() {
                 "resourceName": "foo_test",
                 "type": "transformableAssessment",
                 "title": "Hello World!",
-                "subtitle": "Subtitle",
-                "icon": "fooIcon"
+                "subtitle": "Subtitle"
             }
             """
 
         val original = TransformableAssessmentObject(
-                identifier = "foo",
-                resourceName = "foo_test"
+            identifier = "foo",
+            resourceName = "foo_test",
+            title = "Hello World!",
+            subtitle = "Subtitle"
         )
-        original.title = "Hello World!"
-        original.subtitle = "Subtitle"
-        original.imageInfo = FetchableImage("fooIcon")
 
-        val serializer = PolymorphicSerializer(Assessment::class)
+        val serializer = PolymorphicSerializer(TransformableAssessment::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
         assertTrue(decoded is TransformableAssessmentObject)
-        assertEqualContentNodes(original, decoded)
+        assertEqualContentInfo(original, decoded)
         assertEqualNodes(original, decoded)
 
         assertTrue(restored is TransformableAssessmentObject)
-        assertEqualContentNodes(original, restored)
+        assertEqualContentInfo(original, restored)
         assertEqualNodes(original, restored)
     }
 
     @Test
-    fun testTransformAssessment() {
+    fun testTransformAssessment_Get() {
         val inputString = """
             {
                 "type": "assessment",
-                "identifier": "foo",
+                "identifier": "foobaroo",
                 "versionString": "1.2.3",
                 "title": "Hello World!",
                 "subtitle": "Subtitle",
@@ -1221,9 +1214,120 @@ open class NodeTest : NodeSerializationTestHelper() {
 
         val transform = TransformableAssessmentObject(identifier = "foo", resourceName = "foo_test")
         val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
-        val resourceInfo = TestResourceInfo(packageName = packageName, decoderBundle = bundle)
-        val moduleInfoProvider = getModuleInfoProvider(fileLoader)
-        val decoded = transform.unpack(moduleInfoProvider, resourceInfo, Serialization.JsonCoder.default)
+        val moduleInfo = TestEmbeddedJsonModuleInfo(packageName = packageName, decoderBundle = bundle)
+        val registryProvider = getRegistryProvider(fileLoader, listOf(moduleInfo))
+        val decoded = transform.unpack(null, moduleInfo, registryProvider)
+
+        assertTrue(decoded is AssessmentObject)
+        assertContainerNode(original, decoded)
+        assertEqualContentNodes(original, decoded)
+
+        val imageInfo = decoded.imageInfo
+        assertNotNull(imageInfo)
+        assertNull(imageInfo.bundleIdentifier)
+        assertSame(bundle, imageInfo.decoderBundle)
+        assertEquals(packageName, imageInfo.packageName)
+
+        val step1 = decoded.children.first()
+        assertTrue(step1 is InstructionStepObject)
+        val step1Image = step1.imageInfo
+        assertNotNull(step1Image)
+        assertSame(bundle, step1Image.decoderBundle)
+        assertEquals(packageName, step1Image.packageName)
+    }
+
+    @Test
+    fun testAssessmentPlaceholderObject_Serialization() {
+        val inputString = """
+            {
+                "identifier": "foo",
+                "assessmentInfo": {
+                    "identifier": "bar",
+                    "versionString": "1.2.3"
+                },
+                "type": "assessmentPlaceholder",
+                "title": "Hello World!",
+                "subtitle": "Subtitle"
+            }
+            """
+
+        val original = AssessmentPlaceholderObject(
+            identifier = "foo",
+            assessmentInfo = AssessmentInfoObject("bar", "1.2.3"),
+            title = "Hello World!",
+            subtitle = "Subtitle"
+        )
+
+        val serializer = PolymorphicSerializer(Node::class)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
+
+        assertTrue(decoded is AssessmentPlaceholderObject)
+        assertEqualNodes(original, decoded)
+
+        assertTrue(restored is AssessmentPlaceholderObject)
+        assertEqualNodes(original, restored)
+    }
+
+    @Test
+    fun testAssessmentPlaceholder_Get() {
+        val inputString = """
+            {
+                "type": "assessment",
+                "identifier": "foobaroo",
+                "versionString": "1.2.3",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "icon": "fooIcon",
+                "steps": [
+                    {
+                        "identifier": "step1",
+                        "type": "instruction",
+                        "title": "Step 1",
+                        "image": {"type":"fetchable","imageName":"step1Image"}
+                    },
+                    {
+                        "identifier": "step2",
+                        "type": "instruction",
+                        "title": "Step 2"
+                    }
+                ]
+            }
+            """
+
+        val bundle = TestResourceBundle()
+        val packageName = "org.foo.exampleToo"
+
+        val originalStep1 = buildInstructionStep("step1", "Step 1")
+        val originalStep1Image = FetchableImage("step1Image")
+        originalStep1.imageInfo = originalStep1Image
+        originalStep1Image.decoderBundle = bundle
+        originalStep1Image.packageName = packageName
+
+        val original = AssessmentObject(
+            identifier = "foo",
+            versionString = "1.2.3",
+            children = listOf(
+                originalStep1,
+                buildInstructionStep("step2", "Step 2")))
+        original.title = "Hello World!"
+        original.subtitle = "Subtitle"
+        val originalImageInfo = FetchableImage("fooIcon")
+        original.imageInfo = originalImageInfo
+        originalImageInfo.decoderBundle = bundle
+        originalImageInfo.packageName = packageName
+
+        val transform = TransformableAssessmentObject(identifier = "bar", resourceName = "foo_test")
+        val placeholder = AssessmentPlaceholderObject(identifier = "foo", AssessmentInfoObject("bar"))
+        val fileLoader = TestFileLoader(mapOf("foo_test" to inputString))
+        val moduleInfo = TestEmbeddedJsonModuleInfo(
+            packageName = packageName,
+            decoderBundle = bundle,
+            assessments = listOf(transform)
+        )
+        val registryProvider = getRegistryProvider(fileLoader, listOf(moduleInfo))
+        val decoded = registryProvider.loadAssessment(placeholder)
 
         assertTrue(decoded is AssessmentObject)
         assertContainerNode(original, decoded)
@@ -1258,10 +1362,14 @@ open class NodeSerializationTestHelper {
         assertEquals(expected.buttonMap, actual.buttonMap)
     }
 
-    fun assertEqualContentNodes(expected: ContentNode, actual: ContentNode) {
+    fun assertEqualContentInfo(expected: ContentInfo, actual: ContentInfo) {
         assertEquals(expected.title, actual.title)
         assertEquals(expected.subtitle, actual.subtitle)
         assertEquals(expected.detail, actual.detail)
+    }
+
+    fun assertEqualContentNodes(expected: ContentNode, actual: ContentNode) {
+        assertEqualContentInfo(expected, actual)
         assertEquals(expected.imageInfo, actual.imageInfo)
         assertEquals(expected.footnote, actual.footnote)
         assertEquals(expected.hideButtons, actual.hideButtons)
@@ -1310,10 +1418,10 @@ open class NodeSerializationTestHelper {
         return instruction
     }
 
-    fun getModuleInfoProvider(fileLoader: FileLoader) : ModuleInfoProvider {
-        return object : ModuleInfoProvider { override val fileLoader = fileLoader
-            override fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo? = null
-            override fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json? = null
+    fun getRegistryProvider(fileLoader: FileLoader, modules: List<ModuleInfo>) : AssessmentRegistryProvider {
+        return object : AssessmentRegistryProvider {
+            override val fileLoader = fileLoader
+            override val modules = modules
         }
     }
 }

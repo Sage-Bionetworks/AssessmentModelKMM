@@ -6,13 +6,12 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAssetType
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
 
@@ -46,6 +45,12 @@ interface AssessmentInfo {
      */
     val schemaIdentifier: String?
 
+    /**
+     * The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not
+     * defined. Where provided, it can be used by an application to indicate to the participant approximately how
+     * long an assessment is expected to take to complete.
+     */
+    val estimatedMinutes: Int
 }
 
 /**
@@ -56,13 +61,6 @@ interface AssessmentInfo {
  */
 interface Assessment : BranchNode, ContentNode, AssessmentInfo {
 
-    /**
-     * The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not
-     * defined. Where provided, it can be used by an application to indicate to the participant approximately how
-     * long an assessment is expected to take to complete.
-     */
-    val estimatedMinutes: Int
-
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult = AssessmentResultObject(
         identifier = resultId(),
@@ -70,7 +68,95 @@ interface Assessment : BranchNode, ContentNode, AssessmentInfo {
         schemaIdentifier = schemaIdentifier,
         versionString = versionString)
 
-    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Assessment
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Assessment
+}
+
+
+/**
+ * An [AssessmentPlaceholder] is a placeholder for an [Assessment] where the *actual* [Assessment]
+ * may be referenced from a different module. When a top-level [Assessment] is loaded, the activity
+ * must [unpack] the hierarchy, replacing all [AssessmentPlaceholder] and transformable objects
+ * within it. This can be managed by calling [AssessmentRegistryProvider.loadAssessment].
+ */
+interface AssessmentPlaceholder : Node, ContentInfo {
+
+    /**
+     * The information used to look in the [AssessmentRegistryProvider] for a [ModuleInfo] that
+     * defines the *actual* [Assessment] or [TransformableAssessment].
+     */
+    val assessmentInfo: AssessmentInfo
+
+    override val buttonMap: Map<ButtonAction, ButtonActionInfo>
+        get() = mapOf()
+    override val hideButtons: List<ButtonAction>
+        get() = listOf()
+
+    /**
+     * An [AssessmentPlaceholder] should never be used directly. Instead, it should always be replaced
+     * with a loaded [Assessment] before the [BranchNodeState] instantiates the associated [Result].
+     */
+    override fun createResult(): Result {
+        throw IllegalStateException("This node must be replaced during unpacking with an actual assessment")
+    }
+
+    /**
+     * If the [AssessmentPlaceholder] is included in another [Assessment], then it is replaced during
+     * unpacking by loading the assessment using the [AssessmentRegistryProvider].
+     */
+    override fun unpack(
+        originalNode: Node?,
+        moduleInfo: ModuleInfo,
+        registryProvider: AssessmentRegistryProvider
+    ): Assessment {
+        // syoung 01/28/2021 This should only ever be called when an assessment includes a placeholder
+        // as one of it's nodes. In that case, the node being unpacked is *this* and therefore, there
+        // should *not* ever point at another placeholder.
+        if (originalNode != null) throw IllegalArgumentException("Are you in an infinite loop of wacky madness? An `AssessmentPlaceholder` should always have a null `originalNode`.")
+        return registryProvider.loadAssessment(this)
+    }
+}
+
+/**
+ * A [TransformableNode] is a special node that allows for two-part unpacking of deserialization. This is used to allow
+ * a "placeholder" to be replaced with a different node.
+ */
+interface TransformableNode : Node, AssetInfo {
+    override val resourceAssetType: String?
+        get() = StandardResourceAssetType.RAW
+    override val rawFileExtension: String?
+        get() = "json"
+
+    override val buttonMap: Map<ButtonAction, ButtonActionInfo>
+        get() = mapOf()
+    override val hideButtons: List<ButtonAction>
+        get() = listOf()
+
+    override fun unpack(
+        originalNode: Node?,
+        moduleInfo: ModuleInfo,
+        registryProvider: AssessmentRegistryProvider
+    ): Node {
+        val node = moduleInfo.getReplacementNode(this, registryProvider)
+        return node.unpack(originalNode ?: this, moduleInfo, registryProvider)
+    }
+}
+
+/**
+ * A [TransformableAssessment] is a placeholder that can be used to contain just enough information about an
+ * [Assessment] to allow referencing the resource information needed to load the actual [Assessment] on demand. This
+ * allows using a "placeholder" that can be vended from a different source from the actual assessment. For example,
+ * an active task may be defined using a hardcoded JSON file and included in a module but requested via a
+ * [TransformableAssessment] that is vended from a server.
+ */
+interface TransformableAssessment : TransformableNode, AssessmentInfo, ContentInfo {
+
+    override fun unpack(
+        originalNode: Node?,
+        moduleInfo: ModuleInfo,
+        registryProvider: AssessmentRegistryProvider
+    ): Assessment {
+        return super.unpack(originalNode, moduleInfo, registryProvider) as Assessment
+    }
 }
 
 /**
@@ -132,7 +218,7 @@ interface Node : ResultMapElement {
     /**
      * Unpack (and potentially replace) the node and set up any required resource pointers.
      */
-    fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Node = this
+    fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node = this
 
     /**
      * Does this [Node] support backward navigation?
@@ -141,11 +227,14 @@ interface Node : ResultMapElement {
 }
 
 /**
- * A [ContentNode] contains additional content that may, under certain circumstances and where screen real estate
- * allows, be displayed to the participant to help them understand the intended purpose of the part of the assessment
- * described by this [Node].
+ * [ContentInfo] is a subset of information that may be displayed about an [Assessment] or [Node].
  */
-interface ContentNode : Node {
+interface ContentInfo  {
+
+    /**
+     * The identifier associated with this piece of content.
+     */
+    val identifier: String
 
     /**
      * The primary text to display for the node in a localized string. The UI should display this using a larger font.
@@ -161,6 +250,14 @@ interface ContentNode : Node {
      * Detail text to display for the node in a localized string.
      */
     val detail: String?
+}
+
+/**
+ * A [ContentNode] contains additional content that may, under certain circumstances and where screen real estate
+ * allows, be displayed to the participant to help them understand the intended purpose of the part of the assessment
+ * described by this [Node].
+ */
+interface ContentNode : Node, ContentInfo {
 
     /**
      * An image or animation to display with this node.
@@ -178,9 +275,9 @@ interface ContentNode : Node {
     val footnote: String?
         get() = null
 
-    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
-        imageInfo?.copyResourceInfo(resourceInfo)
-        return super.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
+        imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        return super.unpack(originalNode, moduleInfo, registryProvider)
     }
 }
 
@@ -293,9 +390,9 @@ interface OverviewStep : PermissionStep {
      */
     val icons: List<ImageInfo>?
 
-    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): Node {
-        icons?.forEach { it.copyResourceInfo(resourceInfo) }
-        return super.unpack(moduleInfoProvider, resourceInfo, jsonCoder)
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
+        icons?.forEach { it.copyResourceInfo(moduleInfo.resourceInfo) }
+        return super.unpack(originalNode, moduleInfo, registryProvider)
     }
 }
 
@@ -485,6 +582,7 @@ sealed class SpokenInstructionTiming : StringEnum {
             get() = time.toString()
     }
 
+    @ExperimentalSerializationApi
     @Serializer(forClass = SpokenInstructionTiming::class)
     companion object : KSerializer<SpokenInstructionTiming> {
         override val descriptor: SerialDescriptor =

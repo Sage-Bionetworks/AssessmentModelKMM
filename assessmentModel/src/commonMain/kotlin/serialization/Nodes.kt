@@ -3,7 +3,6 @@ package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
@@ -13,8 +12,6 @@ import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
-import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
-import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
@@ -29,6 +26,7 @@ import kotlin.collections.toMutableMap
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
         subclass(ActiveStepObject::class)
+        subclass(AssessmentPlaceholderObject::class)
         subclass(AssessmentObject::class)
         subclass(ChoiceQuestionObject::class)
         subclass(ComboBoxQuestionObject::class)
@@ -44,8 +42,7 @@ val nodeSerializersModule = SerializersModule {
         subclass(TransformableAssessmentObject::class)
         subclass(TransformableNodeObject::class)
     }
-    polymorphic(Assessment::class) {
-        subclass(AssessmentObject::class)
+    polymorphic(TransformableAssessment::class) {
         subclass(TransformableAssessmentObject::class)
     }
     polymorphic(Question::class) {
@@ -125,6 +122,29 @@ abstract class IconNodeObject : NodeObject() {
 }
 
 /**
+ * A concrete implementation of an [AssessmentPlaceholder].
+ * TODO: syoung 01/27/2021 Add unit test of the serialization.
+ */
+@Serializable
+@SerialName("assessmentPlaceholder")
+data class AssessmentPlaceholderObject(
+    override val identifier: String,
+    override val assessmentInfo: AssessmentInfoObject,
+    override val comment: String? = null,
+    override val title: String? = null,
+    override val subtitle: String? = null,
+    override val detail: String? = null
+) : AssessmentPlaceholder
+
+@Serializable
+data class AssessmentInfoObject(
+    override val identifier: String,
+    override val versionString: String? = null,
+    override val schemaIdentifier: String? = null,
+    override val estimatedMinutes: Int = 0
+) : AssessmentInfo
+
+/**
  * Transformable Nodes
  */
 
@@ -133,8 +153,9 @@ abstract class IconNodeObject : NodeObject() {
 data class TransformableNodeObject(
     override val identifier: String,
     override val resourceName: String,
-    override val versionString: String? = null
-) : IconNodeObject(), TransformableNode
+    override val versionString: String? = null,
+    override val comment: String? = null
+) : TransformableNode
 
 @Serializable
 @SerialName("transformableAssessment")
@@ -143,8 +164,12 @@ data class TransformableAssessmentObject(
     override val resourceName: String,
     override val versionString: String? = null,
     override val estimatedMinutes: Int = 0,
-    override val schemaIdentifier: String? = null
-) : IconNodeObject(), TransformableAssessment
+    override val schemaIdentifier: String? = null,
+    override val comment: String? = null,
+    override val title: String? = null,
+    override val subtitle: String? = null,
+    override val detail: String? = null
+) : TransformableAssessment
 
 /**
  * NodeContainer
@@ -175,10 +200,13 @@ data class AssessmentObject(
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
-    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): AssessmentObject {
-        imageInfo?.copyResourceInfo(resourceInfo)
-        val copyChildren = children.map { it.unpack(moduleInfoProvider, resourceInfo, jsonCoder) }
-        val copy = copy(children = copyChildren)
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {
+        imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        val copyChildren = children.map {
+            it.unpack(null, moduleInfo, registryProvider)
+        }
+        val identifier = originalNode?.identifier ?: this.identifier
+        val copy = copy(identifier = identifier, children = copyChildren)
         copy.copyFrom(this)
         return copy
     }
@@ -193,10 +221,11 @@ data class SectionObject(
     @SerialName("asyncActions")
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
-    override fun unpack(moduleInfoProvider: ModuleInfoProvider, resourceInfo: ResourceInfo, jsonCoder: Json): SectionObject {
-        imageInfo?.copyResourceInfo(resourceInfo)
-        val copyChildren = children.map { it.unpack(moduleInfoProvider, resourceInfo, jsonCoder) }
-        val copy = copy(children = copyChildren)
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): SectionObject {
+        imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        val copyChildren = children.map { it.unpack(null, moduleInfo, registryProvider) }
+        val identifier = originalNode?.identifier ?: this.identifier
+        val copy = copy(identifier = identifier, children = copyChildren)
         copy.copyFrom(this)
         return copy
     }
