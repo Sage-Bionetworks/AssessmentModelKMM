@@ -123,7 +123,6 @@ abstract class IconNodeObject : NodeObject() {
 
 /**
  * A concrete implementation of an [AssessmentPlaceholder].
- * TODO: syoung 01/27/2021 Add unit test of the serialization.
  */
 @Serializable
 @SerialName("assessmentPlaceholder")

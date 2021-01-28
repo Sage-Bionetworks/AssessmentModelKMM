@@ -87,7 +87,6 @@ interface EmbeddedJsonModuleInfo : JsonModuleInfo {
     ): Assessment {
         val sublist = assessments.filter { it.identifier == assessmentPlaceholder.assessmentInfo.identifier }
         // TODO: syoung 01/27/2021 Look at version and schema identifier
-        return sublist.first().unpack(assessmentPlaceholder,this, registryProvider)
+        return sublist.first().unpack(assessmentPlaceholder, this, registryProvider)
     }
 }
-
