@@ -22,7 +22,7 @@ interface NodeUIController {
      * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
      * a node state that blocks forward progress until a login service call is returned.
      */
-    fun customLeafNodeState(node: Node, parent: BranchNodeState): NodeState? = null
+    fun customLeafNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
 
     /**
      * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
@@ -417,7 +417,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getLeafNodeState(navigationPoint: NavigationPoint): NodeState? {
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
-        return nodeUIController?.customLeafNodeState(node, this) ?: when (node) {
+        return nodeUIController?.customLeafNodeStateFor(node, this) ?: when (node) {
             is Question -> QuestionStateImpl(node, this)
             is FormStep -> FormStepStateImpl(node, this)
             else -> LeafNodeStateImpl(node, this)
