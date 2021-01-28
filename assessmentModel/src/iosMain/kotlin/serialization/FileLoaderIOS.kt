@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.Assessment
 import org.sagebionetworks.assessmentmodel.AssessmentInfo
+import org.sagebionetworks.assessmentmodel.ModuleInfo
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import platform.Foundation.NSBundle
@@ -32,11 +33,10 @@ fun ResourceInfo.bundle() : NSBundle
  * an assessment and/or an assessment group.
  */
 class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
-    var moduleInfoProvider: ModuleInfoProvider = object : ModuleInfoProvider { override val fileLoader = FileLoaderIOS()
-        override fun getRegisteredResourceInfo(assessmentInfo: AssessmentInfo): ResourceInfo? = null
-        override fun getRegisteredJsonDecoder(assessmentInfo: AssessmentInfo): Json? = null
+    var jsonCoder: Json = Json {
+        serializersModule = moduleInfoSerializersModule
+        encodeDefaults = true
     }
-    var jsonCoder: Json = Serialization.JsonCoder.default
 
     override var decoderBundle: Any? = bundle
     override var packageName: String? = null
@@ -48,46 +48,48 @@ abstract class KotlinDecodable(val decoder: KotlinDecoder) {
     abstract val jsonString: String?
 }
 
-class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-    @Throws(Throwable::class)
-    fun decodeObject(): AssessmentGroupWrapper {
-        try {
-            val serializer = PolymorphicSerializer(ModuleInfo::class)
-            val group = decoder.jsonCoder.decodeFromString(serializer, jsonString)
-            group.resourceInfo.decoderBundle = decoder.decoderBundle
-            val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
-            return AssessmentGroupWrapper(group, assessments)
-        } catch (err: Exception) {
-            throw Throwable(err.message)
-        }
-    }
-}
-data class AssessmentGroupWrapper(val moduleInfo: ModuleInfo, val assessments: List<AssessmentLoader>)
-
-class AssessmentLoader(private val placeholder: Assessment,
-                       private val decoder: KotlinDecoder) : Assessment by placeholder {
-    @Throws(Throwable::class)
-    fun decodeObject(): Assessment {
-        try {
-            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
-        } catch (err: Exception) {
-            throw Throwable(err.message)
-        }
-    }
-}
-
-class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-    @Throws(Throwable::class)
-    fun decodeObject(): Assessment {
-        try {
-            val serializer = PolymorphicSerializer(Assessment::class)
-            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
-            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
-        } catch (err: Exception) {
-            throw Throwable(err.message)
-        }
-    }
-}
+// TODO: syoung 01/27/2021 Revisit and get an AssessmentLoader working for iOS. For now, just comment out to unblock Android development.
+//
+//class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
+//    @Throws(Throwable::class)
+//    fun decodeObject(): AssessmentGroupWrapper {
+//        try {
+//            val serializer = PolymorphicSerializer(ModuleInfo::class)
+//            val moduleInfo = decoder.jsonCoder.decodeFromString(serializer, jsonString)
+//            moduleInfo.resourceInfo.decoderBundle = decoder.decoderBundle
+//            val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
+//            return AssessmentGroupWrapper(group, assessments)
+//        } catch (err: Exception) {
+//            throw Throwable(err.message)
+//        }
+//    }
+//}
+//data class AssessmentGroupWrapper(val moduleInfo: ModuleInfo, val assessments: List<AssessmentLoader>)
+//
+//class AssessmentLoader(private val placeholder: Assessment,
+//                       private val decoder: KotlinDecoder) : Assessment by placeholder {
+//    @Throws(Throwable::class)
+//    fun decodeObject(): Assessment {
+//        try {
+//            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
+//        } catch (err: Exception) {
+//            throw Throwable(err.message)
+//        }
+//    }
+//}
+//
+//class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
+//    @Throws(Throwable::class)
+//    fun decodeObject(): Assessment {
+//        try {
+//            val serializer = PolymorphicSerializer(Assessment::class)
+//            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
+//            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
+//        } catch (err: Exception) {
+//            throw Throwable(err.message)
+//        }
+//    }
+//}
 
 class ResultEncoder(val result: Result) {
     var jsonCoder: Json = Serialization.JsonCoder.default
