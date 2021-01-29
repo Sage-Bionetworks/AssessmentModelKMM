@@ -25,9 +25,8 @@ android {
         exclude("META-INF/main.kotlin_module")
         pickFirst("META-INF/kotlinx-serialization-runtime.kotlin_module")
     }
-    viewBinding {
-        isEnabled = true
-    }
+    buildFeatures.viewBinding = true
+
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/main/kotlin")
@@ -35,7 +34,7 @@ android {
 
     compileOptions {
         // Flag to enable support for the new language APIs
-        coreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
         // Sets Java compatibility to Java 8
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

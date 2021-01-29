@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AsyncActionNavigationTest" type="AndroidJUnit" factoryName="Android JUnit">
-    <module name="assessmentModel" />
+    <module name="AssessmentModel-KotlinNative.assessmentModel" />
     <useClassPathOnly />
     <option name="PACKAGE_NAME" value="navigation" />
     <option name="MAIN_CLASS_NAME" value="org.sagebionetworks.assessmentmodel.navigation.AsyncActionNavigationTest" />

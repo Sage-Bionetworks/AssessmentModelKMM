@@ -6,10 +6,9 @@ import org.sagebionetworks.assessmentmodel.survey.Question
 import org.sagebionetworks.assessmentmodel.survey.QuestionStateImpl
 
 /**
- * The [RootNodeController] is a platform-specific implementation of the UI that is described by the [Assessment] model.
+ * The [NodeUIController] is a platform-specific implementation of the UI that is described by the [Assessment] model.
  */
-interface RootNodeController {
-
+interface NodeUIController {
     /**
      * Does this controller know how to handle the given node?
      *
@@ -23,7 +22,7 @@ interface RootNodeController {
      * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
      * a node state that blocks forward progress until a login service call is returned.
      */
-    fun customNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
+    fun customLeafNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
 
     /**
      * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
@@ -38,6 +37,13 @@ interface RootNodeController {
     fun handleGoBack(nodeState: NodeState,
                      requestedPermissions: Set<PermissionInfo>? = null,
                      asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+}
+
+/**
+ * The [RootNodeController] is a platform-specific implementation of the save and finish logic
+ * associated with running the [Assessment] model.
+ */
+interface RootNodeController {
 
     /**
      * Handle finishing the [Assessment]. Save state and dismiss the view.
@@ -94,6 +100,7 @@ interface NodeState {
      */
     fun goBackward(requestedPermissions: Set<PermissionInfo>? = null,
                    asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+
 }
 
 fun NodeState.goIn(direction: NavigationPoint.Direction,
@@ -129,7 +136,17 @@ fun BranchNodeState.lowestBranch() : BranchNodeState {
 interface BranchNodeState : NodeState {
 
     /**
+     * Used to optionally provide custom [BranchNodeState] implementations for a custom [BranchNode]
+     */
+    var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
+
+    /**
      * The controller for running the full flow of steps and nodes.
+     */
+    var nodeUIController: NodeUIController?
+
+    /**
+     * The controller for finishing and saving the full flow of steps and nodes.
      */
     var rootNodeController: RootNodeController?
 
@@ -163,6 +180,7 @@ interface BranchNodeState : NodeState {
      * WARNING: This method should *only* be called by the [currentChild].
      */
     fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
+
 }
 
 interface LeafNodeState : NodeState {
@@ -184,7 +202,7 @@ class LeafNodeStateImpl(override val node: Node, override val parent: BranchNode
 }
 
 open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
-    private val navigator: Navigator by lazy { node.getNavigator() }
+    private val navigator: Navigator by lazy { node.getNavigator(this) }
 
     override val currentResult: BranchNodeResult by lazy {
         // If this node has previously been shown, use that to determine the current state.
@@ -198,6 +216,17 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         get() = parent?.rootNodeController ?: _rootNodeController
         set(value) { _rootNodeController = value }
     private var _rootNodeController: RootNodeController? = null
+
+    override var nodeUIController: NodeUIController?
+        //If we have a NodeUIController use it, otherwise defer to our parent.
+        get() =  _nodeUiController ?: parent?.nodeUIController
+        set(value) { _nodeUiController = value }
+    private var _nodeUiController: NodeUIController? = null
+
+    override var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
+        get() = parent?.customBranchNodeStateProvider ?: _customBranchNodeStateProvider
+        set(value) {_customBranchNodeStateProvider = value}
+    private var _customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
 
     override fun goForward(requestedPermissions: Set<PermissionInfo>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
@@ -233,7 +262,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Throws: [NullPointerException] if the [NavigationPoint.node] or [rootNodeController] are null.
      */
     open fun moveTo(navigationPoint: NavigationPoint) {
-        val controller = rootNodeController ?: throw NullPointerException("Unexpected null rootNodeController")
+        val controller = nodeUIController ?: throw NullPointerException("Unexpected null nodeUiController")
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
         val pathMarker = PathMarker(node.identifier, navigationPoint.direction)
         if (currentResult.path.lastOrNull() != pathMarker) {
@@ -337,7 +366,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Warning: If you override this method, you should still call through to super to allow the
      * base class to manage its internal navigation state.
      */
-    open fun finish(navigationPoint: NavigationPoint) {
+    fun finish(navigationPoint: NavigationPoint) {
         // When finishing, mark the end date for the current result.
         markFinalResultIfNeeded()
         when {
@@ -388,7 +417,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getLeafNodeState(navigationPoint: NavigationPoint): NodeState? {
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
-        return rootNodeController?.customNodeStateFor(node, this) ?: when (node) {
+        return nodeUIController?.customLeafNodeStateFor(node, this) ?: when (node) {
             is Question -> QuestionStateImpl(node, this)
             is FormStep -> FormStepStateImpl(node, this)
             else -> LeafNodeStateImpl(node, this)
@@ -400,7 +429,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * class looks for conformance to the [BranchNode] interface.
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
-        return (navigationPoint.node as? BranchNode)?.let { BranchNodeStateImpl(it, this) }
+        return (navigationPoint.node as? BranchNode)?.let {
+            customBranchNodeStateProvider?.customNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="NodeTest" type="AndroidJUnit" factoryName="Android JUnit">
-    <module name="assessmentModel" />
+    <module name="AssessmentModel-KotlinNative.assessmentModel" />
     <option name="PACKAGE_NAME" value="serialization" />
     <option name="MAIN_CLASS_NAME" value="org.sagebionetworks.assessmentmodel.serialization.NodeTest" />
     <option name="METHOD_NAME" value="" />
