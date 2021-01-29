@@ -1003,7 +1003,7 @@ open class NavigationTestHelper {
             }
         }
 
-        override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+        override fun handleFinished(reason: FinishedReason, nodeState: NodeState) {
             finished_called = true
             finished_nodeState = nodeState
             finished_reason = reason

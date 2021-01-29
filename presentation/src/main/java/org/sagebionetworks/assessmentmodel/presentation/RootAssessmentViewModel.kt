@@ -34,14 +34,14 @@ open class RootAssessmentViewModel(
         // syoung 11/25/2020 In an application, this is the callback for uploading the results.
     }
 
-    override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+    override fun handleFinished(reason: FinishedReason, nodeState: NodeState) {
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
 
         //TODO: Before triggering UI to finish, should also check that any clean up is done - nbrown 01/21/21
 
         assessmentFinishedMutableLiveData.value =
-            FinishedState(nodeState, reason, error)
+            FinishedState(nodeState, reason)
 
     }
 
@@ -50,8 +50,7 @@ open class RootAssessmentViewModel(
      */
     data class FinishedState(
         val nodeState: NodeState,
-        val finishedReason: FinishedReason,
-        val error: Error?
+        val finishedReason: FinishedReason
     )
 
 }
