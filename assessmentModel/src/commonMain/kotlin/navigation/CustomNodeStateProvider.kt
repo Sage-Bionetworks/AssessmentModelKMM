@@ -13,7 +13,7 @@ interface CustomNodeStateProvider {
      * Is there a custom [BranchNodeState] for the given [branchNode]? This can be used to return a custom implementation for
      * an [assessment].
      */
-    fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState?
+    fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState? = null
 
     /**
      * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
