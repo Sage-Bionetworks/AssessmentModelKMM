@@ -65,8 +65,10 @@ interface RootNodeController {
     fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState)
 }
 
-enum class FinishedReason {
-    Complete, Error, EarlyExit, Discarded, SaveProgress
+sealed class FinishedReason( val saveResult: Boolean, val markFinished: Boolean) {
+    object Complete : FinishedReason(true, true)
+    data class Failed(val error: Error) : FinishedReason(false, false)
+    class Incomplete(saveResult: Boolean, markFinished: Boolean) : FinishedReason(saveResult, markFinished)
 }
 
 interface NodeState {
@@ -179,7 +181,7 @@ interface BranchNodeState : NodeState {
      *
      * WARNING: This method should *only* be called by the [currentChild].
      */
-    fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
+    fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?)
 
 }
 
@@ -371,7 +373,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         markFinalResultIfNeeded()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
-                exitEarly(navigationPoint.asyncActionNavigations)
+                exitEarly(FinishedReason.Incomplete(false, markFinished = false), navigationPoint.asyncActionNavigations)
             parent == null -> {
                 callReadyToSaveIfNeeded(FinishedReason.Complete)
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
@@ -387,14 +389,14 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Warning: If you override this method, you should still call through to super to allow the
      * base class to manage its internal navigation state.
      */
-    override fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?) {
         appendChildResultIfNeeded()
         markFinalResultIfNeeded()
         if (parent == null) {
-            callReadyToSaveIfNeeded(FinishedReason.EarlyExit)
-            rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
+            callReadyToSaveIfNeeded(finishedReason)
+            rootNodeController?.handleFinished(finishedReason, this)
         } else {
-            parent.exitEarly(asyncActionNavigations)
+            parent.exitEarly(finishedReason, asyncActionNavigations)
         }
     }
 
