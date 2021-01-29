@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
-import org.sagebionetworks.assessmentmodel.navigation.CustomBranchNodeStateProvider
+import org.sagebionetworks.assessmentmodel.navigation.CustomNodeStateProvider
 import org.sagebionetworks.assessmentmodel.navigation.FinishedReason
 import org.sagebionetworks.assessmentmodel.serialization.*
 
@@ -28,7 +28,7 @@ open class AssessmentActivity: AppCompatActivity() {
 
     lateinit var viewModel: RootAssessmentViewModel
     var assessmentFragmentProvider: AssessmentFragmentProvider? = null
-    var customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    var customNodeStateProvider: CustomNodeStateProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (intent.hasExtra(ARG_THEME)) {
@@ -54,7 +54,7 @@ open class AssessmentActivity: AppCompatActivity() {
 
         // TODO: syoung 01/25/2021 Refactor this to have the activity take the [ModuleInfoProvider] as a setup input.
 
-        viewModel = initViewModel(assessmentPlaceholder, registryProvider, customBranchNodeStateProvider)
+        viewModel = initViewModel(assessmentPlaceholder, registryProvider, customNodeStateProvider)
         viewModel.assessmentLoadedLiveData
             .observe(this, Observer<BranchNodeState>
             { nodeState -> this.handleAssessmentLoaded(nodeState) })
@@ -90,10 +90,10 @@ open class AssessmentActivity: AppCompatActivity() {
         supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
     }
 
-    open fun initViewModel(assessmentInfo: AssessmentPlaceholder, assessmentProvider: AssessmentRegistryProvider, customBranchNodeStateProvider: CustomBranchNodeStateProvider?) =
+    open fun initViewModel(assessmentInfo: AssessmentPlaceholder, assessmentProvider: AssessmentRegistryProvider, customNodeStateProvider: CustomNodeStateProvider?) =
         ViewModelProvider(
             this, RootAssessmentViewModelFactory()
-                .create(assessmentInfo, assessmentProvider, customBranchNodeStateProvider)
+                .create(assessmentInfo, assessmentProvider, customNodeStateProvider)
         ).get(RootAssessmentViewModel::class.java)
 
 
