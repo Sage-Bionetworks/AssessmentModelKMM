@@ -9,7 +9,7 @@ import org.sagebionetworks.assessmentmodel.navigation.*
 open class RootAssessmentViewModel(
     val assessmentPlaceholder: AssessmentPlaceholder,
     val registryProvider: AssessmentRegistryProvider,
-    val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    val nodeStateProvider: CustomNodeStateProvider? = null
 ) : ViewModel(), RootNodeController {
 
     var assessmentNodeState: BranchNodeState? = null
@@ -22,8 +22,8 @@ open class RootAssessmentViewModel(
     init {
         viewModelScope.launch {
             val assessment = registryProvider.loadAssessment(assessmentPlaceholder)
-            assessmentNodeState = branchNodeStateProvider?.customNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
-            assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
+            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
+            assessmentNodeState?.customNodeStateProvider = nodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
     }
@@ -67,14 +67,14 @@ open class RootAssessmentViewModelFactory() {
     open fun create(
         assessmentInfo: AssessmentPlaceholder,
         assessmentProvider: AssessmentRegistryProvider,
-        branchNodeStateProvider: CustomBranchNodeStateProvider?
+        nodeStateProvider: CustomNodeStateProvider?
     ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(RootAssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return RootAssessmentViewModel(assessmentInfo, assessmentProvider, branchNodeStateProvider) as T
+                    return RootAssessmentViewModel(assessmentInfo, assessmentProvider, nodeStateProvider) as T
                 }
 
                 throw IllegalArgumentException("Unknown ViewModel class")
