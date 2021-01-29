@@ -10,8 +10,8 @@ import org.sagebionetworks.assessmentmodel.Node
 interface CustomNodeStateProvider {
 
     /**
-     * Is there a custom [BranchNodeState] for the given [branchNode]? This can be used to return a custom implementation for
-     * an [assessment].
+     * Is there a custom [BranchNodeState] for the given [node]? This can be used to return a custom implementation for
+     * an [Assessment].
      */
     fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState? = null
 

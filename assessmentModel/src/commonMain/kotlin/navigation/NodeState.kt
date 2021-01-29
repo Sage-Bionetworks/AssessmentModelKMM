@@ -130,7 +130,7 @@ fun BranchNodeState.lowestBranch() : BranchNodeState {
 interface BranchNodeState : NodeState {
 
     /**
-     * Used to optionally provide custom [NodeState] implementations for a custom [Node]
+     * Used to optionally provide custom [NodeState] implementations for a custom [Node].
      */
     var customNodeStateProvider: CustomNodeStateProvider?
 
