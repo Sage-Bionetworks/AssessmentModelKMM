@@ -48,7 +48,7 @@ interface RootNodeController {
     /**
      * Handle finishing the [Assessment]. Save state and dismiss the view.
      */
-    fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error? = null)
+    fun handleFinished(reason: FinishedReason, nodeState: NodeState)
 
     /**
      * Handle saving the results. Typically, this will mean uploading the results to a server.
