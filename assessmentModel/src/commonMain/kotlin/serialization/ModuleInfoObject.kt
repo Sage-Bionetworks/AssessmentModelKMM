@@ -17,16 +17,16 @@ val moduleInfoSerializersModule = SerializersModule {
 }
 
 @Serializable
-@SerialName("default")
+@SerialName("defaultModuleInfo")
 data class ModuleInfoObject(
     override val assessments: List<TransformableAssessment>,
     override var packageName: String? = null,
-    override val bundleIdentifier: String? = null,
-    @Transient
-    override val jsonCoder: Json = Serialization.JsonCoder.default): ResourceInfo, EmbeddedJsonModuleInfo {
+    override val bundleIdentifier: String? = null): ResourceInfo, EmbeddedJsonModuleInfo {
 
     override val resourceInfo: ResourceInfo
         get() = this
+    override val jsonCoder: Json
+        get() = Serialization.JsonCoder.default
 
     @Transient
     override var decoderBundle: Any? = null

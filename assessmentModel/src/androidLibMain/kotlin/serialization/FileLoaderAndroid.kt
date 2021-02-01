@@ -14,6 +14,8 @@ import java.io.InputStreamReader
 
 class FileLoaderAndroid(private val resources: Resources, private val defaultPackageName: String): FileLoader {
 
+    constructor(context: Context) : this(context.resources, context.packageName)
+
     override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String {
         val packageName = resourceInfo.packageName ?: defaultPackageName
         val resourceId = resources.getIdentifier(assetInfo.resourceName, assetInfo.resourceAssetType, packageName)

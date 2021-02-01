@@ -1,0 +1,16 @@
+[
+  {
+    "type": "defaultModuleInfo",
+    "packageName": "org.sagebionetworks.assessmentmodel.sampleapp",
+    "assessments": [
+      {
+        "type": "transformableAssessment",
+        "identifier": "sampleId",
+        "title": "Hello World!",
+        "subtitle": "Subtitle",
+        "detail": "Some text. This is a test.",
+        "resourceName": "sample_assessment"
+      }
+    ]
+  }
+]
