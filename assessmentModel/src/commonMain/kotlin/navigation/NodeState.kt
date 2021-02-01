@@ -19,12 +19,6 @@ interface NodeUIController {
     fun canHandle(node: Node): Boolean
 
     /**
-     * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
-     * a node state that blocks forward progress until a login service call is returned.
-     */
-    fun customLeafNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
-
-    /**
      * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
      */
     fun handleGoForward(nodeState: NodeState,
@@ -48,7 +42,7 @@ interface RootNodeController {
     /**
      * Handle finishing the [Assessment]. Save state and dismiss the view.
      */
-    fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error? = null)
+    fun handleFinished(reason: FinishedReason, nodeState: NodeState)
 
     /**
      * Handle saving the results. Typically, this will mean uploading the results to a server.
@@ -65,8 +59,10 @@ interface RootNodeController {
     fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState)
 }
 
-enum class FinishedReason {
-    Complete, Error, EarlyExit, Discarded, SaveProgress
+sealed class FinishedReason( val saveResult: Boolean, val markFinished: Boolean) {
+    object Complete : FinishedReason(true, true)
+    data class Failed(val error: Error) : FinishedReason(false, false)
+    class Incomplete(saveResult: Boolean, markFinished: Boolean) : FinishedReason(saveResult, markFinished)
 }
 
 interface NodeState {
@@ -136,9 +132,9 @@ fun BranchNodeState.lowestBranch() : BranchNodeState {
 interface BranchNodeState : NodeState {
 
     /**
-     * Used to optionally provide custom [BranchNodeState] implementations for a custom [BranchNode]
+     * Used to optionally provide custom [NodeState] implementations for a custom [Node].
      */
-    var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
+    var customNodeStateProvider: CustomNodeStateProvider?
 
     /**
      * The controller for running the full flow of steps and nodes.
@@ -179,7 +175,7 @@ interface BranchNodeState : NodeState {
      *
      * WARNING: This method should *only* be called by the [currentChild].
      */
-    fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?)
+    fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?)
 
 }
 
@@ -223,10 +219,10 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         set(value) { _nodeUiController = value }
     private var _nodeUiController: NodeUIController? = null
 
-    override var customBranchNodeStateProvider: CustomBranchNodeStateProvider?
-        get() = parent?.customBranchNodeStateProvider ?: _customBranchNodeStateProvider
-        set(value) {_customBranchNodeStateProvider = value}
-    private var _customBranchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    override var customNodeStateProvider: CustomNodeStateProvider?
+        get() = parent?.customNodeStateProvider ?: _customNodeStateProvider
+        set(value) {_customNodeStateProvider = value}
+    private var _customNodeStateProvider: CustomNodeStateProvider? = null
 
     override fun goForward(requestedPermissions: Set<PermissionInfo>?,
                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
@@ -371,7 +367,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         markFinalResultIfNeeded()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
-                exitEarly(navigationPoint.asyncActionNavigations)
+                exitEarly(FinishedReason.Incomplete(false, markFinished = false), navigationPoint.asyncActionNavigations)
             parent == null -> {
                 callReadyToSaveIfNeeded(FinishedReason.Complete)
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
@@ -387,14 +383,14 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Warning: If you override this method, you should still call through to super to allow the
      * base class to manage its internal navigation state.
      */
-    override fun exitEarly(asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?) {
         appendChildResultIfNeeded()
         markFinalResultIfNeeded()
         if (parent == null) {
-            callReadyToSaveIfNeeded(FinishedReason.EarlyExit)
-            rootNodeController?.handleFinished(FinishedReason.EarlyExit, this)
+            callReadyToSaveIfNeeded(finishedReason)
+            rootNodeController?.handleFinished(finishedReason, this)
         } else {
-            parent.exitEarly(asyncActionNavigations)
+            parent.exitEarly(finishedReason, asyncActionNavigations)
         }
     }
 
@@ -417,7 +413,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getLeafNodeState(navigationPoint: NavigationPoint): NodeState? {
         val node = navigationPoint.node ?: throw NullPointerException("Unexpected null navigationPoint.node")
-        return nodeUIController?.customLeafNodeStateFor(node, this) ?: when (node) {
+        return customNodeStateProvider?.customLeafNodeStateFor(node, this) ?: when (node) {
             is Question -> QuestionStateImpl(node, this)
             is FormStep -> FormStepStateImpl(node, this)
             else -> LeafNodeStateImpl(node, this)
@@ -430,7 +426,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return (navigationPoint.node as? BranchNode)?.let {
-            customBranchNodeStateProvider?.customNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
+            customNodeStateProvider?.customBranchNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
         }
     }
 

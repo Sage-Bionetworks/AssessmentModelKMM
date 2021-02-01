@@ -9,7 +9,7 @@ import org.sagebionetworks.assessmentmodel.navigation.*
 open class RootAssessmentViewModel(
     val assessmentPlaceholder: AssessmentPlaceholder,
     val registryProvider: AssessmentRegistryProvider,
-    val branchNodeStateProvider: CustomBranchNodeStateProvider? = null
+    val nodeStateProvider: CustomNodeStateProvider? = null
 ) : ViewModel(), RootNodeController {
 
     var assessmentNodeState: BranchNodeState? = null
@@ -22,8 +22,8 @@ open class RootAssessmentViewModel(
     init {
         viewModelScope.launch {
             val assessment = registryProvider.loadAssessment(assessmentPlaceholder)
-            assessmentNodeState = branchNodeStateProvider?.customNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
-            assessmentNodeState?.customBranchNodeStateProvider = branchNodeStateProvider
+            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
+            assessmentNodeState?.customNodeStateProvider = nodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
     }
@@ -34,14 +34,14 @@ open class RootAssessmentViewModel(
         // syoung 11/25/2020 In an application, this is the callback for uploading the results.
     }
 
-    override fun handleFinished(reason: FinishedReason, nodeState: NodeState, error: Error?) {
+    override fun handleFinished(reason: FinishedReason, nodeState: NodeState) {
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
 
         //TODO: Before triggering UI to finish, should also check that any clean up is done - nbrown 01/21/21
 
         assessmentFinishedMutableLiveData.value =
-            FinishedState(nodeState, reason, error)
+            FinishedState(nodeState, reason)
 
     }
 
@@ -50,8 +50,7 @@ open class RootAssessmentViewModel(
      */
     data class FinishedState(
         val nodeState: NodeState,
-        val finishedReason: FinishedReason,
-        val error: Error?
+        val finishedReason: FinishedReason
     )
 
 }
@@ -68,14 +67,14 @@ open class RootAssessmentViewModelFactory() {
     open fun create(
         assessmentInfo: AssessmentPlaceholder,
         assessmentProvider: AssessmentRegistryProvider,
-        branchNodeStateProvider: CustomBranchNodeStateProvider?
+        nodeStateProvider: CustomNodeStateProvider?
     ): ViewModelProvider.Factory {
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(RootAssessmentViewModel::class.java)) {
 
                     @Suppress("UNCHECKED_CAST")
-                    return RootAssessmentViewModel(assessmentInfo, assessmentProvider, branchNodeStateProvider) as T
+                    return RootAssessmentViewModel(assessmentInfo, assessmentProvider, nodeStateProvider) as T
                 }
 
                 throw IllegalArgumentException("Unknown ViewModel class")
