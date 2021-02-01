@@ -1,0 +1,34 @@
+{
+  "type": "assessment",
+  "identifier": "foo",
+  "versionString": "1.2.3",
+  "schemaIdentifier":"bar",
+  "title": "Hello World!",
+  "subtitle": "Subtitle",
+  "detail": "Some text. This is a test.",
+  "estimatedMinutes": 4,
+  "icon": "fooIcon",
+  "footnote": "This is a footnote.",
+  "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+    "cancel": { "type": "default", "iconName" : "closeX" }
+  },
+  "shouldHideActions": ["goBackward"],
+  "progressMarkers": ["step1","step2"],
+  "steps": [
+    {
+      "identifier": "addedStep1",
+      "type": "instruction",
+      "title": "Containing assessment step 1",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_seated"
+      }
+    },
+    {
+      "identifier": "sampleAssessment",
+      "type": "transformableAssessment",
+      "resourceName": "sample_assessment"
+    }
+  ]
+}

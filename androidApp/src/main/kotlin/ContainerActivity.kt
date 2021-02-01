@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
+import org.koin.android.ext.android.inject
+import org.sagebionetworks.assessmentmodel.AssessmentRegistryProvider
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentActivity
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentFragment
 import org.sagebionetworks.assessmentmodel.sampleapp.databinding.ActivityContainerBinding
 import org.sagebionetworks.assessmentmodel.sampleapp.databinding.AssessmentRowBinding
+import org.sagebionetworks.assessmentmodel.serialization.ModuleInfoObject
 
 class ContainerActivity: AppCompatActivity() {
 
@@ -16,6 +19,7 @@ class ContainerActivity: AppCompatActivity() {
         const val REQUEST_CODE_ASSESSMENT = 1;
     }
 
+    val assessmentRegistryProvider: AssessmentRegistryProvider by inject()
     private lateinit var binding: ActivityContainerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +28,15 @@ class ContainerActivity: AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        addAssessment("Sample Assessment - Royal", "sampleId", R.style.RoyalTheme)
-        addAssessment("Sample Assessment - Blue", "sampleId",  R.style.BlueberryTheme)
-
+        for (moduleInfo in assessmentRegistryProvider.modules) {
+            (moduleInfo as ModuleInfoObject)?.let {
+                var theme = R.style.RoyalTheme
+                for (assessment in it.assessments) {
+                    addAssessment(assessment.title?:assessment.identifier, assessment.identifier, theme)
+                    theme = R.style.BlueberryTheme
+                }
+            }
+        }
     }
 
     private fun addAssessment(title: String, assessmentId: String, theme: Int = -1) {

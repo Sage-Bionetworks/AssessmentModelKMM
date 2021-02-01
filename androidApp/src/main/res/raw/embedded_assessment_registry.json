@@ -6,10 +6,18 @@
       {
         "type": "transformableAssessment",
         "identifier": "sampleId",
-        "title": "Hello World!",
+        "title": "Sample Assessment",
         "subtitle": "Subtitle",
         "detail": "Some text. This is a test.",
         "resourceName": "sample_assessment"
+      },
+      {
+        "type": "transformableAssessment",
+        "identifier": "sampleWrapperId",
+        "title": "Wrapped Assessment",
+        "subtitle": "Subtitle",
+        "detail": "Some text. This is a test.",
+        "resourceName": "sample_wrapper_assessment"
       }
     ]
   }
