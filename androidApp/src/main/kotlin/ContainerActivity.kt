@@ -24,20 +24,18 @@ class ContainerActivity: AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        addAssessment("Sample Assessment - Royal", "sampleId", "sample_assessment", this.packageName, R.style.RoyalTheme)
-        addAssessment("Sample Assessment - Blue", "sampleId", "sample_assessment", this.packageName, R.style.BlueberryTheme)
+        addAssessment("Sample Assessment - Royal", "sampleId", R.style.RoyalTheme)
+        addAssessment("Sample Assessment - Blue", "sampleId",  R.style.BlueberryTheme)
 
     }
 
-    private fun addAssessment(title: String, assessmentId: String, resourceName: String, packageName: String, theme: Int = -1) {
+    private fun addAssessment(title: String, assessmentId: String, theme: Int = -1) {
         val inflater = if (theme < 0) layoutInflater else LayoutInflater.from(ContextThemeWrapper(this, theme))
         val row = AssessmentRowBinding.inflate(inflater, binding.crfTaskContainer, false)
         row.taskName.text = title
         row.buttonStartTask.setOnClickListener {
             val intent = Intent(this, AssessmentActivity::class.java)
             intent.putExtra(AssessmentActivity.ARG_ASSESSMENT_ID_KEY, assessmentId)
-            intent.putExtra(AssessmentActivity.ARG_RESOURCE_NAME, resourceName)
-            intent.putExtra(AssessmentActivity.ARG_PACKAGE_NAME, this.packageName)
             if (theme > 0) {
                 intent.putExtra(AssessmentActivity.ARG_THEME, theme)
             }
