@@ -84,6 +84,16 @@
       "optional": false,
       "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
+      "identifier": "multipleInputQuestion",
+      "type": "multipleInputQuestion",
+      "inputItems": [{"type" : "year", "placeholder" :  "Enter year"},
+        {"type" : "year", "placeholder" :  "Enter year"},
+        {"type" : "year", "placeholder" :  "Enter year"}],
+      "sequenceSeparator": "testString",
+      "skipCheckbox": {"type":"skipCheckbox","fieldLabel":"No answer"}
     }
   ]
 }
+
