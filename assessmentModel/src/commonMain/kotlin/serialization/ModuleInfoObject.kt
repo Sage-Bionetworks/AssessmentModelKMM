@@ -17,7 +17,7 @@ val moduleInfoSerializersModule = SerializersModule {
 }
 
 @Serializable
-@SerialName("default")
+@SerialName("defaultModuleInfo")
 data class ModuleInfoObject(
     override val assessments: List<TransformableAssessment>,
     override var packageName: String? = null,
