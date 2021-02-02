@@ -38,8 +38,8 @@
     {
       "identifier": "choice",
       "type": "choiceQuestion",
-      "title": "Hello World!",
-      "subtitle": "Question subtitle",
+      "title": "How are you feeling today?",
+      "subtitle": "Select all that apply",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "optional": false,
@@ -47,16 +47,16 @@
       "baseType": "integer",
       "uiHint": "checkmark",
       "choices":[
-        {"text":"choice 1","icon":"choice1","value":1},
-        {"text":"choice 2","value":2},
-        {"text":"choice 3","value":3},
-        {"text":"none of the above","exclusive":true}
+        {"text":"Fabulous!","icon":"choice1","value":1},
+        {"text":"Neutral","value":2},
+        {"text":"Sleepy","value":3},
+        {"text":"Under the weather","exclusive":true}
       ]
     },
     {
       "identifier": "stringQuestion",
       "type": "simpleQuestion",
-      "title": "String question",
+      "title": "What symptoms do you have?",
       "subtitle": "Question subtitle",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
@@ -72,8 +72,8 @@
     {
       "identifier": "yearQuestion",
       "type": "simpleQuestion",
-      "title": "Birth year",
-      "subtitle": "Enter year",
+      "title": "When is your birthday?",
+      "subtitle": "Enter birth year",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "image"  : {    "type" : "animated",

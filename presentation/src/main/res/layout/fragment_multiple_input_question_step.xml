@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".MultipleInputQuestionStepFragment">-->
-
-<!--    <TextView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
-
-<!--</FrameLayout>-->
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,11 +12,30 @@
         android:layout_height="@dimen/header_height"
         android:layout_alignParentTop="true" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/question_header"
+        android:layout_above="@id/nav_bar">
+        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
+            android:id="@+id/question_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+<!--        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView-->
+<!--            android:id="@+id/question2_input"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--        <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView-->
+<!--            android:id="@+id/question3_input"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+
+    </ScrollView>
+
     <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
-
 
 </RelativeLayout>
