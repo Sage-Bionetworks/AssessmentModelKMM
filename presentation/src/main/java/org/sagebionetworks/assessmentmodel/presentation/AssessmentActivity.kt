@@ -21,9 +21,9 @@ open class AssessmentActivity: AppCompatActivity() {
     }
 
     lateinit var viewModel: RootAssessmentViewModel
-    var assessmentFragmentProvider: AssessmentFragmentProvider? = null
-    var customNodeStateProvider: CustomNodeStateProvider? = null
 
+    val assessmentFragmentProvider: AssessmentFragmentProvider? by inject()
+    val customNodeStateProvider: CustomNodeStateProvider? by inject()
     val assessmentRegistryProvider: AssessmentRegistryProvider by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
