@@ -8,7 +8,6 @@ import androidx.appcompat.view.ContextThemeWrapper
 import org.koin.android.ext.android.inject
 import org.sagebionetworks.assessmentmodel.AssessmentRegistryProvider
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentActivity
-import org.sagebionetworks.assessmentmodel.presentation.AssessmentFragment
 import org.sagebionetworks.assessmentmodel.sampleapp.databinding.ActivityContainerBinding
 import org.sagebionetworks.assessmentmodel.sampleapp.databinding.AssessmentRowBinding
 import org.sagebionetworks.assessmentmodel.serialization.ModuleInfoObject
