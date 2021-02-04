@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TextQuestionStepFragment">
+
     <include layout="@layout/include_question_header"
         android:id="@+id/question_header"
         android:layout_width="match_parent"
@@ -17,18 +18,23 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/question_header"
         android:layout_above="@id/nav_bar">
-        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
-            android:id="@+id/question_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-<!--        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView-->
-<!--            android:id="@+id/question2_input"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
-<!--        <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView-->
-<!--            android:id="@+id/question3_input"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
+                android:id="@+id/question0_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
+                android:id="@+id/question1_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
+                android:id="@+id/question2_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </ScrollView>
 

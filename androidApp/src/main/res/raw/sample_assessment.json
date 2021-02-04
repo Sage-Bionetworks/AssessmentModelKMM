@@ -88,6 +88,8 @@
     {
       "identifier": "multipleInputQuestion",
       "type": "multipleInputQuestion",
+      "title": "Multiple Questions",
+      "subtitle": "subtitle goes here",
       "inputItems": [{"type" : "year", "placeholder" :  "Enter year"},
         {"type" : "year", "placeholder" :  "Enter year"},
         {"type" : "year", "placeholder" :  "Enter year"}],
