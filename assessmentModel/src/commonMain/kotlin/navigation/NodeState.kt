@@ -179,7 +179,7 @@ interface BranchNodeState : NodeState {
 
     /**
      * Returns the [Progress] of the assessment based on the [currentChild] and [currentResult]. If `null`
-     * then progress should not be shown for this [currentNode] of assessment.
+     * then progress should not be shown for this [currentChild] of assessment.
      */
     fun progress(): Progress?
 
@@ -465,7 +465,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
 
     /**
      * Returns the [Progress] of the assessment based on the [currentChild] and [currentResult]. If `null`
-     * then progress should not be shown for this [currentNode] of assessment.
+     * then progress should not be shown for this [currentChild] of assessment.
      */
     override fun progress(): Progress? {
         return currentChild?.node?.let {
