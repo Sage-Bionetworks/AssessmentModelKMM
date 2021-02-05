@@ -14,7 +14,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     @Test
     fun testNodeWithIdentifier() {
         val assessmentObject = AssessmentObject("foo", buildNodeList(5, 1, "step").toList())
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
 
@@ -34,7 +34,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testStart_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
 
@@ -53,7 +53,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testNodeAfter_Node2_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -72,7 +72,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testNodeAfter_LastNode_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -93,7 +93,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         nodeList[2].nextNodeIdentifier = "step5"
 
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -114,7 +114,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         nodeList[2].nextNodeIdentifier = ReservedNavigationIdentifier.Exit.name
 
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -134,7 +134,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(7, 1, "step").toList()
 
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -170,7 +170,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testNodeBefore_Node2_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -189,7 +189,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
     fun testNodeBefore_FirstNode_FlatLinearNavigation() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 0)
@@ -211,7 +211,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         nodeList[2].nextNodeIdentifier = "step5"
 
         val assessmentObject = AssessmentObject("foo", nodeList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -239,7 +239,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -254,7 +254,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(6, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -271,7 +271,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(6, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = assessmentObject.allNodeIdentifiers()
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
@@ -294,7 +294,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
@@ -309,7 +309,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = assessmentObject.createResult()
@@ -323,7 +323,7 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val nodeList = buildNodeList(5, 1, "step").toList()
         val assessmentObject = AssessmentObject("foo", nodeList)
         assessmentObject.progressMarkers = listOf("step2", "step3", "step4")
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertNotNull(navigator)
         assertTrue(navigator is NodeNavigator)
         val result = assessmentObject.createResult()

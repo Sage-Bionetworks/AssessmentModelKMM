@@ -20,7 +20,7 @@ interface BranchNode : Node {
     /**
      * The [Navigator] for this assessment.
      */
-    fun getNavigator(nodeState: BranchNodeState): Navigator
+    fun createNavigator(nodeState: BranchNodeState): Navigator
 
     // Override the default implementation to return a [BranchNodeResult]
     override fun createResult(): BranchNodeResult
@@ -298,7 +298,7 @@ interface NodeContainer : BranchNode {
      */
     val progressMarkers: List<String>?
 
-    override fun getNavigator(nodeState: BranchNodeState): Navigator = NodeNavigator(this)
+    override fun createNavigator(nodeState: BranchNodeState): Navigator = NodeNavigator(this)
 }
 
 /**

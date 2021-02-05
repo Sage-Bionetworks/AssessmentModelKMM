@@ -177,6 +177,12 @@ interface BranchNodeState : NodeState {
      */
     fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?)
 
+    /**
+     * Returns the [Progress] of the assessment based on the [currentChild] and [currentResult]. If `null`
+     * then progress should not be shown for this [currentChild] of assessment.
+     */
+    fun progress(): Progress?
+
 }
 
 interface LeafNodeState : NodeState {
@@ -198,7 +204,7 @@ class LeafNodeStateImpl(override val node: Node, override val parent: BranchNode
 }
 
 open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
-    private val navigator: Navigator by lazy { node.getNavigator(this) }
+    private val navigator: Navigator by lazy { node.createNavigator(this) }
 
     override val currentResult: BranchNodeResult by lazy {
         // If this node has previously been shown, use that to determine the current state.
@@ -454,6 +460,16 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             if (currentResult.pathHistoryResults.lastOrNull()?.let { it.identifier != childResult.identifier } != false) {
                 currentResult.pathHistoryResults.add(childResult)
             }
+        }
+    }
+
+    /**
+     * Returns the [Progress] of the assessment based on the [currentChild] and [currentResult]. If `null`
+     * then progress should not be shown for this [currentChild] of assessment.
+     */
+    override fun progress(): Progress? {
+        return currentChild?.node?.let {
+            navigator.progress(it, currentResult)
         }
     }
 }
