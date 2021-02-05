@@ -69,7 +69,7 @@ open class AssessmentFragment : Fragment() {
 
     open fun initViewModel(branchNodeState: BranchNodeState) =
         ViewModelProvider(
-            this, AssessmentViewModelFactory()
+            requireActivity(), AssessmentViewModelFactory()
                 .create(branchNodeState)
         ).get(AssessmentViewModel::class.java)
 
