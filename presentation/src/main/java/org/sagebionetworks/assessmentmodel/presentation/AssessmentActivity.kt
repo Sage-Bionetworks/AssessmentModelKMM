@@ -36,15 +36,17 @@ open class AssessmentActivity: AppCompatActivity() {
         val assessmentPlaceholder = AssessmentPlaceholderObject(assessmentId, assessmentInfo)
 
         viewModel = initViewModel(assessmentPlaceholder, assessmentRegistryProvider, customNodeStateProvider)
-        viewModel.assessmentLoadedLiveData
-            .observe(this, Observer<BranchNodeState>
-            { nodeState -> this.handleAssessmentLoaded(nodeState) })
+        // If we've already loaded the assessment then the activity is being recreated from a configuration
+        // change, and the AssessmentFragment will be restored for us.
+        if (!viewModel.hasHandledLoad) {
+            viewModel.assessmentLoadedLiveData
+                .observe(this, Observer<BranchNodeState>
+                { nodeState -> this.handleAssessmentLoaded(nodeState) })
+        }
 
         viewModel.assessmentFinishedLiveData
             .observe(this, Observer<RootAssessmentViewModel.FinishedState>
             { finished -> this.handleAssessmentFinished(finished) })
-
-
 
         super.onCreate(savedInstanceState)
     }
@@ -68,7 +70,8 @@ open class AssessmentActivity: AppCompatActivity() {
     private fun handleAssessmentLoaded(rootNodeState: BranchNodeState) {
         rootNodeState.rootNodeController = viewModel
         val fragment = assessmentFragmentProvider?.fragmentFor(rootNodeState.node)?: AssessmentFragment.newFragmentInstance()
-        supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).commit()
+        supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).setReorderingAllowed(true).commit()
+        viewModel.hasHandledLoad = true
     }
 
     open fun initViewModel(assessmentInfo: AssessmentPlaceholder, assessmentProvider: AssessmentRegistryProvider, customNodeStateProvider: CustomNodeStateProvider?) =
