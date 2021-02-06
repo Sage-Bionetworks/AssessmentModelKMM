@@ -56,8 +56,8 @@
     {
       "identifier": "stringQuestion",
       "type": "simpleQuestion",
-      "title": "What symptoms do you have?",
-      "subtitle": "Question subtitle",
+      "title": "What symptoms?",
+      "subtitle": "Subtitle goes here",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "image"  : {    "type" : "animated",
@@ -89,10 +89,10 @@
       "identifier": "multipleInputQuestion",
       "type": "multipleInputQuestion",
       "title": "Multiple Questions",
-      "subtitle": "subtitle goes here",
-      "inputItems": [{"type" : "year", "placeholder" :  "Enter year"},
-        {"type" : "year", "placeholder" :  "Enter year"},
-        {"type" : "year", "placeholder" :  "Enter year"}],
+      "subtitle": "Subtitle goes here",
+      "inputItems": [{"type" : "year", "placeholder" :  "Enter text here"},
+        {"type" : "year", "placeholder" :  "Enter text here"},
+        {"type" : "year", "placeholder" :  "Enter text here"}],
       "sequenceSeparator": "testString",
       "skipCheckbox": {"type":"skipCheckbox","fieldLabel":"No answer"}
     }

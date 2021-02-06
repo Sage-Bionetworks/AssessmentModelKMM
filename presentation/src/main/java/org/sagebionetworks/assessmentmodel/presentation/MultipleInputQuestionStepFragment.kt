@@ -20,7 +20,6 @@ import org.sagebionetworks.assessmentmodel.survey.*
 class MultipleInputQuestionStepFragment : StepFragment() {
 
     private var _binding: FragmentMultipleInputQuestionStepBinding? = null
-    // This property is only valid between onCreateView and onDestroyView.
     val binding get() = _binding!!
 
     lateinit var questionStep: MultipleInputQuestion
@@ -36,7 +35,7 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         questionStep = questionState.node as MultipleInputQuestion
         inputStatesList = questionState.itemStates
 
-        inputState = inputStatesList[2] as KeyboardInputItemState<*>
+        inputState = inputStatesList[0] as KeyboardInputItemState<*>
         inputItemsList = questionStep.inputItems
     }
 
@@ -54,8 +53,10 @@ class MultipleInputQuestionStepFragment : StepFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.navBar.setForwardOnClickListener {
-//            binding.question2Input.updateResult(inputState)
-//            questionState.saveAnswer(inputState.currentAnswer, inputState)
+            binding.textQuestion0Input.updateResult(inputState)
+            binding.textQuestion1Input.updateResult(inputState)
+            binding.textQuestion2Input.updateResult(inputState)
+            questionState.saveAnswer(inputState.currentAnswer, inputState)
             assessmentViewModel.goForward()
         }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
@@ -63,17 +64,8 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-//        for (inputItem in inputItemsList) {
-//            if (inputItem.equals(ChoiceQuestionObject)) { //multiple choice question
-//                binding.question0Input.setup(questionState)
-//                binding.question1Input.setup(questionState)
-//            } else if (inputItem.equals(SimpleQuestionObject)) { //text input question
-//                binding.question2Input.setup(inputState)
-//            }
-//            break
-//        }
-        binding.question0Input.setup(inputState)
-        binding.question1Input.setup(inputState)
-        binding.question2Input.setup(inputState)
+        binding.textQuestion0Input.setup(inputState)
+        binding.textQuestion1Input.setup(inputState)
+        binding.textQuestion2Input.setup(inputState)
     }
 }

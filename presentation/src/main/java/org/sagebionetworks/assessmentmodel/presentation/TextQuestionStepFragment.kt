@@ -22,7 +22,7 @@ class TextQuestionStepFragment: StepFragment() {
         super.onCreate(savedInstanceState)
         questionState = nodeState as QuestionState
         questionStep = questionState.node as SimpleQuestion
-        inputState = questionState.itemStates.get(0) as KeyboardInputItemState<*>
+        inputState = questionState.itemStates[0] as KeyboardInputItemState<*>
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -23,15 +23,15 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
             <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/question0_input"
+                android:id="@+id/text_question0_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/question1_input"
+                android:id="@+id/text_question1_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/question2_input"
+                android:id="@+id/text_question2_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
