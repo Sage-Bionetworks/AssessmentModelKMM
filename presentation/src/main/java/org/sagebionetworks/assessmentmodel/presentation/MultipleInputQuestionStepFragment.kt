@@ -16,6 +16,7 @@ import org.sagebionetworks.assessmentmodel.survey.*
  * A simple [Fragment] subclass.
  * Use the [MultipleInputQuestionStepFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * This fragment currently only works with three text fields.
  */
 class MultipleInputQuestionStepFragment : StepFragment() {
 
@@ -24,7 +25,6 @@ class MultipleInputQuestionStepFragment : StepFragment() {
 
     lateinit var questionStep: MultipleInputQuestion
     lateinit var questionState: QuestionState
-    lateinit var inputState: KeyboardInputItemState<*>
 
     lateinit var inputStatesList: List<InputItemState>
     lateinit var inputItemsList : List<InputItem>
@@ -34,9 +34,8 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         questionState = nodeState as QuestionState
         questionStep = questionState.node as MultipleInputQuestion
         inputStatesList = questionState.itemStates
-
-        inputState = inputStatesList[0] as KeyboardInputItemState<*>
         inputItemsList = questionStep.inputItems
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,10 +52,12 @@ class MultipleInputQuestionStepFragment : StepFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.navBar.setForwardOnClickListener {
-            binding.textQuestion0Input.updateResult(inputState)
-            binding.textQuestion1Input.updateResult(inputState)
-            binding.textQuestion2Input.updateResult(inputState)
-            questionState.saveAnswer(inputState.currentAnswer, inputState)
+            binding.textQuestion0Input.updateResult(inputStatesList[0] as KeyboardInputItemState<*>)
+            binding.textQuestion1Input.updateResult(inputStatesList[1] as KeyboardInputItemState<*>)
+            binding.textQuestion2Input.updateResult(inputStatesList[2] as KeyboardInputItemState<*>)
+            questionState.saveAnswer(inputStatesList[0].currentAnswer, inputStatesList[0])
+            questionState.saveAnswer(inputStatesList[1].currentAnswer, inputStatesList[1])
+            questionState.saveAnswer(inputStatesList[2].currentAnswer, inputStatesList[2])
             assessmentViewModel.goForward()
         }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
@@ -64,8 +65,8 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-        binding.textQuestion0Input.setup(inputState)
-        binding.textQuestion1Input.setup(inputState)
-        binding.textQuestion2Input.setup(inputState)
+        binding.textQuestion0Input.setup(inputStatesList[0] as KeyboardInputItemState<*>)
+        binding.textQuestion1Input.setup(inputStatesList[1] as KeyboardInputItemState<*>)
+        binding.textQuestion2Input.setup(inputStatesList[2] as KeyboardInputItemState<*>)
     }
 }

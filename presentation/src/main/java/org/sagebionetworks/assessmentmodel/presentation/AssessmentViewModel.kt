@@ -13,15 +13,13 @@ open class AssessmentViewModel(
     val assessmentNodeState: BranchNodeState
 ) : ViewModel(), NodeUIController {
 
-
-    private var isStarted = false
     protected val currentNodeStateMutableLiveData: MutableLiveData<ShowNodeState> = MutableLiveData()
     val currentNodeStateLiveData: LiveData<ShowNodeState> = currentNodeStateMutableLiveData
 
     fun start() {
-        if (!isStarted) {
-            isStarted = true
-            assessmentNodeState.nodeUIController = this
+        assessmentNodeState.nodeUIController = this
+        if (assessmentNodeState.currentChild == null) {
+            //If we don't yet have a current child then we need to start this assessment
             goForward()
         }
     }
@@ -78,7 +76,8 @@ open class AssessmentViewModel(
         val nodeState: NodeState,
         val direction: NavigationPoint.Direction,
         val requestedPermissions: Set<PermissionInfo>?,
-        val asyncActionNavigations: Set<AsyncActionNavigation>?
+        val asyncActionNavigations: Set<AsyncActionNavigation>?,
+        var hasBeenHandled: Boolean = false
     )
 
 }

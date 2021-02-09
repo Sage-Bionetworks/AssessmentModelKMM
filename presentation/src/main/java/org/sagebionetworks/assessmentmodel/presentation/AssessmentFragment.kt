@@ -64,7 +64,13 @@ open class AssessmentFragment : Fragment() {
 
         viewModel.currentNodeStateLiveData
             .observe(this.viewLifecycleOwner, Observer<AssessmentViewModel.ShowNodeState>
-            { showNodeState -> this.showStep(showNodeState) })
+            { showNodeState ->
+                // If the event has already been handled, then fragment is being restored from a
+                // configuration change and the step fragment will be automatically restored for us.
+                if (!showNodeState.hasBeenHandled) {
+                    this.showStep(showNodeState)
+                }
+            })
         viewModel.start()
     }
 
@@ -75,6 +81,7 @@ open class AssessmentFragment : Fragment() {
         ).get(AssessmentViewModel::class.java)
 
     open fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
+        showNodeState.hasBeenHandled = true
         if (NavigationPoint.Direction.Exit == showNodeState.direction) {
             val resultIntent = Intent()
             resultIntent.putExtra(

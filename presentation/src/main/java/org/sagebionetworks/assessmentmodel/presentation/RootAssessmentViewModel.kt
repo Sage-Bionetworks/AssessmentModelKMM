@@ -12,6 +12,7 @@ open class RootAssessmentViewModel(
     val nodeStateProvider: CustomNodeStateProvider? = null
 ) : ViewModel(), RootNodeController {
 
+    var hasHandledLoad = false
     var assessmentNodeState: BranchNodeState? = null
     protected val assessmentLoadedMutableLiveData: MutableLiveData<BranchNodeState> = MutableLiveData()
     val assessmentLoadedLiveData: LiveData<BranchNodeState> = assessmentLoadedMutableLiveData

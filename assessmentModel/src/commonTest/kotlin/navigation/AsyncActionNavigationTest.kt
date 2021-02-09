@@ -97,7 +97,7 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
             identifier = "foo",
             children = nodeList,
             backgroundActions = asyncList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 2)
 
@@ -124,7 +124,7 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
             identifier = "foo",
             children = nodeList,
             backgroundActions = asyncList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertTrue(navigator is NodeNavigator)
         val result = assessmentObject.createResult()
 
@@ -151,7 +151,7 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
             identifier = "foo",
             children = nodeList,
             backgroundActions = asyncList)
-        val navigator = assessmentObject.getNavigator(BranchNodeStateImpl(assessmentObject, null))
+        val navigator = assessmentObject.createNavigator(BranchNodeStateImpl(assessmentObject, null))
         assertTrue(navigator is NodeNavigator)
         val result = buildResult(assessmentObject, 4)
 
