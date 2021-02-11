@@ -29,8 +29,7 @@ actual object UUIDGenerator {
 }
 
 actual object DateGenerator {
-    actual fun nowString(): String {
-        return ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
-    }
+    actual fun nowString(): String = ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+    
     actual fun currentYear(): Int = ZonedDateTime.now().year
 }
