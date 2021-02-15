@@ -68,5 +68,9 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.textQuestion0Input.setup(inputStatesList[0] as KeyboardInputItemState<*>)
         binding.textQuestion1Input.setup(inputStatesList[1] as KeyboardInputItemState<*>)
         binding.textQuestion2Input.setup(inputStatesList[2] as KeyboardInputItemState<*>)
+
+        //questionStep = questionState.node as ChoiceQuestion
+        //binding.choiceQuestionInput.setup(questionState)
+
     }
 }

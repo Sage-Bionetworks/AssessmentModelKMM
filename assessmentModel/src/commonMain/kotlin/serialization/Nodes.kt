@@ -326,8 +326,11 @@ data class SimpleQuestionObject(
 data class MultipleInputQuestionObject(
     override val identifier: String,
     override val inputItems: List<InputItem>,
+    val choices: List<ChoiceOptionObject>,
     override var sequenceSeparator: String? = null,
-    override var skipCheckbox: SkipCheckboxInputItem? = null
+    override var skipCheckbox: SkipCheckboxInputItem? = null,
+    val baseType: BaseType = BaseType.STRING,
+    var uiHint: UIHint = UIHint.Choice.ListItem
 ) : QuestionObject(), MultipleInputQuestion
 
 @Serializable

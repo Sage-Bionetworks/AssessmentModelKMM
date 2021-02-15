@@ -34,7 +34,12 @@
                 android:id="@+id/text_question2_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
+                android:id="@+id/choice_question_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
+
 
     </ScrollView>
 
