@@ -20,24 +20,21 @@
         android:layout_above="@id/nav_bar">
         <LinearLayout
             android:orientation="vertical"
+            android:id="@+id/linear_layout_view"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
-            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/text_question0_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/text_question1_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-                android:id="@+id/text_question2_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
-                android:id="@+id/choice_question_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+<!--            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView-->
+<!--                android:id="@+id/text_question0_input"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+<!--            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView-->
+<!--                android:id="@+id/text_question1_input"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+<!--            <org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView-->
+<!--                android:id="@+id/text_question2_input"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
         </LinearLayout>
 
 

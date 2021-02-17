@@ -1,12 +1,16 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
+import android.app.ActionBar
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.FragmentMultipleInputQuestionStepBinding
+import org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
 import org.sagebionetworks.assessmentmodel.serialization.ChoiceQuestionObject
 import org.sagebionetworks.assessmentmodel.serialization.SimpleQuestionObject
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -28,6 +32,7 @@ class MultipleInputQuestionStepFragment : StepFragment() {
 
     lateinit var inputStatesList: List<InputItemState>
     lateinit var inputItemsList : List<InputItem>
+    val map = mutableMapOf<InputItemState, TextInputView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +40,6 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         questionStep = questionState.node as MultipleInputQuestion
         inputStatesList = questionState.itemStates
         inputItemsList = questionStep.inputItems
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,12 +56,12 @@ class MultipleInputQuestionStepFragment : StepFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.navBar.setForwardOnClickListener {
-            binding.textQuestion0Input.updateResult(inputStatesList[0] as KeyboardInputItemState<*>)
-            binding.textQuestion1Input.updateResult(inputStatesList[1] as KeyboardInputItemState<*>)
-            binding.textQuestion2Input.updateResult(inputStatesList[2] as KeyboardInputItemState<*>)
-            questionState.saveAnswer(inputStatesList[0].currentAnswer, inputStatesList[0])
-            questionState.saveAnswer(inputStatesList[1].currentAnswer, inputStatesList[1])
-            questionState.saveAnswer(inputStatesList[2].currentAnswer, inputStatesList[2])
+            for (currInputState in map.keys) {
+                map[currInputState]?.updateResult(currInputState as KeyboardInputItemState<*>)
+            }
+            for (inputState in inputStatesList) {
+                questionState.saveAnswer(inputState.currentAnswer, inputState)
+            }
             assessmentViewModel.goForward()
         }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
@@ -65,12 +69,13 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-        binding.textQuestion0Input.setup(inputStatesList[0] as KeyboardInputItemState<*>)
-        binding.textQuestion1Input.setup(inputStatesList[1] as KeyboardInputItemState<*>)
-        binding.textQuestion2Input.setup(inputStatesList[2] as KeyboardInputItemState<*>)
 
-        //questionStep = questionState.node as ChoiceQuestion
-        //binding.choiceQuestionInput.setup(questionState)
-
+        for (inputState in inputStatesList) {
+            val textViewCurr = TextInputView(requireContext())
+            textViewCurr?.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            binding.linearLayoutView.addView(textViewCurr)
+            textViewCurr.setup(inputState as KeyboardInputItemState<*>)
+            map[inputState] = textViewCurr
+        }
     }
 }

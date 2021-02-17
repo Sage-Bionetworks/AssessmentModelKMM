@@ -90,12 +90,11 @@
       "type": "multipleInputQuestion",
       "title": "Multiple Questions",
       "subtitle": "Subtitle goes here",
-      "inputItems": [{"type" : "year", "placeholder" :  "Enter year here"},
+      "inputItems": [{"type" : "string", "placeholder" :  "Enter text here"},
         {"type" : "string", "placeholder" :  "Enter text here"},
         {"type" : "string", "placeholder" :  "Enter text here"}
       ],
       "sequenceSeparator": "testString",
-      "skipCheckbox": {"type":"skipCheckbox","fieldLabel":"No answer"},
       "baseType": "integer",
       "uiHint": "checkmark",
       "choices":[
