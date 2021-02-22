@@ -1,7 +1,5 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
-import android.app.ActionBar
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +9,6 @@ import androidx.fragment.app.Fragment
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.FragmentMultipleInputQuestionStepBinding
 import org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView
-import org.sagebionetworks.assessmentmodel.serialization.ChoiceQuestionObject
-import org.sagebionetworks.assessmentmodel.serialization.SimpleQuestionObject
 import org.sagebionetworks.assessmentmodel.survey.*
 
 
@@ -72,7 +68,7 @@ class MultipleInputQuestionStepFragment : StepFragment() {
 
         for (inputState in inputStatesList) {
             val textViewCurr = TextInputView(requireContext())
-            textViewCurr?.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            textViewCurr.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             binding.linearLayoutView.addView(textViewCurr)
             textViewCurr.setup(inputState as KeyboardInputItemState<*>)
             map[inputState] = textViewCurr

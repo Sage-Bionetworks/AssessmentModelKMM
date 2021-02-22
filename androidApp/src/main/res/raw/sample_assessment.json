@@ -92,6 +92,8 @@
       "subtitle": "Subtitle goes here",
       "inputItems": [{"type" : "string", "placeholder" :  "Enter text here"},
         {"type" : "string", "placeholder" :  "Enter text here"},
+        {"type" : "string", "placeholder" :  "Enter text here"},
+        {"type" : "string", "placeholder" :  "Enter text here"},
         {"type" : "string", "placeholder" :  "Enter text here"}
       ],
       "sequenceSeparator": "testString",
