@@ -38,8 +38,8 @@
     {
       "identifier": "choice",
       "type": "choiceQuestion",
-      "title": "Hello World!",
-      "subtitle": "Question subtitle",
+      "title": "How are you feeling today?",
+      "subtitle": "Select all that apply",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "optional": false,
@@ -47,17 +47,17 @@
       "baseType": "integer",
       "uiHint": "checkmark",
       "choices":[
-        {"text":"choice 1","icon":"choice1","value":1},
-        {"text":"choice 2","value":2},
-        {"text":"choice 3","value":3},
-        {"text":"none of the above","exclusive":true}
+        {"text":"Fabulous!","icon":"choice1","value":1},
+        {"text":"Neutral","value":2},
+        {"text":"Sleepy","value":3},
+        {"text":"None of the above","exclusive":true}
       ]
     },
     {
       "identifier": "stringQuestion",
       "type": "simpleQuestion",
-      "title": "String question",
-      "subtitle": "Question subtitle",
+      "title": "What symptoms?",
+      "subtitle": "Subtitle goes here",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "image"  : {    "type" : "animated",
@@ -72,8 +72,8 @@
     {
       "identifier": "yearQuestion",
       "type": "simpleQuestion",
-      "title": "Birth year",
-      "subtitle": "Enter year",
+      "title": "When is your birthday?",
+      "subtitle": "Enter birth year",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "image"  : {    "type" : "animated",
@@ -84,6 +84,19 @@
       "optional": false,
       "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
+      "identifier": "multipleInputQuestion",
+      "type": "multipleInputQuestion",
+      "title": "Multiple Questions",
+      "subtitle": "Subtitle goes here",
+      "inputItems": [{"type" : "string", "placeholder" :  "What is your full name?"},
+        {"type" : "string", "placeholder" :  "Enter your first name"},
+        {"type" : "string", "placeholder" :  "Enter your middle name"},
+        {"type" : "string", "placeholder" :  "Enter your last name"},
+        {"type" : "string", "placeholder" :  "What are your pronouns?"}
+      ]
     }
   ]
 }
+

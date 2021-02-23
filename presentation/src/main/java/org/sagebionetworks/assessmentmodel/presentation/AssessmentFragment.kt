@@ -15,6 +15,7 @@ import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
+import org.sagebionetworks.assessmentmodel.survey.MultipleInputQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 
@@ -127,6 +128,7 @@ open class AssessmentFragment : Fragment() {
             is SimpleQuestion -> return TextQuestionStepFragment()
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
+            is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
             else -> return DebugStepFragment()
         }
     }
