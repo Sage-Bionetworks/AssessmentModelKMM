@@ -90,20 +90,11 @@
       "type": "multipleInputQuestion",
       "title": "Multiple Questions",
       "subtitle": "Subtitle goes here",
-      "inputItems": [{"type" : "string", "placeholder" :  "Enter text here"},
-        {"type" : "string", "placeholder" :  "Enter text here"},
-        {"type" : "string", "placeholder" :  "Enter text here"},
-        {"type" : "string", "placeholder" :  "Enter text here"},
-        {"type" : "string", "placeholder" :  "Enter text here"}
-      ],
-      "sequenceSeparator": "testString",
-      "baseType": "integer",
-      "uiHint": "checkmark",
-      "choices":[
-        {"text":"Fabulous!","icon":"choice1","value":1},
-        {"text":"Neutral","value":2},
-        {"text":"Sleepy","value":3},
-        {"text":"None of the above","exclusive":true}
+      "inputItems": [{"type" : "string", "placeholder" :  "What is your full name?"},
+        {"type" : "string", "placeholder" :  "Enter your first name"},
+        {"type" : "string", "placeholder" :  "Enter your middle name"},
+        {"type" : "string", "placeholder" :  "Enter your last name"},
+        {"type" : "string", "placeholder" :  "What are your pronouns?"}
       ]
     }
   ]

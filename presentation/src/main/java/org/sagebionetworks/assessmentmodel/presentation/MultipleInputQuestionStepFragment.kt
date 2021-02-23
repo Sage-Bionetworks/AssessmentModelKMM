@@ -16,7 +16,7 @@ import org.sagebionetworks.assessmentmodel.survey.*
  * A simple [Fragment] subclass.
  * Use the [MultipleInputQuestionStepFragment.newInstance] factory method to
  * create an instance of this fragment.
- * This fragment currently only works with three text fields.
+ * This fragment can contain any number of text fields.
  */
 class MultipleInputQuestionStepFragment : StepFragment() {
 
