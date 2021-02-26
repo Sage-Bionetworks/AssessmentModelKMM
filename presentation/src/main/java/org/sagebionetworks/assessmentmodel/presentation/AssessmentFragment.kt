@@ -14,9 +14,11 @@ import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
+import org.sagebionetworks.assessmentmodel.serialization.SkipCheckboxInputItemObject
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.MultipleInputQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
+import org.sagebionetworks.assessmentmodel.survey.SkipCheckboxInputItem
 
 
 open class AssessmentFragment : Fragment() {

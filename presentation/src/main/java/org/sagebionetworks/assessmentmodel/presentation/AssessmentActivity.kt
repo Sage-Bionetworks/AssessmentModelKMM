@@ -3,6 +3,9 @@ package org.sagebionetworks.assessmentmodel.presentation
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import org.sagebionetworks.assessmentmodel.Step
+import androidx.fragment.app.Fragment
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -34,7 +37,6 @@ open class AssessmentActivity: AppCompatActivity() {
 
         val assessmentInfo = AssessmentInfoObject(assessmentId)
         val assessmentPlaceholder = AssessmentPlaceholderObject(assessmentId, assessmentInfo)
-
         viewModel = initViewModel(assessmentPlaceholder, assessmentRegistryProvider, customNodeStateProvider)
         // If we've already loaded the assessment then the activity is being recreated from a configuration
         // change, and the AssessmentFragment will be restored for us.
@@ -79,6 +81,5 @@ open class AssessmentActivity: AppCompatActivity() {
             this, RootAssessmentViewModelFactory()
                 .create(assessmentInfo, assessmentProvider, customNodeStateProvider)
         ).get(RootAssessmentViewModel::class.java)
-
 
 }

@@ -49,7 +49,13 @@ class TextQuestionStepFragment: StepFragment() {
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
         binding.questionInput.setup(inputState)
-
+        // display skip option
+        if (!questionStep.optional) {
+            binding.skipButton.visibility = View.INVISIBLE
+        } else {
+            binding.skipButton.visibility = View.VISIBLE
+            binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
+        }
     }
 
 }

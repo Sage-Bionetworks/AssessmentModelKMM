@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import org.sagebionetworks.assessmentmodel.Step
@@ -65,7 +66,13 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-
+        // display skip option
+        if (!questionStep.optional) {
+            binding.skipButton.visibility = View.INVISIBLE
+        } else {
+            binding.skipButton.visibility = View.VISIBLE
+            binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
+        }
         for (inputState in inputStatesList) {
             val textViewCurr = TextInputView(requireContext())
             textViewCurr.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)

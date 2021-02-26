@@ -2,4 +2,5 @@
 <resources>
     <string name="back">Back</string>
     <string name="next">Next</string>
+    <string name="skip_button">Skip question</string>
 </resources>

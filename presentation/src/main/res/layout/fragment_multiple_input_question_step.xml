@@ -24,8 +24,6 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
         </LinearLayout>
-
-
     </ScrollView>
 
     <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
@@ -33,5 +31,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
+
+    <Button
+        android:id="@+id/skip_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="handler"
+        android:text="@string/skip_button" />
 
 </RelativeLayout>
