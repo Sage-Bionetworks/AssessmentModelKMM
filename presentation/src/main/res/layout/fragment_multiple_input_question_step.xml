@@ -18,7 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/question_header">
-<!--        android:layout_above="@id/nav_bar">-->
         <LinearLayout
             android:orientation="vertical"
             android:id="@+id/linear_layout_view"
