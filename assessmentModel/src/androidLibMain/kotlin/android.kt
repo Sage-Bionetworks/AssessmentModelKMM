@@ -1,12 +1,9 @@
 package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.reflect.KClass
 
 actual class Platform actual constructor() {
     actual val platform: String = "Android"
@@ -32,6 +29,7 @@ actual object UUIDGenerator {
 }
 
 actual object DateGenerator {
-    actual fun nowString(): String = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
-    actual fun currentYear(): Int = LocalDate.now().year
+    actual fun nowString(): String = ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+    
+    actual fun currentYear(): Int = ZonedDateTime.now().year
 }
