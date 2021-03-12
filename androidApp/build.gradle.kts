@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.multiplatform")
-    // TODO: migrate to View Binding (https://goo.gle/kotlin-android-extensions-deprecation)
-    id("kotlin-android-extensions")
     id("org.jetbrains.dokka")
 }
 
