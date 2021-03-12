@@ -3,9 +3,6 @@ package org.sagebionetworks.assessmentmodel.presentation
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import org.sagebionetworks.assessmentmodel.Step
-import androidx.fragment.app.Fragment
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
