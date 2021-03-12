@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("com.github.dcendents.android-maven")
+//    id("com.github.dcendents.android-maven")
     id ("maven-publish")
     id("org.jetbrains.dokka")
 }
@@ -34,7 +34,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.0-beta01"
+        kotlinCompilerExtensionVersion = Libs.Jetpack.compose
     }
 
     buildTypes {
@@ -61,26 +61,28 @@ dependencies {
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
-    implementation ("androidx.compose.ui:ui:1.0.0-beta01")
+
+    implementation ("androidx.compose.compiler:compiler:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.ui:ui:${Libs.Jetpack.compose}")
     // Tooling support (Previews, etc.)
-    implementation ("androidx.compose.ui:ui-tooling:1.0.0-beta01")
+    implementation ("androidx.compose.ui:ui-tooling:${Libs.Jetpack.compose}")
     // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-    implementation ("androidx.compose.foundation:foundation:1.0.0-beta01")
+    implementation ("androidx.compose.foundation:foundation:${Libs.Jetpack.compose}")
     // Material Design
-    implementation ("androidx.compose.material:material:1.0.0-beta01")
+    implementation ("androidx.compose.material:material:${Libs.Jetpack.compose}")
     // Material design icons
-    implementation ("androidx.compose.material:material-icons-core:1.0.0-beta01")
-    implementation ("androidx.compose.material:material-icons-extended:1.0.0-beta01")
+    implementation ("androidx.compose.material:material-icons-core:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.material:material-icons-extended:${Libs.Jetpack.compose}")
     // Integration with activities
     implementation ("androidx.activity:activity-compose:1.3.0-alpha03")
     // Integration with ViewModels
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:${Libs.Jetpack.composeLifecycle}")
     // Integration with observables
-    implementation ("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
-    implementation ("androidx.compose.runtime:runtime-rxjava2:1.0.0-beta01")
+    implementation ("androidx.compose.runtime:runtime-livedata:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.runtime:runtime-rxjava2:${Libs.Jetpack.compose}")
 
     // UI Tests
-    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.0.0-beta01")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:${Libs.Jetpack.compose}")
 }
 
 project.afterEvaluate {
@@ -95,4 +97,4 @@ project.afterEvaluate {
 
 }
 
-apply("../config/artifact-deploy.gradle")
+//apply("../config/artifact-deploy.gradle")

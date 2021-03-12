@@ -1,15 +1,17 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.multiplatform")
+    // TODO: migrate to View Binding (https://goo.gle/kotlin-android-extensions-deprecation)
     id("kotlin-android-extensions")
     id("org.jetbrains.dokka")
 }
 
 android {
+
     compileSdkVersion(29)
     defaultConfig {
         applicationId = "org.sagebionetworks.assessmentmodel.sampleapp"
-        minSdkVersion(19)
+        minSdkVersion(21)
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
@@ -41,6 +43,7 @@ android {
     }
 
     testOptions.unitTests.isIncludeAndroidResources = true
+
 }
 
 kotlin {
