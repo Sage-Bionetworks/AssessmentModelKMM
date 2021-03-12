@@ -70,7 +70,9 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+             api (Libs.KotlinX.serialization)
+             implementation(Libs.KotlinX.coroutines)
+
          }
       }
       commonTest {
