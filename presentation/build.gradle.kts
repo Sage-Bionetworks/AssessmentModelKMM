@@ -34,7 +34,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Libs.Jetpack.compose
+        kotlinCompilerExtensionVersion = Libs.Jetpack.Compose.version
     }
 
     buildTypes {
@@ -49,40 +49,42 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     api(project(":assessmentModel"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
-    implementation("com.google.android.material:material:1.1.0")
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
+    implementation("com.google.android.material:material:1.3.0")
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.core:core-ktx:1.2.0")
+    implementation("androidx.core:core-ktx:1.3.2")
     implementation("org.koin:koin-android:2.2.2")
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 
-    implementation ("androidx.compose.compiler:compiler:${Libs.Jetpack.compose}")
-    implementation ("androidx.compose.ui:ui:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.compiler:compiler:${Libs.Jetpack.Compose.version}")
+    implementation ("androidx.compose.ui:ui:${Libs.Jetpack.Compose.version}")
     // Tooling support (Previews, etc.)
-    implementation ("androidx.compose.ui:ui-tooling:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.ui:ui-tooling:${Libs.Jetpack.Compose.version}")
     // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-    implementation ("androidx.compose.foundation:foundation:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.foundation:foundation:${Libs.Jetpack.Compose.version}")
     // Material Design
-    implementation ("androidx.compose.material:material:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.material:material:${Libs.Jetpack.Compose.version}")
     // Material design icons
-    implementation ("androidx.compose.material:material-icons-core:${Libs.Jetpack.compose}")
-    implementation ("androidx.compose.material:material-icons-extended:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.material:material-icons-core:${Libs.Jetpack.Compose.version}")
+    implementation ("androidx.compose.material:material-icons-extended:${Libs.Jetpack.Compose.version}")
     // Integration with activities
-    implementation ("androidx.activity:activity-compose:1.3.0-alpha03")
+    implementation (Libs.Jetpack.Compose.activity)
     // Integration with ViewModels
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:${Libs.Jetpack.composeLifecycle}")
+    implementation (Libs.Jetpack.Compose.lifecycle)
     // Integration with observables
-    implementation ("androidx.compose.runtime:runtime-livedata:${Libs.Jetpack.compose}")
-    implementation ("androidx.compose.runtime:runtime-rxjava2:${Libs.Jetpack.compose}")
+    implementation ("androidx.compose.runtime:runtime-livedata:${Libs.Jetpack.Compose.version}")
+    implementation ("androidx.compose.runtime:runtime-rxjava2:${Libs.Jetpack.Compose.version}")
 
+
+    testImplementation("junit:junit:4.13.2")
+
+    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
     // UI Tests
-    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:${Libs.Jetpack.compose}")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:${Libs.Jetpack.Compose.version}")
 }
 
 project.afterEvaluate {

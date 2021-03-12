@@ -22,7 +22,11 @@ object Libs {
     }
 
     object Jetpack {
-        val compose = "1.0.0-beta02"
-        val composeLifecycle = "1.0.0-alpha02"
+        object Compose {
+            const val version = "1.0.0-beta02"
+            const val activity = "androidx.activity:activity-compose:1.3.0-alpha03";
+            const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02"
+
+        }
     }
 }
