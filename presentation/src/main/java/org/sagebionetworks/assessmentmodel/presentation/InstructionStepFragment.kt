@@ -51,6 +51,7 @@ open class InstructionStepFragment: StepFragment() {
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
         binding.navBar.setup(step)
         binding.header.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
+        binding.navBar.binding.skipButton.visibility = View.INVISIBLE
     }
 
 }

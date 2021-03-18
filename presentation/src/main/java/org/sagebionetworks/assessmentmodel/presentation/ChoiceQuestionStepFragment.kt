@@ -46,12 +46,10 @@ class ChoiceQuestionStepFragment: StepFragment() {
         binding.questionInput.setup(questionState)
         // display skip option
         if (!questionStep.optional) {
-            binding.skipButton.visibility = View.INVISIBLE
+            binding.navBar.binding.skipButton.visibility = View.INVISIBLE
         } else {
-            binding.skipButton.visibility = View.VISIBLE
-            binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
+            binding.navBar.binding.skipButton.visibility = View.VISIBLE
+            binding.navBar.binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
         }
     }
-
-
 }

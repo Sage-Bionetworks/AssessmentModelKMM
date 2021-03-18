@@ -68,10 +68,10 @@ class MultipleInputQuestionStepFragment : StepFragment() {
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
         // display skip option
         if (!questionStep.optional) {
-            binding.skipButton.visibility = View.INVISIBLE
+            binding.navBar.binding.skipButton.visibility = View.INVISIBLE
         } else {
-            binding.skipButton.visibility = View.VISIBLE
-            binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
+            binding.navBar.binding.skipButton.visibility = View.VISIBLE
+            binding.navBar.binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
         }
         for (inputState in inputStatesList) {
             val textViewCurr = TextInputView(requireContext())
