@@ -42,7 +42,7 @@
       "subtitle": "Select all that apply",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
-      "optional": true,
+      "optional": false,
       "singleChoice": false,
       "baseType": "integer",
       "uiHint": "checkmark",
@@ -81,7 +81,7 @@
         "placementType" : "topBackground",
         "animationDuration" : 2
       },
-      "optional": false,
+      "optional": true,
       "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
       "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"Skip checkbox"}
     },
