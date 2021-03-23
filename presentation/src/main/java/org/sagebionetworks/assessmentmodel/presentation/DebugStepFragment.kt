@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.DebugStepFragmentBinding
-import org.sagebionetworks.assessmentmodel.serialization.loadDrawable
 
 open class DebugStepFragment: StepFragment() {
 
