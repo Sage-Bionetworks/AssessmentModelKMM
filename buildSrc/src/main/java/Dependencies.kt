@@ -9,7 +9,7 @@ object Libs {
         private const val version = "1.5.0-M1"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
-        const val serialization ="org.jetbrains.kotlin:kotlin-serialization:$version"
+        const val serializationPlugin ="org.jetbrains.kotlin:kotlin-serialization:$version"
     }
 
     object KotlinX {
@@ -20,6 +20,8 @@ object Libs {
     object Dokka {
         const val version = "1.4.0"
     }
+
+    const val koin = "org.koin:koin-android:3.0.1-beta-1"
 
     object Jetpack {
         object Compose {

@@ -2,12 +2,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath(Libs.androidGradlePlugin)
         classpath(Libs.Kotlin.gradlePlugin)
-        classpath(Libs.Kotlin.serialization)
+        classpath(Libs.Kotlin.serializationPlugin)
         classpath(Libs.androidMavenGradlePlugin)
     }
 }
@@ -28,7 +27,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
     afterEvaluate {
         tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
