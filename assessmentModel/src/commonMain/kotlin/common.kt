@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
 
 expect class Platform() {
     val platform: String
@@ -16,7 +17,7 @@ expect object DateUtils {
      * The format is "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ" which looks like:
      * "2021-03-23T14:58:54.106-07:00"
      */
-    fun bridgeIsoDateTimeString(instant: Instant): String
+    fun bridgeIsoDateTimeString(instant: Instant, timeZone: TimeZone = TimeZone.currentSystemDefault()): String
 
     /**
      * Parse an ISO_8601 string of format "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ" into an [Instant].

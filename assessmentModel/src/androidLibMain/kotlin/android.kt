@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -35,9 +36,10 @@ actual object DateUtils {
     
     actual fun currentYear(): Int = ZonedDateTime.now().year
 
-    actual fun bridgeIsoDateTimeString(instant: Instant): String {
+    actual fun bridgeIsoDateTimeString(instant: Instant, timeZone: TimeZone): String {
         val jtInstant = java.time.Instant.ofEpochMilli(instant.toEpochMilliseconds())
-        return ZonedDateTime.ofInstant(jtInstant, ZoneId.systemDefault()).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        val zoneId = ZoneId.of(timeZone.id)
+        return ZonedDateTime.ofInstant(jtInstant, zoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     }
 
     actual fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant {
