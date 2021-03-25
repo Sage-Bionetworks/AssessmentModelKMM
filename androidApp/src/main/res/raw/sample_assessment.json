@@ -30,9 +30,9 @@
       "type": "instruction",
       "title": "Animating image instruction",
       "detail": "Here are the details for this instruction.",
-      "image"  : {
-        "type":"fetchable",
-        "imageName" : "crf_stair_step_start_animation"
+      "image": {
+        "type": "fetchable",
+        "imageName": "crf_stair_step_start_animation"
       }
     },
     {

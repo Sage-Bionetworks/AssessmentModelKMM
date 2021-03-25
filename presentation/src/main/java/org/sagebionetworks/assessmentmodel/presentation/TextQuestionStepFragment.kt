@@ -44,18 +44,12 @@ class TextQuestionStepFragment: StepFragment() {
             assessmentViewModel.goForward()
         }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
         binding.navBar.setup(questionStep as Step)
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
         binding.questionInput.setup(inputState)
-        // display skip option
-        if (!questionStep.optional) {
-            binding.navBar.binding.skipButton.visibility = View.INVISIBLE
-        } else {
-            binding.navBar.binding.skipButton.visibility = View.VISIBLE
-            binding.navBar.binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
-        }
     }
 
 }

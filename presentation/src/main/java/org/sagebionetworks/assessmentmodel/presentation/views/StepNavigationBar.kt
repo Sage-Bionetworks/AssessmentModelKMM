@@ -11,6 +11,7 @@ import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.databinding.StepNavigationBarBinding
 import org.sagebionetworks.assessmentmodel.serialization.loadDrawable
+import org.sagebionetworks.assessmentmodel.survey.Question
 
 class StepNavigationBar: LinearLayout {
 
@@ -37,16 +38,27 @@ class StepNavigationBar: LinearLayout {
         for (button in step.hideButtons) {
             when(button) {
                 ButtonAction.Navigation.GoForward -> binding.navBarNext.visibility = View.GONE
-                ButtonAction.Navigation.GoBackward-> binding.navBarBack.visibility = View.GONE
+                ButtonAction.Navigation.GoBackward -> binding.navBarBack.visibility = View.GONE
+                ButtonAction.Navigation.Skip -> binding.skipButton.visibility = View.GONE
             }
         }
+
         step.buttonMap.get(ButtonAction.Navigation.GoForward)?.let { button ->
             configureButton(binding.navBarNext, button)
         }
         step.buttonMap.get(ButtonAction.Navigation.GoBackward)?.let { button ->
             configureButton(binding.navBarBack, button)
         }
-
+        step.buttonMap.get(ButtonAction.Navigation.Skip)?.let{ button ->
+            configureButton(binding.skipButton, button)
+        }
+        if (step is Question) {
+            if (step.optional) {
+                binding.skipButton.visibility = View.VISIBLE
+            }
+        } else {
+            binding.skipButton.visibility = View.INVISIBLE
+        }
     }
 
     private fun configureButton(button: MaterialButton, buttonAction: ButtonActionInfo) {
@@ -64,5 +76,9 @@ class StepNavigationBar: LinearLayout {
 
     fun setBackwardOnClickListener(l: (View) -> Unit) {
         binding.navBarBack.setOnClickListener(l)
+    }
+
+    fun setSkipOnClickListener(l: (View) -> Unit) {
+        binding.skipButton.setOnClickListener(l)
     }
 }

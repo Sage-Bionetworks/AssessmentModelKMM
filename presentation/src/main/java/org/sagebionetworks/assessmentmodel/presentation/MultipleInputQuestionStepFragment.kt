@@ -61,17 +61,11 @@ class MultipleInputQuestionStepFragment : StepFragment() {
             assessmentViewModel.goForward()
         }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
         binding.navBar.setup(questionStep as Step)
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-        // display skip option
-        if (!questionStep.optional) {
-            binding.navBar.binding.skipButton.visibility = View.INVISIBLE
-        } else {
-            binding.navBar.binding.skipButton.visibility = View.VISIBLE
-            binding.navBar.binding.skipButton.setOnClickListener { assessmentViewModel.goForward() }
-        }
         for (inputState in inputStatesList) {
             val textViewCurr = TextInputView(requireContext())
             textViewCurr.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
