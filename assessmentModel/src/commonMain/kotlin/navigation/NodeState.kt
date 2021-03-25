@@ -246,7 +246,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         val next = getNextNode(direction) ?: return
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
         // Before moving to the next node (or ending the task), mark the end data for the current node.
-        currentChild?.currentResult?.endDateString = DateGenerator.nowString()
+        currentChild?.currentResult?.endDateString = DateUtils.nowString()
         if (next.node != null) {
             // Go to next node if it is not null.
             moveTo(next)
@@ -276,7 +276,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             getLeafNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
                 // Mark the start/end timestamps before displaying the node.
-                nodeState.currentResult.startDateString = DateGenerator.nowString()
+                nodeState.currentResult.startDateString = DateUtils.nowString()
                 nodeState.currentResult.endDateString = null
                 // Check if the "ready-to-save" state should be changed.
                 if (navigator.isCompleted(nodeState.node, currentResult)) {
@@ -353,7 +353,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     private fun markFinalResultIfNeeded() {
         if (hasMarkedFinalResult) return
         this.hasMarkedFinalResult = true
-        currentResult.endDateString = DateGenerator.nowString()
+        currentResult.endDateString = DateUtils.nowString()
         didMarkFinalResult()
     }
     private var hasMarkedFinalResult = false

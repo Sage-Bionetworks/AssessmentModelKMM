@@ -1,6 +1,8 @@
 package org.sagebionetworks.assessmentmodel
 
 import android.os.Build
+import kotlinx.datetime.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -28,8 +30,19 @@ actual object UUIDGenerator {
     actual fun uuidString() : String = UUID.randomUUID().toString()
 }
 
-actual object DateGenerator {
-    actual fun nowString(): String = ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+actual object DateUtils {
+    actual fun nowString(): String = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     
     actual fun currentYear(): Int = ZonedDateTime.now().year
+
+    actual fun bridgeIsoDateTimeString(instant: Instant): String {
+        val jtInstant = java.time.Instant.ofEpochMilli(instant.toEpochMilliseconds())
+        return ZonedDateTime.ofInstant(jtInstant, ZoneId.systemDefault()).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    }
+
+    actual fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant {
+        val dateTime = ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(dateString))
+        val jtInstant = dateTime.toInstant()
+        return Instant.fromEpochMilliseconds(jtInstant.toEpochMilli())
+    }
 }

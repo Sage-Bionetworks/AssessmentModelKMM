@@ -955,7 +955,7 @@ open class NavigationTestHelper {
         // TODO: syoung 06/16/2020 Once timestamp generation is implemented for Android (which is the platform used for test)
         // then add checks that the dates are being updated properly to mark begin/end of steps.
 
-        override var startDateString: String = DateGenerator.nowString()
+        override var startDateString: String = DateUtils.nowString()
         override var endDateString: String? = null
 
         override fun copyResult(identifier: String): Result = copy(identifier = identifier)

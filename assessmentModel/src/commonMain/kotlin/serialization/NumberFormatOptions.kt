@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import org.sagebionetworks.assessmentmodel.DateGenerator
+import org.sagebionetworks.assessmentmodel.DateUtils
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -103,7 +103,7 @@ data class YearFormatOptions(var allowFuture: Boolean = true,
     override val maximumValue: Int?
         get() = maximumYear ?: if (allowFuture) null else _currentYear
 
-    private val _currentYear = DateGenerator.currentYear()
+    private val _currentYear = DateUtils.currentYear()
 
     override val stepInterval: Int?
         get() = 1
