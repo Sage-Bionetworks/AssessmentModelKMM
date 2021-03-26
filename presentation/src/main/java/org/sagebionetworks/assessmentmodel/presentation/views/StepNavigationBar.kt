@@ -42,14 +42,19 @@ class StepNavigationBar: LinearLayout {
                 ButtonAction.Navigation.Skip -> binding.skipButton.visibility = View.GONE
             }
         }
+        for (buttonInfo in step.buttonMap.values) {
+            when (buttonInfo) {
+                binding.skipButton.text -> buttonInfo.buttonTitle
+            }
+        }
 
-        step.buttonMap.get(ButtonAction.Navigation.GoForward)?.let { button ->
+        step.buttonMap[ButtonAction.Navigation.GoForward]?.let { button ->
             configureButton(binding.navBarNext, button)
         }
-        step.buttonMap.get(ButtonAction.Navigation.GoBackward)?.let { button ->
+        step.buttonMap[ButtonAction.Navigation.GoBackward]?.let { button ->
             configureButton(binding.navBarBack, button)
         }
-        step.buttonMap.get(ButtonAction.Navigation.Skip)?.let{ button ->
+        step.buttonMap[ButtonAction.Navigation.Skip]?.let{ button ->
             configureButton(binding.skipButton, button)
         }
         if (step is Question) {
