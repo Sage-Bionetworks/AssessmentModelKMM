@@ -1,9 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -32,9 +34,11 @@ data class AnswerResultObject(override val identifier: String,
                               @SerialName("value")
                               override var jsonValue: JsonElement? = null,
                               @SerialName("startDate")
-                              override var startDateString: String = DateUtils.nowString(),
+                              @Serializable(with = InstantSerializer::class)
+                              override var startDateTime: Instant = Clock.System.now(),
                               @SerialName("endDate")
-                              override var endDateString: String? = null) : AnswerResult {
+                              @Serializable(with = InstantSerializer::class)
+                              override var endDateTime: Instant? = null) : AnswerResult {
     override fun copyResult(identifier: String): AnswerResult = this.copy(identifier = identifier)
 }
 
@@ -51,9 +55,11 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("taskRunUUID")
                                   override var runUUIDString: String = UUIDGenerator.uuidString(),
                                   @SerialName("startDate")
-                                  override var startDateString: String = DateUtils.nowString(),
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var startDateTime: Instant = Clock.System.now(),
                                   @SerialName("endDate")
-                                  override var endDateString: String? = null,
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var endDateTime: Instant? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null)
@@ -68,9 +74,11 @@ data class AssessmentResultObject(override val identifier: String,
 @SerialName("base")
 data class ResultObject(override val identifier: String,
                         @SerialName("startDate")
-                        override var startDateString: String = DateUtils.nowString(),
+                        @Serializable(with = InstantSerializer::class)
+                        override var startDateTime: Instant = Clock.System.now(),
                         @SerialName("endDate")
-                        override var endDateString: String? = null,
+                        @Serializable(with = InstantSerializer::class)
+                        override var endDateTime: Instant? = null,
                         @SerialName("skipToIdentifier")
                         override var nextNodeIdentifier: String? = null) : Result, ResultNavigationRule {
     override fun copyResult(identifier: String): Result = this.copy(identifier = identifier)
@@ -81,9 +89,11 @@ data class ResultObject(override val identifier: String,
 data class CollectionResultObject(override val identifier: String,
                                   override var inputResults: MutableSet<Result> = mutableSetOf(),
                                   @SerialName("startDate")
-                                  override var startDateString: String = DateUtils.nowString(),
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var startDateTime: Instant = Clock.System.now(),
                                   @SerialName("endDate")
-                                  override var endDateString: String? = null,
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var endDateTime: Instant? = null,
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null) : CollectionResult, ResultNavigationRule {
     override fun copyResult(identifier: String): CollectionResult = this.copy(
@@ -99,9 +109,11 @@ data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("asyncResults")
                                   override var inputResults: MutableSet<Result> = mutableSetOf(),
                                   @SerialName("startDate")
-                                  override var startDateString: String = DateUtils.nowString(),
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var startDateTime: Instant = Clock.System.now(),
                                   @SerialName("endDate")
-                                  override var endDateString: String? = null,
+                                  @Serializable(with = InstantSerializer::class)
+                                  override var endDateTime: Instant? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
                                   @SerialName("skipToIdentifier")
                                   override var nextNodeIdentifier: String? = null) : BranchNodeResult, ResultNavigationRule {

@@ -6,6 +6,8 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKString
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toNSTimeZone
+import org.sagebionetworks.assessmentmodel.survey.ISO8601Format
 import platform.Foundation.*
 import platform.posix.uname
 import platform.posix.utsname
@@ -42,6 +44,13 @@ actual object UUIDGenerator {
 
 actual object DateUtils {
     actual fun nowString(): String = iso8601Formatter.stringFromDate(NSDate.now)
+    
+    /**
+     * For testing purposes
+     */
+    internal actual fun timeZoneOverride(timeZone: TimeZone) {
+        iso8601Formatter.timeZone = timeZone.toNSTimeZone()
+    }
 
     private val iso8601Formatter: NSDateFormatter = {
         val formatter = NSDateFormatter.new()!!
@@ -52,7 +61,7 @@ actual object DateUtils {
 
     actual fun currentYear(): Int = NSCalendar(NSISO8601Calendar).component(NSCalendarUnitYear, NSDate.now).toInt()
 
-    actual fun bridgeIsoDateTimeString(instant: Instant, timeZone: TimeZone): String {
+    actual fun bridgeIsoDateTimeString(instant: Instant): String {
         val timeInterval: NSTimeInterval = instant.toEpochMilliseconds() / 1000.0
         val date = NSDate.dateWithTimeIntervalSince1970(timeInterval)
         return iso8601Formatter.stringFromDate(date)
@@ -64,4 +73,6 @@ actual object DateUtils {
         val milliSec = (timeInterval * 1000).toLong()
         return Instant.fromEpochMilliseconds(milliSec)
     }
+    
+
 }

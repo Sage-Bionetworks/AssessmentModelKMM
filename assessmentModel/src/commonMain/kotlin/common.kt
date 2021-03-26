@@ -12,12 +12,18 @@ expect object UUIDGenerator {
 }
 
 expect object DateUtils {
+
+    /**
+     * For testing purposes
+     */
+    internal fun timeZoneOverride(timeZone: TimeZone)
+
     /**
      * Create an ISO_8601 formatted string from the specified [Instant].
      * The format is "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ" which looks like:
      * "2021-03-23T14:58:54.106-07:00"
      */
-    fun bridgeIsoDateTimeString(instant: Instant, timeZone: TimeZone = TimeZone.currentSystemDefault()): String
+    fun bridgeIsoDateTimeString(instant: Instant): String
 
     /**
      * Parse an ISO_8601 string of format "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ" into an [Instant].
