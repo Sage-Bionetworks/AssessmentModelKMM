@@ -69,6 +69,9 @@ actual object DateUtils {
 
     actual fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant {
         val date = iso8601Formatter.dateFromString(dateString)
+        if (date == null) {
+            throw IllegalArgumentException("Unable to parse date string: $dateString")
+        }
         val timeInterval = date!!.timeIntervalSince1970()
         val milliSec = (timeInterval * 1000).toLong()
         return Instant.fromEpochMilliseconds(milliSec)
