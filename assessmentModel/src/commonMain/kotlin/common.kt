@@ -11,6 +11,10 @@ expect object UUIDGenerator {
     fun uuidString(): String
 }
 
+object DateConstants {
+    const val BRIDGE_ISO_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+}
+
 expect object DateUtils {
 
     /**
@@ -29,7 +33,7 @@ expect object DateUtils {
      * Parse an ISO_8601 string of format "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ" into an [Instant].
      */
     fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant
-    fun nowString(): String
+
     fun currentYear(): Int
 }
 

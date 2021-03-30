@@ -33,7 +33,6 @@ actual object UUIDGenerator {
 }
 
 actual object DateUtils {
-    actual fun nowString(): String = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     
     actual fun currentYear(): Int = ZonedDateTime.now().year
 
@@ -49,7 +48,7 @@ actual object DateUtils {
     private val iso8601Formatter: DateTimeFormatter = {
         //Would prefer to use DateTimeFormatter.ISO_OFFSET_DATE_TIME, but it is inconsistent with iOS.
         //  ISO_OFFSET_DATE_TIME has a variable number of digits for fractional seconds.
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ", Locale.US)
+        DateTimeFormatter.ofPattern(DateConstants.BRIDGE_ISO_DATE_TIME_FORMAT, Locale.US)
     }()
 
     /**

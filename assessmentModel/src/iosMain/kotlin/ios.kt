@@ -43,7 +43,6 @@ actual object UUIDGenerator {
 }
 
 actual object DateUtils {
-    actual fun nowString(): String = iso8601Formatter.stringFromDate(NSDate.now)
     
     /**
      * For testing purposes
@@ -54,7 +53,7 @@ actual object DateUtils {
 
     private val iso8601Formatter: NSDateFormatter = {
         val formatter = NSDateFormatter.new()!!
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter.dateFormat = DateConstants.BRIDGE_ISO_DATE_TIME_FORMAT
         formatter.locale = NSLocale.localeWithLocaleIdentifier("en_US_POSIX")
         formatter
     }()
