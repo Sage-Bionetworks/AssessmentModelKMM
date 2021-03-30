@@ -34,7 +34,6 @@ expect object DateUtils {
      */
     fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant
 
-    fun currentYear(): Int
 }
 
 expect class Product {

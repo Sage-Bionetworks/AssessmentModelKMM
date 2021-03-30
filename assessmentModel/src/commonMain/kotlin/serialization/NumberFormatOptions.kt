@@ -1,5 +1,8 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -103,7 +106,7 @@ data class YearFormatOptions(var allowFuture: Boolean = true,
     override val maximumValue: Int?
         get() = maximumYear ?: if (allowFuture) null else _currentYear
 
-    private val _currentYear = DateUtils.currentYear()
+    private val _currentYear =  Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
 
     override val stepInterval: Int?
         get() = 1

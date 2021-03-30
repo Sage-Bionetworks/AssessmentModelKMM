@@ -58,8 +58,6 @@ actual object DateUtils {
         formatter
     }()
 
-    actual fun currentYear(): Int = NSCalendar(NSISO8601Calendar).component(NSCalendarUnitYear, NSDate.now).toInt()
-
     actual fun bridgeIsoDateTimeString(instant: Instant): String {
         val timeInterval: NSTimeInterval = instant.toEpochMilliseconds() / 1000.0
         val date = NSDate.dateWithTimeIntervalSince1970(timeInterval)

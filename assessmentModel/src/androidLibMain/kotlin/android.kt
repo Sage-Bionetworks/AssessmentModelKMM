@@ -33,8 +33,6 @@ actual object UUIDGenerator {
 }
 
 actual object DateUtils {
-    
-    actual fun currentYear(): Int = ZonedDateTime.now().year
 
     private var timeZoneOverride: TimeZone? = null
 
