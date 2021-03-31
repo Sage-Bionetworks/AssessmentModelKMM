@@ -122,6 +122,7 @@ open class AssessmentFragment : Fragment() {
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
+            // return CheckboxFragment if the question is type checkbox
             else -> return DebugStepFragment()
         }
     }
