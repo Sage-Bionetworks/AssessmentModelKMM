@@ -118,11 +118,10 @@ open class AssessmentFragment : Fragment() {
     open fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
         when (step) {
-            is SimpleQuestion -> return TextQuestionStepFragment()
+            is SimpleQuestion -> return CheckboxFragment()
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
-            // return CheckboxFragment if the question is type checkbox
             else -> return DebugStepFragment()
         }
     }
