@@ -5,15 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.CheckboxFragmentBinding
+import org.sagebionetworks.assessmentmodel.survey.*
 
 /**
  * A simple [Fragment] subclass.
  * Use the [CheckboxFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CheckboxFragment : Fragment() {
+class CheckboxFragment : StepFragment() {
     private var _binding: CheckboxFragmentBinding? = null
     val binding get() = _binding!!
 
@@ -25,5 +26,18 @@ class CheckboxFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = CheckboxFragmentBinding.inflate(layoutInflater, container, false)
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        binding.navBar.setForwardOnClickListener {
+            assessmentViewModel.goForward()
+        }
+        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
+        //binding.navBar.setup(questionStep as Step)
+        //binding.questionHeader.questionTitle.text = questionStep.title
+        //binding.questionHeader.questionSubtitle.text = questionStep.subtitle
+        binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 }
