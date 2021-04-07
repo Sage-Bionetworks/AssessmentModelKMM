@@ -54,6 +54,22 @@
       ]
     },
     {
+      "identifier": "checkboxQuestion",
+      "type": "simpleQuestion",
+      "title": "Yes or No?",
+      "subtitle": "Subtitle goes here",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": true,
+      "inputItem":{"type" : "checkbox", "identifier": "checkboxQuestionResult","fieldLabel" :  "Check for Yes"},
+      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
       "identifier": "stringQuestion",
       "type": "simpleQuestion",
       "title": "What symptoms?",
