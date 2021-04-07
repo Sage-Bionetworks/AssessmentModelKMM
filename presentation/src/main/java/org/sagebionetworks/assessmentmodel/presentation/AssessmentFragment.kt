@@ -14,10 +14,12 @@ import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
+import org.sagebionetworks.assessmentmodel.survey.CheckboxInputItem
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
+import org.sagebionetworks.assessmentmodel.survey.KeyboardTextInputItem
 import org.sagebionetworks.assessmentmodel.survey.MultipleInputQuestion
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
-
+import org.w3c.dom.Text
 
 open class AssessmentFragment : Fragment() {
 
@@ -28,7 +30,6 @@ open class AssessmentFragment : Fragment() {
 
         const val ASSESSMENT_RESULT = "AsssessmentResult"
     }
-
 
     lateinit var viewModel: AssessmentViewModel
     var assessmentFragmentProvider: AssessmentFragmentProvider? = null
@@ -96,7 +97,7 @@ open class AssessmentFragment : Fragment() {
         //If this is an assessment node, load the necessary assessmentFragment
         val curNode = showNodeState.nodeState.node
         (curNode as? BranchNode)?.let {
-            assessmentFragmentProvider?.fragmentFor(it)?.let {fragment ->
+            assessmentFragmentProvider?.fragmentFor(it)?.let { fragment ->
                 val transaction = childFragmentManager.beginTransaction()
                 transaction
                     .replace(R.id.step_fragment_container, fragment)
@@ -105,7 +106,6 @@ open class AssessmentFragment : Fragment() {
                 return
             }
         }
-
 
         val stepFragment = this.getFragmentForStep(showNodeState.nodeState.node as Step)
         val transaction = childFragmentManager.beginTransaction()
@@ -118,12 +118,18 @@ open class AssessmentFragment : Fragment() {
     open fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
         when (step) {
-            is SimpleQuestion -> return CheckboxFragment()
+            is SimpleQuestion -> {
+                if (step.inputItem is CheckboxInputItem) {
+                    return CheckboxFragment()
+                } else if (step.inputItem is KeyboardTextInputItem<*>) {
+                    return TextQuestionStepFragment()
+                }
+                TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
+            }
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
             else -> return DebugStepFragment()
         }
     }
-
 }
