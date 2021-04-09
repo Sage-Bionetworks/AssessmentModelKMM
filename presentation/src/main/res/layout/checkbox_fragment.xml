@@ -19,40 +19,20 @@
             android:layout_alignParentTop="true" />
 
         <CheckBox
-            android:id="@+id/checkBox"
+            android:id="@+id/checkBox0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CheckBox Question"
-            app:layout_constraintBottom_toTopOf="@+id/checkBox2"
+            app:layout_constraintBottom_toTopOf="@+id/checkBox1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_header" />
 
         <CheckBox
-            android:id="@+id/checkBox2"
+            android:id="@+id/checkBox1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CheckBox Question"
-            app:layout_constraintBottom_toTopOf="@+id/checkBox6"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBox" />
-
-        <CheckBox
-            android:id="@+id/checkBox6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CheckBox Question"
-            app:layout_constraintBottom_toTopOf="@id/checkBox8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBox2" />
-
-        <CheckBox
-            android:id="@+id/checkBox8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CheckBox Question"
             app:layout_constraintBottom_toTopOf="@+id/nav_bar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBox6" />
+            app:layout_constraintTop_toBottomOf="@+id/checkBox0" />
 
         <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
             android:id="@+id/nav_bar"

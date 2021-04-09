@@ -66,8 +66,8 @@
         "animationDuration" : 2
       },
       "optional": true,
-      "inputItem":{"type" : "checkbox", "identifier": "checkboxQuestionResult","fieldLabel" :  "Check for Yes"},
-      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "fieldLabel": "Check for Yes"},
+      "skipCheckbox":{"type": "skipCheckbox", "fieldLabel": "No answer"}
     },
     {
       "identifier": "stringQuestion",
