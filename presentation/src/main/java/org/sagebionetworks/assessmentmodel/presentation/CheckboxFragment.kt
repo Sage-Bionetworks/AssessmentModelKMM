@@ -49,8 +49,8 @@ class CheckboxFragment : StepFragment() {
         binding.navBar.setup(questionStep as Step)
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
+        binding.introText.text = questionStep.detail
         binding.checkBox0.text = questionStep.inputItem.fieldLabel
-        binding.checkBox1.text = questionStep.inputItem.fieldLabel
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 }
