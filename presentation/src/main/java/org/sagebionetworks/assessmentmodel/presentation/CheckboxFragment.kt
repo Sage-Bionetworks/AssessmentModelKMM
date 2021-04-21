@@ -20,7 +20,6 @@ class CheckboxFragment : StepFragment() {
 
     lateinit var questionStep: SimpleQuestion
     lateinit var questionState: QuestionState
-    lateinit var inputState: KeyboardInputItemState<*>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +48,8 @@ class CheckboxFragment : StepFragment() {
         binding.navBar.setup(questionStep as Step)
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
-        binding.introText.text = questionStep.detail
-        binding.checkBox0.text = questionStep.inputItem.fieldLabel
+        binding.textviewid.text = questionStep.detail
+        binding.checkboxInputView.text = questionStep.inputItem.fieldLabel.toString()
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 }
