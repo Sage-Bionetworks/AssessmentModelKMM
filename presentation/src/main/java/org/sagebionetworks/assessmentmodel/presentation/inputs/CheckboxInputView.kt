@@ -6,14 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import kotlinx.serialization.json.jsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.databinding.CheckboxInputViewBinding
+import org.sagebionetworks.assessmentmodel.survey.KeyboardInputItemState
+import org.sagebionetworks.assessmentmodel.survey.QuestionState
+import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
+import org.sagebionetworks.assessmentmodel.survey.inputTypeMask
 import java.awt.font.TextAttribute
 
 class CheckboxInputView : LinearLayout {
 
     val binding: CheckboxInputViewBinding
-    lateinit var text: String
+    lateinit var placeholder: String
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -24,20 +29,11 @@ class CheckboxInputView : LinearLayout {
         orientation = VERTICAL
     }
 
-    fun onCheckboxClicked(view: View) {
-        if (view is CheckBox) {
-            val checked: Boolean = view.isChecked
+    fun setup(questionStep : SimpleQuestion) {
+        placeholder = questionStep.inputItem.fieldLabel.toString()
+    }
 
-            when (view.id) {
-                R.id.checkbox_input_view -> {
-                    if (checked) {
-                        // do something
-                    } else {
-                        // not checked
+    fun updateResult() {
 
-                    }
-                }
-            }
-        }
     }
 }

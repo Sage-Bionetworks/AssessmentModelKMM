@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
 
     <CheckBox
-        android:id="@+id/checkbox_input_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="60dp"
