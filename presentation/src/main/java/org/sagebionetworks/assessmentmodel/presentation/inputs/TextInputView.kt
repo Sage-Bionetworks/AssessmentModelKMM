@@ -48,7 +48,6 @@ class TextInputView : LinearLayout {
         formattedValue?.invalidMessage?.let {
             textInputLayout.error = it.toString()
         }
-
     }
 
 

@@ -3,17 +3,9 @@ package org.sagebionetworks.assessmentmodel.presentation.inputs
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.CheckBox
 import android.widget.LinearLayout
-import kotlinx.serialization.json.jsonPrimitive
-import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.databinding.CheckboxInputViewBinding
-import org.sagebionetworks.assessmentmodel.survey.KeyboardInputItemState
-import org.sagebionetworks.assessmentmodel.survey.QuestionState
-import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
-import org.sagebionetworks.assessmentmodel.survey.inputTypeMask
-import java.awt.font.TextAttribute
+import org.sagebionetworks.assessmentmodel.survey.*
 
 class CheckboxInputView : LinearLayout {
 
@@ -30,10 +22,12 @@ class CheckboxInputView : LinearLayout {
     }
 
     fun setup(questionStep : SimpleQuestion) {
-        placeholder = questionStep.inputItem.fieldLabel.toString()
+        val input = questionStep.inputItem as CheckboxInputItem
+        //placeholder = questionStep.inputItem.fieldLabel.toString()
+        placeholder = input.fieldLabel.toString()
     }
 
-    fun updateResult() {
-
+    fun updateResult(inputItem: CheckboxInputItem) {
+        inputItem.jsonValue(isSelected);
     }
 }

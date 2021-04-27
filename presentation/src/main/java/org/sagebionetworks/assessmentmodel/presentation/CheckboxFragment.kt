@@ -43,6 +43,7 @@ class CheckboxFragment : StepFragment() {
         binding.navBar.setForwardOnClickListener {
             assessmentViewModel.goForward()
         }
+        binding.checkboxInputView.updateResult(questionStep.inputItem as CheckboxInputItem)
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
         binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
         binding.navBar.setup(questionStep as Step)
