@@ -21,10 +21,10 @@ class CheckboxInputView : LinearLayout {
         orientation = VERTICAL
     }
 
-    fun setup(questionStep : SimpleQuestion) {
-        val input = questionStep.inputItem as CheckboxInputItem
+    fun setup(inputItem: CheckboxInputItem) {
+        //val input = questionStep.inputItem as CheckboxInputItem
         //placeholder = questionStep.inputItem.fieldLabel.toString()
-        placeholder = input.fieldLabel.toString()
+        placeholder = inputItem.fieldLabel
     }
 
     fun updateResult(inputItem: CheckboxInputItem) {

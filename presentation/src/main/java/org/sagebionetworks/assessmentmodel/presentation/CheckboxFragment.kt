@@ -50,7 +50,8 @@ class CheckboxFragment : StepFragment() {
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.textviewid.text = questionStep.detail
-        binding.checkboxInputView.setup(questionStep)
+        //binding.checkboxInputView.setup(questionStep)
+        binding.checkboxInputView.setup(questionStep.inputItem as CheckboxInputItem)
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
     }
 }
