@@ -27,9 +27,11 @@ jobs:
           prerelease: true
       - name: Grant Permission to Execute
         run: chmod +x gradlew
+      - name: Assemble
+        run: ./gradlew assemble
       - name: Publish Library
         env:
-          bintrayUser: ${{ secrets.BINTRAY_USER }}
-          bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
+          artifactoryUser: ${{ secrets.ARTIFACTORY_USER }}
+          artifactoryPwd: ${{ secrets.ARTIFACTORY_PWD }}
           bintrayVersionName: ${{ github.ref }}
-        run: ./gradlew publishAllPublicationsToBintrayRepository
+        run: ./gradlew artifactoryPublish
