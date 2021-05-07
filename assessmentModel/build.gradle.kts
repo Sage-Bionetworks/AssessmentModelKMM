@@ -4,9 +4,9 @@ plugins {
     id( "com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.github.dcendents.android-maven")
     id ("maven-publish")
     id("org.jetbrains.dokka")
+    id( "com.jfrog.artifactory")
 }
 
 android {
@@ -45,7 +45,7 @@ dependencies {
 
 kotlin {
    android("androidLib") {
-       publishLibraryVariants("release", "debug")
+       publishAllLibraryVariants()
    }
    
    val buildForDevice = (project.findProperty("device") as? String) == "true"
@@ -69,8 +69,8 @@ kotlin {
    sourceSets {
       commonMain {
          dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-             api("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
+             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+             api("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
          }
       }
       commonTest {
@@ -111,10 +111,6 @@ kotlin {
         }
     }
 }
-
-
-
-apply("../config/artifact-deploy.gradle")
 
 //TODO: syoung 03/24/2020 Figure out why getting a warning that this was already added.
 //tasks.register("iosTest")  {
