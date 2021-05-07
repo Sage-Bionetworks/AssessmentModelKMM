@@ -2,7 +2,6 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id ("maven-publish")
-    id( "com.jfrog.artifactory")
     id("org.jetbrains.dokka")
 }
 
@@ -53,10 +52,24 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("presentation") {
+                from(components.getByName("release"))
+                artifact(tasks.getByName("releaseSourcesJar"))
+            }
+        }
+    }
+}
 publishing {
-    publications {
-        create<MavenPublication>("aar") {
-            artifact("$buildDir/outputs/aar/${project.name}-release.aar")
+    repositories {
+        maven {
+            url = uri("https://sagebionetworks.jfrog.io/artifactory/mobile-sdks/")
+            credentials {
+                username = System.getenv("artifactoryUser")
+                password = System.getenv("artifactoryPwd")
+            }
         }
     }
 }
