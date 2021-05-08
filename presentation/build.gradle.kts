@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     id("maven-publish")
     id("org.jetbrains.dokka")
+    id("kotlin-android")
 }
 
 android {
@@ -40,7 +41,7 @@ android {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     api(project(":assessmentModel"))
-  
+
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.appcompat:appcompat:1.2.0")
@@ -49,6 +50,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.core:core-ktx:1.2.0")
     implementation("io.insert-koin:koin-android:3.0.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+  
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
