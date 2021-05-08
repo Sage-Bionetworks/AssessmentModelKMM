@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TextQuestionStepFragment">
 
     <include layout="@layout/include_question_header"
@@ -16,12 +17,27 @@
         android:id="@+id/question_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/question_header"/>
+        android:layout_below="@id/question_header">
 
-    <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
-        android:id="@+id/nav_bar"
+    </org.sagebionetworks.assessmentmodel.presentation.inputs.TextInputView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="match_parent">
+
+        <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
+            android:id="@+id/nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+        </org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

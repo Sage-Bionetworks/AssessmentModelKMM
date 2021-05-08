@@ -34,7 +34,6 @@ open class AssessmentActivity: AppCompatActivity() {
 
         val assessmentInfo = AssessmentInfoObject(assessmentId)
         val assessmentPlaceholder = AssessmentPlaceholderObject(assessmentId, assessmentInfo)
-
         viewModel = initViewModel(assessmentPlaceholder, assessmentRegistryProvider, customNodeStateProvider)
         // If we've already loaded the assessment then the activity is being recreated from a configuration
         // change, and the AssessmentFragment will be restored for us.
@@ -79,6 +78,5 @@ open class AssessmentActivity: AppCompatActivity() {
             this, RootAssessmentViewModelFactory()
                 .create(assessmentInfo, assessmentProvider, customNodeStateProvider)
         ).get(RootAssessmentViewModel::class.java)
-
 
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.koin.android.ext.android.bind
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ChoiceQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
@@ -39,13 +40,11 @@ class ChoiceQuestionStepFragment: StepFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
         binding.navBar.setup(questionStep as Step)
         binding.questionHeader.questionTitle.text = questionStep.title
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
         binding.questionInput.setup(questionState)
-
     }
-
-
 }
