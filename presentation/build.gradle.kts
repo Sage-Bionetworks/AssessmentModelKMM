@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id ("maven-publish")
+    id("maven-publish")
     id("org.jetbrains.dokka")
 }
 
@@ -53,13 +53,18 @@ dependencies {
 }
 
 afterEvaluate {
+
+    tasks.register<Jar>("sourcesJar") {
+        from(android.sourceSets["main"].java.srcDirs)
+        classifier = "sources"
+    }
+
     publishing {
         publications {
             create<MavenPublication>("presentation") {
                 from(components.getByName("release"))
                 artifact(tasks.getByName("releaseSourcesJar"))
-            }
-        }
+                artifact(tasks.getByName<Jar>("javadocJar"))
     }
 }
 publishing {
