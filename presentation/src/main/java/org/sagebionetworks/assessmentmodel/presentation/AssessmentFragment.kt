@@ -72,6 +72,13 @@ open class AssessmentFragment : Fragment() {
                     this.showStep(showNodeState)
                 }
             })
+        start()
+    }
+
+    /**
+     * Starts the Assessment by calling start on the [viewModel]. This is called in onActivityCreated.
+     */
+    open fun start() {
         viewModel.start()
     }
 

@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
@@ -25,12 +26,12 @@ interface Result {
     /**
      * The start date timestamp for the result.
      */
-    var startDateString: String
+    var startDateTime: Instant
 
     /**
      * The end date timestamp for the result.
      */
-    var endDateString: String?
+    var endDateTime: Instant?
 }
 
 fun MutableSet<Result>.copyResults() = map { it.copyResult() }.toMutableSet()

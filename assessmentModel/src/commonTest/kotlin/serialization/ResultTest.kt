@@ -1,14 +1,14 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.ZoneOffset
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import org.sagebionetworks.assessmentmodel.DateUtils
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertNotSame
+import kotlin.test.*
 
 open class ResultTest {
 
@@ -17,66 +17,71 @@ open class ResultTest {
 
     private val jsonCoder = Serialization.JsonCoder.default
 
+    @BeforeTest
+    fun setUp() {
+        DateUtils.timeZoneOverride(kotlinx.datetime.TimeZone.of("UTC-03:00"))
+    }
+
     /**
      * Collection-type results
      */
     @Test
     fun testParentNodeResult() {
-        val result1 = ResultObject("result1", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val result2 = ResultObject("result2", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val resultA = ResultObject("resultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val resultB = ResultObject("resultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val asyncResultA = ResultObject("asyncResultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val asyncResultB = ResultObject("asyncResultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val result1 = ResultObject("result1", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val result2 = ResultObject("result2", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val resultA = ResultObject("resultA", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val resultB = ResultObject("resultB", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val asyncResultA = ResultObject("asyncResultA", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val asyncResultB = ResultObject("asyncResultB", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
         val result3 = BranchNodeResultObject(
             identifier = "result3",
             pathHistoryResults = mutableListOf(resultA, resultB),
             inputResults = mutableSetOf(asyncResultA, asyncResultB),
-            startDateString = "2020-01-21T12:00:00.000+7000",
-            endDateString = "2020-01-21T12:05:00.000+7000"
+            startDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),
+            endDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")
         )
         val result4 = CollectionResultObject(
             identifier = "result4",
             inputResults = mutableSetOf(asyncResultA, asyncResultB),
-            startDateString = "2020-01-21T12:00:00.000+7000",
-            endDateString = "2020-01-21T12:05:00.000+7000"
+            startDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),
+            endDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")
         )
         val original = BranchNodeResultObject(
             identifier = "testResult",
             pathHistoryResults = mutableListOf(result1, result2, result3, result4),
-            startDateString = "2020-01-21T12:00:00.000+7000",
-            endDateString = "2020-01-21T12:05:00.000+7000"
+            startDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),
+            endDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")
         )
         val inputString = """
             {
                 "identifier": "testResult",
-                "startDate": "2020-01-21T12:00:00.000+7000",
-                "endDate": "2020-01-21T12:05:00.000+7000",
+                "startDate": "2020-01-21T12:00:00.000-03:00",
+                "endDate": "2020-01-21T12:05:00.000-03:00",
                 "stepHistory": [
-                    {"identifier": "result1","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                    {"identifier": "result2","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
+                    {"identifier": "result1","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                    {"identifier": "result2","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
                     {
                         "identifier": "result3",
                         "type": "section",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "stepHistory": [
-                            {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                            {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                            {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                            {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                         ],
                         "asyncResults": [
-                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                         ]
                     },
                     {
                         "identifier": "result4",
                         "type": "collection",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "inputResults": [
-                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                            {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                            {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                         ]
                     }
                 ]
@@ -108,31 +113,31 @@ open class ResultTest {
 
     @Test
     fun testAssessmentResult() {
-        val resultA = ResultObject("resultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val resultB = ResultObject("resultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val asyncResultA = ResultObject("asyncResultA", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
-        val asyncResultB = ResultObject("asyncResultB", "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000")
+        val resultA = ResultObject("resultA", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val resultB = ResultObject("resultB", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val asyncResultA = ResultObject("asyncResultA", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        val asyncResultB = ResultObject("asyncResultB", DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
 
         val original = AssessmentResultObject(identifier = "testResult",
                 pathHistoryResults = mutableListOf(resultA, resultB),
                 inputResults = mutableSetOf(asyncResultA, asyncResultB),
                 runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
-                startDateString = "2020-01-21T12:00:00.000+7000",
-                endDateString = "2020-01-21T12:05:00.000+7000"
+                startDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),
+                endDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")
             )
          val inputString = """
             {
                 "identifier": "testResult",
                 "taskRunUUID": "4cb0580-3cdb-11ea-b77f-2e728ce88125",
-                "startDate": "2020-01-21T12:00:00.000+7000",
-                "endDate": "2020-01-21T12:05:00.000+7000",
+                "startDate": "2020-01-21T12:00:00.000-03:00",
+                "endDate": "2020-01-21T12:05:00.000-03:00",
                 "stepHistory": [
-                    {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                    {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                    {"identifier": "resultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                    {"identifier": "resultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                 ],
                 "asyncResults": [
-                    {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"},
-                    {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000+7000","endDate": "2020-01-21T12:05:00.000+7000"}
+                    {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
+                    {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                 ]
             }
             """.trimIndent()
@@ -148,8 +153,8 @@ open class ResultTest {
         val jsonWrapper = Json.parseToJsonElement(jsonString).jsonObject
         assertEquals("testResult", jsonWrapper["identifier"]?.jsonPrimitive?.content)
         assertEquals("4cb0580-3cdb-11ea-b77f-2e728ce88125", jsonWrapper["taskRunUUID"]?.jsonPrimitive?.content)
-        assertEquals("2020-01-21T12:00:00.000+7000", jsonWrapper["startDate"]?.jsonPrimitive?.content)
-        assertEquals("2020-01-21T12:05:00.000+7000", jsonWrapper["endDate"]?.jsonPrimitive?.content)
+        assertEquals("2020-01-21T12:00:00.000-03:00", jsonWrapper["startDate"]?.jsonPrimitive?.content)
+        assertEquals("2020-01-21T12:05:00.000-03:00", jsonWrapper["endDate"]?.jsonPrimitive?.content)
         val pathHistory = jsonWrapper["stepHistory"]?.jsonArray
         assertNotNull(pathHistory)
         assertEquals(2, pathHistory.count())
@@ -196,14 +201,14 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Boolean() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
-            { "result": 
+            { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "boolean"
                         },
@@ -225,14 +230,14 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Decimal() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "number"
                         },
@@ -254,14 +259,14 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Int() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3), "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
             { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "integer"
                         },
@@ -284,14 +289,14 @@ open class ResultTest {
     fun testAnswerResult_Map() {
         val originalValue = JsonObject(mapOf("a" to JsonPrimitive(3.2), "b" to JsonPrimitive("boo")))
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.OBJECT, originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.OBJECT, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "object"
                         },
@@ -314,14 +319,14 @@ open class ResultTest {
     fun testAnswerResult_String() {
         val originalValue = JsonPrimitive("goo")
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.STRING, originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.STRING, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "string"
                         },
@@ -344,14 +349,14 @@ open class ResultTest {
     fun testAnswerResult_DateYearMonth() {
         val originalValue = JsonPrimitive("2020-02")
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "dateTime",
                             "codingFormat": "yyyy-MM"
@@ -375,14 +380,14 @@ open class ResultTest {
     fun testAnswerResult_ListInt() {
         val originalValue = JsonArray(listOf(JsonPrimitive(2), JsonPrimitive(5)))
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "array",
                             "baseType": "integer"
@@ -406,14 +411,14 @@ open class ResultTest {
     fun testAnswerResult_Measurement() {
         val originalValue = JsonPrimitive(10.2)
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue, "2020-01-21T12:00:00.000+7000","2020-01-21T12:05:00.000+7000"))
+            AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
                         "identifier" : "foo",
                         "type" : "answer",
-                        "startDate": "2020-01-21T12:00:00.000+7000",
-                        "endDate": "2020-01-21T12:05:00.000+7000",
+                        "startDate": "2020-01-21T12:00:00.000-03:00",
+                        "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
                             "type": "measurement",
                             "unit": "cm"
@@ -463,8 +468,8 @@ open class ResultTest {
                 pathHistoryResults = pathHistoryResults,
                 inputResults = inputResults,
                 runUUIDString = "4cb0580-3cdb-11ea-b77f-2e728ce88125",
-                startDateString = "2020-01-21T12:00:00.000+7000",
-                endDateString = "2020-01-21T12:05:00.000+7000"
+                startDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"),
+                endDateTime = DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")
         )
         val copy = original.copyResult()
         assertEquals(original, copy)

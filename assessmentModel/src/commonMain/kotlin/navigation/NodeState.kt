@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
+import kotlinx.datetime.Clock
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.survey.FormStepStateImpl
 import org.sagebionetworks.assessmentmodel.survey.Question
@@ -246,7 +247,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         val next = getNextNode(direction) ?: return
         unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
         // Before moving to the next node (or ending the task), mark the end data for the current node.
-        currentChild?.currentResult?.endDateString = DateGenerator.nowString()
+        currentChild?.currentResult?.endDateTime = Clock.System.now()
         if (next.node != null) {
             // Go to next node if it is not null.
             moveTo(next)
@@ -276,8 +277,8 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             getLeafNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
                 // Mark the start/end timestamps before displaying the node.
-                nodeState.currentResult.startDateString = DateGenerator.nowString()
-                nodeState.currentResult.endDateString = null
+                nodeState.currentResult.startDateTime = Clock.System.now()
+                nodeState.currentResult.endDateTime = null
                 // Check if the "ready-to-save" state should be changed.
                 if (navigator.isCompleted(nodeState.node, currentResult)) {
                     callUpReadyToSaveChain()
@@ -353,7 +354,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     private fun markFinalResultIfNeeded() {
         if (hasMarkedFinalResult) return
         this.hasMarkedFinalResult = true
-        currentResult.endDateString = DateGenerator.nowString()
+        currentResult.endDateTime = Clock.System.now()
         didMarkFinalResult()
     }
     private var hasMarkedFinalResult = false

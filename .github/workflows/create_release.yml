@@ -29,7 +29,7 @@ jobs:
         run: chmod +x gradlew
       - name: Publish Library
         env:
-          bintrayUser: ${{ secrets.BINTRAY_USER }}
-          bintrayApiKey: ${{ secrets.BINTRAY_API_KEY }}
+          artifactoryUser: ${{ secrets.ARTIFACTORY_USER }}
+          artifactoryPwd: ${{ secrets.ARTIFACTORY_PWD }}
           bintrayVersionName: ${{ github.ref }}
-        run: ./gradlew publishAllPublicationsToBintrayRepository
+        run: ./gradlew publish
