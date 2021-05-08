@@ -65,6 +65,8 @@ afterEvaluate {
                 from(components.getByName("release"))
                 artifact(tasks.getByName("releaseSourcesJar"))
                 artifact(tasks.getByName<Jar>("javadocJar"))
+            }
+        }
     }
 }
 publishing {
