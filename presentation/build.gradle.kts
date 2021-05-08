@@ -2,7 +2,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("com.github.dcendents.android-maven")
-    id ("maven-publish")
+    id("maven-publish")
     id("org.jetbrains.dokka")
 }
 
@@ -39,18 +39,26 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.core:core-ktx:1.2.0")
-    implementation("org.koin:koin-android:2.2.2")
+    implementation("io.insert-koin:koin-android:2.2.2")
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }
 
 project.afterEvaluate {
+
+    tasks.register<Jar>("sourcesJar") {
+        from(android.sourceSets["main"].java.srcDirs)
+        classifier = "sources"
+    }
+
     publishing {
         publications {
             create<MavenPublication>("maven") {
                 artifactId = "presentation"
                 from(components["release"])
+                artifact(tasks.getByName<Jar>("javadocJar"))
+                artifact(tasks.getByName<Jar>("sourcesJar"))
             }
         }
     }

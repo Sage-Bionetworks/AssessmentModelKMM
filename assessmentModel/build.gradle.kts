@@ -1,13 +1,14 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id( "com.android.library")
+    id("com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.github.dcendents.android-maven")
-    id ("maven-publish")
+    id("maven-publish")
     id("org.jetbrains.dokka")
 }
+
 
 android {
     compileSdkVersion(29)
@@ -28,7 +29,6 @@ android {
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
     }
 }
-
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
     // Specify Kotlin/JVM stdlib dependency.
@@ -44,45 +44,45 @@ dependencies {
 }
 
 kotlin {
-   android("androidLib") {
-       publishLibraryVariants("release", "debug")
-   }
-   
-   val buildForDevice = (project.findProperty("device") as? String) == "true"
-   val iosTarget = if(buildForDevice) iosArm64("ios") else iosX64("ios")
+    android("androidLib") {
+        publishLibraryVariants("release", "debug")
+    }
+
+    val buildForDevice = (project.findProperty("device") as? String) == "true"
+    val iosTarget = if (buildForDevice) iosArm64("ios") else iosX64("ios")
     println("property.device=${project.findProperty("device")}")
     println("buildForDevice=$buildForDevice")
-   iosTarget.binaries {
-      framework {
-          baseName = "AssessmentModel"
-         // Disable bitcode embedding for the simulator build.
-         if (!buildForDevice) {
-            embedBitcode("disable")
-         }
-          // Include DSYM in the release build
-          freeCompilerArgs += "-Xg0"
-          // Include Generics in the module header.
-          freeCompilerArgs += "-Xobjc-generics"
-      }
-   }
+    iosTarget.binaries {
+        framework {
+            baseName = "AssessmentModel"
+            // Disable bitcode embedding for the simulator build.
+            if (!buildForDevice) {
+                embedBitcode("disable")
+            }
+            // Include DSYM in the release build
+            freeCompilerArgs += "-Xg0"
+            // Include Generics in the module header.
+            freeCompilerArgs += "-Xobjc-generics"
+        }
+    }
 
-   sourceSets {
-      commonMain {
-         dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-         }
-      }
-      commonTest {
-         dependencies {
-            implementation( "org.jetbrains.kotlin:kotlin-test-common")
-             implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
-         }
-      }
-       sourceSets["androidLibMain"].dependencies {
-           implementation("androidx.appcompat:appcompat:1.1.0")
-       }
-       sourceSets["iosMain"].dependencies {
-       }
+    sourceSets {
+        commonMain {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-common")
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+            }
+        }
+        sourceSets["androidLibMain"].dependencies {
+            implementation("androidx.appcompat:appcompat:1.1.0")
+        }
+        sourceSets["iosMain"].dependencies {
+        }
 
     }
 
@@ -104,14 +104,12 @@ kotlin {
             copy {
                 from(srcFile.parent)
                 into(targetDir)
-                include( "AssessmentModel.framework/**")
+                include("AssessmentModel.framework/**")
                 include("AssessmentModel.framework.dSYM")
             }
         }
     }
 }
-
-
 
 apply("../config/artifact-deploy.gradle")
 
