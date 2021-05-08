@@ -6,7 +6,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id ("maven-publish")
     id("org.jetbrains.dokka")
-    id( "com.jfrog.artifactory")
 }
 
 android {
@@ -107,6 +106,18 @@ kotlin {
                 into(targetDir)
                 include( "AssessmentModel.framework/**")
                 include("AssessmentModel.framework.dSYM")
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri("https://sagebionetworks.jfrog.io/artifactory/mobile-sdks/")
+            credentials {
+                username = System.getenv("artifactoryUser")
+                password = System.getenv("artifactoryPwd")
             }
         }
     }
