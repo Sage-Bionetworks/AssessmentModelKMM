@@ -44,5 +44,11 @@ class DateTimeInputFragment : StepFragment() {
         binding.navBar.setForwardOnClickListener {
             assessmentViewModel.goForward()
         }
+        binding.questionHeader.questionTitle.text = questionStep.title
+        binding.questionHeader.questionSubtitle.text = questionStep.subtitle
+        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
+
+
     }
 }

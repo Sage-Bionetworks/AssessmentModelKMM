@@ -72,8 +72,8 @@
     {
       "identifier": "dateTimeInputQuestion",
       "type": "simpleQuestion",
-      "title": "When were you infected with Covid-19?",
-      "subtitle": "Subtitle goes here",
+      "title": "Infected with Covid-19?",
+      "subtitle": "Enter date of infection",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
       "image"  : {    "type" : "animated",

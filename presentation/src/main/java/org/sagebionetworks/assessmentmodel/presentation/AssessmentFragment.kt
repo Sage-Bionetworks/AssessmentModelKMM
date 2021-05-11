@@ -117,10 +117,10 @@ open class AssessmentFragment : Fragment() {
             is SimpleQuestion -> {
                 if (step.inputItem is CheckboxInputItem) {
                     return CheckboxFragment()
-                } else if (step.inputItem is KeyboardTextInputItem<*>) {
-                    return TextQuestionStepFragment()
                 } else if (step.inputItem is DateTimeInputItem) {
                     return DateTimeInputFragment()
+                } else if (step.inputItem is KeyboardTextInputItem<*>) {
+                    return TextQuestionStepFragment()
                 }
                 TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
             }
