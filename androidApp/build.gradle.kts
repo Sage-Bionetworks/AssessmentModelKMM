@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("kotlin-android-extensions")
+    kotlin("android")
+    id("kotlin-android")
     id("org.jetbrains.dokka")
 }
 
@@ -40,12 +40,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
-kotlin {
-    android()
-}
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -55,7 +56,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("org.koin:koin-android:2.2.2")
+    implementation("io.insert-koin:koin-android:3.0.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
 
