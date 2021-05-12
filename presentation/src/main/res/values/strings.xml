@@ -9,4 +9,5 @@
     <string name="month">month</string>
     <string name="date">date</string>
     <string name="year">year</string>
+    <string name="approximate_date">Approximate date:</string>
 </resources>
