@@ -103,8 +103,5 @@
             app:layout_constraintVertical_bias="0.0">
         </org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>
 
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
