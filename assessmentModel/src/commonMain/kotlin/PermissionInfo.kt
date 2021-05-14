@@ -78,6 +78,8 @@ sealed class PermissionType() : StringEnum {
         object Microphone : Standard("microphone")
         object Motion : Standard("motion")
         object PhotoLibrary : Standard("photoLibrary")
+        object LocationWhenInUse : Standard("locationWhenInUse")
+        object Notifications : Standard("notifications")
 
         companion object : StringEnumCompanion<Standard> {
             override fun values(): Array<Standard>
