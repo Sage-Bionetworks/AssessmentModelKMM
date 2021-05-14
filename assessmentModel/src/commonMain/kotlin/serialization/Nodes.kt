@@ -35,6 +35,7 @@ val nodeSerializersModule = SerializersModule {
         subclass(InstructionStepObject::class)
         subclass(MultipleInputQuestionObject::class)
         subclass(OverviewStepObject::class)
+        subclass(PermissionStepObject::class)
         subclass(ResultSummaryStepObject::class)
         subclass(SimpleQuestionObject::class)
         subclass(SectionObject::class)
@@ -242,6 +243,23 @@ data class InstructionStepObject(
      override var imageInfo: ImageInfo? = null,
      override var fullInstructionsOnly: Boolean = false
 ) : StepObject(), InstructionStep
+
+@Serializable
+@SerialName("permission")
+data class PermissionStepObject(
+        override val identifier: String,
+        override val permissionType: PermissionType,
+        @SerialName("image")
+        override var imageInfo: ImageInfo? = null,
+        override val optional: Boolean = true,
+        override val requiresBackground: Boolean = false,
+        override val reason: String? = null,
+        override val restrictedMessage: String? = null,
+        override val deniedMessage: String? = null
+) : StepObject(), PermissionStep, PermissionInfo {
+    override val permissions: List<PermissionInfo>
+        get() = listOf(this)
+}
 
 @Serializable
 @SerialName("overview")
