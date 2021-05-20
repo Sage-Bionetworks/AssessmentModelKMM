@@ -24,7 +24,6 @@ class DateTimeInputFragment : StepFragment() {
     private var month: Int = 0
     private var day: Int = 0
     private var year: Int = 0
-    private var isValidDate: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,12 +53,13 @@ class DateTimeInputFragment : StepFragment() {
         binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
     }
 
-
-    fun validateDateTimePeriod() {
-        // Step 1: Construct LocalDate if all checks pass
+    fun validateDateTimePeriod() : LocalDate? {
+        // Construct LocalDate if all checks pass
         if (validateMonth() && validateYear() && validateDay()) {
-            val userDate = LocalDate(year, month, day)
+            val validUserDate = LocalDate(year, month, day)
+            return validUserDate
         }
+        return null
     }
 
     fun validateMonth() : Boolean {
