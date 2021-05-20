@@ -40,36 +40,36 @@
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/month"
-            android:inputType="datetime"
-            app:layout_constraintEnd_toStartOf="@+id/textFieldDate"
+            app:layout_constraintEnd_toStartOf="@+id/textFieldDay"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputEditText0"
+                android:id="@+id/inputMonth"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:inputType="datetime"
                 app:layout_constraintVertical_bias="0.546" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:theme="@style/EditTextThemeOverlay"
-            android:id="@+id/textFieldDate"
+            android:id="@+id/textFieldDay"
             android:layout_width="80dp"
             android:layout_height="50dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/date"
-            android:inputType="datetime"
             app:layout_constraintEnd_toStartOf="@+id/textFieldYear"
             app:layout_constraintStart_toEndOf="@+id/textFieldMonth"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputEditText1"
+                android:id="@+id/inputDay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:inputType="datetime"
                 app:layout_constraintVertical_bias="0.546" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,15 +82,16 @@
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/year"
-            android:inputType="datetime"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textFieldDate"
+            app:layout_constraintStart_toEndOf="@+id/textFieldDay"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputEditText2"
+                android:id="@+id/inputYear"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:inputType="datetime"
+
                 app:layout_constraintVertical_bias="0.546" />
 
         </com.google.android.material.textfield.TextInputLayout>
