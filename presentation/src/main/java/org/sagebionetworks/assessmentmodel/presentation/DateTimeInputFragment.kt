@@ -6,11 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.descriptors.PrimitiveKind
 import org.sagebionetworks.assessmentmodel.presentation.databinding.FragmentDateTimeInputBinding
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
-import java.util.regex.Pattern
 
 /**
  * A simple [Fragment] subclass.
