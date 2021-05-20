@@ -56,7 +56,7 @@ class DateTimeInputFragment : StepFragment() {
 
 
     fun validateDateTimePeriod() {
-        // Step 1: use LocalDate to construct date from year, month, day
+        // Step 1: Construct LocalDate if all checks pass
         if (validateMonth() && validateYear() && validateDay()) {
             val userDate = LocalDate(year, month, day)
         }
@@ -65,17 +65,13 @@ class DateTimeInputFragment : StepFragment() {
     fun validateMonth() : Boolean {
         month = binding.inputMonth.toString().toInt()
         if (month < 1 || month > 12) {
+            binding.textFieldMonth.error = "Not a valid month. Try entering a month between 1-12"
             return false;
-        }
-        // Only March, April, September, November have 30 days
-        if (month == 4 || month == 6 || month == 9 || month == 11) {
-            if (day == 31) {
-                return false;
-            }
         }
         // February case
         if (month == 3) {
             if (day == 31 || day == 30) {
+                binding.textFieldDay.error = "Invalid day for Feb"
                 return false;
             }
             return validateYear()
@@ -85,24 +81,28 @@ class DateTimeInputFragment : StepFragment() {
 
     fun validateYear() : Boolean {
         year = binding.inputYear.toString().toInt()
-        var isLeapYear : Boolean = false
-        // Check if leap year
+        if (year > 2021) {
+            binding.textFieldYear.error = "This $year is too large. Try entering something more recent."
+        }
+        if (year < 1930) {
+            binding.textFieldYear.error = "This $year is too small. Try entering something more recent."
+        }
+        var isLeapYear = false
+        // Check if this is a leap year
         if (year % 4 == 0) {
-            if ( year % 100 == 0) {
-                if (year % 400 == 0) {
-                    isLeapYear = true;
-                }
-            }
+            isLeapYear = true;
         }
         if (isLeapYear) {
             if (month == 3) { // Feb has 29 days in leap year
                 if (day > 29) {
+                    binding.textFieldDay.error = "Invalid day for Feb leap year"
                     return false;
                 }
             }
         } else { // February can't exceed 28 in normal years
             if (month == 3) {
                 if (day > 28) {
+                    binding.textFieldDay.error = "Invalid day for Feb"
                     return false;
                 }
             }
@@ -112,8 +112,24 @@ class DateTimeInputFragment : StepFragment() {
 
     fun validateDay() : Boolean {
         day = binding.inputDay.toString().toInt()
-        if (day > 31) {
+        if (day > 31 || day < 1) {
+            binding.textFieldDay.error = "The day is too large"
             return false;
+        }
+        // March, April, September, November should have 30 days
+        if (month == 4 || month == 6 || month == 9 || month == 11) {
+            if (day == 31) {
+                binding.textFieldDay.error = "Invalid day for $month please try again"
+                return false;
+            }
+        }
+
+        // Jan, March, May, July, Aug, Oct, Dec should have 31 days
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+            if (day == 30) {
+                binding.textFieldDay.error = "Invalid day for $month please try again"
+                return false
+            }
         }
         return true;
     }
