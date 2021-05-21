@@ -9,3 +9,4 @@ local.properties
 *.xcsettings
 xcschememanagement.plist
 /.build
+Breakpoints_v2.xcbkptlist

@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "JsonModel",
+        "repositoryURL": "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
+        "state": {
+          "branch": null,
+          "revision": "531fbb91179d9272d4fbb389a5c6516ead9d8fd7",
+          "version": "1.2.2"
+        }
+      },
+      {
+        "package": "MobilePassiveData",
+        "repositoryURL": "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
+        "state": {
+          "branch": null,
+          "revision": "57ba7124b3e27db895410f237b1ced4d51e71a10",
+          "version": "1.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
