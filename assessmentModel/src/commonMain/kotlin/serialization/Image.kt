@@ -60,9 +60,10 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val bundleIdentifier: String? = null,
                          override var packageName: String? = null,
                          override val rawFileExtension: String? = null,
-                         override val versionString: String? = null) : AnimatedImageInfo, ImageTheme {
+                         override val versionString: String? = null,
+                         val compositeImageName: String? = null) : AnimatedImageInfo, ImageTheme {
     override val imageName: String
-        get() = imageNames.first()
+        get() = compositeImageName ?: imageNames.first()
 }
 
 /**

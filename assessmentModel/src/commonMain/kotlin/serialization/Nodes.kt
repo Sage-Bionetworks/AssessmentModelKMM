@@ -43,6 +43,9 @@ val nodeSerializersModule = SerializersModule {
         subclass(TransformableAssessmentObject::class)
         subclass(TransformableNodeObject::class)
     }
+    polymorphic(Assessment::class) {
+        subclass(AssessmentObject::class)
+    }
     polymorphic(TransformableAssessment::class) {
         subclass(TransformableAssessmentObject::class)
     }
@@ -95,7 +98,7 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
 }
 
 @Serializable
-abstract class StepObject : NodeObject(), Step {
+abstract class StepObject : NodeObject(), ContentNodeStep {
     override var spokenInstructions: Map<SpokenInstructionTiming, String>? = null
     override var viewTheme: ViewThemeObject? = null
 
@@ -201,7 +204,7 @@ data class AssessmentObject(
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {
-        imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        super<Assessment>.unpack(originalNode, moduleInfo, registryProvider)
         val copyChildren = children.map {
             it.unpack(null, moduleInfo, registryProvider)
         }
@@ -222,7 +225,7 @@ data class SectionObject(
     override val backgroundActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): SectionObject {
-        imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        super<Section>.unpack(originalNode, moduleInfo, registryProvider)
         val copyChildren = children.map { it.unpack(null, moduleInfo, registryProvider) }
         val identifier = originalNode?.identifier ?: this.identifier
         val copy = copy(identifier = identifier, children = copyChildren)
@@ -329,6 +332,21 @@ abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
             this.surveyRules = original.surveyRules
         }
     }
+
+    override fun unpack( originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider ): QuestionObject {
+        super<StepObject>.unpack(originalNode, moduleInfo, registryProvider)
+        super<Question>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
+}
+
+@Serializable
+abstract class AbstractChoiceQuestionObject : QuestionObject(), ChoiceQuestion {
+    override fun unpack( originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider ): AbstractChoiceQuestionObject {
+        super<QuestionObject>.unpack(originalNode, moduleInfo, registryProvider)
+        super<ChoiceQuestion>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 @Serializable
@@ -357,7 +375,7 @@ data class ChoiceQuestionObject(
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = true,
     override var uiHint: UIHint = UIHint.Choice.ListItem
-) : QuestionObject(), ChoiceQuestion
+) : AbstractChoiceQuestionObject(), ChoiceQuestion
 
 @Serializable
 @SerialName("stringChoiceQuestion")
@@ -368,7 +386,7 @@ data class StringChoiceQuestionObject(
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = true,
     override var uiHint: UIHint = UIHint.Choice.ListItem
-) : QuestionObject(), ChoiceQuestion {
+) : AbstractChoiceQuestionObject(), ChoiceQuestion {
     override val choices: List<ChoiceOptionObject>
         get() = items.map { ChoiceOptionObject(fieldLabel = it, value = JsonPrimitive(it)) }
     override val baseType: BaseType
@@ -384,7 +402,7 @@ data class ComboBoxQuestionObject(
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = false,
     override var uiHint: UIHint = UIHint.Choice.Checkbox
-) : QuestionObject(), ComboBoxQuestion {
+) : AbstractChoiceQuestionObject(), ComboBoxQuestion {
     companion object {
         val defaultOtherInputItem: StringTextInputItemObject
             get() {

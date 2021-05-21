@@ -31,8 +31,15 @@
       "title": "Animating image instruction",
       "detail": "Here are the details for this instruction.",
       "image": {
-        "type": "fetchable",
-        "imageName": "crf_stair_step_start_animation"
+        "type": "animated",
+        "compositeImageName": "crf_stair_step_start_animation",
+        "animationDuration": 0.5,
+        "imageNames": [
+          "crf_stair_step_start_1",
+          "crf_stair_step_start_2",
+          "crf_stair_step_start_3",
+          "crf_stair_step_start_4"
+        ]
       }
     },
     {

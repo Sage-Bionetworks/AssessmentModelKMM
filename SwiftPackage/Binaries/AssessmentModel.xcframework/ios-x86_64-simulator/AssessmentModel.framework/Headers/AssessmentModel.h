@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class AssessmentModelActiveStepCommand, AssessmentModelSpokenInstructionTiming, AssessmentModelKotlinx_serialization_jsonJson, AssessmentModelButtonAction, AssessmentModelKotlinEnum<E>, AssessmentModelAnswerType, AssessmentModelKotlinx_serialization_jsonJsonElement, AssessmentModelPathMarker, AssessmentModelButtonActionCustom, AssessmentModelButtonActionNavigation, AssessmentModelKotlinArray<T>, AssessmentModelButtonStyle, AssessmentModelButtonStyleFooter, AssessmentModelButtonStyleNavigationHeader, AssessmentModelProduct, AssessmentModelNavigationPointDirection, AssessmentModelPermissionType, AssessmentModelPermissionInfoObject, AssessmentModelPermissionTypeCustom, AssessmentModelPermissionTypeStandard, AssessmentModelIdentifierPath, AssessmentModelSpokenInstructionTimingKeyword, AssessmentModelSpokenInstructionTimingTimeInterval, AssessmentModelBaseType, AssessmentModelKotlinx_serialization_coreSerialKind, AssessmentModelAnswerTypeArray, AssessmentModelAnswerTypeDateTime, AssessmentModelAnswerTypeMeasurement, AssessmentModelAnyNodeFieldStateImpl, AssessmentModelAutoCapitalizationType, AssessmentModelAutoCorrectionType, AssessmentModelUIHint, AssessmentModelFetchableImage, AssessmentModelSurveyRuleOperator, AssessmentModelDateTimePart, AssessmentModelDatePart, AssessmentModelDateTimeReference, AssessmentModelDateTime, AssessmentModelDateTimeComponents, NSDate, NSTimeZone, AssessmentModelAsyncActionNavigation, AssessmentModelFormattedValue<T>, AssessmentModelISO8601Format, AssessmentModelInvalidMessageObject, AssessmentModelKeyboardType, AssessmentModelSpellCheckingType, AssessmentModelNumberType, AssessmentModelAbstractQuestionFieldStateImpl, AssessmentModelReservedNavigationIdentifier, AssessmentModelTimePart, AssessmentModelUIHintChoice, AssessmentModelUIHintCustom, AssessmentModelUIHintDetail, AssessmentModelUIHintTextField, AssessmentModelAttitudeReferenceFrame, AssessmentModelDistanceRecord, AssessmentModelDistanceRecorderConfiguration, AssessmentModelMotionRecorderType, AssessmentModelMotionRecord, AssessmentModelMotionRecorderConfiguration, AssessmentModelNodeObject, AssessmentModelViewThemeObject, AssessmentModelStepObject, AssessmentModelBaseActiveStepObject, AssessmentModelActiveStepObject, AssessmentModelImagePlacement, AssessmentModelSize, AssessmentModelAnimatedImage, AssessmentModelAnswerResultObject, AssessmentModelAssessmentGroupInfoObject, AssessmentModelKotlinDecoder, AssessmentModelKotlinDecodable, NSBundle, AssessmentModelAssessmentGroupWrapper, AssessmentModelAssessmentLoader, AssessmentModelIconNodeObject, AssessmentModelNodeContainerObject, AssessmentModelAssessmentObject, AssessmentModelAssessmentResultObject, AssessmentModelBranchNodeResultObject, AssessmentModelSerializableButtonActionInfo, AssessmentModelButtonActionInfoObject, AssessmentModelCheckboxInputItemObject, AssessmentModelChoiceItemWrapper, AssessmentModelChoiceOptionObject, AssessmentModelComparableSurveyRuleObject, AssessmentModelQuestionObject, AssessmentModelChoiceQuestionObject, AssessmentModelCollectionResultObject, AssessmentModelComboBoxQuestionObject, AssessmentModelStringTextInputItemObject, AssessmentModelCountdownStepObject, AssessmentModelDateFormatOptions, AssessmentModelInputItemObject, AssessmentModelDateInputItemObject, AssessmentModelDoubleFormatOptions, AssessmentModelDecimalTextInputItemObject, AssessmentModelNumberFormatOptionsStyle, AssessmentModelNumberFormatOptions<T>, NSNumber, AssessmentModelNumberFormatter<T>, AssessmentModelFormStepObject, AssessmentModelIconInfoObject, AssessmentModelImagePlacementCustom, AssessmentModelImagePlacementStandard, AssessmentModelInstructionStepObject, AssessmentModelIntFormatOptions, AssessmentModelKeyboardOptionsObject, AssessmentModelIntegerTextInputItemObject, AssessmentModelMultipleInputQuestionObject, AssessmentModelNavigationButtonActionInfoObject, AssessmentModelOverviewStepObject, AssessmentModelRegExValidator, AssessmentModelReminderButtonActionInfoObject, AssessmentModelResultObject, AssessmentModelResultSummaryStepObject, AssessmentModelSectionObject, AssessmentModelKotlinx_serialization_coreSerializersModule, AssessmentModelSimpleQuestionObject, AssessmentModelSkipCheckboxInputItemObject, AssessmentModelStringChoiceQuestionObject, AssessmentModelTimeFormatOptions, AssessmentModelTimeInputItemObject, AssessmentModelTransformableAssessmentObject, AssessmentModelTransformableNodeObject, AssessmentModelVideoViewButtonActionInfoObject, AssessmentModelWebViewButtonActionInfoObject, AssessmentModelYearFormatOptions, AssessmentModelYearTextInputItemObject, AssessmentModelNavigationPoint, AssessmentModelFinishedReason, AssessmentModelProgress, AssessmentModelKotlinError, NSDateFormatter, AssessmentModelKotlinNothing, AssessmentModelKotlinThrowable;
+@class AssessmentModelActiveStepCommand, AssessmentModelSpokenInstructionTiming, AssessmentModelButtonAction, AssessmentModelKotlinEnum<E>, AssessmentModelKotlinArray<T>, AssessmentModelAnswerType, AssessmentModelKotlinx_serialization_jsonJsonElement, AssessmentModelKotlinx_datetimeInstant, AssessmentModelPathMarker, AssessmentModelButtonActionCustom, AssessmentModelButtonActionNavigation, AssessmentModelButtonStyle, AssessmentModelButtonStyleFooter, AssessmentModelButtonStyleNavigationHeader, AssessmentModelKotlinx_serialization_jsonJson, AssessmentModelProduct, AssessmentModelNavigationPointDirection, AssessmentModelPermissionType, AssessmentModelPermissionInfoObject, AssessmentModelPermissionTypeCustom, AssessmentModelPermissionTypeStandard, AssessmentModelIdentifierPath, AssessmentModelSpokenInstructionTimingKeyword, AssessmentModelSpokenInstructionTimingTimeInterval, AssessmentModelBaseType, AssessmentModelKotlinx_serialization_coreSerialKind, AssessmentModelAnswerTypeArray, AssessmentModelAnswerTypeDateTime, AssessmentModelAnswerTypeMeasurement, AssessmentModelAnyNodeFieldStateImpl, AssessmentModelAutoCapitalizationType, AssessmentModelAutoCorrectionType, AssessmentModelUIHint, AssessmentModelFetchableImage, AssessmentModelSurveyRuleOperator, AssessmentModelDateTimePart, AssessmentModelDatePart, AssessmentModelDateTimeReference, AssessmentModelDateTime, AssessmentModelDateTimeComponents, NSDate, NSTimeZone, AssessmentModelAsyncActionNavigation, AssessmentModelFormattedValue<T>, AssessmentModelISO8601Format, AssessmentModelInvalidMessageObject, AssessmentModelKeyboardType, AssessmentModelSpellCheckingType, AssessmentModelNumberType, AssessmentModelAbstractQuestionFieldStateImpl, AssessmentModelReservedNavigationIdentifier, AssessmentModelTimePart, AssessmentModelUIHintChoice, AssessmentModelUIHintCustom, AssessmentModelUIHintDetail, AssessmentModelUIHintTextField, AssessmentModelAttitudeReferenceFrame, AssessmentModelDistanceRecord, AssessmentModelDistanceRecorderConfiguration, AssessmentModelMotionRecorderType, AssessmentModelMotionRecord, AssessmentModelMotionRecorderConfiguration, AssessmentModelNodeObject, AssessmentModelViewThemeObject, AssessmentModelStepObject, AssessmentModelQuestionObject, AssessmentModelComparableSurveyRuleObject, AssessmentModelAbstractChoiceQuestionObject, AssessmentModelBaseActiveStepObject, AssessmentModelActiveStepObject, AssessmentModelImagePlacement, AssessmentModelSize, AssessmentModelAnimatedImage, AssessmentModelAnswerResultObject, NSBundle, AssessmentModelBundleModuleInfo, AssessmentModelAssessmentInfoObject, AssessmentModelAssessmentLoaderIOS, AssessmentModelIconNodeObject, AssessmentModelNodeContainerObject, AssessmentModelAssessmentObject, AssessmentModelAssessmentPlaceholderObject, AssessmentModelEmbeddedJsonAssessmentRegistryProvider, AssessmentModelAssessmentResultObject, AssessmentModelBranchNodeResultObject, AssessmentModelSerializableButtonActionInfo, AssessmentModelButtonActionInfoObject, AssessmentModelCheckboxInputItemObject, AssessmentModelChoiceItemWrapper, AssessmentModelChoiceOptionObject, AssessmentModelChoiceQuestionObject, AssessmentModelCollectionResultObject, AssessmentModelComboBoxQuestionObject, AssessmentModelStringTextInputItemObject, AssessmentModelCountdownStepObject, AssessmentModelDateFormatOptions, AssessmentModelInputItemObject, AssessmentModelDateInputItemObject, AssessmentModelDoubleFormatOptions, AssessmentModelDecimalTextInputItemObject, AssessmentModelNumberFormatOptionsStyle, AssessmentModelNumberFormatOptions<T>, NSNumber, AssessmentModelNumberFormatter<T>, AssessmentModelFormStepObject, AssessmentModelIconInfoObject, AssessmentModelImagePlacementCustom, AssessmentModelImagePlacementStandard, AssessmentModelInstructionStepObject, AssessmentModelIntFormatOptions, AssessmentModelKeyboardOptionsObject, AssessmentModelIntegerTextInputItemObject, AssessmentModelModuleInfoObject, AssessmentModelMultipleInputQuestionObject, AssessmentModelNavigationButtonActionInfoObject, AssessmentModelOverviewStepObject, AssessmentModelRegExValidator, AssessmentModelReminderButtonActionInfoObject, AssessmentModelResultObject, AssessmentModelResultSummaryStepObject, AssessmentModelSectionObject, AssessmentModelKotlinx_serialization_coreSerializersModule, AssessmentModelSimpleQuestionObject, AssessmentModelSkipCheckboxInputItemObject, AssessmentModelStringChoiceQuestionObject, AssessmentModelTimeFormatOptions, AssessmentModelTimeInputItemObject, AssessmentModelTransformableAssessmentObject, AssessmentModelTransformableNodeObject, AssessmentModelVideoViewButtonActionInfoObject, AssessmentModelWebViewButtonActionInfoObject, AssessmentModelYearFormatOptions, AssessmentModelYearTextInputItemObject, AssessmentModelFinishedReason, AssessmentModelProgress, AssessmentModelNavigationPoint, AssessmentModelKotlinError, AssessmentModelFinishedReasonFailed, NSDateFormatter, AssessmentModelKotlinNothing, AssessmentModelKotlinThrowable;
 
-@protocol AssessmentModelViewTheme, AssessmentModelNode, AssessmentModelFileLoader, AssessmentModelResourceInfo, AssessmentModelButtonActionInfo, AssessmentModelResult, AssessmentModelResultMapElement, AssessmentModelStep, AssessmentModelKotlinComparable, AssessmentModelStringEnum, AssessmentModelAssetInfo, AssessmentModelAssetResourceInfo, AssessmentModelDrawableLayout, AssessmentModelImageInfo, AssessmentModelNavigator, AssessmentModelBranchNode, AssessmentModelContentNode, AssessmentModelAssessment, AssessmentModelCollectionResult, AssessmentModelBranchNodeResult, AssessmentModelAsyncActionConfiguration, AssessmentModelKotlinx_serialization_coreEncoder, AssessmentModelKotlinx_serialization_coreSerialDescriptor, AssessmentModelKotlinx_serialization_coreSerializationStrategy, AssessmentModelKotlinx_serialization_coreDecoder, AssessmentModelKotlinx_serialization_coreDeserializationStrategy, AssessmentModelKotlinx_serialization_coreKSerializer, AssessmentModelStringEnumCompanion, AssessmentModelOptionalStep, AssessmentModelActiveStep, AssessmentModelPermissionInfo, AssessmentModelPermissionStep, AssessmentModelNodeContainer, AssessmentModelRecorderConfiguration, AssessmentModelModalViewButtonActionInfo, AssessmentModelChoiceInputItemState, AssessmentModelInputItemState, AssessmentModelFieldState, AssessmentModelQuestionFieldState, AssessmentModelInputItem, AssessmentModelChoiceInputItem, AssessmentModelAnswerResult, AssessmentModelAnyInputItemState, AssessmentModelChoiceOption, AssessmentModelQuestion, AssessmentModelChoiceQuestion, AssessmentModelSurveyRule, AssessmentModelDateTimeFormatOptions, AssessmentModelTextValidator, AssessmentModelKeyboardOptions, AssessmentModelKeyboardTextInputItem, AssessmentModelBranchNodeState, AssessmentModelNodeState, AssessmentModelLeafNodeState, AssessmentModelFormStepState, AssessmentModelFormStep, AssessmentModelInvalidMessage, AssessmentModelKeyboardInputItemState, AssessmentModelSkipCheckboxInputItem, AssessmentModelSkipCheckboxQuestion, AssessmentModelRange, AssessmentModelQuestionState, AssessmentModelSampleRecord, AssessmentModelTableRecorderConfiguration, AssessmentModelNavigationRule, AssessmentModelDirectNavigationRule, AssessmentModelAnimatedImageInfo, AssessmentModelImageTheme, AssessmentModelAssessmentGroupInfo, AssessmentModelAssessmentResult, AssessmentModelAsyncActionContainer, AssessmentModelResultNavigationRule, AssessmentModelCheckboxInputItem, AssessmentModelSurveyNavigationRule, AssessmentModelComboBoxQuestion, AssessmentModelComparableSurveyRule, AssessmentModelCountdownStep, AssessmentModelDateTimeInputItem, AssessmentModelNumberRange, AssessmentModelAssessmentProvider, AssessmentModelResourceAssessmentProvider, AssessmentModelInstructionStep, AssessmentModelMultipleInputQuestion, AssessmentModelNavigationButtonActionInfo, AssessmentModelOverviewStep, AssessmentModelReminderButtonActionInfo, AssessmentModelResultSummaryStep, AssessmentModelSection, AssessmentModelSimpleQuestion, AssessmentModelTransformableNode, AssessmentModelTransformableAssessment, AssessmentModelVideoViewButtonActionInfo, AssessmentModelWebViewButtonActionInfo, AssessmentModelRootNodeController, AssessmentModelKotlinIterator, AssessmentModelKotlinx_serialization_coreSerialFormat, AssessmentModelKotlinx_serialization_coreStringFormat, AssessmentModelKotlinx_serialization_coreCompositeEncoder, AssessmentModelKotlinAnnotation, AssessmentModelKotlinx_serialization_coreCompositeDecoder, AssessmentModelKotlinx_serialization_coreSerializersModuleCollector, AssessmentModelKotlinKClass, AssessmentModelKotlinKDeclarationContainer, AssessmentModelKotlinKAnnotatedElement, AssessmentModelKotlinKClassifier;
+@protocol AssessmentModelViewTheme, AssessmentModelNode, AssessmentModelModuleInfo, AssessmentModelAssessmentRegistryProvider, AssessmentModelButtonActionInfo, AssessmentModelResult, AssessmentModelResultMapElement, AssessmentModelStep, AssessmentModelKotlinComparable, AssessmentModelStringEnum, AssessmentModelAssetInfo, AssessmentModelResourceInfo, AssessmentModelAssetResourceInfo, AssessmentModelDrawableLayout, AssessmentModelImageInfo, AssessmentModelNavigator, AssessmentModelBranchNodeState, AssessmentModelBranchNode, AssessmentModelContentInfo, AssessmentModelContentNode, AssessmentModelAssessmentInfo, AssessmentModelAssessment, AssessmentModelAssessmentPlaceholder, AssessmentModelFileLoader, AssessmentModelCollectionResult, AssessmentModelBranchNodeResult, AssessmentModelAsyncActionConfiguration, AssessmentModelKotlinx_serialization_coreEncoder, AssessmentModelKotlinx_serialization_coreSerialDescriptor, AssessmentModelKotlinx_serialization_coreSerializationStrategy, AssessmentModelKotlinx_serialization_coreDecoder, AssessmentModelKotlinx_serialization_coreDeserializationStrategy, AssessmentModelKotlinx_serialization_coreKSerializer, AssessmentModelStringEnumCompanion, AssessmentModelOptionalStep, AssessmentModelActiveStep, AssessmentModelTransformableAssessment, AssessmentModelTransformableNode, AssessmentModelJsonModuleInfo, AssessmentModelContentNodeStep, AssessmentModelPermissionInfo, AssessmentModelPermissionStep, AssessmentModelNodeContainer, AssessmentModelRecorderConfiguration, AssessmentModelModalViewButtonActionInfo, AssessmentModelChoiceInputItemState, AssessmentModelInputItemState, AssessmentModelFieldState, AssessmentModelQuestionFieldState, AssessmentModelInputItem, AssessmentModelChoiceInputItem, AssessmentModelAnswerResult, AssessmentModelAnyInputItemState, AssessmentModelChoiceOption, AssessmentModelQuestion, AssessmentModelChoiceQuestion, AssessmentModelSurveyRule, AssessmentModelDateTimeFormatOptions, AssessmentModelTextValidator, AssessmentModelKeyboardOptions, AssessmentModelKeyboardTextInputItem, AssessmentModelNodeState, AssessmentModelLeafNodeState, AssessmentModelFormStepState, AssessmentModelFormStep, AssessmentModelInvalidMessage, AssessmentModelKeyboardInputItemState, AssessmentModelSkipCheckboxInputItem, AssessmentModelSkipCheckboxQuestion, AssessmentModelRange, AssessmentModelQuestionState, AssessmentModelSampleRecord, AssessmentModelTableRecorderConfiguration, AssessmentModelNavigationRule, AssessmentModelDirectNavigationRule, AssessmentModelSurveyNavigationRule, AssessmentModelAnimatedImageInfo, AssessmentModelImageTheme, AssessmentModelEmbeddedJsonModuleInfo, AssessmentModelAsyncActionContainer, AssessmentModelAssessmentResult, AssessmentModelResultNavigationRule, AssessmentModelCheckboxInputItem, AssessmentModelComboBoxQuestion, AssessmentModelComparableSurveyRule, AssessmentModelCountdownStep, AssessmentModelDateTimeInputItem, AssessmentModelNumberRange, AssessmentModelInstructionStep, AssessmentModelMultipleInputQuestion, AssessmentModelNavigationButtonActionInfo, AssessmentModelOverviewStep, AssessmentModelReminderButtonActionInfo, AssessmentModelResultSummaryStep, AssessmentModelSection, AssessmentModelSimpleQuestion, AssessmentModelVideoViewButtonActionInfo, AssessmentModelWebViewButtonActionInfo, AssessmentModelCustomNodeStateProvider, AssessmentModelNodeUIController, AssessmentModelRootNodeController, AssessmentModelKotlinIterator, AssessmentModelKotlinx_serialization_coreCompositeEncoder, AssessmentModelKotlinAnnotation, AssessmentModelKotlinx_serialization_coreCompositeDecoder, AssessmentModelKotlinx_serialization_coreSerialFormat, AssessmentModelKotlinx_serialization_coreStringFormat, AssessmentModelKotlinx_serialization_coreSerializersModuleCollector, AssessmentModelKotlinKClass, AssessmentModelKotlinKDeclarationContainer, AssessmentModelKotlinKAnnotatedElement, AssessmentModelKotlinKClassifier;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -149,7 +149,8 @@ __attribute__((swift_name("ResultMapElement")))
 __attribute__((swift_name("Node")))
 @protocol AssessmentModelNode <AssessmentModelResultMapElement>
 @required
-- (id<AssessmentModelNode>)unpackFileLoader:(id<AssessmentModelFileLoader>)fileLoader resourceInfo:(id<AssessmentModelResourceInfo>)resourceInfo jsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)jsonCoder __attribute__((swift_name("unpack(fileLoader:resourceInfo:jsonCoder:)")));
+- (BOOL)canGoBack __attribute__((swift_name("canGoBack()")));
+- (id<AssessmentModelNode>)unpackOriginalNode:(id<AssessmentModelNode> _Nullable)originalNode moduleInfo:(id<AssessmentModelModuleInfo>)moduleInfo registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("unpack(originalNode:moduleInfo:registryProvider:)")));
 @property (readonly) NSDictionary<AssessmentModelButtonAction *, id<AssessmentModelButtonActionInfo>> *buttonMap __attribute__((swift_name("buttonMap")));
 @property (readonly) NSArray<AssessmentModelButtonAction *> *hideButtons __attribute__((swift_name("hideButtons")));
 @end;
@@ -208,6 +209,7 @@ __attribute__((swift_name("ActiveStepCommand")))
 @property (class, readonly) AssessmentModelActiveStepCommand *continueonfinish __attribute__((swift_name("continueonfinish")));
 @property (class, readonly) AssessmentModelActiveStepCommand *shoulddisableidletimer __attribute__((swift_name("shoulddisableidletimer")));
 @property (class, readonly) AssessmentModelActiveStepCommand *speakwarningonpause __attribute__((swift_name("speakwarningonpause")));
++ (AssessmentModelKotlinArray<AssessmentModelActiveStepCommand *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -265,9 +267,9 @@ __attribute__((swift_name("Result")))
 @protocol AssessmentModelResult
 @required
 - (id<AssessmentModelResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @end;
 
 __attribute__((swift_name("AnswerResult")))
@@ -280,32 +282,51 @@ __attribute__((swift_name("AnswerResult")))
 __attribute__((swift_name("BranchNode")))
 @protocol AssessmentModelBranchNode <AssessmentModelNode>
 @required
-- (id<AssessmentModelNavigator>)getNavigator __attribute__((swift_name("getNavigator()")));
+- (id<AssessmentModelNavigator>)createNavigatorNodeState:(id<AssessmentModelBranchNodeState>)nodeState __attribute__((swift_name("createNavigator(nodeState:)")));
 @end;
 
-__attribute__((swift_name("ContentNode")))
-@protocol AssessmentModelContentNode <AssessmentModelNode>
+__attribute__((swift_name("ContentInfo")))
+@protocol AssessmentModelContentInfo
 @required
 @property (readonly) NSString * _Nullable detail __attribute__((swift_name("detail")));
-@property (readonly) NSString * _Nullable footnote __attribute__((swift_name("footnote")));
-@property (readonly) id<AssessmentModelImageInfo> _Nullable imageInfo __attribute__((swift_name("imageInfo")));
+@property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property (readonly) NSString * _Nullable subtitle __attribute__((swift_name("subtitle")));
 @property (readonly) NSString * _Nullable title __attribute__((swift_name("title")));
 @end;
 
-__attribute__((swift_name("Assessment")))
-@protocol AssessmentModelAssessment <AssessmentModelBranchNode, AssessmentModelContentNode>
+__attribute__((swift_name("ContentNode")))
+@protocol AssessmentModelContentNode <AssessmentModelNode, AssessmentModelContentInfo>
+@required
+@property (readonly) NSString * _Nullable footnote __attribute__((swift_name("footnote")));
+@property (readonly) id<AssessmentModelImageInfo> _Nullable imageInfo __attribute__((swift_name("imageInfo")));
+@end;
+
+__attribute__((swift_name("AssessmentInfo")))
+@protocol AssessmentModelAssessmentInfo
 @required
 @property (readonly) int32_t estimatedMinutes __attribute__((swift_name("estimatedMinutes")));
+@property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property (readonly) NSString * _Nullable schemaIdentifier __attribute__((swift_name("schemaIdentifier")));
 @property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
 @end;
 
-__attribute__((swift_name("AssessmentProvider")))
-@protocol AssessmentModelAssessmentProvider
+__attribute__((swift_name("Assessment")))
+@protocol AssessmentModelAssessment <AssessmentModelBranchNode, AssessmentModelContentNode, AssessmentModelAssessmentInfo>
 @required
-- (BOOL)canLoadAssessmentAssessmentIdentifier:(NSString *)assessmentIdentifier __attribute__((swift_name("canLoadAssessment(assessmentIdentifier:)")));
-- (id<AssessmentModelAssessment> _Nullable)loadAssessmentAssessmentIdentifier:(NSString *)assessmentIdentifier __attribute__((swift_name("loadAssessment(assessmentIdentifier:)")));
+@end;
+
+__attribute__((swift_name("AssessmentPlaceholder")))
+@protocol AssessmentModelAssessmentPlaceholder <AssessmentModelNode, AssessmentModelContentInfo>
+@required
+@property (readonly) id<AssessmentModelAssessmentInfo> assessmentInfo __attribute__((swift_name("assessmentInfo")));
+@end;
+
+__attribute__((swift_name("AssessmentRegistryProvider")))
+@protocol AssessmentModelAssessmentRegistryProvider
+@required
+- (id<AssessmentModelAssessment>)loadAssessmentAssessmentPlaceholder:(id<AssessmentModelAssessmentPlaceholder>)assessmentPlaceholder __attribute__((swift_name("loadAssessment(assessmentPlaceholder:)")));
+@property (readonly) id<AssessmentModelFileLoader> fileLoader __attribute__((swift_name("fileLoader")));
+@property (readonly) NSArray<id<AssessmentModelModuleInfo>> *modules __attribute__((swift_name("modules")));
 @end;
 
 __attribute__((swift_name("CollectionResult")))
@@ -533,6 +554,16 @@ __attribute__((swift_name("ButtonStyle.NavigationHeaderCompanion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
+__attribute__((swift_name("CompletionStep")))
+@protocol AssessmentModelCompletionStep <AssessmentModelStep>
+@required
+@end;
+
+__attribute__((swift_name("ContentNodeStep")))
+@protocol AssessmentModelContentNodeStep <AssessmentModelStep, AssessmentModelContentNode>
+@required
+@end;
+
 __attribute__((swift_name("OptionalStep")))
 @protocol AssessmentModelOptionalStep <AssessmentModelStep>
 @required
@@ -545,13 +576,44 @@ __attribute__((swift_name("CountdownStep")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("DateGenerator")))
-@interface AssessmentModelDateGenerator : AssessmentModelBase
+__attribute__((swift_name("DateConstants")))
+@interface AssessmentModelDateConstants : AssessmentModelBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-+ (instancetype)dateGenerator __attribute__((swift_name("init()")));
-- (int32_t)currentYear __attribute__((swift_name("currentYear()")));
-- (NSString *)nowString __attribute__((swift_name("nowString()")));
++ (instancetype)dateConstants __attribute__((swift_name("init()")));
+@property (readonly) NSString *BRIDGE_ISO_DATE_TIME_FORMAT __attribute__((swift_name("BRIDGE_ISO_DATE_TIME_FORMAT")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DateUtils")))
+@interface AssessmentModelDateUtils : AssessmentModelBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)dateUtils __attribute__((swift_name("init()")));
+- (NSString *)bridgeIsoDateTimeStringInstant:(AssessmentModelKotlinx_datetimeInstant *)instant __attribute__((swift_name("bridgeIsoDateTimeString(instant:)")));
+- (AssessmentModelKotlinx_datetimeInstant *)instantFromBridgeIsoDateTimeStringDateString:(NSString *)dateString __attribute__((swift_name("instantFromBridgeIsoDateTimeString(dateString:)")));
+@end;
+
+__attribute__((swift_name("ModuleInfo")))
+@protocol AssessmentModelModuleInfo
+@required
+- (id<AssessmentModelAssessment>)getAssessmentAssessmentPlaceholder:(id<AssessmentModelAssessmentPlaceholder>)assessmentPlaceholder registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("getAssessment(assessmentPlaceholder:registryProvider:)")));
+- (id<AssessmentModelNode>)getReplacementNodeTransformableNode:(id<AssessmentModelTransformableNode>)transformableNode registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("getReplacementNode(transformableNode:registryProvider:)")));
+- (BOOL)hasAssessmentAssessmentPlaceholder:(id<AssessmentModelAssessmentPlaceholder>)assessmentPlaceholder __attribute__((swift_name("hasAssessment(assessmentPlaceholder:)")));
+@property (readonly) id<AssessmentModelResourceInfo> resourceInfo __attribute__((swift_name("resourceInfo")));
+@end;
+
+__attribute__((swift_name("JsonModuleInfo")))
+@protocol AssessmentModelJsonModuleInfo <AssessmentModelModuleInfo>
+@required
+- (NSString *)getJsonStringTransformableNode:(id<AssessmentModelTransformableNode>)transformableNode registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("getJsonString(transformableNode:registryProvider:)")));
+@property (readonly) AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
+@end;
+
+__attribute__((swift_name("EmbeddedJsonModuleInfo")))
+@protocol AssessmentModelEmbeddedJsonModuleInfo <AssessmentModelJsonModuleInfo>
+@required
+@property (readonly) NSArray<id<AssessmentModelTransformableAssessment>> *assessments __attribute__((swift_name("assessments")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -565,13 +627,13 @@ __attribute__((swift_name("Factory")))
 @end;
 
 __attribute__((swift_name("FormStep")))
-@protocol AssessmentModelFormStep <AssessmentModelStep, AssessmentModelContentNode>
+@protocol AssessmentModelFormStep <AssessmentModelContentNodeStep>
 @required
 @property (readonly) NSArray<id<AssessmentModelNode>> *children __attribute__((swift_name("children")));
 @end;
 
 __attribute__((swift_name("InstructionStep")))
-@protocol AssessmentModelInstructionStep <AssessmentModelOptionalStep, AssessmentModelContentNode>
+@protocol AssessmentModelInstructionStep <AssessmentModelOptionalStep, AssessmentModelContentNodeStep>
 @required
 @end;
 
@@ -596,7 +658,7 @@ __attribute__((swift_name("NodeContainer")))
 @end;
 
 __attribute__((swift_name("PermissionStep")))
-@protocol AssessmentModelPermissionStep <AssessmentModelStep, AssessmentModelContentNode>
+@protocol AssessmentModelPermissionStep <AssessmentModelContentNodeStep>
 @required
 @property (readonly) NSArray<id<AssessmentModelPermissionInfo>> * _Nullable permissions __attribute__((swift_name("permissions")));
 @end;
@@ -765,7 +827,7 @@ __attribute__((swift_name("ReminderButtonActionInfo")))
 @end;
 
 __attribute__((swift_name("ResultSummaryStep")))
-@protocol AssessmentModelResultSummaryStep <AssessmentModelStep, AssessmentModelContentNode>
+@protocol AssessmentModelResultSummaryStep <AssessmentModelContentNodeStep>
 @required
 @property (readonly) NSString * _Nullable resultTitle __attribute__((swift_name("resultTitle")));
 @property (readonly) AssessmentModelIdentifierPath * _Nullable scoringResultPath __attribute__((swift_name("scoringResultPath")));
@@ -863,6 +925,16 @@ __attribute__((swift_name("TableRecorderConfiguration")))
 @protocol AssessmentModelTableRecorderConfiguration <AssessmentModelRecorderConfiguration>
 @required
 @property (readonly) BOOL usesCSVEncoding __attribute__((swift_name("usesCSVEncoding")));
+@end;
+
+__attribute__((swift_name("TransformableNode")))
+@protocol AssessmentModelTransformableNode <AssessmentModelNode, AssessmentModelAssetInfo>
+@required
+@end;
+
+__attribute__((swift_name("TransformableAssessment")))
+@protocol AssessmentModelTransformableAssessment <AssessmentModelTransformableNode, AssessmentModelAssessmentInfo, AssessmentModelContentInfo>
+@required
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1156,6 +1228,7 @@ __attribute__((swift_name("AutoCapitalizationType")))
 @property (class, readonly) AssessmentModelAutoCapitalizationType *words __attribute__((swift_name("words")));
 @property (class, readonly) AssessmentModelAutoCapitalizationType *sentences __attribute__((swift_name("sentences")));
 @property (class, readonly) AssessmentModelAutoCapitalizationType *allcharacters __attribute__((swift_name("allcharacters")));
++ (AssessmentModelKotlinArray<AssessmentModelAutoCapitalizationType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1179,6 +1252,7 @@ __attribute__((swift_name("AutoCorrectionType")))
 @property (class, readonly) AssessmentModelAutoCorrectionType *default_ __attribute__((swift_name("default_")));
 @property (class, readonly) AssessmentModelAutoCorrectionType *no __attribute__((swift_name("no")));
 @property (class, readonly) AssessmentModelAutoCorrectionType *yes __attribute__((swift_name("yes")));
++ (AssessmentModelKotlinArray<AssessmentModelAutoCorrectionType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1205,6 +1279,7 @@ __attribute__((swift_name("BaseType")))
 @property (class, readonly) AssessmentModelBaseType *string __attribute__((swift_name("string")));
 @property (class, readonly) AssessmentModelBaseType *array __attribute__((swift_name("array")));
 @property (class, readonly) AssessmentModelBaseType *object __attribute__((swift_name("object")));
++ (AssessmentModelKotlinArray<AssessmentModelBaseType *> *)values __attribute__((swift_name("values()")));
 - (AssessmentModelKotlinx_serialization_jsonJsonElement *)jsonElementForValue:(id)value __attribute__((swift_name("jsonElementFor(value:)")));
 @property (readonly) AssessmentModelKotlinx_serialization_coreSerialKind *serialKind __attribute__((swift_name("serialKind")));
 @end;
@@ -1607,6 +1682,7 @@ __attribute__((swift_name("KeyboardType")))
 @property (class, readonly) AssessmentModelKeyboardType *twitter __attribute__((swift_name("twitter")));
 @property (class, readonly) AssessmentModelKeyboardType *websearch __attribute__((swift_name("websearch")));
 @property (class, readonly) AssessmentModelKeyboardType *asciicapablenumberpad __attribute__((swift_name("asciicapablenumberpad")));
++ (AssessmentModelKotlinArray<AssessmentModelKeyboardType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1663,6 +1739,7 @@ __attribute__((swift_name("NumberType")))
 @property (class, readonly) AssessmentModelNumberType *short_ __attribute__((swift_name("short_")));
 @property (class, readonly) AssessmentModelNumberType *long_ __attribute__((swift_name("long_")));
 @property (class, readonly) AssessmentModelNumberType *float_ __attribute__((swift_name("float_")));
++ (AssessmentModelKotlinArray<AssessmentModelNumberType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((swift_name("TextValidator")))
@@ -1720,6 +1797,7 @@ __attribute__((swift_name("ReservedNavigationIdentifier")))
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) AssessmentModelReservedNavigationIdentifier *exit __attribute__((swift_name("exit")));
 @property (class, readonly) AssessmentModelReservedNavigationIdentifier *nextsection __attribute__((swift_name("nextsection")));
++ (AssessmentModelKotlinArray<AssessmentModelReservedNavigationIdentifier *> *)values __attribute__((swift_name("values()")));
 - (BOOL)matchingIdentifier:(NSString * _Nullable)identifier __attribute__((swift_name("matching(identifier:)")));
 @end;
 
@@ -1744,6 +1822,7 @@ __attribute__((swift_name("SpellCheckingType")))
 @property (class, readonly) AssessmentModelSpellCheckingType *default_ __attribute__((swift_name("default_")));
 @property (class, readonly) AssessmentModelSpellCheckingType *no __attribute__((swift_name("no")));
 @property (class, readonly) AssessmentModelSpellCheckingType *yes __attribute__((swift_name("yes")));
++ (AssessmentModelKotlinArray<AssessmentModelSpellCheckingType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -1772,6 +1851,7 @@ __attribute__((swift_name("SurveyRuleOperator")))
 @property (class, readonly) AssessmentModelSurveyRuleOperator *greaterthanequal __attribute__((swift_name("greaterthanequal")));
 @property (class, readonly) AssessmentModelSurveyRuleOperator *always __attribute__((swift_name("always")));
 @property (class, readonly) AssessmentModelSurveyRuleOperator *skip __attribute__((swift_name("skip")));
++ (AssessmentModelKotlinArray<AssessmentModelSurveyRuleOperator *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2004,6 +2084,7 @@ __attribute__((swift_name("AttitudeReferenceFrame")))
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) AssessmentModelAttitudeReferenceFrame *xarbitraryzvertical __attribute__((swift_name("xarbitraryzvertical")));
 @property (class, readonly) AssessmentModelAttitudeReferenceFrame *xmagneticnorthzvertical __attribute__((swift_name("xmagneticnorthzvertical")));
++ (AssessmentModelKotlinArray<AssessmentModelAttitudeReferenceFrame *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2204,6 +2285,7 @@ __attribute__((swift_name("MotionRecorderType")))
 @property (class, readonly) AssessmentModelMotionRecorderType *magneticfield __attribute__((swift_name("magneticfield")));
 @property (class, readonly) AssessmentModelMotionRecorderType *rotationrate __attribute__((swift_name("rotationrate")));
 @property (class, readonly) AssessmentModelMotionRecorderType *useracceleration __attribute__((swift_name("useracceleration")));
++ (AssessmentModelKotlinArray<AssessmentModelMotionRecorderType *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2267,12 +2349,45 @@ __attribute__((swift_name("NodeObject")))
 @end;
 
 __attribute__((swift_name("StepObject")))
-@interface AssessmentModelStepObject : AssessmentModelNodeObject <AssessmentModelStep>
+@interface AssessmentModelStepObject : AssessmentModelNodeObject <AssessmentModelContentNodeStep>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)doCopyFromOriginal:(id<AssessmentModelContentNode>)original __attribute__((swift_name("doCopyFrom(original:)")));
 @property NSDictionary<AssessmentModelSpokenInstructionTiming *, NSString *> * _Nullable spokenInstructions __attribute__((swift_name("spokenInstructions")));
 @property AssessmentModelViewThemeObject * _Nullable viewTheme __attribute__((swift_name("viewTheme")));
+@end;
+
+__attribute__((swift_name("SurveyNavigationRule")))
+@protocol AssessmentModelSurveyNavigationRule <AssessmentModelDirectNavigationRule, AssessmentModelResultMapElement>
+@required
+@property (readonly) NSArray<id<AssessmentModelSurveyRule>> * _Nullable surveyRules __attribute__((swift_name("surveyRules")));
+@end;
+
+__attribute__((swift_name("QuestionObject")))
+@interface AssessmentModelQuestionObject : AssessmentModelStepObject <AssessmentModelQuestion, AssessmentModelSurveyNavigationRule>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (void)doCopyFromOriginal:(id<AssessmentModelContentNode>)original __attribute__((swift_name("doCopyFrom(original:)")));
+- (AssessmentModelQuestionObject *)unpackOriginalNode:(id<AssessmentModelNode> _Nullable)originalNode moduleInfo:(id<AssessmentModelModuleInfo>)moduleInfo registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("unpack(originalNode:moduleInfo:registryProvider:)")));
+@property id<AssessmentModelImageInfo> _Nullable imageInfo __attribute__((swift_name("imageInfo")));
+@property BOOL optional __attribute__((swift_name("optional")));
+@property NSArray<AssessmentModelComparableSurveyRuleObject *> * _Nullable surveyRules __attribute__((swift_name("surveyRules")));
+@end;
+
+__attribute__((swift_name("AbstractChoiceQuestionObject")))
+@interface AssessmentModelAbstractChoiceQuestionObject : AssessmentModelQuestionObject <AssessmentModelChoiceQuestion>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (AssessmentModelAbstractChoiceQuestionObject *)unpackOriginalNode:(id<AssessmentModelNode> _Nullable)originalNode moduleInfo:(id<AssessmentModelModuleInfo>)moduleInfo registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("unpack(originalNode:moduleInfo:registryProvider:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AbstractChoiceQuestionObject.Companion")))
+@interface AssessmentModelAbstractChoiceQuestionObjectCompanion : AssessmentModelBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+- (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
 __attribute__((swift_name("BaseActiveStepObject")))
@@ -2321,10 +2436,11 @@ __attribute__((swift_name("ImageTheme")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("AnimatedImage")))
 @interface AssessmentModelAnimatedImage : AssessmentModelBase <AssessmentModelAnimatedImageInfo, AssessmentModelImageTheme>
-- (instancetype)initWithImageNames:(NSArray<NSString *> *)imageNames animationDuration:(double)animationDuration animationRepeatCount:(AssessmentModelInt * _Nullable)animationRepeatCount label:(NSString * _Nullable)label imagePlacement:(AssessmentModelImagePlacement * _Nullable)imagePlacement size:(AssessmentModelSize * _Nullable)size decoderBundle:(id _Nullable)decoderBundle bundleIdentifier:(NSString * _Nullable)bundleIdentifier packageName:(NSString * _Nullable)packageName rawFileExtension:(NSString * _Nullable)rawFileExtension versionString:(NSString * _Nullable)versionString __attribute__((swift_name("init(imageNames:animationDuration:animationRepeatCount:label:imagePlacement:size:decoderBundle:bundleIdentifier:packageName:rawFileExtension:versionString:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithImageNames:(NSArray<NSString *> *)imageNames animationDuration:(double)animationDuration animationRepeatCount:(AssessmentModelInt * _Nullable)animationRepeatCount label:(NSString * _Nullable)label imagePlacement:(AssessmentModelImagePlacement * _Nullable)imagePlacement size:(AssessmentModelSize * _Nullable)size decoderBundle:(id _Nullable)decoderBundle bundleIdentifier:(NSString * _Nullable)bundleIdentifier packageName:(NSString * _Nullable)packageName rawFileExtension:(NSString * _Nullable)rawFileExtension versionString:(NSString * _Nullable)versionString compositeImageName:(NSString * _Nullable)compositeImageName __attribute__((swift_name("init(imageNames:animationDuration:animationRepeatCount:label:imagePlacement:size:decoderBundle:bundleIdentifier:packageName:rawFileExtension:versionString:compositeImageName:)"))) __attribute__((objc_designated_initializer));
 - (NSArray<NSString *> *)component1 __attribute__((swift_name("component1()")));
 - (NSString * _Nullable)component10 __attribute__((swift_name("component10()")));
 - (NSString * _Nullable)component11 __attribute__((swift_name("component11()")));
+- (NSString * _Nullable)component12 __attribute__((swift_name("component12()")));
 - (double)component2 __attribute__((swift_name("component2()")));
 - (AssessmentModelInt * _Nullable)component3 __attribute__((swift_name("component3()")));
 - (NSString * _Nullable)component4 __attribute__((swift_name("component4()")));
@@ -2333,13 +2449,14 @@ __attribute__((swift_name("AnimatedImage")))
 - (id _Nullable)component7 __attribute__((swift_name("component7()")));
 - (NSString * _Nullable)component8 __attribute__((swift_name("component8()")));
 - (NSString * _Nullable)component9 __attribute__((swift_name("component9()")));
-- (AssessmentModelAnimatedImage *)doCopyImageNames:(NSArray<NSString *> *)imageNames animationDuration:(double)animationDuration animationRepeatCount:(AssessmentModelInt * _Nullable)animationRepeatCount label:(NSString * _Nullable)label imagePlacement:(AssessmentModelImagePlacement * _Nullable)imagePlacement size:(AssessmentModelSize * _Nullable)size decoderBundle:(id _Nullable)decoderBundle bundleIdentifier:(NSString * _Nullable)bundleIdentifier packageName:(NSString * _Nullable)packageName rawFileExtension:(NSString * _Nullable)rawFileExtension versionString:(NSString * _Nullable)versionString __attribute__((swift_name("doCopy(imageNames:animationDuration:animationRepeatCount:label:imagePlacement:size:decoderBundle:bundleIdentifier:packageName:rawFileExtension:versionString:)")));
+- (AssessmentModelAnimatedImage *)doCopyImageNames:(NSArray<NSString *> *)imageNames animationDuration:(double)animationDuration animationRepeatCount:(AssessmentModelInt * _Nullable)animationRepeatCount label:(NSString * _Nullable)label imagePlacement:(AssessmentModelImagePlacement * _Nullable)imagePlacement size:(AssessmentModelSize * _Nullable)size decoderBundle:(id _Nullable)decoderBundle bundleIdentifier:(NSString * _Nullable)bundleIdentifier packageName:(NSString * _Nullable)packageName rawFileExtension:(NSString * _Nullable)rawFileExtension versionString:(NSString * _Nullable)versionString compositeImageName:(NSString * _Nullable)compositeImageName __attribute__((swift_name("doCopy(imageNames:animationDuration:animationRepeatCount:label:imagePlacement:size:decoderBundle:bundleIdentifier:packageName:rawFileExtension:versionString:compositeImageName:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @property (readonly) double animationDuration __attribute__((swift_name("animationDuration")));
 @property (readonly) AssessmentModelInt * _Nullable animationRepeatCount __attribute__((swift_name("animationRepeatCount")));
 @property (readonly) NSString * _Nullable bundleIdentifier __attribute__((swift_name("bundleIdentifier")));
+@property (readonly) NSString * _Nullable compositeImageName __attribute__((swift_name("compositeImageName")));
 @property id _Nullable decoderBundle __attribute__((swift_name("decoderBundle")));
 @property (readonly) NSString *imageName __attribute__((swift_name("imageName")));
 @property (readonly) NSArray<NSString *> *imageNames __attribute__((swift_name("imageNames")));
@@ -2363,22 +2480,22 @@ __attribute__((swift_name("AnimatedImage.Companion")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("AnswerResultObject")))
 @interface AssessmentModelAnswerResultObject : AssessmentModelBase <AssessmentModelAnswerResult>
-- (instancetype)initWithIdentifier:(NSString *)identifier answerType:(AssessmentModelAnswerType * _Nullable)answerType jsonValue:(AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)jsonValue startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString __attribute__((swift_name("init(identifier:answerType:jsonValue:startDateString:endDateString:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithIdentifier:(NSString *)identifier answerType:(AssessmentModelAnswerType * _Nullable)answerType jsonValue:(AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)jsonValue startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime __attribute__((swift_name("init(identifier:answerType:jsonValue:startDateTime:endDateTime:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (AssessmentModelAnswerType * _Nullable)component2 __attribute__((swift_name("component2()")));
 - (AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)component3 __attribute__((swift_name("component3()")));
-- (NSString *)component4 __attribute__((swift_name("component4()")));
-- (NSString * _Nullable)component5 __attribute__((swift_name("component5()")));
-- (AssessmentModelAnswerResultObject *)doCopyIdentifier:(NSString *)identifier answerType:(AssessmentModelAnswerType * _Nullable)answerType jsonValue:(AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)jsonValue startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString __attribute__((swift_name("doCopy(identifier:answerType:jsonValue:startDateString:endDateString:)")));
+- (AssessmentModelKotlinx_datetimeInstant *)component4 __attribute__((swift_name("component4()")));
+- (AssessmentModelKotlinx_datetimeInstant * _Nullable)component5 __attribute__((swift_name("component5()")));
+- (AssessmentModelAnswerResultObject *)doCopyIdentifier:(NSString *)identifier answerType:(AssessmentModelAnswerType * _Nullable)answerType jsonValue:(AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)jsonValue startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime __attribute__((swift_name("doCopy(identifier:answerType:jsonValue:startDateTime:endDateTime:)")));
 - (id<AssessmentModelAnswerResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @property AssessmentModelAnswerType * _Nullable answerType __attribute__((swift_name("answerType")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable jsonValue __attribute__((swift_name("jsonValue")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2390,111 +2507,79 @@ __attribute__((swift_name("AnswerResultObject.Companion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
-__attribute__((swift_name("AssessmentGroupInfo")))
-@protocol AssessmentModelAssessmentGroupInfo
-@required
-@property (readonly) NSArray<id<AssessmentModelAssessment>> *assessments __attribute__((swift_name("assessments")));
-@property (readonly) id<AssessmentModelResourceInfo> resourceInfo __attribute__((swift_name("resourceInfo")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("AssessmentGroupInfoObject")))
-@interface AssessmentModelAssessmentGroupInfoObject : AssessmentModelBase <AssessmentModelResourceInfo, AssessmentModelAssessmentGroupInfo>
-- (instancetype)initWithAssessments:(NSArray<id<AssessmentModelAssessment>> *)assessments packageName:(NSString * _Nullable)packageName bundleIdentifier:(NSString * _Nullable)bundleIdentifier __attribute__((swift_name("init(assessments:packageName:bundleIdentifier:)"))) __attribute__((objc_designated_initializer));
-- (NSArray<id<AssessmentModelAssessment>> *)component1 __attribute__((swift_name("component1()")));
-- (NSString * _Nullable)component2 __attribute__((swift_name("component2()")));
-- (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
-- (AssessmentModelAssessmentGroupInfoObject *)doCopyAssessments:(NSArray<id<AssessmentModelAssessment>> *)assessments packageName:(NSString * _Nullable)packageName bundleIdentifier:(NSString * _Nullable)bundleIdentifier __attribute__((swift_name("doCopy(assessments:packageName:bundleIdentifier:)")));
-- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSArray<id<AssessmentModelAssessment>> *assessments __attribute__((swift_name("assessments")));
+__attribute__((swift_name("BundleModuleInfo")))
+@interface AssessmentModelBundleModuleInfo : AssessmentModelBase <AssessmentModelResourceInfo, AssessmentModelEmbeddedJsonModuleInfo>
+- (instancetype)initWithBundle:(NSBundle *)bundle assessments:(NSArray<id<AssessmentModelTransformableAssessment>> *)assessments __attribute__((swift_name("init(bundle:assessments:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) NSArray<id<AssessmentModelTransformableAssessment>> *assessments __attribute__((swift_name("assessments")));
 @property (readonly) NSString * _Nullable bundleIdentifier __attribute__((swift_name("bundleIdentifier")));
 @property id _Nullable decoderBundle __attribute__((swift_name("decoderBundle")));
+@property (readonly) AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
 @property NSString * _Nullable packageName __attribute__((swift_name("packageName")));
 @property (readonly) id<AssessmentModelResourceInfo> resourceInfo __attribute__((swift_name("resourceInfo")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("AssessmentGroupInfoObject.Companion")))
-@interface AssessmentModelAssessmentGroupInfoObjectCompanion : AssessmentModelBase
+__attribute__((swift_name("AssessmentBundleModuleInfo")))
+@interface AssessmentModelAssessmentBundleModuleInfo : AssessmentModelBundleModuleInfo
+- (instancetype)initWithResourceName:(NSString *)resourceName bundle:(NSBundle *)bundle __attribute__((swift_name("init(resourceName:bundle:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithBundle:(NSBundle *)bundle assessments:(NSArray<id<AssessmentModelTransformableAssessment>> *)assessments __attribute__((swift_name("init(bundle:assessments:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) NSArray<id<AssessmentModelTransformableAssessment>> *assessments __attribute__((swift_name("assessments")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AssessmentInfoObject")))
+@interface AssessmentModelAssessmentInfoObject : AssessmentModelBase <AssessmentModelAssessmentInfo>
+- (instancetype)initWithIdentifier:(NSString *)identifier versionString:(NSString * _Nullable)versionString schemaIdentifier:(NSString * _Nullable)schemaIdentifier estimatedMinutes:(int32_t)estimatedMinutes __attribute__((swift_name("init(identifier:versionString:schemaIdentifier:estimatedMinutes:)"))) __attribute__((objc_designated_initializer));
+- (NSString *)component1 __attribute__((swift_name("component1()")));
+- (NSString * _Nullable)component2 __attribute__((swift_name("component2()")));
+- (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
+- (int32_t)component4 __attribute__((swift_name("component4()")));
+- (AssessmentModelAssessmentInfoObject *)doCopyIdentifier:(NSString *)identifier versionString:(NSString * _Nullable)versionString schemaIdentifier:(NSString * _Nullable)schemaIdentifier estimatedMinutes:(int32_t)estimatedMinutes __attribute__((swift_name("doCopy(identifier:versionString:schemaIdentifier:estimatedMinutes:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) int32_t estimatedMinutes __attribute__((swift_name("estimatedMinutes")));
+@property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
+@property (readonly) NSString * _Nullable schemaIdentifier __attribute__((swift_name("schemaIdentifier")));
+@property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AssessmentInfoObject.Companion")))
+@interface AssessmentModelAssessmentInfoObjectCompanion : AssessmentModelBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
-__attribute__((swift_name("KotlinDecodable")))
-@interface AssessmentModelKotlinDecodable : AssessmentModelBase
-- (instancetype)initWithDecoder:(AssessmentModelKotlinDecoder *)decoder __attribute__((swift_name("init(decoder:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) AssessmentModelKotlinDecoder *decoder __attribute__((swift_name("decoder")));
-@property (readonly) NSString * _Nullable jsonString __attribute__((swift_name("jsonString")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("AssessmentGroupStringLoader")))
-@interface AssessmentModelAssessmentGroupStringLoader : AssessmentModelKotlinDecodable
-- (instancetype)initWithJsonString:(NSString *)jsonString bundle:(NSBundle *)bundle __attribute__((swift_name("init(jsonString:bundle:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)initWithDecoder:(AssessmentModelKotlinDecoder *)decoder __attribute__((swift_name("init(decoder:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+__attribute__((swift_name("AssessmentLoaderIOS")))
+@interface AssessmentModelAssessmentLoaderIOS : AssessmentModelBundleModuleInfo
+- (instancetype)initWithBundle:(NSBundle *)bundle __attribute__((swift_name("init(bundle:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithBundle:(NSBundle *)bundle assessments:(NSArray<id<AssessmentModelTransformableAssessment>> *)assessments __attribute__((swift_name("init(bundle:assessments:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 
 /**
  @note This method converts all Kotlin exceptions to errors.
 */
-- (AssessmentModelAssessmentGroupWrapper * _Nullable)decodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("decodeObject()")));
+- (id<AssessmentModelAssessment> _Nullable)decodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("decodeObject()")));
 @property (readonly) NSString *jsonString __attribute__((swift_name("jsonString")));
+@property id<AssessmentModelAssessmentRegistryProvider> registryProvider __attribute__((swift_name("registryProvider")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("AssessmentGroupWrapper")))
-@interface AssessmentModelAssessmentGroupWrapper : AssessmentModelBase
-- (instancetype)initWithAssessmentGroupInfo:(id<AssessmentModelAssessmentGroupInfo>)assessmentGroupInfo assessments:(NSArray<AssessmentModelAssessmentLoader *> *)assessments __attribute__((swift_name("init(assessmentGroupInfo:assessments:)"))) __attribute__((objc_designated_initializer));
-- (id<AssessmentModelAssessmentGroupInfo>)component1 __attribute__((swift_name("component1()")));
-- (NSArray<AssessmentModelAssessmentLoader *> *)component2 __attribute__((swift_name("component2()")));
-- (AssessmentModelAssessmentGroupWrapper *)doCopyAssessmentGroupInfo:(id<AssessmentModelAssessmentGroupInfo>)assessmentGroupInfo assessments:(NSArray<AssessmentModelAssessmentLoader *> *)assessments __attribute__((swift_name("doCopy(assessmentGroupInfo:assessments:)")));
-- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<AssessmentModelAssessmentGroupInfo> assessmentGroupInfo __attribute__((swift_name("assessmentGroupInfo")));
-@property (readonly) NSArray<AssessmentModelAssessmentLoader *> *assessments __attribute__((swift_name("assessments")));
+__attribute__((swift_name("AssessmentJsonResourceLoader")))
+@interface AssessmentModelAssessmentJsonResourceLoader : AssessmentModelAssessmentLoaderIOS
+- (instancetype)initWithResourceName:(NSString *)resourceName bundle:(NSBundle *)bundle __attribute__((swift_name("init(resourceName:bundle:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithBundle:(NSBundle *)bundle __attribute__((swift_name("init(bundle:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) NSString *jsonString __attribute__((swift_name("jsonString")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("AssessmentJsonStringLoader")))
-@interface AssessmentModelAssessmentJsonStringLoader : AssessmentModelKotlinDecodable
+@interface AssessmentModelAssessmentJsonStringLoader : AssessmentModelAssessmentLoaderIOS
 - (instancetype)initWithJsonString:(NSString *)jsonString bundle:(NSBundle *)bundle __attribute__((swift_name("init(jsonString:bundle:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)initWithDecoder:(AssessmentModelKotlinDecoder *)decoder __attribute__((swift_name("init(decoder:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-
-/**
- @note This method converts all Kotlin exceptions to errors.
-*/
-- (id<AssessmentModelAssessment> _Nullable)decodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("decodeObject()")));
+- (instancetype)initWithBundle:(NSBundle *)bundle __attribute__((swift_name("init(bundle:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (readonly) NSString *jsonString __attribute__((swift_name("jsonString")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("AssessmentLoader")))
-@interface AssessmentModelAssessmentLoader : AssessmentModelBase <AssessmentModelAssessment>
-- (instancetype)initWithPlaceholder:(id<AssessmentModelAssessment>)placeholder decoder:(AssessmentModelKotlinDecoder *)decoder __attribute__((swift_name("init(placeholder:decoder:)"))) __attribute__((objc_designated_initializer));
-- (id<AssessmentModelAssessmentResult>)createResult __attribute__((swift_name("createResult()")));
-
-/**
- @note This method converts all Kotlin exceptions to errors.
-*/
-- (id<AssessmentModelAssessment> _Nullable)decodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("decodeObject()")));
-- (id<AssessmentModelNavigator>)getNavigator __attribute__((swift_name("getNavigator()")));
-- (id<AssessmentModelAssessment>)unpackFileLoader:(id<AssessmentModelFileLoader>)fileLoader resourceInfo:(id<AssessmentModelResourceInfo>)resourceInfo jsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)jsonCoder __attribute__((swift_name("unpack(fileLoader:resourceInfo:jsonCoder:)")));
-@property (readonly) NSDictionary<AssessmentModelButtonAction *, id<AssessmentModelButtonActionInfo>> *buttonMap __attribute__((swift_name("buttonMap")));
-@property (readonly) NSString * _Nullable comment __attribute__((swift_name("comment")));
-@property (readonly) NSString * _Nullable detail __attribute__((swift_name("detail")));
-@property (readonly) int32_t estimatedMinutes __attribute__((swift_name("estimatedMinutes")));
-@property (readonly) NSString * _Nullable footnote __attribute__((swift_name("footnote")));
-@property (readonly) NSArray<AssessmentModelButtonAction *> *hideButtons __attribute__((swift_name("hideButtons")));
-@property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
-@property (readonly) id<AssessmentModelImageInfo> _Nullable imageInfo __attribute__((swift_name("imageInfo")));
-@property (readonly) NSString * _Nullable schemaIdentifier __attribute__((swift_name("schemaIdentifier")));
-@property (readonly) NSString * _Nullable subtitle __attribute__((swift_name("subtitle")));
-@property (readonly) NSString * _Nullable title __attribute__((swift_name("title")));
-@property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
 @end;
 
 __attribute__((swift_name("IconNodeObject")))
@@ -2530,7 +2615,7 @@ __attribute__((swift_name("AssessmentObject")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (AssessmentModelAssessmentObject *)unpackFileLoader:(id<AssessmentModelFileLoader>)fileLoader resourceInfo:(id<AssessmentModelResourceInfo>)resourceInfo jsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)jsonCoder __attribute__((swift_name("unpack(fileLoader:resourceInfo:jsonCoder:)")));
+- (AssessmentModelAssessmentObject *)unpackOriginalNode:(id<AssessmentModelNode> _Nullable)originalNode moduleInfo:(id<AssessmentModelModuleInfo>)moduleInfo registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("unpack(originalNode:moduleInfo:registryProvider:)")));
 @property (readonly) NSArray<id<AssessmentModelAsyncActionConfiguration>> *backgroundActions __attribute__((swift_name("backgroundActions")));
 @property (readonly) NSArray<id<AssessmentModelNode>> *children __attribute__((swift_name("children")));
 @property int32_t estimatedMinutes __attribute__((swift_name("estimatedMinutes")));
@@ -2548,6 +2633,68 @@ __attribute__((swift_name("AssessmentObject.Companion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AssessmentPlaceholderObject")))
+@interface AssessmentModelAssessmentPlaceholderObject : AssessmentModelBase <AssessmentModelAssessmentPlaceholder>
+- (instancetype)initWithIdentifier:(NSString *)identifier assessmentInfo:(AssessmentModelAssessmentInfoObject *)assessmentInfo comment:(NSString * _Nullable)comment title:(NSString * _Nullable)title subtitle:(NSString * _Nullable)subtitle detail:(NSString * _Nullable)detail __attribute__((swift_name("init(identifier:assessmentInfo:comment:title:subtitle:detail:)"))) __attribute__((objc_designated_initializer));
+- (NSString *)component1 __attribute__((swift_name("component1()")));
+- (AssessmentModelAssessmentInfoObject *)component2 __attribute__((swift_name("component2()")));
+- (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
+- (NSString * _Nullable)component4 __attribute__((swift_name("component4()")));
+- (NSString * _Nullable)component5 __attribute__((swift_name("component5()")));
+- (NSString * _Nullable)component6 __attribute__((swift_name("component6()")));
+- (AssessmentModelAssessmentPlaceholderObject *)doCopyIdentifier:(NSString *)identifier assessmentInfo:(AssessmentModelAssessmentInfoObject *)assessmentInfo comment:(NSString * _Nullable)comment title:(NSString * _Nullable)title subtitle:(NSString * _Nullable)subtitle detail:(NSString * _Nullable)detail __attribute__((swift_name("doCopy(identifier:assessmentInfo:comment:title:subtitle:detail:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) AssessmentModelAssessmentInfoObject *assessmentInfo __attribute__((swift_name("assessmentInfo")));
+@property (readonly) NSString * _Nullable comment __attribute__((swift_name("comment")));
+@property (readonly) NSString * _Nullable detail __attribute__((swift_name("detail")));
+@property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
+@property (readonly) NSString * _Nullable subtitle __attribute__((swift_name("subtitle")));
+@property (readonly) NSString * _Nullable title __attribute__((swift_name("title")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AssessmentPlaceholderObject.Companion")))
+@interface AssessmentModelAssessmentPlaceholderObjectCompanion : AssessmentModelBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+- (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@end;
+
+__attribute__((swift_name("EmbeddedJsonAssessmentRegistryProvider")))
+@interface AssessmentModelEmbeddedJsonAssessmentRegistryProvider : AssessmentModelBase <AssessmentModelAssessmentRegistryProvider>
+- (instancetype)initWithFileLoader:(id<AssessmentModelFileLoader>)fileLoader modulesResourceName:(NSString *)modulesResourceName moduleJsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)moduleJsonCoder modulesDecoderBundle:(id _Nullable)modulesDecoderBundle modulesPackageName:(NSString * _Nullable)modulesPackageName __attribute__((swift_name("init(fileLoader:modulesResourceName:moduleJsonCoder:modulesDecoderBundle:modulesPackageName:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) id<AssessmentModelFileLoader> fileLoader __attribute__((swift_name("fileLoader")));
+@property (readonly) NSArray<id<AssessmentModelModuleInfo>> *modules __attribute__((swift_name("modules")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("AssessmentRegistryProviderIOS")))
+@interface AssessmentModelAssessmentRegistryProviderIOS : AssessmentModelEmbeddedJsonAssessmentRegistryProvider
+- (instancetype)initWithModulesResourceName:(NSString * _Nullable)modulesResourceName bundle:(NSBundle * _Nullable)bundle __attribute__((swift_name("init(modulesResourceName:bundle:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithFileLoader:(id<AssessmentModelFileLoader>)fileLoader modulesResourceName:(NSString *)modulesResourceName moduleJsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)moduleJsonCoder modulesDecoderBundle:(id _Nullable)modulesDecoderBundle modulesPackageName:(NSString * _Nullable)modulesPackageName __attribute__((swift_name("init(fileLoader:modulesResourceName:moduleJsonCoder:modulesDecoderBundle:modulesPackageName:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
+- (id<AssessmentModelAssessment> _Nullable)loadJsonResourceAssessmentResourceName:(NSString *)resourceName error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("loadJsonResourceAssessment(resourceName:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
+- (id<AssessmentModelAssessment> _Nullable)loadJsonStringAssessmentJsonString:(NSString *)jsonString error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("loadJsonStringAssessment(jsonString:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
+- (id<AssessmentModelAssessment> _Nullable)loadRegisteredAssessmentIdentifier:(NSString *)identifier version:(NSString * _Nullable)version error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("loadRegisteredAssessment(identifier:version:)")));
+- (void)registerModuleInfoModuleInfo:(id<AssessmentModelModuleInfo>)moduleInfo __attribute__((swift_name("registerModuleInfo(moduleInfo:)")));
+@property (readonly) NSArray<id<AssessmentModelModuleInfo>> *modules __attribute__((swift_name("modules")));
+@end;
+
 __attribute__((swift_name("ResultNavigationRule")))
 @protocol AssessmentModelResultNavigationRule <AssessmentModelDirectNavigationRule, AssessmentModelResult>
 @required
@@ -2557,7 +2704,7 @@ __attribute__((swift_name("ResultNavigationRule")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("AssessmentResultObject")))
 @interface AssessmentModelAssessmentResultObject : AssessmentModelBase <AssessmentModelAssessmentResult, AssessmentModelResultNavigationRule>
-- (instancetype)initWithIdentifier:(NSString *)identifier assessmentIdentifier:(NSString * _Nullable)assessmentIdentifier schemaIdentifier:(NSString * _Nullable)schemaIdentifier versionString:(NSString * _Nullable)versionString pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults runUUIDString:(NSString *)runUUIDString startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:assessmentIdentifier:schemaIdentifier:versionString:pathHistoryResults:inputResults:runUUIDString:startDateString:endDateString:path:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithIdentifier:(NSString *)identifier assessmentIdentifier:(NSString * _Nullable)assessmentIdentifier schemaIdentifier:(NSString * _Nullable)schemaIdentifier versionString:(NSString * _Nullable)versionString pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults runUUIDString:(NSString *)runUUIDString startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:assessmentIdentifier:schemaIdentifier:versionString:pathHistoryResults:inputResults:runUUIDString:startDateTime:endDateTime:path:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (NSMutableArray<AssessmentModelPathMarker *> *)component10 __attribute__((swift_name("component10()")));
 - (NSString * _Nullable)component11 __attribute__((swift_name("component11()")));
@@ -2567,15 +2714,15 @@ __attribute__((swift_name("AssessmentResultObject")))
 - (NSMutableArray<id<AssessmentModelResult>> *)component5 __attribute__((swift_name("component5()")));
 - (AssessmentModelMutableSet<id<AssessmentModelResult>> *)component6 __attribute__((swift_name("component6()")));
 - (NSString *)component7 __attribute__((swift_name("component7()")));
-- (NSString *)component8 __attribute__((swift_name("component8()")));
-- (NSString * _Nullable)component9 __attribute__((swift_name("component9()")));
-- (AssessmentModelAssessmentResultObject *)doCopyIdentifier:(NSString *)identifier assessmentIdentifier:(NSString * _Nullable)assessmentIdentifier schemaIdentifier:(NSString * _Nullable)schemaIdentifier versionString:(NSString * _Nullable)versionString pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults runUUIDString:(NSString *)runUUIDString startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:assessmentIdentifier:schemaIdentifier:versionString:pathHistoryResults:inputResults:runUUIDString:startDateString:endDateString:path:nextNodeIdentifier:)")));
+- (AssessmentModelKotlinx_datetimeInstant *)component8 __attribute__((swift_name("component8()")));
+- (AssessmentModelKotlinx_datetimeInstant * _Nullable)component9 __attribute__((swift_name("component9()")));
+- (AssessmentModelAssessmentResultObject *)doCopyIdentifier:(NSString *)identifier assessmentIdentifier:(NSString * _Nullable)assessmentIdentifier schemaIdentifier:(NSString * _Nullable)schemaIdentifier versionString:(NSString * _Nullable)versionString pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults runUUIDString:(NSString *)runUUIDString startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:assessmentIdentifier:schemaIdentifier:versionString:pathHistoryResults:inputResults:runUUIDString:startDateTime:endDateTime:path:nextNodeIdentifier:)")));
 - (id<AssessmentModelAssessmentResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @property (readonly) NSString * _Nullable assessmentIdentifier __attribute__((swift_name("assessmentIdentifier")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property AssessmentModelMutableSet<id<AssessmentModelResult>> *inputResults __attribute__((swift_name("inputResults")));
 @property NSString * _Nullable nextNodeIdentifier __attribute__((swift_name("nextNodeIdentifier")));
@@ -2583,7 +2730,7 @@ __attribute__((swift_name("AssessmentResultObject")))
 @property NSMutableArray<id<AssessmentModelResult>> *pathHistoryResults __attribute__((swift_name("pathHistoryResults")));
 @property NSString *runUUIDString __attribute__((swift_name("runUUIDString")));
 @property (readonly) NSString * _Nullable schemaIdentifier __attribute__((swift_name("schemaIdentifier")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
 @end;
 
@@ -2608,26 +2755,26 @@ __attribute__((swift_name("BaseActiveStepObject.Companion")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("BranchNodeResultObject")))
 @interface AssessmentModelBranchNodeResultObject : AssessmentModelBase <AssessmentModelBranchNodeResult, AssessmentModelResultNavigationRule>
-- (instancetype)initWithIdentifier:(NSString *)identifier pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:pathHistoryResults:inputResults:startDateString:endDateString:path:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithIdentifier:(NSString *)identifier pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:pathHistoryResults:inputResults:startDateTime:endDateTime:path:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (NSMutableArray<id<AssessmentModelResult>> *)component2 __attribute__((swift_name("component2()")));
 - (AssessmentModelMutableSet<id<AssessmentModelResult>> *)component3 __attribute__((swift_name("component3()")));
-- (NSString *)component4 __attribute__((swift_name("component4()")));
-- (NSString * _Nullable)component5 __attribute__((swift_name("component5()")));
+- (AssessmentModelKotlinx_datetimeInstant *)component4 __attribute__((swift_name("component4()")));
+- (AssessmentModelKotlinx_datetimeInstant * _Nullable)component5 __attribute__((swift_name("component5()")));
 - (NSMutableArray<AssessmentModelPathMarker *> *)component6 __attribute__((swift_name("component6()")));
 - (NSString * _Nullable)component7 __attribute__((swift_name("component7()")));
-- (AssessmentModelBranchNodeResultObject *)doCopyIdentifier:(NSString *)identifier pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:pathHistoryResults:inputResults:startDateString:endDateString:path:nextNodeIdentifier:)")));
+- (AssessmentModelBranchNodeResultObject *)doCopyIdentifier:(NSString *)identifier pathHistoryResults:(NSMutableArray<id<AssessmentModelResult>> *)pathHistoryResults inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime path:(NSMutableArray<AssessmentModelPathMarker *> *)path nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:pathHistoryResults:inputResults:startDateTime:endDateTime:path:nextNodeIdentifier:)")));
 - (id<AssessmentModelBranchNodeResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property AssessmentModelMutableSet<id<AssessmentModelResult>> *inputResults __attribute__((swift_name("inputResults")));
 @property NSString * _Nullable nextNodeIdentifier __attribute__((swift_name("nextNodeIdentifier")));
 @property (readonly) NSMutableArray<AssessmentModelPathMarker *> *path __attribute__((swift_name("path")));
 @property NSMutableArray<id<AssessmentModelResult>> *pathHistoryResults __attribute__((swift_name("pathHistoryResults")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2754,25 +2901,9 @@ __attribute__((swift_name("ChoiceOptionObject.Companion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
-__attribute__((swift_name("SurveyNavigationRule")))
-@protocol AssessmentModelSurveyNavigationRule <AssessmentModelDirectNavigationRule, AssessmentModelResultMapElement>
-@required
-@property (readonly) NSArray<id<AssessmentModelSurveyRule>> * _Nullable surveyRules __attribute__((swift_name("surveyRules")));
-@end;
-
-__attribute__((swift_name("QuestionObject")))
-@interface AssessmentModelQuestionObject : AssessmentModelStepObject <AssessmentModelQuestion, AssessmentModelSurveyNavigationRule>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)doCopyFromOriginal:(id<AssessmentModelContentNode>)original __attribute__((swift_name("doCopyFrom(original:)")));
-@property id<AssessmentModelImageInfo> _Nullable imageInfo __attribute__((swift_name("imageInfo")));
-@property BOOL optional __attribute__((swift_name("optional")));
-@property NSArray<AssessmentModelComparableSurveyRuleObject *> * _Nullable surveyRules __attribute__((swift_name("surveyRules")));
-@end;
-
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ChoiceQuestionObject")))
-@interface AssessmentModelChoiceQuestionObject : AssessmentModelQuestionObject <AssessmentModelChoiceQuestion>
+@interface AssessmentModelChoiceQuestionObject : AssessmentModelAbstractChoiceQuestionObject <AssessmentModelChoiceQuestion>
 - (instancetype)initWithIdentifier:(NSString *)identifier choices:(NSArray<AssessmentModelChoiceOptionObject *> *)choices baseType:(AssessmentModelBaseType *)baseType singleAnswer:(BOOL)singleAnswer uiHint:(AssessmentModelUIHint *)uiHint __attribute__((swift_name("init(identifier:choices:baseType:singleAnswer:uiHint:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
@@ -2804,22 +2935,22 @@ __attribute__((swift_name("ChoiceQuestionObject.Companion")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CollectionResultObject")))
 @interface AssessmentModelCollectionResultObject : AssessmentModelBase <AssessmentModelCollectionResult, AssessmentModelResultNavigationRule>
-- (instancetype)initWithIdentifier:(NSString *)identifier inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:inputResults:startDateString:endDateString:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithIdentifier:(NSString *)identifier inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:inputResults:startDateTime:endDateTime:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (AssessmentModelMutableSet<id<AssessmentModelResult>> *)component2 __attribute__((swift_name("component2()")));
-- (NSString *)component3 __attribute__((swift_name("component3()")));
-- (NSString * _Nullable)component4 __attribute__((swift_name("component4()")));
+- (AssessmentModelKotlinx_datetimeInstant *)component3 __attribute__((swift_name("component3()")));
+- (AssessmentModelKotlinx_datetimeInstant * _Nullable)component4 __attribute__((swift_name("component4()")));
 - (NSString * _Nullable)component5 __attribute__((swift_name("component5()")));
-- (AssessmentModelCollectionResultObject *)doCopyIdentifier:(NSString *)identifier inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:inputResults:startDateString:endDateString:nextNodeIdentifier:)")));
+- (AssessmentModelCollectionResultObject *)doCopyIdentifier:(NSString *)identifier inputResults:(AssessmentModelMutableSet<id<AssessmentModelResult>> *)inputResults startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:inputResults:startDateTime:endDateTime:nextNodeIdentifier:)")));
 - (id<AssessmentModelCollectionResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property AssessmentModelMutableSet<id<AssessmentModelResult>> *inputResults __attribute__((swift_name("inputResults")));
 @property NSString * _Nullable nextNodeIdentifier __attribute__((swift_name("nextNodeIdentifier")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -2833,7 +2964,7 @@ __attribute__((swift_name("CollectionResultObject.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ComboBoxQuestionObject")))
-@interface AssessmentModelComboBoxQuestionObject : AssessmentModelQuestionObject <AssessmentModelComboBoxQuestion>
+@interface AssessmentModelComboBoxQuestionObject : AssessmentModelAbstractChoiceQuestionObject <AssessmentModelComboBoxQuestion>
 - (instancetype)initWithIdentifier:(NSString *)identifier choices:(NSArray<AssessmentModelChoiceOptionObject *> *)choices otherInputItem:(id<AssessmentModelInputItem>)otherInputItem singleAnswer:(BOOL)singleAnswer uiHint:(AssessmentModelUIHint *)uiHint __attribute__((swift_name("init(identifier:choices:otherInputItem:singleAnswer:uiHint:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
@@ -3110,23 +3241,6 @@ __attribute__((swift_name("FetchableImage.Companion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
-__attribute__((swift_name("ResourceAssessmentProvider")))
-@protocol AssessmentModelResourceAssessmentProvider <AssessmentModelAssessmentGroupInfo, AssessmentModelAssessmentProvider>
-@required
-@property (readonly) id<AssessmentModelFileLoader> fileLoader __attribute__((swift_name("fileLoader")));
-@property (readonly) AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("FileAssessmentProvider")))
-@interface AssessmentModelFileAssessmentProvider : AssessmentModelBase <AssessmentModelResourceAssessmentProvider, AssessmentModelAssessmentGroupInfo>
-- (instancetype)initWithFileLoader:(id<AssessmentModelFileLoader>)fileLoader assessmentGroupInfo:(id<AssessmentModelAssessmentGroupInfo>)assessmentGroupInfo jsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)jsonCoder __attribute__((swift_name("init(fileLoader:assessmentGroupInfo:jsonCoder:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) NSArray<id<AssessmentModelAssessment>> *assessments __attribute__((swift_name("assessments")));
-@property (readonly) id<AssessmentModelFileLoader> fileLoader __attribute__((swift_name("fileLoader")));
-@property AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@property (readonly) id<AssessmentModelResourceInfo> resourceInfo __attribute__((swift_name("resourceInfo")));
-@end;
-
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("FileLoaderIOS")))
 @interface AssessmentModelFileLoaderIOS : AssessmentModelBase <AssessmentModelFileLoader>
@@ -3324,6 +3438,17 @@ __attribute__((swift_name("InputItemObject.Companion")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("InstantSerializer")))
+@interface AssessmentModelInstantSerializer : AssessmentModelBase <AssessmentModelKotlinx_serialization_coreKSerializer>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)instantSerializer __attribute__((swift_name("init()")));
+- (AssessmentModelKotlinx_datetimeInstant *)deserializeDecoder:(id<AssessmentModelKotlinx_serialization_coreDecoder>)input __attribute__((swift_name("deserialize(decoder:)")));
+- (void)serializeEncoder:(id<AssessmentModelKotlinx_serialization_coreEncoder>)output value:(AssessmentModelKotlinx_datetimeInstant *)obj __attribute__((swift_name("serialize(encoder:value:)")));
+@property (readonly) id<AssessmentModelKotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("InstructionStepObject")))
 @interface AssessmentModelInstructionStepObject : AssessmentModelStepObject <AssessmentModelInstructionStep>
 - (instancetype)initWithIdentifier:(NSString *)identifier imageInfo:(id<AssessmentModelImageInfo> _Nullable)imageInfo fullInstructionsOnly:(BOOL)fullInstructionsOnly __attribute__((swift_name("init(identifier:imageInfo:fullInstructionsOnly:)"))) __attribute__((objc_designated_initializer));
@@ -3432,8 +3557,6 @@ __attribute__((swift_name("JsonElementDecoder")))
  @note This method converts all Kotlin exceptions to errors.
 */
 - (AssessmentModelKotlinx_serialization_jsonJsonElement * _Nullable)decodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("decodeObject()")));
-@property AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@property (readonly) NSString *jsonString __attribute__((swift_name("jsonString")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -3445,8 +3568,6 @@ __attribute__((swift_name("JsonElementEncoder")))
  @note This method converts all Kotlin exceptions to errors.
 */
 - (NSString * _Nullable)encodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("encodeObject()")));
-@property AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@property (readonly) AssessmentModelKotlinx_serialization_jsonJsonElement *jsonElement __attribute__((swift_name("jsonElement")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -3482,23 +3603,40 @@ __attribute__((swift_name("KeyboardOptionsObject.Companion")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("KotlinDecoder")))
-@interface AssessmentModelKotlinDecoder : AssessmentModelBase <AssessmentModelResourceInfo>
-- (instancetype)initWithBundle:(NSBundle *)bundle __attribute__((swift_name("init(bundle:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) NSString * _Nullable bundleIdentifier __attribute__((swift_name("bundleIdentifier")));
-@property id _Nullable decoderBundle __attribute__((swift_name("decoderBundle")));
-@property id<AssessmentModelFileLoader> fileLoader __attribute__((swift_name("fileLoader")));
-@property AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@property NSString * _Nullable packageName __attribute__((swift_name("packageName")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Localization")))
 @interface AssessmentModelLocalization : AssessmentModelBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)localization __attribute__((swift_name("init()")));
 - (NSString *)localizeStringStringKey:(NSString *)stringKey __attribute__((swift_name("localizeString(stringKey:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ModuleInfoObject")))
+@interface AssessmentModelModuleInfoObject : AssessmentModelBase <AssessmentModelResourceInfo, AssessmentModelEmbeddedJsonModuleInfo>
+- (instancetype)initWithAssessments:(NSArray<id<AssessmentModelTransformableAssessment>> *)assessments packageName:(NSString * _Nullable)packageName bundleIdentifier:(NSString * _Nullable)bundleIdentifier __attribute__((swift_name("init(assessments:packageName:bundleIdentifier:)"))) __attribute__((objc_designated_initializer));
+- (NSArray<id<AssessmentModelTransformableAssessment>> *)component1 __attribute__((swift_name("component1()")));
+- (NSString * _Nullable)component2 __attribute__((swift_name("component2()")));
+- (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
+- (AssessmentModelModuleInfoObject *)doCopyAssessments:(NSArray<id<AssessmentModelTransformableAssessment>> *)assessments packageName:(NSString * _Nullable)packageName bundleIdentifier:(NSString * _Nullable)bundleIdentifier __attribute__((swift_name("doCopy(assessments:packageName:bundleIdentifier:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) NSArray<id<AssessmentModelTransformableAssessment>> *assessments __attribute__((swift_name("assessments")));
+@property (readonly) NSString * _Nullable bundleIdentifier __attribute__((swift_name("bundleIdentifier")));
+@property id _Nullable decoderBundle __attribute__((swift_name("decoderBundle")));
+@property (readonly) AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
+@property NSString * _Nullable packageName __attribute__((swift_name("packageName")));
+@property (readonly) id<AssessmentModelResourceInfo> resourceInfo __attribute__((swift_name("resourceInfo")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ModuleInfoObject.Companion")))
+@interface AssessmentModelModuleInfoObjectCompanion : AssessmentModelBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+- (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -3602,6 +3740,7 @@ __attribute__((swift_name("NumberFormatOptionsStyle")))
 @property (class, readonly) AssessmentModelNumberFormatOptionsStyle *scientific __attribute__((swift_name("scientific")));
 @property (class, readonly) AssessmentModelNumberFormatOptionsStyle *spellout __attribute__((swift_name("spellout")));
 @property (class, readonly) AssessmentModelNumberFormatOptionsStyle *ordinalnumber __attribute__((swift_name("ordinalnumber")));
++ (AssessmentModelKotlinArray<AssessmentModelNumberFormatOptionsStyle *> *)values __attribute__((swift_name("values()")));
 @property (readonly) NSString * _Nullable serialName __attribute__((swift_name("serialName")));
 @end;
 
@@ -3758,27 +3897,25 @@ __attribute__((swift_name("ResultEncoder")))
  @note This method converts all Kotlin exceptions to errors.
 */
 - (NSString * _Nullable)encodeObjectAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("encodeObject()")));
-@property AssessmentModelKotlinx_serialization_jsonJson *jsonCoder __attribute__((swift_name("jsonCoder")));
-@property (readonly) id<AssessmentModelResult> result __attribute__((swift_name("result")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ResultObject")))
 @interface AssessmentModelResultObject : AssessmentModelBase <AssessmentModelResult, AssessmentModelResultNavigationRule>
-- (instancetype)initWithIdentifier:(NSString *)identifier startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:startDateString:endDateString:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithIdentifier:(NSString *)identifier startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("init(identifier:startDateTime:endDateTime:nextNodeIdentifier:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
-- (NSString *)component2 __attribute__((swift_name("component2()")));
-- (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
+- (AssessmentModelKotlinx_datetimeInstant *)component2 __attribute__((swift_name("component2()")));
+- (AssessmentModelKotlinx_datetimeInstant * _Nullable)component3 __attribute__((swift_name("component3()")));
 - (NSString * _Nullable)component4 __attribute__((swift_name("component4()")));
-- (AssessmentModelResultObject *)doCopyIdentifier:(NSString *)identifier startDateString:(NSString *)startDateString endDateString:(NSString * _Nullable)endDateString nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:startDateString:endDateString:nextNodeIdentifier:)")));
+- (AssessmentModelResultObject *)doCopyIdentifier:(NSString *)identifier startDateTime:(AssessmentModelKotlinx_datetimeInstant *)startDateTime endDateTime:(AssessmentModelKotlinx_datetimeInstant * _Nullable)endDateTime nextNodeIdentifier:(NSString * _Nullable)nextNodeIdentifier __attribute__((swift_name("doCopy(identifier:startDateTime:endDateTime:nextNodeIdentifier:)")));
 - (id<AssessmentModelResult>)doCopyResultIdentifier:(NSString *)identifier __attribute__((swift_name("doCopyResult(identifier:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-@property NSString * _Nullable endDateString __attribute__((swift_name("endDateString")));
+@property AssessmentModelKotlinx_datetimeInstant * _Nullable endDateTime __attribute__((swift_name("endDateTime")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property NSString * _Nullable nextNodeIdentifier __attribute__((swift_name("nextNodeIdentifier")));
-@property NSString *startDateString __attribute__((swift_name("startDateString")));
+@property AssessmentModelKotlinx_datetimeInstant *startDateTime __attribute__((swift_name("startDateTime")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -3832,7 +3969,7 @@ __attribute__((swift_name("SectionObject")))
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-- (AssessmentModelSectionObject *)unpackFileLoader:(id<AssessmentModelFileLoader>)fileLoader resourceInfo:(id<AssessmentModelResourceInfo>)resourceInfo jsonCoder:(AssessmentModelKotlinx_serialization_jsonJson *)jsonCoder __attribute__((swift_name("unpack(fileLoader:resourceInfo:jsonCoder:)")));
+- (AssessmentModelSectionObject *)unpackOriginalNode:(id<AssessmentModelNode> _Nullable)originalNode moduleInfo:(id<AssessmentModelModuleInfo>)moduleInfo registryProvider:(id<AssessmentModelAssessmentRegistryProvider>)registryProvider __attribute__((swift_name("unpack(originalNode:moduleInfo:registryProvider:)")));
 @property (readonly) NSArray<id<AssessmentModelAsyncActionConfiguration>> *backgroundActions __attribute__((swift_name("backgroundActions")));
 @property (readonly) NSArray<id<AssessmentModelNode>> *children __attribute__((swift_name("children")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
@@ -3966,7 +4103,7 @@ __attribute__((swift_name("StepObject.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("StringChoiceQuestionObject")))
-@interface AssessmentModelStringChoiceQuestionObject : AssessmentModelQuestionObject <AssessmentModelChoiceQuestion>
+@interface AssessmentModelStringChoiceQuestionObject : AssessmentModelAbstractChoiceQuestionObject <AssessmentModelChoiceQuestion>
 - (instancetype)initWithIdentifier:(NSString *)identifier items:(NSArray<NSString *> *)items singleAnswer:(BOOL)singleAnswer uiHint:(AssessmentModelUIHint *)uiHint __attribute__((swift_name("init(identifier:items:singleAnswer:uiHint:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
@@ -4079,35 +4216,31 @@ __attribute__((swift_name("TimeInputItemObject.Companion")))
 - (id<AssessmentModelKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end;
 
-__attribute__((swift_name("TransformableNode")))
-@protocol AssessmentModelTransformableNode <AssessmentModelContentNode, AssessmentModelAssetInfo>
-@required
-@end;
-
-__attribute__((swift_name("TransformableAssessment")))
-@protocol AssessmentModelTransformableAssessment <AssessmentModelAssessment, AssessmentModelTransformableNode>
-@required
-@end;
-
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TransformableAssessmentObject")))
-@interface AssessmentModelTransformableAssessmentObject : AssessmentModelIconNodeObject <AssessmentModelTransformableAssessment>
-- (instancetype)initWithIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString estimatedMinutes:(int32_t)estimatedMinutes schemaIdentifier:(NSString * _Nullable)schemaIdentifier __attribute__((swift_name("init(identifier:resourceName:versionString:estimatedMinutes:schemaIdentifier:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-+ (instancetype)new __attribute__((unavailable));
+@interface AssessmentModelTransformableAssessmentObject : AssessmentModelBase <AssessmentModelTransformableAssessment>
+- (instancetype)initWithIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString estimatedMinutes:(int32_t)estimatedMinutes schemaIdentifier:(NSString * _Nullable)schemaIdentifier comment:(NSString * _Nullable)comment title:(NSString * _Nullable)title subtitle:(NSString * _Nullable)subtitle detail:(NSString * _Nullable)detail __attribute__((swift_name("init(identifier:resourceName:versionString:estimatedMinutes:schemaIdentifier:comment:title:subtitle:detail:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (NSString *)component2 __attribute__((swift_name("component2()")));
 - (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
 - (int32_t)component4 __attribute__((swift_name("component4()")));
 - (NSString * _Nullable)component5 __attribute__((swift_name("component5()")));
-- (AssessmentModelTransformableAssessmentObject *)doCopyIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString estimatedMinutes:(int32_t)estimatedMinutes schemaIdentifier:(NSString * _Nullable)schemaIdentifier __attribute__((swift_name("doCopy(identifier:resourceName:versionString:estimatedMinutes:schemaIdentifier:)")));
+- (NSString * _Nullable)component6 __attribute__((swift_name("component6()")));
+- (NSString * _Nullable)component7 __attribute__((swift_name("component7()")));
+- (NSString * _Nullable)component8 __attribute__((swift_name("component8()")));
+- (NSString * _Nullable)component9 __attribute__((swift_name("component9()")));
+- (AssessmentModelTransformableAssessmentObject *)doCopyIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString estimatedMinutes:(int32_t)estimatedMinutes schemaIdentifier:(NSString * _Nullable)schemaIdentifier comment:(NSString * _Nullable)comment title:(NSString * _Nullable)title subtitle:(NSString * _Nullable)subtitle detail:(NSString * _Nullable)detail __attribute__((swift_name("doCopy(identifier:resourceName:versionString:estimatedMinutes:schemaIdentifier:comment:title:subtitle:detail:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) NSString * _Nullable comment __attribute__((swift_name("comment")));
+@property (readonly) NSString * _Nullable detail __attribute__((swift_name("detail")));
 @property (readonly) int32_t estimatedMinutes __attribute__((swift_name("estimatedMinutes")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property (readonly) NSString *resourceName __attribute__((swift_name("resourceName")));
 @property (readonly) NSString * _Nullable schemaIdentifier __attribute__((swift_name("schemaIdentifier")));
+@property (readonly) NSString * _Nullable subtitle __attribute__((swift_name("subtitle")));
+@property (readonly) NSString * _Nullable title __attribute__((swift_name("title")));
 @property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
 @end;
 
@@ -4122,17 +4255,17 @@ __attribute__((swift_name("TransformableAssessmentObject.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TransformableNodeObject")))
-@interface AssessmentModelTransformableNodeObject : AssessmentModelIconNodeObject <AssessmentModelTransformableNode>
-- (instancetype)initWithIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString __attribute__((swift_name("init(identifier:resourceName:versionString:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-+ (instancetype)new __attribute__((unavailable));
+@interface AssessmentModelTransformableNodeObject : AssessmentModelBase <AssessmentModelTransformableNode>
+- (instancetype)initWithIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString comment:(NSString * _Nullable)comment __attribute__((swift_name("init(identifier:resourceName:versionString:comment:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)component1 __attribute__((swift_name("component1()")));
 - (NSString *)component2 __attribute__((swift_name("component2()")));
 - (NSString * _Nullable)component3 __attribute__((swift_name("component3()")));
-- (AssessmentModelTransformableNodeObject *)doCopyIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString __attribute__((swift_name("doCopy(identifier:resourceName:versionString:)")));
+- (NSString * _Nullable)component4 __attribute__((swift_name("component4()")));
+- (AssessmentModelTransformableNodeObject *)doCopyIdentifier:(NSString *)identifier resourceName:(NSString *)resourceName versionString:(NSString * _Nullable)versionString comment:(NSString * _Nullable)comment __attribute__((swift_name("doCopy(identifier:resourceName:versionString:comment:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) NSString * _Nullable comment __attribute__((swift_name("comment")));
 @property (readonly) NSString *identifier __attribute__((swift_name("identifier")));
 @property (readonly) NSString *resourceName __attribute__((swift_name("resourceName")));
 @property (readonly) NSString * _Nullable versionString __attribute__((swift_name("versionString")));
@@ -4335,17 +4468,23 @@ __attribute__((swift_name("AsyncActionNavigation")))
 __attribute__((swift_name("BranchNodeState")))
 @protocol AssessmentModelBranchNodeState <AssessmentModelNodeState>
 @required
-- (void)exitEarlyAsyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("exitEarly(asyncActionNavigations:)")));
+- (BOOL)allowBackNavigation __attribute__((swift_name("allowBackNavigation()")));
+- (void)exitEarlyFinishedReason:(AssessmentModelFinishedReason *)finishedReason asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("exitEarly(finishedReason:asyncActionNavigations:)")));
 - (void)moveToNextNodeDirection:(AssessmentModelNavigationPointDirection *)direction requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("moveToNextNode(direction:requestedPermissions:asyncActionNavigations:)")));
+- (AssessmentModelProgress * _Nullable)progress __attribute__((swift_name("progress()")));
 @property (readonly) id<AssessmentModelNodeState> _Nullable currentChild __attribute__((swift_name("currentChild")));
+@property id<AssessmentModelCustomNodeStateProvider> _Nullable customNodeStateProvider __attribute__((swift_name("customNodeStateProvider")));
+@property id<AssessmentModelNodeUIController> _Nullable nodeUIController __attribute__((swift_name("nodeUIController")));
 @property id<AssessmentModelRootNodeController> _Nullable rootNodeController __attribute__((swift_name("rootNodeController")));
 @end;
 
 __attribute__((swift_name("BranchNodeStateImpl")))
 @interface AssessmentModelBranchNodeStateImpl : AssessmentModelBase <AssessmentModelBranchNodeState>
 - (instancetype)initWithNode:(id<AssessmentModelBranchNode>)node parent:(id<AssessmentModelBranchNodeState> _Nullable)parent __attribute__((swift_name("init(node:parent:)"))) __attribute__((objc_designated_initializer));
+- (BOOL)allowBackNavigation __attribute__((swift_name("allowBackNavigation()")));
 - (void)appendChildResultIfNeeded __attribute__((swift_name("appendChildResultIfNeeded()")));
-- (void)exitEarlyAsyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("exitEarly(asyncActionNavigations:)")));
+- (void)didMarkFinalResult __attribute__((swift_name("didMarkFinalResult()")));
+- (void)exitEarlyFinishedReason:(AssessmentModelFinishedReason *)finishedReason asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("exitEarly(finishedReason:asyncActionNavigations:)")));
 - (void)finishNavigationPoint:(AssessmentModelNavigationPoint *)navigationPoint __attribute__((swift_name("finish(navigationPoint:)")));
 - (id<AssessmentModelBranchNodeState> _Nullable)getBranchNodeStateNavigationPoint:(AssessmentModelNavigationPoint *)navigationPoint __attribute__((swift_name("getBranchNodeState(navigationPoint:)")));
 - (id<AssessmentModelNodeState> _Nullable)getLeafNodeStateNavigationPoint:(AssessmentModelNavigationPoint *)navigationPoint __attribute__((swift_name("getLeafNodeState(navigationPoint:)")));
@@ -4354,25 +4493,54 @@ __attribute__((swift_name("BranchNodeStateImpl")))
 - (void)goForwardRequestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("goForward(requestedPermissions:asyncActionNavigations:)")));
 - (void)moveToNavigationPoint:(AssessmentModelNavigationPoint *)navigationPoint __attribute__((swift_name("moveTo(navigationPoint:)")));
 - (void)moveToNextNodeDirection:(AssessmentModelNavigationPointDirection *)direction requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("moveToNextNode(direction:requestedPermissions:asyncActionNavigations:)")));
+- (AssessmentModelProgress * _Nullable)progress __attribute__((swift_name("progress()")));
 - (void)unionNavigationSetsNavigationPoint:(AssessmentModelNavigationPoint *)navigationPoint requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("unionNavigationSets(navigationPoint:requestedPermissions:asyncActionNavigations:)")));
 @property id<AssessmentModelNodeState> _Nullable currentChild __attribute__((swift_name("currentChild")));
 @property (readonly) id<AssessmentModelBranchNodeResult> currentResult __attribute__((swift_name("currentResult")));
+@property id<AssessmentModelCustomNodeStateProvider> _Nullable customNodeStateProvider __attribute__((swift_name("customNodeStateProvider")));
 @property (readonly) id<AssessmentModelBranchNode> node __attribute__((swift_name("node")));
+@property id<AssessmentModelNodeUIController> _Nullable nodeUIController __attribute__((swift_name("nodeUIController")));
 @property (readonly) id<AssessmentModelBranchNodeState> _Nullable parent __attribute__((swift_name("parent")));
 @property id<AssessmentModelRootNodeController> _Nullable rootNodeController __attribute__((swift_name("rootNodeController")));
 @end;
 
-__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CustomNodeStateProvider")))
+@protocol AssessmentModelCustomNodeStateProvider
+@required
+- (id<AssessmentModelBranchNodeState> _Nullable)customBranchNodeStateForNode:(id<AssessmentModelBranchNode>)node parent:(id<AssessmentModelBranchNodeState> _Nullable)parent __attribute__((swift_name("customBranchNodeStateFor(node:parent:)")));
+- (id<AssessmentModelNodeState> _Nullable)customLeafNodeStateForNode:(id<AssessmentModelNode>)node parent:(id<AssessmentModelBranchNodeState>)parent __attribute__((swift_name("customLeafNodeStateFor(node:parent:)")));
+@end;
+
 __attribute__((swift_name("FinishedReason")))
-@interface AssessmentModelFinishedReason : AssessmentModelKotlinEnum<AssessmentModelFinishedReason *>
+@interface AssessmentModelFinishedReason : AssessmentModelBase
+@property (readonly) BOOL markFinished __attribute__((swift_name("markFinished")));
+@property (readonly) BOOL saveResult __attribute__((swift_name("saveResult")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("FinishedReason.Complete")))
+@interface AssessmentModelFinishedReasonComplete : AssessmentModelFinishedReason
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) AssessmentModelFinishedReason *complete __attribute__((swift_name("complete")));
-@property (class, readonly) AssessmentModelFinishedReason *error __attribute__((swift_name("error")));
-@property (class, readonly) AssessmentModelFinishedReason *earlyexit __attribute__((swift_name("earlyexit")));
-@property (class, readonly) AssessmentModelFinishedReason *discarded __attribute__((swift_name("discarded")));
-@property (class, readonly) AssessmentModelFinishedReason *saveprogress __attribute__((swift_name("saveprogress")));
++ (instancetype)complete __attribute__((swift_name("init()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("FinishedReason.Failed")))
+@interface AssessmentModelFinishedReasonFailed : AssessmentModelFinishedReason
+- (instancetype)initWithError:(AssessmentModelKotlinError *)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer));
+- (AssessmentModelKotlinError *)component1 __attribute__((swift_name("component1()")));
+- (AssessmentModelFinishedReasonFailed *)doCopyError:(AssessmentModelKotlinError *)error __attribute__((swift_name("doCopy(error:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) AssessmentModelKotlinError *error __attribute__((swift_name("error")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("FinishedReason.Incomplete")))
+@interface AssessmentModelFinishedReasonIncomplete : AssessmentModelFinishedReason
+- (instancetype)initWithSaveResult:(BOOL)saveResult markFinished:(BOOL)markFinished __attribute__((swift_name("init(saveResult:markFinished:)"))) __attribute__((objc_designated_initializer));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4440,6 +4608,7 @@ __attribute__((swift_name("NavigationPoint.Direction")))
 @property (class, readonly) AssessmentModelNavigationPointDirection *forward __attribute__((swift_name("forward")));
 @property (class, readonly) AssessmentModelNavigationPointDirection *backward __attribute__((swift_name("backward")));
 @property (class, readonly) AssessmentModelNavigationPointDirection *exit __attribute__((swift_name("exit")));
++ (AssessmentModelKotlinArray<AssessmentModelNavigationPointDirection *> *)values __attribute__((swift_name("values()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4456,6 +4625,7 @@ __attribute__((swift_name("Navigator")))
 @required
 - (BOOL)allowBackNavigationCurrentNode:(id<AssessmentModelNode>)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("allowBackNavigation(currentNode:branchResult:)")));
 - (BOOL)hasNodeAfterCurrentNode:(id<AssessmentModelNode>)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("hasNodeAfter(currentNode:branchResult:)")));
+- (BOOL)isCompletedCurrentNode:(id<AssessmentModelNode>)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("isCompleted(currentNode:branchResult:)")));
 - (id<AssessmentModelNode> _Nullable)nodeIdentifier:(NSString *)identifier __attribute__((swift_name("node(identifier:)")));
 - (AssessmentModelNavigationPoint *)nodeAfterCurrentNode:(id<AssessmentModelNode> _Nullable)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("nodeAfter(currentNode:branchResult:)")));
 - (AssessmentModelNavigationPoint *)nodeBeforeCurrentNode:(id<AssessmentModelNode> _Nullable)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("nodeBefore(currentNode:branchResult:)")));
@@ -4477,6 +4647,14 @@ __attribute__((swift_name("NodeNavigator")))
 @property (readonly) id<AssessmentModelNodeContainer> node __attribute__((swift_name("node")));
 @end;
 
+__attribute__((swift_name("NodeUIController")))
+@protocol AssessmentModelNodeUIController
+@required
+- (BOOL)canHandleNode:(id<AssessmentModelNode>)node __attribute__((swift_name("canHandle(node:)")));
+- (void)handleGoBackNodeState:(id<AssessmentModelNodeState>)nodeState requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("handleGoBack(nodeState:requestedPermissions:asyncActionNavigations:)")));
+- (void)handleGoForwardNodeState:(id<AssessmentModelNodeState>)nodeState requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("handleGoForward(nodeState:requestedPermissions:asyncActionNavigations:)")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Progress")))
 @interface AssessmentModelProgress : AssessmentModelBase
@@ -4496,11 +4674,8 @@ __attribute__((swift_name("Progress")))
 __attribute__((swift_name("RootNodeController")))
 @protocol AssessmentModelRootNodeController
 @required
-- (BOOL)canHandleNode:(id<AssessmentModelNode>)node __attribute__((swift_name("canHandle(node:)")));
-- (id<AssessmentModelNodeState> _Nullable)customNodeStateForNode:(id<AssessmentModelNode>)node parent:(id<AssessmentModelBranchNodeState>)parent __attribute__((swift_name("customNodeStateFor(node:parent:)")));
-- (void)handleFinishedReason:(AssessmentModelFinishedReason *)reason nodeState:(id<AssessmentModelNodeState>)nodeState error:(AssessmentModelKotlinError * _Nullable)error __attribute__((swift_name("handleFinished(reason:nodeState:error:)")));
-- (void)handleGoBackNodeState:(id<AssessmentModelNodeState>)nodeState requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("handleGoBack(nodeState:requestedPermissions:asyncActionNavigations:)")));
-- (void)handleGoForwardNodeState:(id<AssessmentModelNodeState>)nodeState requestedPermissions:(NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissions asyncActionNavigations:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActionNavigations __attribute__((swift_name("handleGoForward(nodeState:requestedPermissions:asyncActionNavigations:)")));
+- (void)handleFinishedReason:(AssessmentModelFinishedReason *)reason nodeState:(id<AssessmentModelNodeState>)nodeState __attribute__((swift_name("handleFinished(reason:nodeState:)")));
+- (void)handleReadyToSaveReason:(AssessmentModelFinishedReason *)reason nodeState:(id<AssessmentModelNodeState>)nodeState __attribute__((swift_name("handleReadyToSave(reason:nodeState:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4566,7 +4741,7 @@ __attribute__((swift_name("DateKt")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ResourceInfoKt")))
 @interface AssessmentModelResourceInfoKt : AssessmentModelBase
-+ (void)doCopyResourceInfo:(id<AssessmentModelAssetResourceInfo>)receiver fromResourceInfo:(id<AssessmentModelResourceInfo>)fromResourceInfo __attribute__((swift_name("doCopyResourceInfo(_:fromResourceInfo:)")));
++ (void)doCopyResourceInfo:(id<AssessmentModelResourceInfo>)receiver fromResourceInfo:(id<AssessmentModelResourceInfo>)fromResourceInfo __attribute__((swift_name("doCopyResourceInfo(_:fromResourceInfo:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4582,12 +4757,6 @@ __attribute__((swift_name("ButtonsKt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("FileAssessmentProviderKt")))
-@interface AssessmentModelFileAssessmentProviderKt : AssessmentModelBase
-@property (class, readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *fileProviderSerializersModule __attribute__((swift_name("fileProviderSerializersModule")));
-@end;
-
-__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ImageKt")))
 @interface AssessmentModelImageKt : AssessmentModelBase
 @property (class, readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *imageSerializersModule __attribute__((swift_name("imageSerializersModule")));
@@ -4597,6 +4766,12 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("InputItemsKt")))
 @interface AssessmentModelInputItemsKt : AssessmentModelBase
 @property (class, readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *inputItemSerializersModule __attribute__((swift_name("inputItemSerializersModule")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ModuleInfoObjectKt")))
+@interface AssessmentModelModuleInfoObjectKt : AssessmentModelBase
+@property (class, readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *moduleInfoSerializersModule __attribute__((swift_name("moduleInfoSerializersModule")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4621,7 +4796,8 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("NodeNavigatorKt")))
 @interface AssessmentModelNodeNavigatorKt : AssessmentModelBase
 + (NSSet<id<AssessmentModelAsyncActionConfiguration>> * _Nullable)backgroundActionsToStart:(id<AssessmentModelAsyncActionContainer>)receiver previousNode:(id<AssessmentModelNode> _Nullable)previousNode nextNode:(id<AssessmentModelNode> _Nullable)nextNode __attribute__((swift_name("backgroundActionsToStart(_:previousNode:nextNode:)")));
-+ (NSSet<id<AssessmentModelAsyncActionConfiguration>> * _Nullable)backgroundActionsToStop:(id<AssessmentModelAsyncActionContainer>)receiver previousNode:(id<AssessmentModelNode> _Nullable)previousNode nextNode:(id<AssessmentModelNode> _Nullable)nextNode __attribute__((swift_name("backgroundActionsToStop(_:previousNode:nextNode:)")));
++ (NSSet<id<AssessmentModelAsyncActionConfiguration>> * _Nullable)backgroundActionsToStop:(id<AssessmentModelAsyncActionContainer>)receiver nextNode:(id<AssessmentModelNode> _Nullable)nextNode __attribute__((swift_name("backgroundActionsToStop(_:nextNode:)")));
++ (BOOL)shouldStop:(id<AssessmentModelAsyncActionConfiguration>)receiver nextNode:(id<AssessmentModelNode> _Nullable)nextNode __attribute__((swift_name("shouldStop(_:nextNode:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -4637,6 +4813,82 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("NavigatorKt")))
 @interface AssessmentModelNavigatorKt : AssessmentModelBase
 + (NSSet<AssessmentModelAsyncActionNavigation *> *)union:(NSSet<AssessmentModelAsyncActionNavigation *> *)receiver values:(NSSet<AssessmentModelAsyncActionNavigation *> *)values __attribute__((swift_name("union(_:values:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kotlinx_datetimeInstant")))
+@interface AssessmentModelKotlinx_datetimeInstant : AssessmentModelBase <AssessmentModelKotlinComparable>
+- (int32_t)compareToOther:(AssessmentModelKotlinx_datetimeInstant *)other __attribute__((swift_name("compareTo(other:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (AssessmentModelKotlinx_datetimeInstant *)minusDuration:(double)duration __attribute__((swift_name("minus(duration:)")));
+- (double)minusOther:(AssessmentModelKotlinx_datetimeInstant *)other __attribute__((swift_name("minus(other:)")));
+- (AssessmentModelKotlinx_datetimeInstant *)plusDuration:(double)duration __attribute__((swift_name("plus(duration:)")));
+- (int64_t)toEpochMilliseconds __attribute__((swift_name("toEpochMilliseconds()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) int64_t epochSeconds __attribute__((swift_name("epochSeconds")));
+@property (readonly) int32_t nanosecondsOfSecond __attribute__((swift_name("nanosecondsOfSecond")));
+@end;
+
+__attribute__((swift_name("Kotlinx_serialization_coreEncoder")))
+@protocol AssessmentModelKotlinx_serialization_coreEncoder
+@required
+- (id<AssessmentModelKotlinx_serialization_coreCompositeEncoder>)beginCollectionDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor collectionSize:(int32_t)collectionSize __attribute__((swift_name("beginCollection(descriptor:collectionSize:)")));
+- (id<AssessmentModelKotlinx_serialization_coreCompositeEncoder>)beginStructureDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
+- (void)encodeBooleanValue:(BOOL)value __attribute__((swift_name("encodeBoolean(value:)")));
+- (void)encodeByteValue:(int8_t)value __attribute__((swift_name("encodeByte(value:)")));
+- (void)encodeCharValue:(unichar)value __attribute__((swift_name("encodeChar(value:)")));
+- (void)encodeDoubleValue:(double)value __attribute__((swift_name("encodeDouble(value:)")));
+- (void)encodeEnumEnumDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)enumDescriptor index:(int32_t)index __attribute__((swift_name("encodeEnum(enumDescriptor:index:)")));
+- (void)encodeFloatValue:(float)value __attribute__((swift_name("encodeFloat(value:)")));
+- (id<AssessmentModelKotlinx_serialization_coreEncoder>)encodeInlineInlineDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)inlineDescriptor __attribute__((swift_name("encodeInline(inlineDescriptor:)")));
+- (void)encodeIntValue:(int32_t)value __attribute__((swift_name("encodeInt(value:)")));
+- (void)encodeLongValue:(int64_t)value __attribute__((swift_name("encodeLong(value:)")));
+- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
+- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNullableSerializableValueSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeNullableSerializableValue(serializer:value:)")));
+- (void)encodeSerializableValueSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableValue(serializer:value:)")));
+- (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
+- (void)encodeStringValue:(NSString *)value __attribute__((swift_name("encodeString(value:)")));
+@property (readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@end;
+
+__attribute__((swift_name("Kotlinx_serialization_coreSerialDescriptor")))
+@protocol AssessmentModelKotlinx_serialization_coreSerialDescriptor
+@required
+- (NSArray<id<AssessmentModelKotlinAnnotation>> *)getElementAnnotationsIndex:(int32_t)index __attribute__((swift_name("getElementAnnotations(index:)")));
+- (id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)getElementDescriptorIndex:(int32_t)index __attribute__((swift_name("getElementDescriptor(index:)")));
+- (int32_t)getElementIndexName:(NSString *)name __attribute__((swift_name("getElementIndex(name:)")));
+- (NSString *)getElementNameIndex:(int32_t)index __attribute__((swift_name("getElementName(index:)")));
+- (BOOL)isElementOptionalIndex:(int32_t)index __attribute__((swift_name("isElementOptional(index:)")));
+@property (readonly) NSArray<id<AssessmentModelKotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
+@property (readonly) BOOL isInline __attribute__((swift_name("isInline")));
+@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
+@property (readonly) AssessmentModelKotlinx_serialization_coreSerialKind *kind __attribute__((swift_name("kind")));
+@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@end;
+
+__attribute__((swift_name("Kotlinx_serialization_coreDecoder")))
+@protocol AssessmentModelKotlinx_serialization_coreDecoder
+@required
+- (id<AssessmentModelKotlinx_serialization_coreCompositeDecoder>)beginStructureDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
+- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
+- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
+- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
+- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (int32_t)decodeEnumEnumDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
+- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (id<AssessmentModelKotlinx_serialization_coreDecoder>)decodeInlineInlineDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)inlineDescriptor __attribute__((swift_name("decodeInline(inlineDescriptor:)")));
+- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
+- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
+- (AssessmentModelKotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (id _Nullable)decodeNullableSerializableValueDeserializer:(id<AssessmentModelKotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeNullableSerializableValue(deserializer:)")));
+- (id _Nullable)decodeSerializableValueDeserializer:(id<AssessmentModelKotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeSerializableValue(deserializer:)")));
+- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
+- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
+@property (readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
 @end;
 
 __attribute__((swift_name("Kotlinx_serialization_coreSerialFormat")))
@@ -4659,64 +4911,6 @@ __attribute__((swift_name("Kotlinx_serialization_jsonJson")))
 - (AssessmentModelKotlinx_serialization_jsonJsonElement *)encodeToJsonElementSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeToJsonElement(serializer:value:)")));
 - (NSString *)encodeToStringSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeToString(serializer:value:)")));
 - (AssessmentModelKotlinx_serialization_jsonJsonElement *)parseToJsonElementString:(NSString *)string __attribute__((swift_name("parseToJsonElement(string:)")));
-@property (readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
-@end;
-
-__attribute__((swift_name("Kotlinx_serialization_coreEncoder")))
-@protocol AssessmentModelKotlinx_serialization_coreEncoder
-@required
-- (id<AssessmentModelKotlinx_serialization_coreCompositeEncoder>)beginCollectionDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor collectionSize:(int32_t)collectionSize __attribute__((swift_name("beginCollection(descriptor:collectionSize:)")));
-- (id<AssessmentModelKotlinx_serialization_coreCompositeEncoder>)beginStructureDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (void)encodeBooleanValue:(BOOL)value __attribute__((swift_name("encodeBoolean(value:)")));
-- (void)encodeByteValue:(int8_t)value __attribute__((swift_name("encodeByte(value:)")));
-- (void)encodeCharValue:(unichar)value __attribute__((swift_name("encodeChar(value:)")));
-- (void)encodeDoubleValue:(double)value __attribute__((swift_name("encodeDouble(value:)")));
-- (void)encodeEnumEnumDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)enumDescriptor index:(int32_t)index __attribute__((swift_name("encodeEnum(enumDescriptor:index:)")));
-- (void)encodeFloatValue:(float)value __attribute__((swift_name("encodeFloat(value:)")));
-- (void)encodeIntValue:(int32_t)value __attribute__((swift_name("encodeInt(value:)")));
-- (void)encodeLongValue:(int64_t)value __attribute__((swift_name("encodeLong(value:)")));
-- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
-- (void)encodeNullableSerializableValueSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeNullableSerializableValue(serializer:value:)")));
-- (void)encodeSerializableValueSerializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableValue(serializer:value:)")));
-- (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
-- (void)encodeStringValue:(NSString *)value __attribute__((swift_name("encodeString(value:)")));
-@property (readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
-@end;
-
-__attribute__((swift_name("Kotlinx_serialization_coreSerialDescriptor")))
-@protocol AssessmentModelKotlinx_serialization_coreSerialDescriptor
-@required
-- (NSArray<id<AssessmentModelKotlinAnnotation>> *)getElementAnnotationsIndex:(int32_t)index __attribute__((swift_name("getElementAnnotations(index:)")));
-- (id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)getElementDescriptorIndex:(int32_t)index __attribute__((swift_name("getElementDescriptor(index:)")));
-- (int32_t)getElementIndexName:(NSString *)name __attribute__((swift_name("getElementIndex(name:)")));
-- (NSString *)getElementNameIndex:(int32_t)index __attribute__((swift_name("getElementName(index:)")));
-- (BOOL)isElementOptionalIndex:(int32_t)index __attribute__((swift_name("isElementOptional(index:)")));
-@property (readonly) NSArray<id<AssessmentModelKotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
-@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
-@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
-@property (readonly) AssessmentModelKotlinx_serialization_coreSerialKind *kind __attribute__((swift_name("kind")));
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
-@end;
-
-__attribute__((swift_name("Kotlinx_serialization_coreDecoder")))
-@protocol AssessmentModelKotlinx_serialization_coreDecoder
-@required
-- (id<AssessmentModelKotlinx_serialization_coreCompositeDecoder>)beginStructureDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
-- (int32_t)decodeEnumEnumDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
-- (AssessmentModelKotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
-- (id _Nullable)decodeNullableSerializableValueDeserializer:(id<AssessmentModelKotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeNullableSerializableValue(deserializer:)")));
-- (id _Nullable)decodeSerializableValueDeserializer:(id<AssessmentModelKotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeSerializableValue(deserializer:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
 @property (readonly) AssessmentModelKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
 @end;
 
@@ -4772,6 +4966,7 @@ __attribute__((swift_name("Kotlinx_serialization_coreCompositeEncoder")))
 - (void)encodeCharElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index value:(unichar)value __attribute__((swift_name("encodeCharElement(descriptor:index:value:)")));
 - (void)encodeDoubleElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index value:(double)value __attribute__((swift_name("encodeDoubleElement(descriptor:index:value:)")));
 - (void)encodeFloatElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index value:(float)value __attribute__((swift_name("encodeFloatElement(descriptor:index:value:)")));
+- (id<AssessmentModelKotlinx_serialization_coreEncoder>)encodeInlineElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("encodeInlineElement(descriptor:index:)")));
 - (void)encodeIntElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index value:(int32_t)value __attribute__((swift_name("encodeIntElement(descriptor:index:value:)")));
 - (void)encodeLongElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index value:(int64_t)value __attribute__((swift_name("encodeLongElement(descriptor:index:value:)")));
 - (void)encodeNullableSerializableElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index serializer:(id<AssessmentModelKotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeNullableSerializableElement(descriptor:index:serializer:value:)")));
@@ -4798,6 +4993,7 @@ __attribute__((swift_name("Kotlinx_serialization_coreCompositeDecoder")))
 - (double)decodeDoubleElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeDoubleElement(descriptor:index:)")));
 - (int32_t)decodeElementIndexDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("decodeElementIndex(descriptor:)")));
 - (float)decodeFloatElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeFloatElement(descriptor:index:)")));
+- (id<AssessmentModelKotlinx_serialization_coreDecoder>)decodeInlineElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeInlineElement(descriptor:index:)")));
 - (int32_t)decodeIntElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeIntElement(descriptor:index:)")));
 - (int64_t)decodeLongElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeLongElement(descriptor:index:)")));
 - (id _Nullable)decodeNullableSerializableElementDescriptor:(id<AssessmentModelKotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<AssessmentModelKotlinx_serialization_coreDeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeNullableSerializableElement(descriptor:index:deserializer:previousValue:)")));

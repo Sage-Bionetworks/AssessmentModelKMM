@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.survey
 
 import kotlinx.serialization.json.JsonArray
 import org.sagebionetworks.assessmentmodel.*
+import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.AnswerResultObject
 import org.sagebionetworks.assessmentmodel.serialization.ChoiceItemWrapper
 
@@ -115,6 +116,13 @@ interface ChoiceQuestion : Question {
      */
     override fun buildInputItems(): List<InputItem> = choices.map {
         ChoiceItemWrapper(it, singleAnswer, AnswerType.valueFor(baseType), uiHint)
+    }
+
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
+        choices.forEach {
+            it.icon?.copyResourceInfo(moduleInfo.resourceInfo)
+        }
+        return super.unpack(originalNode, moduleInfo, registryProvider)
     }
 }
 

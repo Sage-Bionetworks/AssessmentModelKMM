@@ -1,12 +1,11 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import org.sagebionetworks.assessmentmodel.Assessment
-import org.sagebionetworks.assessmentmodel.AssessmentInfo
-import org.sagebionetworks.assessmentmodel.ModuleInfo
-import org.sagebionetworks.assessmentmodel.Result
+import kotlinx.serialization.modules.plus
+import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import platform.Foundation.NSBundle
 import platform.Foundation.NSString
@@ -18,81 +17,147 @@ class FileLoaderIOS() : FileLoader {
         val bundle = resourceInfo.bundle()
         val filename = assetInfo.resourceName
         val ext = assetInfo.rawFileExtension ?: "json"
-        val url = bundle.URLForResource(filename, ext) ?: return ""
-        return NSString.stringWithContentsOfURL(url, NSUTF8StringEncoding, null) ?: return ""
+        return bundle.loadString(filename, ext)
     }
 }
 
 fun ResourceInfo.bundle() : NSBundle
-        = (this.decoderBundle as? NSBundle) ?: this.bundleIdentifier?.let { NSBundle.bundleWithIdentifier(it) } ?: NSBundle.mainBundle()
+        = this.bundleIdentifier?.let { NSBundle.bundleWithIdentifier(it) } ?: (this.decoderBundle as? NSBundle) ?: NSBundle.mainBundle()
 
-/**
- * syoung 03/18/2020
- * Kotlin/Native to iOS does not allow for using generics or error handling except for the case where there is a single
- * return value so I've tried to organize these interfaces to allow for a fairly flexible implementation for decoding
- * an assessment and/or an assessment group.
- */
-class KotlinDecoder(bundle: NSBundle) : ResourceInfo {
-    var jsonCoder: Json = Json {
-        serializersModule = moduleInfoSerializersModule
-        encodeDefaults = true
-    }
+internal fun NSBundle.loadString(filename: String, ext: String = "json") : String {
+    val url = this.URLForResource(filename, ext) ?: throw NullPointerException("Could not load '$filename' from '${this.bundleIdentifier ?: "null"}'")
+    return NSString.stringWithContentsOfURL(url, NSUTF8StringEncoding, null) ?: throw NullPointerException("Could not load string from $filename")
+}
+
+open class BundleModuleInfo(bundle: NSBundle, override val assessments: List<TransformableAssessment> = listOf()) : ResourceInfo, EmbeddedJsonModuleInfo {
+    override val jsonCoder: Json = Serialization.JsonCoder.default
+    override val resourceInfo: ResourceInfo
+        get() = this
 
     override var decoderBundle: Any? = bundle
     override var packageName: String? = null
-    override val bundleIdentifier: String?
-        get() = null
+    override val bundleIdentifier: String? = null
 }
 
-abstract class KotlinDecodable(val decoder: KotlinDecoder) {
-    abstract val jsonString: String?
+class AssessmentBundleModuleInfo(private val resourceName: String, bundle: NSBundle) : BundleModuleInfo(bundle) {
+    private var _assessments: List<TransformableAssessment>? = null
+    override val assessments: List<TransformableAssessment>
+        get() {
+            if (_assessments == null) {
+                val bundle = resourceInfo.bundle()
+                val jsonString = bundle.loadString(resourceName)
+                val serializer = ListSerializer(PolymorphicSerializer(TransformableAssessment::class))
+                _assessments = jsonCoder.decodeFromString(serializer, jsonString)
+            }
+            return _assessments!!
+        }
 }
 
-// TODO: syoung 01/27/2021 Revisit and get an AssessmentLoader working for iOS. For now, just comment out to unblock Android development.
-//
-//class AssessmentGroupStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-//    @Throws(Throwable::class)
-//    fun decodeObject(): AssessmentGroupWrapper {
-//        try {
-//            val serializer = PolymorphicSerializer(ModuleInfo::class)
-//            val moduleInfo = decoder.jsonCoder.decodeFromString(serializer, jsonString)
-//            moduleInfo.resourceInfo.decoderBundle = decoder.decoderBundle
-//            val assessments = group.assessments.map { AssessmentLoader(it, decoder) }
-//            return AssessmentGroupWrapper(group, assessments)
-//        } catch (err: Exception) {
-//            throw Throwable(err.message)
-//        }
-//    }
-//}
-//data class AssessmentGroupWrapper(val moduleInfo: ModuleInfo, val assessments: List<AssessmentLoader>)
-//
-//class AssessmentLoader(private val placeholder: Assessment,
-//                       private val decoder: KotlinDecoder) : Assessment by placeholder {
-//    @Throws(Throwable::class)
-//    fun decodeObject(): Assessment {
-//        try {
-//            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
-//        } catch (err: Exception) {
-//            throw Throwable(err.message)
-//        }
-//    }
-//}
-//
-//class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : KotlinDecodable(KotlinDecoder(bundle)) {
-//    @Throws(Throwable::class)
-//    fun decodeObject(): Assessment {
-//        try {
-//            val serializer = PolymorphicSerializer(Assessment::class)
-//            val placeholder = decoder.jsonCoder.decodeFromString(serializer, jsonString)
-//            return placeholder.unpack(decoder.moduleInfoProvider, decoder, decoder.moduleInfoProvider.getRegisteredJsonDecoder(placeholder) ?: decoder.jsonCoder)
-//        } catch (err: Exception) {
-//            throw Throwable(err.message)
-//        }
-//    }
-//}
+/**
+ * On iOS, the assessment registry can include embedded resources included in a single bundle,
+ * assessments that are defined on the server, and assessments that are defined using SageResearch.
+ * Therefore, we need to have a way to register modules after the provider is instantiated.
+ *
+ * Simply put, using the bundle identifier on iOS is very brittle and it's better to use the Bundle
+ * directly by using `Bundle.module` when instantiating it and to register modules using code rather
+ * than using a JSON file that includes modules housed within different packages.
+ */
+class AssessmentRegistryProviderIOS(modulesResourceName: String? = null, bundle: NSBundle? = null) :
+    EmbeddedJsonAssessmentRegistryProvider(
+        fileLoader = FileLoaderIOS(),
+        modulesResourceName = modulesResourceName ?: "",
+        modulesDecoderBundle = bundle) {
 
-class ResultEncoder(val result: Result) {
-    var jsonCoder: Json = Serialization.JsonCoder.default
+    private val defaultBundle: NSBundle = bundle ?: NSBundle.mainBundle
+
+    private var _modules: MutableList<ModuleInfo>? = null
+    override val modules: List<ModuleInfo>
+        get() {
+            setupModules()
+            return _modules!!
+        }
+
+    private fun setupModules() {
+        if (_modules == null) {
+            _modules = try {
+                super.modules.toMutableList()
+            } catch (err: Exception) {
+                mutableListOf()
+            }
+        }
+    }
+
+    /**
+     * Register a module *after* instantiating the registry provider.
+     */
+    fun registerModuleInfo(moduleInfo: ModuleInfo) {
+        setupModules()
+        _modules!!.add(moduleInfo)
+    }
+
+    @Throws(Throwable::class)
+    fun loadRegisteredAssessment(identifier: String, version: String? = null): Assessment {
+        val placeholder = AssessmentPlaceholderObject(identifier, AssessmentInfoObject(identifier, version))
+        try {
+            return this.loadAssessment(placeholder)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+
+    @Throws(Throwable::class)
+    fun loadJsonStringAssessment(jsonString: String): Assessment {
+        val loader = AssessmentJsonStringLoader(jsonString, defaultBundle)
+        loader.registryProvider = this
+        return loader.decodeObject()
+    }
+
+    @Throws(Throwable::class)
+    fun loadJsonResourceAssessment(resourceName: String): Assessment {
+        val loader = AssessmentJsonResourceLoader(resourceName, defaultBundle)
+        loader.registryProvider = this
+        return loader.decodeObject()
+    }
+}
+
+abstract class AssessmentLoaderIOS(bundle: NSBundle) : BundleModuleInfo(bundle) {
+    abstract val jsonString: String
+    var registryProvider: AssessmentRegistryProvider = AssessmentRegistryProviderIOS()
+
+    @Throws(Throwable::class)
+    fun decodeObject(): Assessment {
+        try {
+            val serializer = PolymorphicSerializer(Assessment::class)
+            val placeholder = jsonCoder.decodeFromString(serializer, jsonString)
+            return placeholder.unpack(placeholder, this, registryProvider)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
+
+/**
+ * Load an assessment from a JSON string.
+ */
+class AssessmentJsonStringLoader(override val jsonString: String, bundle: NSBundle) : AssessmentLoaderIOS(bundle)
+
+/**
+ * Load an assessment from an embedded JSON file.
+ */
+class AssessmentJsonResourceLoader(private val resourceName: String, bundle: NSBundle) : AssessmentLoaderIOS(bundle) {
+    private var _jsonString: String? = null
+    override val jsonString: String
+        get() {
+        if (_jsonString == null) {
+            val bundle = resourceInfo.bundle()
+            _jsonString = bundle.loadString(resourceName)
+        }
+        return _jsonString ?: throw NullPointerException("Could not decode UTF8 string from $resourceName")
+    }
+}
+
+class ResultEncoder(private val result: Result) {
+    private val jsonCoder: Json = Serialization.JsonCoder.default
     @Throws(Throwable::class)
     fun encodeObject(): String {
         try {
@@ -104,8 +169,8 @@ class ResultEncoder(val result: Result) {
     }
 }
 
-class JsonElementEncoder(val jsonElement: JsonElement) {
-    var jsonCoder: Json = Serialization.JsonCoder.default
+class JsonElementEncoder(private val jsonElement: JsonElement) {
+    private val jsonCoder: Json = Serialization.JsonCoder.default
     @Throws(Throwable::class)
     fun encodeObject(): String {
         try {
@@ -116,8 +181,8 @@ class JsonElementEncoder(val jsonElement: JsonElement) {
     }
 }
 
-class JsonElementDecoder(val jsonString: String) {
-    var jsonCoder: Json = Serialization.JsonCoder.default
+class JsonElementDecoder(private val jsonString: String) {
+    private val jsonCoder: Json = Serialization.JsonCoder.default
     @Throws(Throwable::class)
     fun decodeObject(): JsonElement {
         try {
