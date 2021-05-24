@@ -4697,6 +4697,7 @@ __attribute__((swift_name("NodeNavigator")))
 - (AssessmentModelNavigationPoint *)nodeAfterCurrentNode:(id<AssessmentModelNode> _Nullable)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("nodeAfter(currentNode:branchResult:)")));
 - (AssessmentModelNavigationPoint *)nodeBeforeCurrentNode:(id<AssessmentModelNode> _Nullable)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("nodeBefore(currentNode:branchResult:)")));
 - (AssessmentModelProgress * _Nullable)progressCurrentNode:(id<AssessmentModelNode>)currentNode branchResult:(id<AssessmentModelBranchNodeResult>)branchResult __attribute__((swift_name("progress(currentNode:branchResult:)")));
+- (NSSet<id<AssessmentModelPermissionInfo>> * _Nullable)requestedPermissionsPreviousNode:(id<AssessmentModelNode> _Nullable)previousNode nextNode:(id<AssessmentModelNode> _Nullable)nextNode parentResult:(id<AssessmentModelBranchNodeResult>)parentResult asyncActions:(NSSet<AssessmentModelAsyncActionNavigation *> * _Nullable)asyncActions __attribute__((swift_name("requestedPermissions(previousNode:nextNode:parentResult:asyncActions:)")));
 @property (readonly) id<AssessmentModelAsyncActionContainer> _Nullable asyncActionContainer __attribute__((swift_name("asyncActionContainer")));
 @property (readonly) id<AssessmentModelNodeContainer> node __attribute__((swift_name("node")));
 @end;
