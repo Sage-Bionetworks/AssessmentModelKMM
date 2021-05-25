@@ -103,9 +103,7 @@ class AsyncActionNavigationTest : NavigationTestHelper() {
 
         val point = navigator.nodeAfter(nodeList[2], result)
         assertEquals(nodeList[3], point.node)
-
-        // There are no permissions to request that are *not* associated with an async action.
-        assertNull(point.requestedPermissions)
+        assertEquals(permissions, point.requestedPermissions?.toList())
 
         val expectedActions = setOf(AsyncActionNavigation("foo", setOf(configB), setOf(configC)))
         assertEquals(expectedActions, point.asyncActionNavigations)

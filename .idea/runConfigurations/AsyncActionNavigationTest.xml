@@ -9,7 +9,7 @@
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
     <method v="2">
-      <option name="Make" enabled="true" />
+      <option name="Android.Gradle.BeforeRunTask" enabled="true" goal="" />
     </method>
   </configuration>
 </component>
