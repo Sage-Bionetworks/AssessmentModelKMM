@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import org.sagebionetworks.assessmentmodel.presentation.databinding.FragmentDateTimeInputBinding
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
@@ -51,16 +54,17 @@ class DateTimeInputFragment : StepFragment() {
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
         binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
-
+        //validateDateTimePeriod()
     }
 
-    fun validateDateTimePeriod() : LocalDate? {
+    fun validateDateTimePeriod() : Boolean {
         // Construct LocalDate if all checks pass
         if (validateMonth() && validateYear() && validateDay()) {
             val validUserDate = LocalDate(year, month, day)
-            return validUserDate
+            return true
+        } else {
+            return false
         }
-        return null
     }
 
     fun validateMonth() : Boolean {
