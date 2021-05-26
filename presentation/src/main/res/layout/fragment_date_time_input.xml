@@ -31,15 +31,15 @@
             app:layout_constraintTop_toBottomOf="@+id/question_header" />
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:theme="@style/EditTextThemeOverlay"
             android:id="@+id/textFieldMonth"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="90dp"
+            android:layout_height="60dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/month"
+            android:theme="@style/EditTextThemeOverlay"
             app:layout_constraintEnd_toStartOf="@+id/textFieldDay"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
@@ -53,14 +53,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:theme="@style/EditTextThemeOverlay"
             android:id="@+id/textFieldDay"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="90dp"
+            android:layout_height="60dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/date"
+            android:theme="@style/EditTextThemeOverlay"
             app:layout_constraintEnd_toStartOf="@+id/textFieldYear"
             app:layout_constraintStart_toEndOf="@+id/textFieldMonth"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
@@ -74,14 +74,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:theme="@style/EditTextThemeOverlay"
             android:id="@+id/textFieldYear"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="90dp"
+            android:layout_height="60dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="30dp"
             android:hint="@string/year"
+            android:theme="@style/EditTextThemeOverlay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textFieldDay"
             app:layout_constraintTop_toBottomOf="@+id/question_header">
@@ -107,8 +107,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0">
-        </org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>
+            app:layout_constraintVertical_bias="0.0"></org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

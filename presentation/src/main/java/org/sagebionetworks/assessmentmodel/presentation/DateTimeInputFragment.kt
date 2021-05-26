@@ -51,6 +51,7 @@ class DateTimeInputFragment : StepFragment() {
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
         binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
+
     }
 
     fun validateDateTimePeriod() : LocalDate? {
