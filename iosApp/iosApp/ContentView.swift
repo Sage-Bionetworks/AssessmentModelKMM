@@ -1,22 +1,6 @@
 import SwiftUI
 import AssessmentModel
 
-struct FullScreenModalView: View {
-    @Environment(\.presentationMode) var presentationMode
-    
-    var body: some View {
-        VStack {
-            Text("This is a modal view")
-            Button("Dismiss") {
-                presentationMode.wrappedValue.dismiss()
-            }
-        }
-        .frame(minWidth: .infinity, maxHeight: .infinity)
-        .edgesIgnoringSafeArea(.all)
-        .background(Color.red)
-    }
-}
-
 struct AssessmentInfoView: View {
     let assessment: AssessmentObject
     var body: some View {

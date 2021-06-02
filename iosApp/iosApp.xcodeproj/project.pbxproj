@@ -47,6 +47,7 @@
 		FFA5E832264DF7370042D694 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFA5E831264DF7370042D694 /* Colors.xcassets */; };
 		FFA5E835264DF7BB0042D694 /* Color+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA5E834264DF7BB0042D694 /* Color+Custom.swift */; };
 		FFA5E892264EF7D80042D694 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFA5E891264EF7D80042D694 /* Images.xcassets */; };
+		FFCBD3832667FA9D00F0AAAD /* Image+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCBD3822667FA9D00F0AAAD /* Image+Custom.swift */; };
 		FFE636B0264D9ECD00F3D027 /* AssessmentModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */; };
 		FFE636B1264D9ECD00F3D027 /* AssessmentModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -200,6 +201,7 @@
 		FFA5E831264DF7370042D694 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		FFA5E834264DF7BB0042D694 /* Color+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Custom.swift"; sourceTree = "<group>"; };
 		FFA5E891264EF7D80042D694 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FFCBD3822667FA9D00F0AAAD /* Image+Custom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Image+Custom.swift"; sourceTree = "<group>"; };
 		FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssessmentModel.framework; path = ../assessmentModel/build/bin/ios/debugFramework/AssessmentModel.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -752,7 +754,6 @@
 				FFA5E81B264DCBD70042D694 /* Font+Lato.swift */,
 				FFA5E82D264DD5410042D694 /* Font+PlayfairDisplay.swift */,
 				FFA5E82B264DCF8E0042D694 /* Font+Utilities.swift */,
-				FFA5E82F264DD9000042D694 /* Font+Custom.swift */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -786,6 +787,8 @@
 			isa = PBXGroup;
 			children = (
 				FFA5E812264DCAD90042D694 /* Fonts */,
+				FFA5E82F264DD9000042D694 /* Font+Custom.swift */,
+				FFCBD3822667FA9D00F0AAAD /* Image+Custom.swift */,
 				FFA5E834264DF7BB0042D694 /* Color+Custom.swift */,
 			);
 			path = "Resource Extensions";
@@ -976,6 +979,7 @@
 				FFA5E81C264DCBD70042D694 /* Font+Lato.swift in Sources */,
 				FF2ECC13265C3F0800831866 /* AssessmentModel+Utils.swift in Sources */,
 				FFA5E80F264DC36B0042D694 /* PagedNavigationBar.swift in Sources */,
+				FFCBD3832667FA9D00F0AAAD /* Image+Custom.swift in Sources */,
 				FF74AFFB264F3C4A00C48966 /* PagedNavigationViewModel.swift in Sources */,
 				FF74B05A26545A3900C48966 /* BranchNavigationView.swift in Sources */,
 				FFA5E811264DC5830042D694 /* BranchViewModel.swift in Sources */,
