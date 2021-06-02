@@ -7,6 +7,21 @@ class DateTimeUtilsTest : TestCase() {
 
     fun testValidateDateTimePeriod() {
         // test leap years
+        var d = DateTimeUtils()
+        var leapYears = listOf(1988, 1992, 1996)
+        for (i in leapYears) {
+            assertTrue(i % 4 == 0)
+        }
+        for (i in leapYears) {
+            for (j in 30..31) {
+                assertFalse(d.validateYear(i, 2, j))
+            }
+        }
+        for (i in leapYears) {
+            for (j in 1..29) {
+                assertTrue(d.validateYear(i, 2, j))
+            }
+        }
     }
 
     fun testValidateMonth() {
@@ -33,21 +48,6 @@ class DateTimeUtilsTest : TestCase() {
                 for (k in 2022..2030) {
                     assertFalse(d.validateYear(k, j, i))
                 }
-            }
-        }
-        //leap years
-        var leapYears = listOf(1988, 1992, 1996)
-        for (i in leapYears) {
-            assertTrue(i % 4 == 0)
-        }
-        for (i in leapYears) {
-            for (j in 30..31) {
-                assertFalse(d.validateYear(i, 2, j))
-            }
-        }
-        for (i in leapYears) {
-            for (j in 1..29) {
-                assertTrue(d.validateYear(i, 2, j))
             }
         }
     }
