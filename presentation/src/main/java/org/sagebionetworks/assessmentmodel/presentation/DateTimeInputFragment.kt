@@ -54,7 +54,6 @@ class DateTimeInputFragment : StepFragment() {
         binding.questionHeader.questionSubtitle.text = questionStep.subtitle
         binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
         binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
-        //validateDateTimePeriod()
     }
 
     fun validateDateTimePeriod() : Boolean {
@@ -79,7 +78,6 @@ class DateTimeInputFragment : StepFragment() {
                 binding.textFieldDay.error = "Invalid day for Feb"
                 return false;
             }
-            return validateYear()
         }
         return true;
     }
