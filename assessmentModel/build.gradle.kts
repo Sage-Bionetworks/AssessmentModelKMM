@@ -47,21 +47,23 @@ kotlin {
        publishAllLibraryVariants()
     }
 
-    val buildForDevice = (project.findProperty("device") as? String) == "true"
-    val iosTarget = if (buildForDevice) iosArm64("ios") else iosX64("ios")
-    println("property.device=${project.findProperty("device")}")
-    println("buildForDevice=$buildForDevice")
-    iosTarget.binaries {
-        framework {
-            baseName = "AssessmentModel"
-            // Disable bitcode embedding for the simulator build.
-            if (!buildForDevice) {
-                embedBitcode("disable")
+    val iOSTargetName  = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
+    val iOSTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
+            if (iOSTargetName.startsWith("iphoneos"))
+                ::iosArm64
+            else if (iOSTargetName.startsWith("macos"))
+                ::macosX64
+            else
+                ::iosX64
+    iOSTarget("ios") {
+        binaries {
+            framework {
+                baseName = "AssessmentModel"
+                // Include DSYM in the release build
+                freeCompilerArgs += "-Xg0"
+                // Include Generics in the module header.
+                freeCompilerArgs += "-Xobjc-generics"
             }
-            // Include DSYM in the release build
-            freeCompilerArgs += "-Xg0"
-            // Include Generics in the module header.
-            freeCompilerArgs += "-Xobjc-generics"
         }
     }
 
@@ -86,29 +88,19 @@ kotlin {
 
     }
 
-    tasks.register("copyFramework") {
-        val buildType = project.findProperty("kotlin.build.type") as? String ?: "DEBUG"
-        dependsOn("link${buildType.toLowerCase().capitalize()}FrameworkIos")
-
-        doLast {
-            val srcFile = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getFramework(buildType).outputFile
-            var targetDir = project.findProperty("configuration.build.dir") as? String
-            if (targetDir == null) {
-                targetDir = if (buildForDevice) {
-                    srcFile.parent.replace("/ios/", "/iosArm64/")
-                } else {
-                    srcFile.parent.replace("/ios/", "/iosX64/")
-                }
-            }
-            println("copy from ${srcFile.parent} \nto $targetDir")
-            copy {
-                from(srcFile.parent)
-                into(targetDir)
-                include("AssessmentModel.framework/**")
-                include("AssessmentModel.framework.dSYM")
-            }
-        }
+    val packForXcode by tasks.creating(Sync::class) {
+        group = "build"
+        val mode = System.getenv("CONFIGURATION") ?: project.findProperty("XCODE_CONFIGURATION") as? String ?: "DEBUG"
+        val sdkName = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
+        val targetName = "ios"// + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
+        val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
+        inputs.property("mode", mode)
+        dependsOn(framework.linkTask)
+        val targetDir = File(buildDir, "xcode-frameworks")
+        from({ framework.outputDirectory })
+        into(targetDir)
     }
+    tasks.getByName("build").dependsOn(packForXcode)
 }
 
 publishing {

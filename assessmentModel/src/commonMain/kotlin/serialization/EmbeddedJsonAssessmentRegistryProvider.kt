@@ -17,11 +17,13 @@ import org.sagebionetworks.assessmentmodel.serialization.nodeSerializersModule
  * To specify custom [Json] coders, you could add to the [moduleInfoSerializersModule] a different
  * decoding for each module and use the "type" to define the coder for the module.
  */
-class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileLoader,
-                                             private val modulesResourceName: String,
-                                             private val moduleJsonCoder: Json = Json {
-                                        serializersModule = nodeSerializersModule + moduleInfoSerializersModule
-                                    }
+open class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileLoader,
+                                                  private val modulesResourceName: String,
+                                                  private val moduleJsonCoder: Json = Json {
+                                                      serializersModule = nodeSerializersModule + moduleInfoSerializersModule
+                                                  },
+                                                  private val modulesDecoderBundle: Any? = null,
+                                                  private val modulesPackageName: String? = null
                                     ): AssessmentRegistryProvider {
 
     private var _modules: List<ModuleInfo>? = null
@@ -30,17 +32,25 @@ class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileLoader
             if (_modules == null) {
                 val modulesFile = object : AssetResourceInfo {
                     override val resourceAssetType = StandardResourceAssetType.RAW
-                    override var decoderBundle: Any? = null
+                    override var decoderBundle: Any? = modulesDecoderBundle
                     override val bundleIdentifier: String? = null
                     override val rawFileExtension = "json"
                     override val versionString: String? = null
-                    override var packageName: String? = null
+                    override var packageName: String? = modulesPackageName
                     override val resourceName = modulesResourceName
-
                 }
                 val jsonString = fileLoader.loadFile(assetInfo = modulesFile, resourceInfo = modulesFile)
                 val serializer = ListSerializer(PolymorphicSerializer(ModuleInfo::class))
-                _modules = moduleJsonCoder.decodeFromString(serializer, jsonString)
+                val decodedModules = moduleJsonCoder.decodeFromString(serializer, jsonString)
+                decodedModules.forEach {
+                    if (it.resourceInfo.bundleIdentifier == null) {
+                        it.resourceInfo.decoderBundle = modulesDecoderBundle
+                    }
+                    if (it.resourceInfo.packageName == null) {
+                        it.resourceInfo.packageName = modulesPackageName
+                    }
+                }
+                _modules = decodedModules
             }
             return _modules?: throw AssertionError("Set to null by another thread")
         }

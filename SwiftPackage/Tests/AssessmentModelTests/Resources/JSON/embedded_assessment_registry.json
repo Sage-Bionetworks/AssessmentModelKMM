@@ -1,0 +1,24 @@
+[
+  {
+    "type": "defaultModuleInfo",
+    "packageName": "org.sagebionetworks.assessmentmodel.sampleapp",
+    "assessments": [
+      {
+        "type": "transformableAssessment",
+        "identifier": "sampleId",
+        "title": "Sample Assessment",
+        "subtitle": "Subtitle",
+        "detail": "Some text. This is a test.",
+        "resourceName": "sample_assessment"
+      },
+      {
+        "type": "transformableAssessment",
+        "identifier": "sampleWrapperId",
+        "title": "Wrapped Assessment",
+        "subtitle": "Subtitle",
+        "detail": "Some text. This is a test.",
+        "resourceName": "sample_wrapper_assessment"
+      }
+    ]
+  }
+]

@@ -7,3 +7,5 @@ build/
 local.properties
 *.xcuserstate
 *.xcsettings
+xcschememanagement.plist
+/.build

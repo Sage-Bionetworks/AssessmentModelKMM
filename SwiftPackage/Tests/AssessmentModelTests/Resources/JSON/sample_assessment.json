@@ -1,0 +1,126 @@
+{
+  "type": "assessment",
+  "identifier": "foo",
+  "versionString": "1.2.3",
+  "schemaIdentifier":"bar",
+  "title": "Hello World!",
+  "subtitle": "Subtitle",
+  "detail": "Some text. This is a test.",
+  "estimatedMinutes": 4,
+  "icon": "fooIcon",
+  "footnote": "This is a footnote.",
+  "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
+    "cancel": { "type": "default", "iconName" : "closeX" }
+  },
+  "shouldHideActions": ["goBackward"],
+  "progressMarkers": ["step1","step2"],
+  "steps": [
+    {
+      "identifier": "step1",
+      "type": "instruction",
+      "title": "Instruction Step 1",
+      "detail": "Here are the details for this instruction.",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "crf_seated"
+      }
+    },
+    {
+      "identifier": "step2",
+      "type": "instruction",
+      "title": "Animating image instruction",
+      "detail": "Here are the details for this instruction.",
+      "image": {
+        "type": "animated",
+        "compositeImageName": "crf_stair_step_start_animation",
+        "animationDuration": 0.5,
+        "imageNames": [
+          "crf_stair_step_start_1",
+          "crf_stair_step_start_2",
+          "crf_stair_step_start_3",
+          "crf_stair_step_start_4"
+        ]
+      }
+    },
+    {
+      "identifier": "choice",
+      "type": "choiceQuestion",
+      "title": "How are you feeling today?",
+      "subtitle": "Select all that apply",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "optional": false,
+      "singleChoice": false,
+      "baseType": "integer",
+      "uiHint": "checkmark",
+      "choices":[
+        {"text":"Fabulous!","icon":"choice1","value":1},
+        {"text":"Neutral","value":2},
+        {"text":"Sleepy","value":3},
+        {"text":"None of the above","exclusive":true}
+      ]
+    },
+    {
+      "identifier": "checkboxQuestion",
+      "type": "simpleQuestion",
+      "title": "Yes or No?",
+      "subtitle": "Subtitle goes here",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": true,
+      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "fieldLabel": "Check for Yes"},
+      "skipCheckbox":{"type": "skipCheckbox", "fieldLabel": "No answer"}
+    },
+    {
+      "identifier": "stringQuestion",
+      "type": "simpleQuestion",
+      "title": "What symptoms?",
+      "subtitle": "Subtitle goes here",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": true,
+      "inputItem":{"type" : "string", "placeholder" :  "Enter text"},
+      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+    },
+    {
+      "identifier": "yearQuestion",
+      "type": "simpleQuestion",
+      "title": "When is your birthday?",
+      "subtitle": "Enter birth year",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "image"  : {    "type" : "animated",
+        "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
+        "placementType" : "topBackground",
+        "animationDuration" : 2
+      },
+      "optional": true,
+      "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
+      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"Skip checkbox"}
+    },
+    {
+      "identifier": "multipleInputQuestion",
+      "type": "multipleInputQuestion",
+      "title": "Multiple Questions",
+      "subtitle": "Subtitle goes here",
+      "optional": true,
+      "inputItems": [{"type" : "string", "placeholder" :  "What is your full name?"},
+        {"type" : "string", "placeholder" :  "Enter your first name"},
+        {"type" : "string", "placeholder" :  "Enter your middle name"},
+        {"type" : "string", "placeholder" :  "Enter your last name"},
+        {"type" : "string", "placeholder" :  "What are your pronouns?"}
+      ]
+    }
+  ]
+}
+
