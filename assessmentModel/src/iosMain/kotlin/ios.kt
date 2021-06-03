@@ -52,7 +52,7 @@ actual object DateUtils {
     }
 
     private val iso8601Formatter: NSDateFormatter = {
-        val formatter = NSDateFormatter.new()!!
+        val formatter = NSDateFormatter()
         formatter.dateFormat = DateConstants.BRIDGE_ISO_DATE_TIME_FORMAT
         formatter.locale = NSLocale.localeWithLocaleIdentifier("en_US_POSIX")
         formatter
@@ -66,10 +66,8 @@ actual object DateUtils {
 
     actual fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant {
         val date = iso8601Formatter.dateFromString(dateString)
-        if (date == null) {
-            throw IllegalArgumentException("Unable to parse date string: $dateString")
-        }
-        val timeInterval = date!!.timeIntervalSince1970()
+            ?: throw IllegalArgumentException("Unable to parse date string: $dateString")
+        val timeInterval = date.timeIntervalSince1970()
         val milliSec = (timeInterval * 1000).toLong()
         return Instant.fromEpochMilliseconds(milliSec)
     }

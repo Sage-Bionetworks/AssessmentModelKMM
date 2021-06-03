@@ -184,6 +184,10 @@ interface BranchNodeState : NodeState {
      */
     fun progress(): Progress?
 
+    /**
+     * Is backward navigation allowed from this [currentChild] with the current [currentResult]?
+     */
+    fun allowBackNavigation(): Boolean
 }
 
 interface LeafNodeState : NodeState {
@@ -472,5 +476,11 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         return currentChild?.node?.let {
             navigator.progress(it, currentResult)
         }
+    }
+
+    override fun allowBackNavigation(): Boolean {
+        return currentChild?.node?.let {
+            navigator.allowBackNavigation(it, currentResult)
+        } == true
     }
 }

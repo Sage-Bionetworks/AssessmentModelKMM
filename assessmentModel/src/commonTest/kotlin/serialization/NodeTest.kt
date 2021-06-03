@@ -87,6 +87,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, copy)
     }
 
+    @Test
     fun testActiveCommands_Pairs_Serialization() {
         val stringSet = setOf("playSound", "vibrate", "transitionAutomatically")
         val commands = ActiveStepCommand.fromStrings(stringSet)
@@ -98,6 +99,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEquals(expected, commands)
     }
 
+    @Test
     fun testActiveCommands_Enum_Serialization() {
         val stringSet = setOf(
             "playSoundOnStart", "playSoundOnFinish",
@@ -1063,6 +1065,15 @@ open class NodeTest : NodeSerializationTestHelper() {
             }
             """
 
+        val bundle = TestResourceBundle()
+        val packageName = "org.foo.exampleToo"
+
+        fun button(buttonTitle: String? = null, iconName: String? = null): ButtonActionInfoObject {
+            val ret = ButtonActionInfoObject(buttonTitle, iconName, packageName)
+            ret.decoderBundle = bundle
+            return ret
+        }
+
         val original = SectionObject(
                 identifier = "foo",
                 children = listOf(
@@ -1074,14 +1085,12 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
         original.buttonMap = mapOf(
-                ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
-                ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName = "closeX"))
+                ButtonAction.Navigation.GoForward to button(buttonTitle = "Go, Dogs! Go!"),
+                ButtonAction.Navigation.Cancel to button(iconName = "closeX"))
         original.progressMarkers = listOf("step1", "step2")
         val originalImageInfo = FetchableImage("fooIcon")
         original.imageInfo = originalImageInfo
 
-        val bundle = TestResourceBundle()
-        val packageName = "org.foo.exampleToo"
         originalImageInfo.decoderBundle = bundle
         originalImageInfo.packageName = packageName
 

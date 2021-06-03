@@ -36,40 +36,99 @@ import AssessmentModel
 
 class AssessmentModelTests: XCTestCase {
     
-    func testAssessmentGroup_StringDecoding() {
-        let json = """
-        {
-            "type": "assessmentGroupInfo",
-            "assessments": [
-                {
-                    "identifier":"list",
-                    "type": "transformableAssessment",
-                    "resourceName": "FormStep_List"
-                },
-                {
-                    "identifier": "textfield",
-                    "type": "transformableAssessment",
-                    "resourceName": "FormStep_Textfield"
-                }
-            ]
-        }
-        """ // our data in native (JSON) format
-
+    func testAssessmentLoadedFromEmbeddedResource() {
         do {
-            let loader = AssessmentGroupStringLoader(jsonString: json, bundle: Bundle.module)
-            let group = try loader.decodeObject()
-            try group.assessments.forEach { assessmentLoader in
-                let assessment = try assessmentLoader.decodeObject()
-                print(assessment)
-            }
+            let loader = AssessmentJsonResourceLoader(resourceName: "sample_assessment", bundle: Bundle.module)
+            let assessment = try loader.decodeObject() as? AssessmentObject
+            XCTAssertNotNil(assessment)
+            checkBundlePointer(assessment)
         } catch let err {
             XCTFail("Failed to decode files: \(err)")
+            return
         }
+    }
+    
+    func testAssessmentLoadedFromJsonString() {
+        guard let url = Bundle.module.url(forResource: "sample_assessment", withExtension: "json") else {
+            XCTFail("Failed to find file")
+            return
+        }
+        do {
+            let jsonString = try String(contentsOf: url)
+            let loader = AssessmentJsonStringLoader(jsonString: jsonString, bundle: Bundle.module)
+            let assessment = try loader.decodeObject() as? AssessmentObject
+            XCTAssertNotNil(assessment)
+            checkBundlePointer(assessment)
+        } catch let err {
+            XCTFail("Failed to decode files: \(err)")
+            return
+        }
+    }
+    
+    func testAssessmentLoadedFromRegistry() {
+        do {
+            let registry = AssessmentRegistryProviderIOS(modulesResourceName: "embedded_assessment_registry", bundle: Bundle.module)
+            let assessment = try registry.loadRegisteredAssessment(identifier: "sampleId", version: nil) as? AssessmentObject
+            XCTAssertNotNil(assessment)
+            
+            let wrappedAssessment = try registry.loadRegisteredAssessment(identifier: "sampleWrapperId", version: nil) as? AssessmentObject
+            XCTAssertNotNil(wrappedAssessment)
+            
+            guard let assessment2 = wrappedAssessment?.children.last as? AssessmentObject else {
+                XCTFail("\(String(describing: wrappedAssessment?.children)) are not expected type")
+                return
+            }
+            
+            XCTAssertEqual(assessment?.schemaIdentifier, assessment2.schemaIdentifier)
+            XCTAssertEqual(assessment?.children.count, assessment2.children.count)
+            
+            checkBundlePointer(assessment)
+            checkBundlePointer(assessment2)
+            
+        } catch let err {
+            XCTFail("Failed to decode files: \(err)")
+            return
+        }
+    }
+    
+    func checkBundlePointer(_ assessment: AssessmentObject?) {
+        guard let assessment = assessment else { return }
+        checkNode(node: assessment, prefix: "")
+        checkContainer(container: assessment)
+    }
+    
+    func checkContainer(container: NodeContainer) {
+        container.children.forEach { node in
+            checkNode(node: node, prefix: "\(container.identifier).")
+            if let choices = (node as? ChoiceQuestion)?.choices {
+                choices.forEach { choice in
+                    checkResourceInfo(choice.icon, "\(container.identifier).\(node.identifier).choices[\(choice.icon?.imageName ?? "")]")
+                }
+            }
+            if let sub = node as? NodeContainer {
+                checkContainer(container: sub)
+            }
+        }
+    }
+    
+    func checkNode(node: Node, prefix: String) {
+        checkResourceInfo((node as? ContentNode)?.imageInfo, "\(prefix)\(node.identifier).imageInfo")
+        node.buttonMap.forEach { button in
+            checkResourceInfo(button.value.imageInfo, "\(prefix)\(node.identifier).buttonMap[\(button.key)].imageInfo")
+            checkResourceInfo(button.value as? ResourceInfo,
+                "\(prefix)\(node.identifier).buttonMap[\(button.key)]")
+        }
+    }
+    
+    func checkResourceInfo(_ resourceInfo: ResourceInfo?, _ message: String? = nil) {
+        guard let info = resourceInfo else { return }
+        XCTAssertNotNil(info.decoderBundle, message ?? "")
     }
     
     func testAnswerResult_Serialization() {
         let answerType = AnswerType.INTEGER()
         let result = answerType.createAnswerResult(identifier: "foo", value: 3)
+        let startDateString = DateUtils().bridgeIsoDateTimeString(instant: result.startDateTime)
         do {
             let dictionary = try result.jsonObject() as NSDictionary
             let expectedJson: NSDictionary = [
@@ -79,7 +138,7 @@ class AssessmentModelTests: XCTestCase {
                                 "type": "integer"
                             ],
                             "value" : 3,
-                            "startDate" : result.startDateString,
+                            "startDate" : startDateString,
                             "endDate" : NSNull()
                         ]
             XCTAssertEqual(expectedJson, dictionary)
@@ -138,3 +197,4 @@ extension Result {
         return dictionary
     }
 }
+

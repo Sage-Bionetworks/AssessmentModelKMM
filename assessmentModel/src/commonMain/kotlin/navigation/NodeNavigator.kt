@@ -16,11 +16,14 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         } else if (shouldExitEarly(currentNode, branchResult, false)) {
             direction = NavigationPoint.Direction.Exit
         }
+        val actions = asyncActionNavigations(currentNode, next, branchResult)
+        val permissions = requestedPermissions(currentNode, next, branchResult, actions)
         return NavigationPoint(
             node = next,
             branchResult = branchResult,
             direction = direction,
-            asyncActionNavigations = asyncActionNavigations(currentNode, next, branchResult)
+            asyncActionNavigations = actions,
+            requestedPermissions = permissions
         )
     }
 
@@ -132,6 +135,23 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         return if (!start.isNullOrEmpty() || !stop.isNullOrEmpty()) {
             setOf(AsyncActionNavigation(node.identifier, start, stop))
         } else null
+    }
+
+    protected open fun requestedPermissions(previousNode: Node?,
+                                            nextNode: Node?,
+                                            parentResult: BranchNodeResult,
+                                            asyncActions: Set<AsyncActionNavigation>?) : Set<PermissionInfo>? {
+        val permissions: MutableSet<PermissionInfo> = (previousNode as? PermissionStep)?.permissions?.toMutableSet() ?: mutableSetOf()
+        asyncActions?.forEach {  nav ->
+            nav.startAsyncActions?.forEach { action ->
+                (action as? RecorderConfiguration)?.permissions?.forEach { permission ->
+                    if (!permissions.any { it.permissionType == permission }) {
+                        permissions.add(permission)
+                    }
+                }
+            }
+        }
+        return if (permissions.size > 0) permissions else null
     }
 }
 

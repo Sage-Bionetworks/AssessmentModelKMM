@@ -11,6 +11,7 @@ import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
 import org.sagebionetworks.assessmentmodel.navigation.Navigator
 import org.sagebionetworks.assessmentmodel.navigation.NodeNavigator
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetInfo
+import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAssetType
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
@@ -68,7 +69,9 @@ interface Assessment : BranchNode, ContentNode, AssessmentInfo {
         schemaIdentifier = schemaIdentifier,
         versionString = versionString)
 
-    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Assessment
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Assessment {
+        return super<ContentNode>.unpack(originalNode, moduleInfo, registryProvider) as Assessment
+    }
 }
 
 
@@ -218,7 +221,13 @@ interface Node : ResultMapElement {
     /**
      * Unpack (and potentially replace) the node and set up any required resource pointers.
      */
-    fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node = this
+    fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
+        buttonMap.forEach {
+            (it.value as? ResourceInfo)?.copyResourceInfo(moduleInfo.resourceInfo)
+            it.value.imageInfo?.copyResourceInfo(moduleInfo.resourceInfo)
+        }
+        return this
+    }
 
     /**
      * Does this [Node] support backward navigation?
@@ -366,6 +375,12 @@ interface Step : Node {
      */
     val viewTheme: ViewTheme?
         get() = null
+
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Step {
+        viewTheme?.copyResourceInfo(moduleInfo.resourceInfo)
+        super.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 /**
@@ -390,7 +405,7 @@ interface OverviewStep : PermissionStep {
      */
     val icons: List<ImageInfo>?
 
-    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): ContentNodeStep {
         icons?.forEach { it.copyResourceInfo(moduleInfo.resourceInfo) }
         return super.unpack(originalNode, moduleInfo, registryProvider)
     }
@@ -401,8 +416,16 @@ interface OverviewStep : PermissionStep {
  * required by this step or assessment. Without these preconditions, the [Assessment] cannot measure or collect the data
  * needed for this assessment.
  */
-interface PermissionStep : Step, ContentNode {
+interface PermissionStep : ContentNodeStep {
     val permissions: List<PermissionInfo>?
+}
+
+interface ContentNodeStep : Step, ContentNode {
+    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): ContentNodeStep {
+        super<Step>.unpack(originalNode, moduleInfo, registryProvider)
+        super<ContentNode>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 /**
@@ -424,7 +447,7 @@ interface OptionalStep : Step {
  * text label in an instruction step with the intention that the amount of text will be short enough to be readable on
  * a single screen.
  */
-interface InstructionStep : OptionalStep, ContentNode
+interface InstructionStep : OptionalStep, ContentNodeStep
 
 /**
  * A [CompletionStep] is an interface used to mark a node as a step that is only shown to the participant if they
@@ -446,7 +469,7 @@ interface CompletionStep : Step {
  * For example, a [FormStep] may describe entering a participant's demographics data where the study designer wants to
  * display height, weight, gender, and birth year on a single screen.
  */
-interface FormStep : Step, ContentNode {
+interface FormStep : ContentNodeStep {
 
     /**
      * The children contained within this collection.
@@ -462,7 +485,7 @@ interface FormStep : Step, ContentNode {
 /**
  * A result summary step is used to display a result that is calculated or measured earlier in the [Assessment].
  */
-interface ResultSummaryStep : Step, ContentNode {
+interface ResultSummaryStep : ContentNodeStep {
 
     /**
      * Localized text to display as the title above the result. This is separate from the [title], [subtitle], and

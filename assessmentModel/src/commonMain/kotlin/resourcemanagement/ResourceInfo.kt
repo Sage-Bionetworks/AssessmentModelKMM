@@ -68,7 +68,7 @@ interface AssetInfo {
  */
 interface AssetResourceInfo : AssetInfo, ResourceInfo
 
-fun AssetResourceInfo.copyResourceInfo(fromResourceInfo: ResourceInfo) {
+fun ResourceInfo.copyResourceInfo(fromResourceInfo: ResourceInfo) {
     this.decoderBundle = this.decoderBundle ?: fromResourceInfo.decoderBundle
     this.packageName = this.packageName ?: fromResourceInfo.packageName
 }
