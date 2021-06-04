@@ -1,7 +1,6 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +10,9 @@ import org.sagebionetworks.assessmentmodel.survey.QuestionState
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
 /**
- * A simple [Fragment] subclass.
- * Use the [DateTimeInputFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * A DateTimeInputFragment class
+ * Allows a user to input a month, day and year into three text fields.
+ * Validates the user input and verifies it is a correctly formatted date.
  */
 class DateTimeInputFragment : StepFragment() {
     private var _binding: FragmentDateTimeInputBinding? = null
