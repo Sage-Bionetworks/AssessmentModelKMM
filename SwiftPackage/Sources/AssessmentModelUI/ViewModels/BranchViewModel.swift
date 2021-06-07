@@ -95,21 +95,24 @@ open class BranchViewModel : ObservableObject, NodeUIController, Identifiable {
                           direction: .forward)
     }
     
+    private var permissionsHandler: PermissionsHandler?
+    
     private func _handleNodeChange(nodeState: NodeState,
                                    requestedPermissions: Set<AnyHashable>?,
                                    asyncActionNavigations: Set<AsyncActionNavigation>?,
                                    direction: NavigationPoint.Direction) {
-        let handler = PermissionsHandler(requestedPermissions: requestedPermissions)
-        handler.requestPermissions { (failedPermission, error) in
-            guard error == nil, failedPermission == nil else {
-                self.handleFailedRequiredPermission(failedPermission, with: error)
+        self.permissionsHandler = PermissionsHandler(requestedPermissions: requestedPermissions)
+        self.permissionsHandler!.requestPermissions { [weak self] (failedPermission, error) in
+            guard error == nil, failedPermission == nil, let strongSelf = self else {
+                self?.handleFailedRequiredPermission(failedPermission, with: error)
                 return
             }
             debugPrint(nodeState.node.identifier)
-            self.navigationViewModel.currentDirection = direction
-            self.currentNodeState = nodeState
-            self.updateViewModel()
-            self.handleAsyncActionNavigations(asyncActionNavigations)
+            strongSelf.navigationViewModel.currentDirection = direction
+            strongSelf.currentNodeState = nodeState
+            strongSelf.updateViewModel()
+            strongSelf.handleAsyncActionNavigations(asyncActionNavigations)
+            strongSelf.permissionsHandler = nil
         }
     }
     

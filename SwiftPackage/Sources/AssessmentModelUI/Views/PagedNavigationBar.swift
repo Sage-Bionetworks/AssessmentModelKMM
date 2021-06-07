@@ -38,7 +38,7 @@ struct PagedNavigationBar : View {
         VStack(spacing: 0.0) {
             
             if viewModel.pageCount > 0, !viewModel.isEstimated {
-                PagingDotsView(viewModel: viewModel)
+                PagingDotsView()
                     .padding(.horizontal, 40.0)
             }
                 
@@ -79,7 +79,7 @@ struct TextButtonView : View {
 }
 
 struct PagingDotsView : View {
-    @ObservedObject var viewModel: PagedNavigationViewModel
+    @EnvironmentObject var viewModel: PagedNavigationViewModel
     let dotSize: CGFloat = 10
     var body: some View {
         HStack {

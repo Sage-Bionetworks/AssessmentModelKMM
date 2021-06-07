@@ -65,6 +65,10 @@ struct BranchNavigationView_Previews: PreviewProvider {
         Group {
             BranchNavigationView()
                 .environmentObject(previewPermissionsBranchViewModel(0))
+            BranchNavigationView()
+                .environment(\.sizeCategory, .extraExtraLarge)
+                .previewDevice("iPhone SE (2nd generation)")
+                .environmentObject(previewPermissionsBranchViewModel(1))
         }
     }
 }
