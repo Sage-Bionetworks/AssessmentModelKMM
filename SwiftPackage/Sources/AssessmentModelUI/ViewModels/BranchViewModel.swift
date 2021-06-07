@@ -64,7 +64,7 @@ open class BranchViewModel : ObservableObject, NodeUIController, Identifiable {
     
     /// By default, this view model can handle `ContentNode` views.
     open func canHandle(node: Node) -> Bool {
-        node is Step
+        node is ContentNodeStep
     }
     
     open func goForward() {

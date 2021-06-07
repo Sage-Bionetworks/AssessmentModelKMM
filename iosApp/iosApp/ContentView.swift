@@ -31,7 +31,8 @@ struct ContentView: View {
             }
         }
         .fullScreenCover(item: $viewModel.currentAssessmentViewModel) { item in
-            BranchNavigationView(branchViewModel: item)
+            BranchNavigationView()
+                .environmentObject(item)
         }
     }
 }

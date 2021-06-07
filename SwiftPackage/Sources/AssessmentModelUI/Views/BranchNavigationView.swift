@@ -34,20 +34,26 @@ import SwiftUI
 import AssessmentModel
 
 public struct BranchNavigationView : View {
-    @ObservedObject public var branchViewModel: BranchViewModel
+    @EnvironmentObject public var branchViewModel: BranchViewModel
     
     public var body: some View {
         VStack {
             if let nodeState = branchViewModel.currentNodeState {
-                if let node = nodeState.node as? ContentNodeStep {
-                    InstructionStepContentView(node: node)
-                }
-                else {
-                    Text("\(nodeState.node.identifier) not handled.")
-                }
+                buildContent(nodeState)
             }
             Spacer()
-            PagedNavigationBar(viewModel: branchViewModel.navigationViewModel)
+            PagedNavigationBar()
+                
+        }
+        .environmentObject(branchViewModel.navigationViewModel)
+    }
+    
+    @ViewBuilder func buildContent(_ nodeState: NodeState) -> some View {
+        if let node = nodeState.node as? ContentNodeStep {
+            InstructionStepContentView(node: node)
+        }
+        else {
+            Text("\(nodeState.node.identifier) not handled.")
         }
     }
 }
@@ -57,7 +63,8 @@ public struct BranchNavigationView : View {
 struct BranchNavigationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            BranchNavigationView(branchViewModel: previewPermissionsBranchViewModel(0))
+            BranchNavigationView()
+                .environmentObject(previewPermissionsBranchViewModel(0))
         }
     }
 }

@@ -33,7 +33,7 @@
 import SwiftUI
 
 struct PagedNavigationBar : View {
-    @ObservedObject var viewModel: PagedNavigationViewModel
+    @EnvironmentObject var viewModel: PagedNavigationViewModel
     var body: some View {
         VStack(spacing: 0.0) {
             
@@ -97,14 +97,20 @@ struct PagingDotsView : View {
 struct PagedNavigationBar_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
                 .preferredColorScheme(.dark)
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
                 .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-            PagedNavigationBar(viewModel: PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
+            PagedNavigationBar()
+                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: "Next"))
                 .preferredColorScheme(.dark)
         }
     }
