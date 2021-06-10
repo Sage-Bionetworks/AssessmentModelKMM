@@ -1,6 +1,5 @@
 //
-//  PagedNavigationViewModel.swift
-//
+//  ResourceInfo+Utils.swift
 //
 //  Copyright © 2021 Sage Bionetworks. All rights reserved.
 //
@@ -31,37 +30,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import SwiftUI
+import Foundation
 import AssessmentModel
 
-public class PagedNavigationViewModel : ObservableObject {
-
-    @Published public var pageCount: Int
-    @Published public var currentIndex: Int
-    @Published public var forwardEnabled: Bool = true
-    @Published public var backEnabled: Bool = false
-    @Published public var currentDirection: NavigationPoint.Direction = .forward
-    @Published public var forwardButtonText: String? = nil
-    @Published public var isEstimated: Bool = false
-    
-    lazy public var goForward: (() -> Void) = {
-        guard self.currentIndex + 1 < self.pageCount else { return }
-        self.currentIndex += 1
-        self.backEnabled = self.currentIndex > 0
-        self.currentDirection = .forward
-    }
-    
-    lazy public var goBack: (() -> Void) = {
-        guard self.currentIndex > 0 else { return }
-        self.currentIndex -= 1
-        self.backEnabled = self.currentIndex > 0
-        self.currentDirection = .backward
-    }
-    
-    public init(pageCount: Int = 0, currentIndex: Int = 0, buttonText: String? = nil) {
-        self.pageCount = pageCount
-        self.currentIndex = currentIndex
-        self.backEnabled = currentIndex > 0
-        self.forwardButtonText = buttonText
+extension AssessmentModel.ResourceInfo {
+    var bundle: Bundle? {
+        (self.bundleIdentifier != nil) ? Bundle(identifier: bundleIdentifier!) : (self.decoderBundle as? Bundle)
     }
 }

@@ -34,6 +34,7 @@
 import SwiftUI
 import AssessmentModel
 import MobilePassiveData
+import SharedMobileUI
 
 open class BranchViewModel : ObservableObject, NodeUIController, Identifiable {
 
@@ -108,7 +109,7 @@ open class BranchViewModel : ObservableObject, NodeUIController, Identifiable {
                 return
             }
             debugPrint(nodeState.node.identifier)
-            strongSelf.navigationViewModel.currentDirection = direction
+            strongSelf.navigationViewModel.currentDirection = (direction == .backward) ? .backward : .forward
             strongSelf.currentNodeState = nodeState
             strongSelf.updateViewModel()
             strongSelf.handleAsyncActionNavigations(asyncActionNavigations)

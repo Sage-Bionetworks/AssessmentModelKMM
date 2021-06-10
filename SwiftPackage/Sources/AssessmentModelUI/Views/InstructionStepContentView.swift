@@ -32,41 +32,31 @@
 
 import SwiftUI
 import AssessmentModel
+import SharedMobileUI
 
 struct InstructionStepContentView : View {
     let node: ContentNodeStep
     
     var body: some View {
-        ScrollView {
-            // Only show the image if the font size is not extra large.
-            let fontRatio: CGFloat = Font.fontRatio()
-            if let imageName = node.imageInfo?.imageName,
-                fontRatio < 1.5 {
-                
-                // If the accessibility for text is large then shrink the image
-                // so that it doesn't take the whole screen.
-                let imageRatio: CGFloat = (fontRatio > 1.0) ? (1.0 / fontRatio) : 1.0
-                let height = 160.0 * imageRatio
-                
-                Image(imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: height, alignment: .center)
-                    .padding(.top, 10.0)
-                    .padding(.bottom, 44.0)
-            }
-            Text(node.title ?? "")
-                .font(.instructionTitle)
-                .padding(.bottom, 14.0)
-                .padding(.horizontal, 60.0)
-            Text(node.detail ?? "")
-                .font(.instructionDetail)
-                .padding(.horizontal, 56.0)
-                .padding(.bottom, 14.0)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxHeight: .infinity)
-        }
+        InstructionContentView(title: node.titleKey,
+                               detail: node.detailKey,
+                               imageName: node.imageName,
+                               bundle: node.bundle)
+    }
+}
+
+extension ContentNodeStep {
+    fileprivate var titleKey: LocalizedStringKey {
+        LocalizedStringKey(title ?? "")
+    }
+    fileprivate var detailKey: LocalizedStringKey {
+        LocalizedStringKey(detail ?? "")
+    }
+    fileprivate var imageName: String? {
+        self.imageInfo?.imageName
+    }
+    fileprivate var bundle: Bundle? {
+        self.imageInfo?.bundle
     }
 }
 

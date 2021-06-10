@@ -32,6 +32,7 @@
 
 import SwiftUI
 import AssessmentModel
+import SharedMobileUI
 
 public struct BranchNavigationView : View {
     @EnvironmentObject public var branchViewModel: BranchViewModel
