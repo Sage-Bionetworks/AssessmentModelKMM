@@ -33,7 +33,7 @@ open class AssessmentViewModel(
     }
 
     fun cancel() {
-        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = false, markFinished = false), null)
+        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false), null)
     }
 
     override fun canHandle(node: Node): Boolean {

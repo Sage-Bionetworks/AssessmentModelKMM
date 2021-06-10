@@ -42,7 +42,7 @@ open class InstructionStepFragment: StepFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.title.text = step.title
         binding.detail.text = step.detail
-        val drawable = step.imageInfo?.loadDrawable(context!!)
+        val drawable = step.imageInfo?.loadDrawable(requireContext())
         binding.header.image.setImageDrawable(drawable)
         if (drawable is AnimationDrawable) {
             drawable.start()
