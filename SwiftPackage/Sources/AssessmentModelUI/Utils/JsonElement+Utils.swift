@@ -1,4 +1,6 @@
 //
+//  JsonElement+Utils.swift
+//
 //  Copyright © 2021 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,31 +30,39 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+import Foundation
+import JsonModel
+import AssessmentModel
 
-import UIKit
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        return true
+public extension AssessmentModel.Kotlinx_serialization_jsonJsonElement {
+    
+    func jsonElement() -> JsonModel.JsonElement {
+        let encoder = AssessmentModel.JsonElementEncoder(jsonElement: self)
+        do {
+            let string = try encoder.encodeObject()
+            guard let data = string.data(using: .utf8) else {
+                return .null
+            }
+            let decoder = JSONDecoder()
+            return try decoder.decode(JsonModel.JsonElement.self, from: data)
+        } catch let err {
+            debugPrint("Failed to convert to json element: \(err)")
+            return .null
+        }
     }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    
+    static func new(from jsonElement: JsonModel.JsonElement) -> AssessmentModel.Kotlinx_serialization_jsonJsonElement? {
+        do {
+            let encodedData = try jsonElement.jsonEncodedData()
+            guard let encodedString = String(data: encodedData, encoding: .utf8) else {
+                return nil
+            }
+            let decoder = AssessmentModel.JsonElementDecoder(jsonString: encodedString)
+            return try decoder.decodeObject()
+        } catch let err {
+            debugPrint("Failed to convert to json element: \(err)")
+            return nil
+        }
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-
 }
 

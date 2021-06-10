@@ -1,4 +1,7 @@
 //
+//  SampleSurvey.swift
+//
+//
 //  Copyright © 2021 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,31 +31,27 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+import Foundation
+import AssessmentModel
 
-import UIKit
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        return true
-    }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-
+func previewSurveyBranchViewModel(_ initialIndex: Int) -> BranchViewModel {
+    let nodeState = PreviewBranchNodeState(previewSurveyAssessment, initialIndex: initialIndex)
+    return BranchViewModel(nodeState)
 }
 
+func previewSurveyQuestionState(_ index: Int) -> QuestionState {
+    previewSurveyBranchViewModel(index).currentNodeState! as! QuestionState
+}
+
+let previewSurveyAssessment = AssessmentObject(identifier: "Sample Survey",
+                                               children: previewSurveyNodes,
+                                               progressMarkers: [])
+
+let previewSurveyNodes: [ContentNode] = [
+    SimpleQuestionObject(identifier: "enterText",
+                         inputItem: StringTextInputItemObject(),
+                         skipCheckbox: nil,
+                         title: "Title: Enter Text",
+                         subtitle: "Subtitle: Enter some text into the input field below.",
+                         detail: "Detail: This can be anything you want.")
+]

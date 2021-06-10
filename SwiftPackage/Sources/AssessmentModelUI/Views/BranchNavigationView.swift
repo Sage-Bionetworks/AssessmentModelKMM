@@ -1,4 +1,6 @@
 //
+//  BranchNavigationView.swift
+//
 //  Copyright © 2021 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,31 +30,48 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+import SwiftUI
+import AssessmentModel
+import SharedMobileUI
 
-import UIKit
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        return true
+public struct BranchNavigationView : View {
+    @EnvironmentObject public var branchViewModel: BranchViewModel
+    
+    public var body: some View {
+        VStack {
+            if let nodeState = branchViewModel.currentNodeState {
+                buildContent(nodeState)
+            }
+            Spacer()
+            PagedNavigationBar()
+                
+        }
+        .environmentObject(branchViewModel.navigationViewModel)
     }
-
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    
+    @ViewBuilder func buildContent(_ nodeState: NodeState) -> some View {
+        if let node = nodeState.node as? ContentNodeStep {
+            InstructionStepContentView(node: node)
+        }
+        else {
+            Text("\(nodeState.node.identifier) not handled.")
+        }
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-
-
 }
 
+#if PREVIEW
+
+struct BranchNavigationView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            BranchNavigationView()
+                .environmentObject(previewPermissionsBranchViewModel(0))
+            BranchNavigationView()
+                .environment(\.sizeCategory, .extraExtraLarge)
+                .previewDevice("iPhone SE (2nd generation)")
+                .environmentObject(previewPermissionsBranchViewModel(1))
+        }
+    }
+}
+
+#endif
