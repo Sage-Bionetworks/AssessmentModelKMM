@@ -60,10 +60,28 @@ interface RootNodeController {
     fun handleReadyToSave(reason: FinishedReason, nodeState: NodeState)
 }
 
-sealed class FinishedReason( val saveResult: Boolean, val markFinished: Boolean) {
-    object Complete : FinishedReason(true, true)
-    data class Failed(val error: Error) : FinishedReason(false, false)
-    class Incomplete(saveResult: Boolean, markFinished: Boolean) : FinishedReason(saveResult, markFinished)
+enum class SaveResults {
+    /**
+     * Save and upload results immediately.
+     */
+    Now,
+
+    /**
+     * Wait until scheduled session has expired before uploading results. This allows the participant
+     * to come back and finish the assessment.
+     */
+    WhenSessionExpires,
+
+    /**
+     * Discard any results.
+     */
+    Never
+}
+
+sealed class FinishedReason( val saveResult: SaveResults, val markFinished: Boolean, val declined: Boolean) {
+    object Complete : FinishedReason(SaveResults.Now, true, declined = false)
+    data class Failed(val error: Error) : FinishedReason(SaveResults.Never, false, declined = false)
+    class Incomplete(saveResult: SaveResults, markFinished: Boolean, declined: Boolean) : FinishedReason(saveResult, markFinished, declined)
 }
 
 interface NodeState {
@@ -378,7 +396,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         markFinalResultIfNeeded()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
-                exitEarly(FinishedReason.Incomplete(false, markFinished = false), navigationPoint.asyncActionNavigations)
+                exitEarly(FinishedReason.Incomplete(SaveResults.Never, markFinished = false, declined = false), navigationPoint.asyncActionNavigations)
             parent == null -> {
                 callReadyToSaveIfNeeded(FinishedReason.Complete)
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
