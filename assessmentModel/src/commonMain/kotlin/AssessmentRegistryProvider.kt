@@ -35,5 +35,30 @@ interface AssessmentRegistryProvider {
         return moduleInfo?.getAssessment(assessmentPlaceholder, this)
             ?: throw IllegalStateException("This version of the application cannot load " + {assessmentPlaceholder.assessmentInfo.identifier})
     }
+
+    /**
+     * Does this [AssessmentRegistryProvider] include an [Assessment] that matches the given [AssessmentPlaceholder]?
+     */
+    fun canLoadAssessment(assessmentPlaceholder: AssessmentPlaceholder): Boolean {
+        return modules.any { it.hasAssessment(assessmentPlaceholder) }
+    }
+
+}
+
+/**
+ * For apps with more than one [AssessmentRegistryProvider], [RootAssessmentRegistryProvider] can be used
+ * to wrap them all into one. This is common when when including Assessments from multiple libraries,
+ * each of which would have it's own [AssessmentRegistryProvider]
+ */
+class RootAssessmentRegistryProvider(override val fileLoader: FileLoader, val providers: List<AssessmentRegistryProvider>) : AssessmentRegistryProvider {
+
+    override val modules: List<ModuleInfo>
+        get() {
+            val result: MutableList<ModuleInfo> = ArrayList()
+            for (provider in providers) {
+                result += provider.modules
+            }
+            return result
+        }
 }
 
