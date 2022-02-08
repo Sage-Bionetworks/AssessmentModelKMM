@@ -12,13 +12,12 @@ plugins {
 android {
     compileSdkVersion(29)
     defaultConfig {
-        minSdkVersion(19)
+        minSdkVersion(21)
         multiDexEnabled = true //Required when setting minSdkVersion to 20 or lower
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
