@@ -22,3 +22,33 @@ interface CustomNodeStateProvider {
     fun customLeafNodeStateFor(node: Node, parent: BranchNodeState): NodeState? = null
 
 }
+
+/**
+ * For apps with more than one [CustomNodeStateProvider], [RootCustomNodeStateProvider] can be used
+ * to wrap them all into one.
+ */
+class RootCustomNodeStateProvider(val providers: List<CustomNodeStateProvider>) :
+    CustomNodeStateProvider {
+
+    override fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState? {
+        for (provider in providers) {
+            val state = provider.customBranchNodeStateFor(node, parent)
+            if (state != null) {
+                return state
+            }
+        }
+        return null
+    }
+
+    override fun customLeafNodeStateFor(node: Node, parent: BranchNodeState): NodeState? {
+        for (provider in providers) {
+            val state = provider.customLeafNodeStateFor(node, parent)
+            if (state != null) {
+                return state
+            }
+        }
+        return null
+    }
+}
+
+
