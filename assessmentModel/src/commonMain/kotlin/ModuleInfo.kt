@@ -57,7 +57,7 @@ interface JsonModuleInfo : ModuleInfo {
  * several modules and their assessments without having *all* the assessment data in memory.
  */
 interface EmbeddedJsonModuleInfo : JsonModuleInfo {
-    val assessments: List<TransformableAssessment>
+    val assessments: List<Assessment>
 
     /**
      * If *any* of the [TransformableAssessment] objects match the identifier for the placeholder's
