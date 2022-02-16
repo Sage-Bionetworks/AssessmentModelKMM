@@ -9,9 +9,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.*
 import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.DirectNavigationRule
-import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
-import org.sagebionetworks.assessmentmodel.navigation.SurveyNavigationRule
+import org.sagebionetworks.assessmentmodel.navigation.*
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.BaseType
@@ -45,6 +43,7 @@ val nodeSerializersModule = SerializersModule {
     }
     polymorphic(Assessment::class) {
         subclass(AssessmentObject::class)
+        subclass(TransformableAssessmentObject::class)
     }
     polymorphic(TransformableAssessment::class) {
         subclass(TransformableAssessmentObject::class)
@@ -172,7 +171,11 @@ data class TransformableAssessmentObject(
     override val title: String? = null,
     override val subtitle: String? = null,
     override val detail: String? = null
-) : TransformableAssessment
+) : TransformableAssessment {
+
+    override val imageInfo: ImageInfo?
+        get() = null
+}
 
 /**
  * NodeContainer

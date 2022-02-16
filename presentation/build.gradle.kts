@@ -10,21 +10,22 @@ android {
     compileSdkVersion(29)
 
     defaultConfig {
-        minSdkVersion(19)
+        minSdkVersion(21)
         targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = "1.8"
+        useIR = true
     }
 
     buildTypes {

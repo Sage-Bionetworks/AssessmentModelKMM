@@ -151,14 +151,30 @@ interface TransformableNode : Node, AssetInfo {
  * an active task may be defined using a hardcoded JSON file and included in a module but requested via a
  * [TransformableAssessment] that is vended from a server.
  */
-interface TransformableAssessment : TransformableNode, AssessmentInfo, ContentInfo {
+interface TransformableAssessment : Assessment, TransformableNode, AssessmentInfo, ContentInfo {
+
+    /**
+     * An [TransformableAssessment] should never be used directly. Instead, it should always be replaced
+     * with a loaded [Assessment] before the [BranchNodeState] instantiates the associated [Result].
+     */
+    override fun createResult(): AssessmentResult {
+        throw IllegalStateException("This node must be replaced during unpacking with an actual assessment")
+    }
+
+    /**
+     * An [TransformableAssessment] should never be used directly. Instead, it should always be replaced
+     * with a loaded [Assessment] before the [BranchNodeState] instantiates the associated [Navigator].
+     */
+    override fun createNavigator(nodeState: BranchNodeState): Navigator {
+        throw IllegalStateException("This node must be replaced during unpacking with an actual assessment")
+    }
 
     override fun unpack(
         originalNode: Node?,
         moduleInfo: ModuleInfo,
         registryProvider: AssessmentRegistryProvider
     ): Assessment {
-        return super.unpack(originalNode, moduleInfo, registryProvider) as Assessment
+        return super<TransformableNode>.unpack(originalNode, moduleInfo, registryProvider) as Assessment
     }
 }
 
