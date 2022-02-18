@@ -108,6 +108,11 @@ abstract class StepObject : NodeObject(), ContentNodeStep {
             this.viewTheme = original.viewTheme
         }
     }
+
+    override fun unpack( originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider ): StepObject {
+        super<ContentNodeStep>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 @Serializable
@@ -279,6 +284,15 @@ data class OverviewStepObject(
     override var learnMore: ButtonActionInfo?
         get() = buttonMap[ButtonAction.Navigation.LearnMore]
         set(value) = setButton(ButtonAction.Navigation.LearnMore, value)
+
+    override fun unpack(
+        originalNode: Node?,
+        moduleInfo: ModuleInfo,
+        registryProvider: AssessmentRegistryProvider
+    ): StepObject {
+        super<StepObject>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 @Serializable
