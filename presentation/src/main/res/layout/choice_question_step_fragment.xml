@@ -7,21 +7,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TextQuestionStepFragment">
 
-    <include layout="@layout/include_question_header"
-        android:id="@+id/question_header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height"
-        android:layout_alignParentTop="true" />
-
-    <ScrollView
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/question_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/question_header">
-        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView
-            android:id="@+id/question_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:layout_alignParentTop="true"/>
+
+<!--    <include layout="@layout/include_question_header"-->
+<!--        android:id="@+id/question_header"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/header_height"-->
+<!--        android:layout_alignParentTop="true" />-->
+
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/question_header">-->
+<!--        <org.sagebionetworks.assessmentmodel.presentation.inputs.ChoiceInputView-->
+<!--            android:id="@+id/question_input"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </ScrollView>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

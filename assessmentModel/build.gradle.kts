@@ -26,6 +26,11 @@ android {
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
     }
+    buildFeatures.viewBinding = true
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
+        kotlinCompilerVersion = "1.5.21"
+    }
 }
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.1")
@@ -81,6 +86,7 @@ kotlin {
         }
         sourceSets["androidLibMain"].dependencies {
             implementation("androidx.appcompat:appcompat:1.3.0")
+            implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
         }
         sourceSets["iosMain"].dependencies {
         }

@@ -14,11 +14,7 @@ import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
-import org.sagebionetworks.assessmentmodel.survey.CheckboxInputItem
-import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
-import org.sagebionetworks.assessmentmodel.survey.KeyboardTextInputItem
-import org.sagebionetworks.assessmentmodel.survey.MultipleInputQuestion
-import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
+import org.sagebionetworks.assessmentmodel.survey.*
 import org.w3c.dom.Text
 
 open class AssessmentFragment : Fragment() {
@@ -134,6 +130,7 @@ open class AssessmentFragment : Fragment() {
                 TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
             }
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
+            is ComboBoxQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
             else -> return DebugStepFragment()

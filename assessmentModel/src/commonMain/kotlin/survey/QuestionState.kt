@@ -44,7 +44,7 @@ interface QuestionFieldState : FieldState {
      *
      * @return Whether or not the change of selection state should trigger a refresh.
      */
-    fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean
+    fun didChangeSelectionState(selected: Boolean, forItem: InputItemState): Boolean
 
     /**
      * Save the given answer. It is assumed that the answer in this case has already been validated for the given input
@@ -149,7 +149,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             // Otherwise, there should be a non-null result and all the non-optional items should be selected.
             (currentResult.jsonValue != null && itemStates.none { !it.inputItem.optional && !it.selected })
 
-    override fun didChangeSelectionState(selected: Boolean, forItem: ChoiceInputItemState): Boolean {
+    override fun didChangeSelectionState(selected: Boolean, forItem: InputItemState): Boolean {
         forItem.selected = selected
         return updateAnswerState(forItem)
     }
@@ -252,12 +252,13 @@ class KeyboardInputItemStateImpl<T>(override val index: Int,
                                     override val inputItem: KeyboardTextInputItem<T>,
                                     override var storedAnswer: JsonElement?) : KeyboardInputItemState<T> {
     override val textValidator = inputItem.buildTextValidator()
-    override var selected = (storedAnswer != null)
+    override var selected = (storedAnswer != null) //This seems to contradict with AnyInputItemState
 }
 
-class ChoiceInputItemStateImpl(override val index: Int,
-                               override val inputItem: ChoiceInputItem,
-                               override var selected: Boolean) : ChoiceInputItemState
+expect class ChoiceInputItemStateImpl(index: Int,
+                                      inputItem: ChoiceInputItem,
+                                      selected: Boolean) : ChoiceInputItemState {
+}
 
 class AnyInputItemStateImpl(override val index: Int,
                             override val inputItem: InputItem,
