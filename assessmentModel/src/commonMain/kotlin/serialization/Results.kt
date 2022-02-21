@@ -87,6 +87,7 @@ data class ResultObject(override val identifier: String,
 @Serializable
 @SerialName("collection")
 data class CollectionResultObject(override val identifier: String,
+                                  @SerialName("children")
                                   override var inputResults: MutableSet<Result> = mutableSetOf(),
                                   @SerialName("startDate")
                                   @Serializable(with = InstantSerializer::class)
