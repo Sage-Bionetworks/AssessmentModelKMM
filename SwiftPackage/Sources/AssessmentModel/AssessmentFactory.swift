@@ -38,7 +38,7 @@ open class AssessmentFactory : SerializationFactory {
     
     public static var shared = AssessmentFactory.defaultFactory
     
-//    public let buttonActionSerializer = ButtonActionSerializer()
+//
 //    public let colorMappingSerializer = ColorMappingSerializer()
 //    public let imageThemeSerializer = ImageThemeSerializer()
 //    public let inputItemSerializer = InputItemSerializer()
@@ -49,11 +49,13 @@ open class AssessmentFactory : SerializationFactory {
     
     public let resultSerializer = ResultDataSerializer()
     public let answerTypeSerializer = AnswerTypeSerializer()
+    public let buttonActionSerializer = ButtonActionSerializer()
     
     public required init() {
         super.init()
         self.registerSerializer(resultSerializer)
         self.registerSerializer(answerTypeSerializer)
+        self.registerSerializer(buttonActionSerializer)
     }
     
 }
