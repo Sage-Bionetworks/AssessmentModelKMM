@@ -40,21 +40,22 @@ open class AssessmentFactory : SerializationFactory {
     
 //
 //    public let colorMappingSerializer = ColorMappingSerializer()
-//    public let imageThemeSerializer = ImageThemeSerializer()
+//    public let viewThemeSerializer = ViewThemeSerializer()
 //    public let inputItemSerializer = InputItemSerializer()
 //    public let resultNodeSerializer = ResultNodeSerializer()
 //    public let stepSerializer = StepSerializer()
 //    public let taskSerializer = TaskSerializer()
-//    public let viewThemeSerializer = ViewThemeSerializer()
     
-    public let resultSerializer = ResultDataSerializer()
     public let answerTypeSerializer = AnswerTypeSerializer()
     public let buttonActionSerializer = ButtonActionSerializer()
+    public let imageInfoSerializer = ImageInfoSerializer()
+    public let resultSerializer = ResultDataSerializer()
     
     public required init() {
         super.init()
-        self.registerSerializer(resultSerializer)
         self.registerSerializer(answerTypeSerializer)
+        self.registerSerializer(resultSerializer)
+        self.registerSerializer(imageInfoSerializer)
         self.registerSerializer(buttonActionSerializer)
     }
     

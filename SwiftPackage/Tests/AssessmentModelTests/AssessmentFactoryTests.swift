@@ -55,11 +55,13 @@ class AssessmentModelTests: XCTestCase {
         do {
             let schemas = try doc.buildSchemas()
 
-            XCTAssertEqual(schemas.count, 4)
+            XCTAssertEqual(schemas.count, 5)
             
             checkAnswerTypeSchema(schemas)
             checkButtonActionInfoSchema(schemas)
+            checkImageInfoSchema(schemas)
             checkResultDataSchema(schemas)
+    
         }
         catch let err {
             XCTFail("Failed to build the JsonSchema: \(err)")
@@ -112,6 +114,30 @@ class AssessmentModelTests: XCTestCase {
                                            expectedType: $0.1,
                                            sharedKeys: ["buttonTitle", "iconName", "bundleIdentifier", "packageName"],
                                            expectedSerializableType: "ButtonActionInfoType")
+            else {
+                XCTFail("Unexpected nil for \($0.0)")
+                return
+            }
+        }
+    }
+    
+    func checkImageInfoSchema(_ schemas: [JsonSchema]) {
+        guard let schema = schemas.first(where: { $0.id.className == "ImageInfo" })
+        else {
+            XCTFail("Failed to build the expected JSON schema for `ImageInfo`.")
+            return
+        }
+        
+        let expectedAnswerTypeClassAndType = [
+            ("FetchableImageInfoObject","fetchable"),
+            ("AnimatedImageInfoObject","animated"),
+        ]
+        expectedAnswerTypeClassAndType.forEach {
+            guard let _ = checkDefinitions(on: schema,
+                                           className: $0.0,
+                                           expectedType: $0.1,
+                                           sharedKeys: [],
+                                           expectedSerializableType: "ImageInfoType")
             else {
                 XCTFail("Unexpected nil for \($0.0)")
                 return
@@ -237,7 +263,8 @@ class AssessmentModelTests: XCTestCase {
                                                 using: factory, protocolType: AnswerType.self))
         XCTAssertTrue(checkPolymorphicExamples(for: factory.buttonActionSerializer.examples,
                                                 using: factory, protocolType: ButtonActionInfo.self))
-
+        XCTAssertTrue(checkPolymorphicExamples(for: factory.imageInfoSerializer.examples,
+                                                using: factory, protocolType: ImageInfo.self))
     }
     
     func checkPolymorphicExamples<ProtocolType>(for objects: [ProtocolType], using factory: SerializationFactory, protocolType: ProtocolType.Type) -> Bool {
