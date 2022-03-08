@@ -274,12 +274,9 @@ data class OverviewStepObject(
     @SerialName("image")
     override var imageInfo: ImageInfo? = null,
     override var icons: List<IconInfoObject>? = null,
-    override var permissions: List<PermissionInfoObject>? = null
-) : StepObject(), OverviewStep {
-    override var learnMore: ButtonActionInfo?
-        get() = buttonMap[ButtonAction.Navigation.LearnMore]
-        set(value) = setButton(ButtonAction.Navigation.LearnMore, value)
-}
+    override var permissions: List<PermissionInfoObject>? = null,
+    override var learnMore: ButtonActionInfo? = null
+) : StepObject(), OverviewStep
 
 @Serializable
 data class PermissionInfoObject(

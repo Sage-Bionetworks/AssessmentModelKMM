@@ -13,10 +13,10 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 val buttonSerializersModule = SerializersModule {
     polymorphic(ButtonActionInfo::class) {
         subclass(ButtonActionInfoObject::class)
-        subclass(NavigationButtonActionInfoObject::class)
-        subclass(ReminderButtonActionInfoObject::class)
-        subclass(WebViewButtonActionInfoObject::class)
-        subclass(VideoViewButtonActionInfoObject::class)
+//        subclass(NavigationButtonActionInfoObject::class)
+//        subclass(ReminderButtonActionInfoObject::class)
+//        subclass(WebViewButtonActionInfoObject::class)
+//        subclass(VideoViewButtonActionInfoObject::class)
     }
 }
 
@@ -46,47 +46,51 @@ data class ButtonActionInfoObject(override val buttonTitle: String? = null,
                                   override var packageName: String? = null,
                                   override var bundleIdentifier: String? = null) : SerializableButtonActionInfo()
 
-@Serializable
-@SerialName("navigation")
-data class NavigationButtonActionInfoObject(override val buttonTitle: String? = null,
-                                            override val iconName: String? = null,
-                                            override val skipToIdentifier: String,
-                                            override var packageName: String? = null,
-                                            override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), NavigationButtonActionInfo
+// TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
+//@Serializable
+//@SerialName("navigation")
+//data class NavigationButtonActionInfoObject(override val buttonTitle: String? = null,
+//                                            override val iconName: String? = null,
+//                                            override val skipToIdentifier: String,
+//                                            override var packageName: String? = null,
+//                                            override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), NavigationButtonActionInfo
 
-@Serializable
-@SerialName("reminder")
-data class ReminderButtonActionInfoObject(override val buttonTitle: String? = "\$remindMeLaterButtonTitle\$", // TODO: syoung 01/21/2020 Implement a localization strategy
-                                          override val iconName: String? = null,
-                                          override val reminderIdentifier: String,
-                                          override val reminderPrompt: String? = null,
-                                          override val reminderAlert: String? = null,
-                                          override var packageName: String? = null,
-                                          override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), ReminderButtonActionInfo
+// TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
+//@Serializable
+//@SerialName("reminder")
+//data class ReminderButtonActionInfoObject(override val buttonTitle: String? = "\$remindMeLaterButtonTitle\$", // TODO: syoung 01/21/2020 Implement a localization strategy
+//                                          override val iconName: String? = null,
+//                                          override val reminderIdentifier: String,
+//                                          override val reminderPrompt: String? = null,
+//                                          override val reminderAlert: String? = null,
+//                                          override var packageName: String? = null,
+//                                          override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), ReminderButtonActionInfo
+//
 
-@Serializable
-@SerialName("webView")
-data class WebViewButtonActionInfoObject(override val buttonTitle: String? = null,
-                                         override val iconName: String? = null,
-                                         override val url: String,
-                                         override val title: String? = null,
-                                         val usesBackButton: Boolean? = null,
-                                         val closeButtonTitle: String? = null,
-                                         override var packageName: String? = null,
-                                         override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), WebViewButtonActionInfo {
-    override val backButtonStyle: ButtonStyle
-        get() = closeButtonTitle?.let {
-            return ButtonStyle.Footer(it) }
-                ?: usesBackButton?.let {
-                    return if (it) ButtonStyle.NavigationHeader.Back else ButtonStyle.NavigationHeader.Close }
-                ?: super.backButtonStyle
-}
-
-@Serializable
-@SerialName("videoView")
-data class VideoViewButtonActionInfoObject(override val buttonTitle: String? = null,
-                                           override val iconName: String? = null,
-                                           override val url: String,
-                                           override val title: String? = null,
-                                           override var packageName: String? = null,
-                                           override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), VideoViewButtonActionInfo
+// TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
+//@Serializable
+//@SerialName("webView")
+//data class WebViewButtonActionInfoObject(override val buttonTitle: String? = null,
+//                                         override val iconName: String? = null,
+//                                         override val url: String,
+//                                         override val title: String? = null,
+//                                         val usesBackButton: Boolean? = null,
+//                                         val closeButtonTitle: String? = null,
+//                                         override var packageName: String? = null,
+//                                         override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), WebViewButtonActionInfo {
+//    override val backButtonStyle: ButtonStyle
+//        get() = closeButtonTitle?.let {
+//            return ButtonStyle.Footer(it) }
+//                ?: usesBackButton?.let {
+//                    return if (it) ButtonStyle.NavigationHeader.Back else ButtonStyle.NavigationHeader.Close }
+//                ?: super.backButtonStyle
+//}
+//
+//@Serializable
+//@SerialName("videoView")
+//data class VideoViewButtonActionInfoObject(override val buttonTitle: String? = null,
+//                                           override val iconName: String? = null,
+//                                           override val url: String,
+//                                           override val title: String? = null,
+//                                           override var packageName: String? = null,
+//                                           override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), VideoViewButtonActionInfo

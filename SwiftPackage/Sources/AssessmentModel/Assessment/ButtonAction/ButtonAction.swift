@@ -53,9 +53,14 @@ public enum ButtonAction {
         case skip
         
         /// Exit the assessment. This action is associated with a button that will exit the assessment.
-        /// That action may include prompting the particpant to save state, mark schedules as discarded,
-        /// do later, etc. but typically, those actions are presented using a popover or sheet.
         case cancel
+        
+        /// Pause the assessment. Depending upon the assessment/step, this button may be associated
+        /// with an action sheet or just pause a timer.
+        case pause
+        
+        /// Go back in the assessment and show previously displayed instructions.
+        case reviewInstructions
     }
     
     /// A custom action on the step. Must be handled by the app.
