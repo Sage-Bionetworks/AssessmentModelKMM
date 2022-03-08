@@ -39,7 +39,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                                         "end": "Stop moving"},
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
             }
            """
@@ -58,7 +57,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.shouldEndOnInterrupt = true
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.commands = setOf(
             ActiveStepCommand.PlaySoundOnStart,
@@ -227,7 +225,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
@@ -258,7 +255,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -290,7 +286,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
@@ -326,7 +321,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -387,7 +381,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                                         "end": "Stop moving"},
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
             }
            """
@@ -406,7 +399,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.shouldEndOnInterrupt = true
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
         original.commands = setOf(
             ActiveStepCommand.PlaySoundOnStart,
@@ -519,7 +511,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "shouldHideActions": ["goBackward"],
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "viewTheme": { 
@@ -541,15 +532,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                 ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.spokenInstructions = mapOf(SpokenInstructionTiming.Keyword.Start to "Start now")
-        original.viewTheme = ViewThemeObject(
-            viewIdentifier = "Moo",
-            storyboardIdentifier = "Ba",
-            fragmentIdentifier = "La",
-            fragmentLayout = "LaLa"
-        )
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -606,7 +590,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 ],
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
            }
            """
@@ -625,7 +608,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         ))
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -684,7 +666,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
            }
            """
@@ -701,7 +682,6 @@ open class NodeTest : NodeSerializationTestHelper() {
             ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -743,7 +723,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
@@ -762,7 +741,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
         original.surveyRules = listOf(ComparableSurveyRuleObject(JsonPrimitive(1900)))
@@ -809,7 +787,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
@@ -838,7 +815,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
 
@@ -997,7 +973,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "title": "Hello World!",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   }
            }
@@ -1008,7 +983,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.title = "Hello World!"
         val originalImageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.imageInfo = originalImageInfo
 
@@ -1410,7 +1384,6 @@ open class NodeSerializationTestHelper {
     fun assertEqualStep(expected: Step, actual: Step) {
         assertEqualNodes(expected, actual)
         assertEquals(expected.spokenInstructions, actual.spokenInstructions)
-        assertEquals(expected.viewTheme, actual.viewTheme)
     }
 
     fun assertEqualActiveStep(expected: ActiveStep, actual: ActiveStep) {

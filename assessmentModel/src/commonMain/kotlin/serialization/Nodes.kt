@@ -99,13 +99,11 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
 @Serializable
 abstract class StepObject : NodeObject(), ContentNodeStep {
     override var spokenInstructions: Map<SpokenInstructionTiming, String>? = null
-    override var viewTheme: ViewThemeObject? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
         if (original is StepObject) {
             this.spokenInstructions = original.spokenInstructions
-            this.viewTheme = original.viewTheme
         }
     }
 }

@@ -57,7 +57,7 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
@@ -73,7 +73,7 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
@@ -89,7 +89,7 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
@@ -105,7 +105,7 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
@@ -123,7 +123,7 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
