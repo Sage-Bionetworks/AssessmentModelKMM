@@ -43,21 +43,68 @@
       }
     },
     {
-      "identifier": "choice",
+      "identifier": "feeling",
       "type": "choiceQuestion",
       "title": "How are you feeling today?",
       "subtitle": "Select all that apply",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
-      "optional": false,
+      "optional": true,
       "singleChoice": false,
       "baseType": "integer",
       "uiHint": "checkmark",
       "choices":[
-        {"text":"Fabulous!","icon":"choice1","value":1},
+        {"text":"Fabulous!","value":1},
         {"text":"Neutral","value":2},
         {"text":"Sleepy","value":3},
-        {"text":"None of the above","exclusive":true}
+        {"text":"None of the above", "value": 4, "exclusive":true},
+        {"text":"Prefer not to answer", "value": 5, "exclusive":true}
+      ]
+    },
+    {
+      "identifier": "favoriteColor",
+      "type": "choiceQuestion",
+      "title": "What is your favorite color?",
+      "subtitle": "Select one",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "optional": true,
+      "singleChoice": true,
+      "baseType": "integer",
+      "uiHint": "radio",
+      "choices":[
+        {"text":"Red","value":1},
+        {"text":"Orange","value":2},
+        {"text":"Yellow","value":3},
+        {"text":"Green", "value": 4},
+        {"text":"Blue", "value": 5},
+        {"text":"Purple", "value": 6}
+      ],
+      "surveyRules" : [{
+        "matchingAnswer": 1,
+        "ruleOperator": "eq",
+        "skipToIdentifier": "checkboxQuestion"
+      },
+        {
+          "matchingAnswer": 4,
+          "ruleOperator": "ge",
+          "skipToIdentifier": "stringQuestion"
+        }
+        ]
+    },
+    {
+      "identifier": "colorOther",
+      "type": "comboBoxQuestion",
+      "title": "What is your favorite animal?",
+      "subtitle": "Select one",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "optional": true,
+      "singleChoice": true,
+      "uiHint": "radio",
+      "choices":[
+        {"text":"Cat","value":"Cat"},
+        {"text":"Dog","value":"Dog"}
       ]
     },
     {
