@@ -1,6 +1,5 @@
 //
 //  AssessmentModelTests.swift
-//  AssessmentModelTests
 //
 //  Copyright © 2019-2022 Sage Bionetworks. All rights reserved.
 //

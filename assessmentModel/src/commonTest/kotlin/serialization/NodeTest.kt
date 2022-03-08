@@ -1,19 +1,32 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
-import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
 
 open class NodeTest : NodeSerializationTestHelper() {
 
-    private val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder =  Json{
+        serializersModule = Serialization.SerializersModule.default
+            .plus( SerializersModule {
+                polymorphic(AsyncActionConfiguration::class) {
+                    subclass(MotionRecorderConfiguration::class)
+                }
+            })
+        encodeDefaults = true
+    }
 
     /**
      * ActiveStepObject
@@ -1407,3 +1420,11 @@ open class NodeSerializationTestHelper {
         }
     }
 }
+
+@Serializable
+@SerialName("motion")
+data class MotionRecorderConfiguration(
+    override val identifier: String,
+    override val comment: String? = null,
+    override val startStepIdentifier: String? = null
+) : AsyncActionConfiguration

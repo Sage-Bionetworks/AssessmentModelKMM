@@ -155,7 +155,7 @@ open class InputItemsTest {
         val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(true),
-                fieldLabel = "Pick me!",
+                text = "Pick me!",
                 icon = FetchableImage("pickMe"),
                 exclusive = true,
                 detail = "more info")
@@ -175,7 +175,7 @@ open class InputItemsTest {
         val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive("foo"),
-                fieldLabel = "Pick me!",
+                text = "Pick me!",
                 icon = FetchableImage("pickMe"),
                 exclusive = true,
                 detail = "more info")
@@ -195,7 +195,7 @@ open class InputItemsTest {
         val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
         val original = ChoiceOptionObject(
                 value = JsonPrimitive(1),
-                fieldLabel = "Pick me!",
+                text = "Pick me!",
                 icon = FetchableImage("pickMe"),
                 exclusive = true,
                 detail = "more info")

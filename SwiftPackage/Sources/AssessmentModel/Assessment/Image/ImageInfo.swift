@@ -108,8 +108,8 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
     
     override init() {
         examples = [
-            FetchableImageInfoObject.examples().first!,
-            AnimatedImageInfoObject.examples().first!,
+            FetchableImage.examples().first!,
+            AnimatedImage.examples().first!,
         ]
     }
     
@@ -136,8 +136,8 @@ public extension SerializableImageInfo {
     var typeName: String { return serializableType.rawValue }
 }
 
-/// `FetchableImageInfoObject` is a `Codable` concrete implementation of `ImageInfo`.
-public struct FetchableImageInfoObject : ImageInfo, SerializableImageInfo {
+/// `FetchableImage` is a `Codable` concrete implementation of `ImageInfo`.
+public struct FetchableImage : ImageInfo, SerializableImageInfo {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension"
     }
@@ -165,7 +165,7 @@ public struct FetchableImageInfoObject : ImageInfo, SerializableImageInfo {
     }
 }
 
-extension FetchableImageInfoObject : DocumentableStruct {
+extension FetchableImage : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
         return CodingKeys.allCases
     }
@@ -205,9 +205,9 @@ extension FetchableImageInfoObject : DocumentableStruct {
         }
     }
     
-    public static func examples() -> [FetchableImageInfoObject] {
-        let imageA = FetchableImageInfoObject(imageName: "blueDog")
-        let imageB = FetchableImageInfoObject(imageName: "redCat.jpeg",
+    public static func examples() -> [FetchableImage] {
+        let imageA = FetchableImage(imageName: "blueDog")
+        let imageB = FetchableImage(imageName: "redCat.jpeg",
                                                          bundle: nil,
                                                          packageName: "org.example.sharedresources",
                                                          bundleIdentifier: "org.example.SharedResources")
@@ -215,8 +215,8 @@ extension FetchableImageInfoObject : DocumentableStruct {
     }
 }
 
-/// `AnimatedImageInfoObject` is a `Codable` concrete implementation of `AnimatedImageInfo`.
-public struct AnimatedImageInfoObject : AnimatedImageInfo, SerializableImageInfo {
+/// `AnimatedImage` is a `Codable` concrete implementation of `AnimatedImageInfo`.
+public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo {
     private enum CodingKeys: String, OrderedEnumCodingKey {
         case serializableType = "type", imageNames, animationDuration, animationRepeatCount, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension"
     }
@@ -242,7 +242,7 @@ public struct AnimatedImageInfoObject : AnimatedImageInfo, SerializableImageInfo
     }
 }
 
-extension AnimatedImageInfoObject : DocumentableStruct {
+extension AnimatedImage : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
         return CodingKeys.allCases
     }
@@ -288,9 +288,9 @@ extension AnimatedImageInfoObject : DocumentableStruct {
         }
     }
     
-    public static func examples() -> [AnimatedImageInfoObject] {
-        let imageA = AnimatedImageInfoObject(imageNames: ["blueDog1", "blueDog2", "blueDog3"], animationDuration: 2)
-        let imageB = AnimatedImageInfoObject(imageNames: ["redCat1", "redCat2", "redCat3"], animationDuration: 2, bundleIdentifier: "org.example.SharedResources")
+    public static func examples() -> [AnimatedImage] {
+        let imageA = AnimatedImage(imageNames: ["blueDog1", "blueDog2", "blueDog3"], animationDuration: 2)
+        let imageB = AnimatedImage(imageNames: ["redCat1", "redCat2", "redCat3"], animationDuration: 2, bundleIdentifier: "org.example.SharedResources")
         return [imageA, imageB]
     }
 }

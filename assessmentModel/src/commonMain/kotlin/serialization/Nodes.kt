@@ -386,7 +386,7 @@ data class StringChoiceQuestionObject(
     override var uiHint: UIHint = UIHint.Choice.ListItem
 ) : AbstractChoiceQuestionObject(), ChoiceQuestion {
     override val choices: List<ChoiceOptionObject>
-        get() = items.map { ChoiceOptionObject(fieldLabel = it, value = JsonPrimitive(it)) }
+        get() = items.map { ChoiceOptionObject(text = it, value = JsonPrimitive(it)) }
     override val baseType: BaseType
         get() = BaseType.STRING
 }

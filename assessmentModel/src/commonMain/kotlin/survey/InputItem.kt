@@ -1,9 +1,20 @@
 package org.sagebionetworks.assessmentmodel.survey
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
+import org.sagebionetworks.assessmentmodel.StringEnum
+import org.sagebionetworks.assessmentmodel.matching
 import org.sagebionetworks.assessmentmodel.serialization.*
 
 /**
@@ -103,17 +114,14 @@ interface ChoiceInputItem : InputItem, ChoiceOption {
         get() = null
 
     /**
-     * [fieldLabel] does not apply to choice input items and is always null.
-     */
-    override val fieldLabel: String?
-        get() = null
-
-    /**
      * A choice input is always optional because it is either a checkbox yes/no input where the difference between
      * "not selected" and "not answered" is indeterminate, or it is a choice in a list of other choices.
      */
     override val optional: Boolean
         get() = true
+
+    override val exclusive: Boolean
+        get() = (choiceSelectorType == ChoiceSelectorType.Default)
 }
 
 /**
@@ -138,7 +146,7 @@ interface ChoiceOption {
      * A localized string that displays a short text offering a hint to the user of the data to be entered for this
      * field.
      */
-    val fieldLabel: String?
+    val fieldLabel: String
 
     /**
      * Additional detail shown below the [fieldLabel]
@@ -152,11 +160,33 @@ interface ChoiceOption {
     val icon: FetchableImage?
 
     /**
-     * Does filling in or selecting this [InputItem] mean that the other [ChoiceOption] should be deselected or
-     * disabled? For example, this can be used in a multiple selection question to allow for a "none of the above"
-     * input item that is exclusive to the other items.
+     * Does selecting this choice mean that the other options should be deselected or selected as
+     * well?
+     *
+     * For example, this can be used in a multiple selection question to allow for a "none of the above"
+     * choice that is `exclusive` to the other items or an "all of the above" choice that should
+     * select `all` other choices as well (except those that are marked as `exclusive`).
      */
-    val exclusive: Boolean
+    val choiceSelectorType: ChoiceSelectorType
+        get() = ChoiceSelectorType.Default
+}
+
+@Serializable
+enum class ChoiceSelectorType : StringEnum {
+    Default, Exclusive, All;
+
+    @Serializer(forClass = ChoiceSelectorType::class)
+    companion object : KSerializer<ChoiceSelectorType> {
+        override val descriptor: SerialDescriptor =
+            PrimitiveSerialDescriptor("ChoiceSelectorType", PrimitiveKind.STRING)
+        override fun deserialize(decoder: Decoder): ChoiceSelectorType {
+            val name = decoder.decodeString()
+            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
+        }
+        override fun serialize(encoder: Encoder, value: ChoiceSelectorType) {
+            encoder.encodeString(value.name)
+        }
+    }
 }
 
 /**
@@ -178,8 +208,8 @@ interface SkipCheckboxInputItem  : ChoiceInputItem {
     override val icon: FetchableImage?
         get() = null
 
-    override val exclusive: Boolean
-        get() = true
+    override val choiceSelectorType: ChoiceSelectorType
+        get() = ChoiceSelectorType.Exclusive
 
     override val answerType: AnswerType
         get() = AnswerType.NULL
@@ -200,8 +230,6 @@ interface CheckboxInputItem : ChoiceInputItem {
     override val fieldLabel: String
     override val uiHint: UIHint
         get() = UIHint.Choice.Checkbox
-    override val exclusive: Boolean
-        get() = false
     override val answerType: AnswerType
         get() = AnswerType.BOOLEAN
     override val icon: FetchableImage?

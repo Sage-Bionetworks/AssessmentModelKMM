@@ -199,13 +199,17 @@ data class CheckboxInputItemObject(@SerialName("identifier")
 
 @Serializable
 data class ChoiceOptionObject(val value: JsonElement = JsonNull,
-                              @SerialName("text")
-                              override val fieldLabel: String? = null,
+                              val text: String? = null,
                               @Serializable(ImageNameSerializer::class)
                               override val icon: FetchableImage? = null,
-                              override val exclusive: Boolean = false,
+                              val exclusive: Boolean? = null,
+                              val selectorType: ChoiceSelectorType? = null,
                               override val detail: String? = null) : ChoiceOption {
+    override val fieldLabel: String
+        get() = text ?: value.toString()
     override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
+    override val choiceSelectorType: ChoiceSelectorType
+        get() = if (exclusive == true) ChoiceSelectorType.Exclusive else selectorType ?: super.choiceSelectorType
 }
 
 /**
@@ -218,9 +222,9 @@ data class ChoiceItemWrapper(val choice: ChoiceOption,
                              override val uiHint: UIHint) : ChoiceInputItem, ChoiceOption by choice {
     override val resultIdentifier: String?
         get() = (choice.jsonValue(true) ?: JsonNull).toString()
-    override val exclusive: Boolean
-        get() = singleChoice || choice.exclusive
-    override val fieldLabel: String?
+    override val choiceSelectorType: ChoiceSelectorType
+        get() = if (singleChoice) ChoiceSelectorType.Default else choice.choiceSelectorType
+    override val fieldLabel: String
         get() = choice.fieldLabel
 }
 

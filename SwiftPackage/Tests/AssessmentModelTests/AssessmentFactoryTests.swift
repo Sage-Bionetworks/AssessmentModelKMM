@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AssessmentModelTests.swift
 //  
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
 //
@@ -129,8 +129,8 @@ class AssessmentModelTests: XCTestCase {
         }
         
         let expectedAnswerTypeClassAndType = [
-            ("FetchableImageInfoObject","fetchable"),
-            ("AnimatedImageInfoObject","animated"),
+            ("FetchableImage","fetchable"),
+            ("AnimatedImage","animated"),
         ]
         expectedAnswerTypeClassAndType.forEach {
             guard let _ = checkDefinitions(on: schema,
