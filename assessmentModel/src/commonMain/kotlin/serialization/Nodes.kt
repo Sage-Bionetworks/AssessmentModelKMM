@@ -27,9 +27,7 @@ val nodeSerializersModule = SerializersModule {
         subclass(AssessmentPlaceholderObject::class)
         subclass(AssessmentObject::class)
         subclass(ChoiceQuestionObject::class)
-        subclass(ComboBoxQuestionObject::class)
         subclass(CountdownStepObject::class)
-        subclass(FormStepObject::class)
         subclass(InstructionStepObject::class)
         subclass(MultipleInputQuestionObject::class)
         subclass(OverviewStepObject::class)
@@ -37,7 +35,6 @@ val nodeSerializersModule = SerializersModule {
         subclass(ResultSummaryStepObject::class)
         subclass(SimpleQuestionObject::class)
         subclass(SectionObject::class)
-        subclass(StringChoiceQuestionObject::class)
         subclass(TransformableAssessmentObject::class)
         subclass(TransformableNodeObject::class)
     }
@@ -50,10 +47,8 @@ val nodeSerializersModule = SerializersModule {
     }
     polymorphic(Question::class) {
         subclass(ChoiceQuestionObject::class)
-        subclass(ComboBoxQuestionObject::class)
         subclass(MultipleInputQuestionObject::class)
         subclass(SimpleQuestionObject::class)
-        subclass(StringChoiceQuestionObject::class)
     }
 }
 
@@ -301,19 +296,6 @@ data class ResultSummaryStepObject(
  */
 
 @Serializable
-@SerialName("form")
-data class FormStepObject(
-    override val identifier: String,
-    @SerialName("image")
-    override val imageInfo: ImageInfo? = null,
-    // TODO: syoung 04/22/2020 iOS defines the child nodes as "inputFields" but may want to change that?
-    //  Basically, what is the keyword that makes sense for the nodes in a collection where the "step" shows multiple
-    //  questions as a part of a single step?
-    @SerialName("inputFields")
-    override val children: List<Node>
-) : StepObject(), FormStep
-
-@Serializable
 abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
@@ -352,7 +334,7 @@ abstract class AbstractChoiceQuestionObject : QuestionObject(), ChoiceQuestion {
 data class SimpleQuestionObject(
     override val identifier: String,
     override val inputItem: InputItem,
-    override var skipCheckbox: SkipCheckboxInputItem? = null
+    override val uiHint: UIHint? = null,
 ) : QuestionObject(), SimpleQuestion
 
 @Serializable
@@ -360,56 +342,20 @@ data class SimpleQuestionObject(
 data class MultipleInputQuestionObject(
     override val identifier: String,
     override val inputItems: List<InputItem>,
-    override var sequenceSeparator: String? = null,
-    override var skipCheckbox: SkipCheckboxInputItem? = null
+    override val uiHint: UIHint? = null,
 ) : QuestionObject(), MultipleInputQuestion
 
 @Serializable
 @SerialName("choiceQuestion")
 data class ChoiceQuestionObject(
     override val identifier: String,
-    override val choices: List<ChoiceOptionObject>,
+    override val choices: List<JsonChoiceObject>,
     override val baseType: BaseType = BaseType.STRING,
     @SerialName("singleChoice")
     override var singleAnswer: Boolean = true,
-    override var uiHint: UIHint = UIHint.Choice.ListItem
+    override var uiHint: UIHint? = null,
+    override val other: InputItem? = null,
 ) : AbstractChoiceQuestionObject(), ChoiceQuestion
-
-@Serializable
-@SerialName("stringChoiceQuestion")
-data class StringChoiceQuestionObject(
-    override val identifier: String,
-    @SerialName("choices")
-    val items: List<String>,
-    @SerialName("singleChoice")
-    override var singleAnswer: Boolean = true,
-    override var uiHint: UIHint = UIHint.Choice.ListItem
-) : AbstractChoiceQuestionObject(), ChoiceQuestion {
-    override val choices: List<ChoiceOptionObject>
-        get() = items.map { ChoiceOptionObject(text = it, value = JsonPrimitive(it)) }
-    override val baseType: BaseType
-        get() = BaseType.STRING
-}
-
-@Serializable
-@SerialName("comboBoxQuestion")
-data class ComboBoxQuestionObject(
-    override val identifier: String,
-    override val choices: List<ChoiceOptionObject>,
-    override val otherInputItem: InputItem = defaultOtherInputItem,
-    @SerialName("singleChoice")
-    override var singleAnswer: Boolean = false,
-    override var uiHint: UIHint = UIHint.Choice.Checkbox
-) : AbstractChoiceQuestionObject(), ComboBoxQuestion {
-    companion object {
-        val defaultOtherInputItem: StringTextInputItemObject
-            get() {
-                val otherInputItem = StringTextInputItemObject()
-                otherInputItem.fieldLabel = Localization.localizeString("Other")
-                return otherInputItem
-            }
-    }
-}
 
 @Serializable
 data class ComparableSurveyRuleObject(

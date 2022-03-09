@@ -28,9 +28,9 @@ class QuestionTest : NavigationTestHelper() {
         val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3")),
                 baseType = BaseType.INTEGER,
                 singleAnswer = false)
         assertEquals(AnswerType.Array(BaseType.INTEGER), original.answerType)
@@ -41,9 +41,9 @@ class QuestionTest : NavigationTestHelper() {
         val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3")),
                 baseType = BaseType.INTEGER,
                 singleAnswer = true)
         assertEquals(AnswerType.INTEGER, original.answerType)
@@ -52,9 +52,9 @@ class QuestionTest : NavigationTestHelper() {
     @Test
     fun testChoiceQuestion_BuildInputItems() {
         val choices = listOf(
-                ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                ChoiceOptionObject(JsonPrimitive(3), "choice 3"))
+                JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                JsonChoiceObject(JsonPrimitive(3), "choice 3"))
         val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = choices,
@@ -73,7 +73,7 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testComboBoxQuestion_Result() {
-        val original = ComboBoxQuestionObject("foo", listOf())
+        val original = ChoiceQuestionObject("foo", listOf())
         val result = original.createResult()
         assertEquals("foo", result.identifier)
         assertEquals(original.answerType, result.answerType)
@@ -81,26 +81,26 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testComboBoxQuestion_AnswerType_MultipleChoice() {
-        val original = ComboBoxQuestionObject(
+        val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
-                otherInputItem = IntegerTextInputItemObject(),
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3")),
+                other = IntegerTextInputItemObject(),
                 singleAnswer = false)
         assertEquals(AnswerType.Array(BaseType.INTEGER), original.answerType)
     }
 
     @Test
     fun testComboBoxQuestion_AnswerType_SingleChoice() {
-        val original = ComboBoxQuestionObject(
+        val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3")),
-                otherInputItem = IntegerTextInputItemObject(),
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3")),
+                other = IntegerTextInputItemObject(),
                 singleAnswer = true)
         assertEquals(AnswerType.INTEGER, original.answerType)
     }
@@ -108,14 +108,14 @@ class QuestionTest : NavigationTestHelper() {
     @Test
     fun testComboBoxQuestion_BuildInputItems() {
         val choices = listOf(
-                ChoiceOptionObject(JsonPrimitive(1), "choice 1"),
-                ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                ChoiceOptionObject(JsonPrimitive(3), "choice 3"))
+                JsonChoiceObject(JsonPrimitive(1), "choice 1"),
+                JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                JsonChoiceObject(JsonPrimitive(3), "choice 3"))
         val otherItem = IntegerTextInputItemObject()
-        val original = ComboBoxQuestionObject(
+        val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = choices,
-                otherInputItem = otherItem)
+                other = otherItem)
         val items = original.buildInputItems()
         assertEquals(4, items.count())
         items.dropLast(1).forEach {choiceInput ->
@@ -153,16 +153,6 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
-    fun testMultipleInputQuestion_AnswerType_MAP_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject("foo")
-        val item2 = StringTextInputItemObject("bar")
-        val original = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = SkipCheckboxInputItemObject("no answer"))
-        assertEquals(AnswerType.OBJECT, original.answerType)
-    }
-
-    @Test
     fun testMultipleInputQuestion_BuildItems_NoSkipCheckbox() {
         val item1 = StringTextInputItemObject("item1")
         val item2 = StringTextInputItemObject("item2")
@@ -172,20 +162,6 @@ class QuestionTest : NavigationTestHelper() {
         assertEquals(2, items.count())
         assertEquals(item1, items.first())
         assertEquals(item2, items.last())
-    }
-
-    @Test
-    fun testMultipleInputQuestion_BuildItems_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject("foo")
-        val item2 = StringTextInputItemObject("bar")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val original = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        val items = original.buildInputItems()
-        assertEquals(3, items.count())
-        assertEquals(item1, items.first())
-        assertEquals(checkbox, items.last())
     }
 
     /**
@@ -222,34 +198,12 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
-    fun testSimpleQuestion_AnswerType_WithSkipCheckbox() {
-        val item1 = IntegerTextInputItemObject()
-        val original = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = SkipCheckboxInputItemObject("no answer"))
-        assertEquals(AnswerType.INTEGER, original.answerType)
-    }
-
-    @Test
     fun testSimpleQuestion_BuildItems_NoSkipCheckbox() {
         val item1 = StringTextInputItemObject()
         val original = SimpleQuestionObject("foo", inputItem = item1)
         val items = original.buildInputItems()
         assertEquals(1, items.count())
         assertEquals(item1, items.first())
-    }
-
-    @Test
-    fun testSimpleQuestion_BuildItems_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject()
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val original = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = checkbox)
-        val items = original.buildInputItems()
-        assertEquals(2, items.count())
-        assertEquals(item1, items.first())
-        assertEquals(checkbox, items.last())
     }
 
     /**
@@ -288,77 +242,6 @@ class QuestionTest : NavigationTestHelper() {
         assertEquals(1, questionState.itemStates.count())
         val firstItem = questionState.itemStates.first()
         assertEquals(jsonValue, firstItem.currentAnswer)
-
-        // Check expectations for the result and answer type.
-        assertEquals(previousResult, questionState.currentResult)
-    }
-
-    @Test
-    fun testQuestionStateImpl_Init_SimpleQuestion_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject()
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = checkbox)
-        val questionState = buildQuestionState(question)
-
-        // Check expectations for the initial item state.
-        assertEquals(2, questionState.itemStates.count())
-        val firstItem = questionState.itemStates.first()
-        assertNull(firstItem.currentAnswer)
-        assertEquals(item1, firstItem.inputItem)
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertFalse(lastItem.selected)
-        assertEquals(checkbox, lastItem.inputItem)
-
-        // Check expectations for the result and answer type.
-        assertNull(questionState.currentResult.jsonValue)
-        assertEquals(AnswerType.STRING, questionState.currentResult.answerType)
-        assertEquals(AnswerType.STRING, questionState.answerType)
-    }
-
-    @Test
-    fun testQuestionStateImpl_Init_SimpleQuestion_WithSkipCheckbox_PreviousResult() {
-        val item1 = StringTextInputItemObject()
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = checkbox)
-        val jsonValue = JsonPrimitive("baloo")
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        // Check expectations for the initial item state.
-        assertEquals(2, questionState.itemStates.count())
-        val firstItem = questionState.itemStates.first()
-        assertEquals(jsonValue, firstItem.currentAnswer)
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertFalse(lastItem.selected)
-
-        // Check expectations for the result and answer type.
-        assertEquals(previousResult, questionState.currentResult)
-    }
-
-    @Test
-    fun testQuestionStateImpl_Init_SimpleQuestion_WithSkipCheckbox_PreviousResultChecked() {
-        val item1 = StringTextInputItemObject()
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = checkbox)
-        val jsonValue = JsonNull
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        // Check expectations for the initial item state.
-        assertEquals(2, questionState.itemStates.count())
-        val firstItem = questionState.itemStates.first()
-        assertNull(firstItem.currentAnswer)
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertTrue(lastItem.selected)
 
         // Check expectations for the result and answer type.
         assertEquals(previousResult, questionState.currentResult)
@@ -434,62 +317,10 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
-    fun testQuestionStateImpl_Init_MultipleInputQuestion_WithSkipCheckbox_NotChecked() {
-        val item1 = StringTextInputItemObject("item1")
-        val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        val a1 = JsonPrimitive("baloo")
-        val a2 = JsonPrimitive("ragu")
-        val jsonValue = JsonObject(mapOf("item1" to a1, "item2" to a2))
-        assertEquals(AnswerType.OBJECT, question.answerType)
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        // Check expectations for the initial item state.
-        assertEquals(3, questionState.itemStates.count())
-        val firstItem = questionState.itemStates.first()
-        assertEquals(a1, firstItem.currentAnswer)
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertFalse(lastItem.selected)
-
-        // Check expectations for the result and answer type.
-        assertEquals(previousResult, questionState.currentResult)
-    }
-
-    @Test
-    fun testQuestionStateImpl_Init_MultipleInputQuestion_WithSkipCheckbox_Checked() {
-        val item1 = StringTextInputItemObject("item1")
-        val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        val jsonValue = JsonNull
-        assertEquals(AnswerType.OBJECT, question.answerType)
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        // Check expectations for the initial item state.
-        assertEquals(3, questionState.itemStates.count())
-        val firstItem = questionState.itemStates.first()
-        assertEquals(null, firstItem.currentAnswer)
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertTrue(lastItem.selected)
-
-        // Check expectations for the result and answer type.
-        assertEquals(previousResult, questionState.currentResult)
-    }
-
-    @Test
     fun testQuestionStateImpl_Init_ChoiceQuestion() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
         val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3))
         val questionState = buildQuestionState(question)
 
@@ -508,9 +339,9 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ChoiceQuestion_PreviousResult_SingleAnswer() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
         val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
         val previousResult = AnswerResultObject("foo", AnswerType.STRING, JsonPrimitive("item2"))
         val questionState = buildQuestionState(question, previousResult)
@@ -533,9 +364,9 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ChoiceQuestion_PreviousResult_MultipleAnswer() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
         val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false)
         val previousResult = AnswerResultObject("foo",
                 answerType = AnswerType.Array(BaseType.STRING),
@@ -560,10 +391,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3))
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), other = StringTextInputItemObject())
         val questionState = buildQuestionState(question)
 
         // Check expectations for the initial item state.
@@ -584,10 +415,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion_PreviousResult_SingleAnswer() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true, other = StringTextInputItemObject())
         val previousResult = AnswerResultObject("foo", AnswerType.STRING, JsonPrimitive("item2"))
         val questionState = buildQuestionState(question, previousResult)
 
@@ -612,10 +443,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion_PreviousResult_SingleAnswer_Other() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true, other = StringTextInputItemObject())
         val jsonValue = JsonPrimitive("ragu")
         val previousResult = AnswerResultObject("foo", AnswerType.STRING, jsonValue)
         val questionState = buildQuestionState(question, previousResult)
@@ -636,10 +467,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion_PreviousResult_MultipleAnswer() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false)
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false, other = StringTextInputItemObject())
         val previousResult = AnswerResultObject("foo",
                 answerType = AnswerType.Array(BaseType.STRING),
                 jsonValue = JsonArray(listOf(JsonPrimitive("item2"))))
@@ -666,10 +497,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion_PreviousResult_MultipleAnswer_Other() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false)
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false, other = StringTextInputItemObject())
         val otherAnswer = JsonPrimitive("ragu")
         val previousResult = AnswerResultObject("foo",
                 answerType = AnswerType.Array(BaseType.STRING),
@@ -751,105 +582,15 @@ class QuestionTest : NavigationTestHelper() {
         assertEquals(JsonObject(map), questionState.currentResult.jsonValue)
     }
 
-    @Test
-    fun testQuestionStateImpl_SaveAnswer_MultipleInputQuestion_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject("item1")
-        val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        val jsonValue = JsonNull
-        assertEquals(AnswerType.OBJECT, question.answerType)
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        val jsonValue1 = JsonPrimitive("baloon")
-        val firstItem = questionState.itemStates.first()
-        val refresh = questionState.saveAnswer(jsonValue1, firstItem)
-
-        assertTrue(refresh)
-        assertEquals(jsonValue1, firstItem.currentAnswer)
-        assertEquals(JsonObject(mapOf("item1" to jsonValue1)), questionState.currentResult.jsonValue)
-
-        val lastItem = questionState.itemStates.last()
-        assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertFalse(lastItem.selected)
-    }
-
     /**
      * QuestionStateImpl - didChangeSelectionState
      */
 
     @Test
-    fun testQuestionStateImpl_DidChangeSelectionState_SimpleQuestion_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject("item1")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = SimpleQuestionObject("foo",
-                inputItem = item1,
-                skipCheckbox = checkbox)
-        val jsonValue1 = JsonPrimitive("baloon")
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue1)
-        val questionState = buildQuestionState(question, previousResult)
-
-        val firstItem = questionState.itemStates.first() as KeyboardInputItemState<*>
-        val lastItem = questionState.itemStates.last() as ChoiceInputItemState
-        val refresh1 = questionState.didChangeSelectionState(true, lastItem)
-
-        assertTrue(refresh1)
-        assertTrue(lastItem.selected)
-        assertNull(firstItem.currentAnswer)
-        assertEquals(jsonValue1, firstItem.storedAnswer)
-        assertFalse(firstItem.selected)
-        assertEquals(JsonNull, questionState.currentResult.jsonValue)
-
-        questionState.didChangeSelectionState(false, lastItem)
-
-        assertFalse(lastItem.selected)
-        assertEquals(jsonValue1, firstItem.currentAnswer)
-        assertEquals(jsonValue1, firstItem.storedAnswer)
-        assertTrue(firstItem.selected)
-        assertEquals(jsonValue1, questionState.currentResult.jsonValue)
-    }
-
-    @Test
-    fun testQuestionStateImpl_DidChangeSelectionState_MultipleInputQuestion_WithSkipCheckbox() {
-        val item1 = StringTextInputItemObject("item1")
-        val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        val jsonValue1 = JsonPrimitive("baloon")
-        val initialValue = JsonObject(mapOf("item1" to jsonValue1))
-        val previousResult = AnswerResultObject("foo", question.answerType, initialValue)
-        val questionState = buildQuestionState(question, previousResult)
-
-        val firstItem = questionState.itemStates.first() as KeyboardInputItemState<*>
-        val lastItem = questionState.itemStates.last() as ChoiceInputItemState
-        val refresh1 = questionState.didChangeSelectionState(true, lastItem)
-
-        assertTrue(refresh1)
-        assertTrue(lastItem.selected)
-        assertNull(firstItem.currentAnswer)
-        assertEquals(jsonValue1, firstItem.storedAnswer)
-        assertFalse(firstItem.selected)
-        assertEquals(JsonNull, questionState.currentResult.jsonValue)
-
-        questionState.didChangeSelectionState(false, lastItem)
-
-        assertFalse(lastItem.selected)
-        assertEquals(jsonValue1, firstItem.currentAnswer)
-        assertEquals(jsonValue1, firstItem.storedAnswer)
-        assertTrue(firstItem.selected)
-        assertEquals(initialValue, questionState.currentResult.jsonValue)
-    }
-
-    @Test
     fun testQuestionStateImpl_DidChangeSelectionState_ChoiceQuestion_Single() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
         val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
         val questionState = buildQuestionState(question)
 
@@ -881,10 +622,10 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_DidChangeSelectionState_ChoiceQuestion_Multiple() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val itemNone = ChoiceOptionObject(exclusive = true)
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val itemNone = JsonChoiceObject(selectorType = ChoiceSelectorType.Exclusive)
         val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3, itemNone), singleAnswer = false)
         val questionState = buildQuestionState(question)
 
@@ -934,10 +675,19 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_DidChangeSelectionState_ComboBoxQuestion_Single() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = true)
+
+        val otherOriginalItem = StringTextInputItemObject("other")
+        otherOriginalItem.fieldLabel = "Other"
+
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject(
+            identifier = "foo",
+            choices = listOf(item1, item2, item3),
+            singleAnswer = true,
+            other = otherOriginalItem
+        )
         val questionState = buildQuestionState(question)
 
         val firstItem = questionState.itemStates.first() as ChoiceInputItemState
@@ -980,10 +730,18 @@ class QuestionTest : NavigationTestHelper() {
 
     @Test
     fun testQuestionStateImpl_DidChangeSelectionState_ComboBoxQuestion_Multiple() {
-        val item1 = ChoiceOptionObject(JsonPrimitive("item1"))
-        val item2 = ChoiceOptionObject(JsonPrimitive("item2"))
-        val item3 = ChoiceOptionObject(JsonPrimitive("item3"))
-        val question = ComboBoxQuestionObject("foo", listOf(item1, item2, item3), singleAnswer = false)
+        val otherOriginalItem = StringTextInputItemObject("other")
+        otherOriginalItem.fieldLabel = "Other"
+
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(JsonPrimitive("item3"))
+        val question = ChoiceQuestionObject(
+            identifier = "foo",
+            choices = listOf(item1, item2, item3),
+            singleAnswer = false,
+            other = otherOriginalItem
+        )
         val questionState = buildQuestionState(question)
 
         val firstItem = questionState.itemStates.first() as ChoiceInputItemState
@@ -1048,17 +806,6 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
-    fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_NotOptional_Skip() {
-        val item1 = StringTextInputItemObject()
-        val question = SimpleQuestionObject("foo", inputItem = item1, skipCheckbox = SkipCheckboxInputItemObject("skip"))
-        question.optional = false
-        val jsonValue = JsonNull
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-        assertTrue(questionState.allAnswersValid())
-    }
-
-    @Test
     fun testQuestionStateImpl_AllAnswersValid_SimpleQuestion_NotOptional_Null() {
         val item1 = StringTextInputItemObject()
         val question = SimpleQuestionObject("foo", inputItem = item1)
@@ -1077,31 +824,12 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
-    fun testQuestionStateImpl_AllAnswersValid_MultipleInputQuestion_WithSkipCheckbox_Checked() {
-        val item1 = StringTextInputItemObject("item1")
-        item1.optional = false
-        val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
-        val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
-        question.optional = false
-        val jsonValue = JsonNull
-        assertEquals(AnswerType.OBJECT, question.answerType)
-        val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
-        val questionState = buildQuestionState(question, previousResult)
-        assertTrue(questionState.allAnswersValid())
-    }
-
-    @Test
     fun testQuestionStateImpl_AllAnswersValid_MultipleInputQuestion_WithRequired() {
         val item1 = StringTextInputItemObject("item1")
         item1.optional = false
         val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
         val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
+                inputItems = listOf(item1, item2))
         question.optional = false
         val jsonValue = JsonObject(mapOf("item1" to JsonPrimitive("baloo")))
         val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)
@@ -1114,10 +842,8 @@ class QuestionTest : NavigationTestHelper() {
         val item1 = StringTextInputItemObject("item1")
         item1.optional = false
         val item2 = StringTextInputItemObject("item2")
-        val checkbox = SkipCheckboxInputItemObject("no answer")
         val question = MultipleInputQuestionObject("foo",
-                inputItems = listOf(item1, item2),
-                skipCheckbox = checkbox)
+                inputItems = listOf(item1, item2))
         question.optional = false
         val jsonValue = JsonObject(mapOf("item2" to JsonPrimitive("baloo")))
         val previousResult = AnswerResultObject("foo", question.answerType, jsonValue)

@@ -32,12 +32,13 @@
 //
 
 import Foundation
+import JsonModel
 
 /// A result map element is an element in the ``Assessment`` model that defines the expectations for a
 /// ``ResultData``  associated with this element. It can define a user-facing step, a section (which may
 /// or may not map to a view), a background web service, a sensor recorder, or any other piece of data
 /// collected by the overall ``Assessment``.
-public protocol ResultMapElement {
+public protocol ResultMapElement : PolymorphicTyped {
 
     /// The identifier for the node.
     var identifier: String { get }
@@ -47,7 +48,7 @@ public protocol ResultMapElement {
     var comment: String?  { get }
 
     /// Create an appropriate instance of a *new* ``ResultData`` for this map element.
-    func createResult() -> ResultData
+    func instantiateResult() -> ResultData
 }
 
 /// A ``Node`` is any object defined within the structure of an ``Assessment`` that is used to organize and describe UI/UX
@@ -82,10 +83,22 @@ public extension Node {
     }
 }
 
-/// A ``ContentNode`` contains additional content that may, under certain circumstances and where screen real estate
-/// allows, be displayed to the participant to help them understand the intended purpose of the part of the assessment
-/// described by this ``Node``.
-public protocol ContentNode : Node {
+/// Content info is general information about a ``Node``, ``Question``, or other UI/UX element where the syntax
+/// for title, subtitle, and detail should be consistent.
+public protocol ContentInfo {
+    
+    /// The primary text to display for this content in a localized string. The UI should display this using a larger font.
+    var title: String? { get }
+
+    /// A subtitle to display for this content in a localized string.
+    var subtitle: String? { get }
+
+    /// Detail text to display for this content in a localized string.
+    var detail: String? { get }
+}
+
+/// a ``ContentNode`` is a node that includes information, depending upon the UI design and available real-estate.
+public protocol ContentNode : Node, ContentInfo {
     
     /// The primary text to display for the node in a localized string. The UI should display this using a larger font.
     var title: String? { get }
@@ -95,7 +108,45 @@ public protocol ContentNode : Node {
 
     /// Detail text to display for the node in a localized string.
     var detail: String? { get }
-
+    
     /// An image or animation to display with this node.
-    var imageInfo: ImageInfo?  { get }
+    var imageInfo: ImageInfo? { get }
 }
+
+/// A user-interface step in an ``Assessment``.
+///
+/// This is the base interface for the steps that can compose an assessment for presentation using a controller
+/// appropriate to the device and application. Each ``Step`` object represents one logical piece of data entry,
+/// information, or activity in a larger assessment.
+///
+/// A step can be a question, an active test, or a simple instruction. It is typically paired with a step controller that
+/// controls the actions of the ``Step``.
+public protocol Step : Node {
+
+    /// Localized text that represents an instructional voice prompt. Instructional speech begins when the
+    /// step passes the time indicated by the given time.  If `timeInterval` is greater than or equal to
+    /// `duration` or is equal to `Double.infinity`, then the spoken instruction returned should be for
+    /// when the step is finished.
+    ///
+    /// - parameter timeInterval: The time interval at which to speak the instruction.
+    /// - returns: The localized instruction to speak or `nil` if there isn't an instruction.
+    func spokenInstruction(at timeInterval: TimeInterval) -> String?
+}
+
+/// This protocol is used to allow an assessment designer to show a more detailed set of instructions only
+/// to users who are not already familiar with the assessment rather than showing a full set of instructions
+/// every time. The state handling for the assessment can use the ``fullInstructionsOnly`` flag to
+/// determine if a user who has done this assessment before should be allowed to skip the full instructions.
+/// The implementation details for storing state about the participant and handling this flag are left to the
+/// assessment developers.
+public protocol OptionalNode : Node {
+
+    /// Should this step only be displayed when showing the full instruction sequence?
+    var fullInstructionsOnly: Bool { get }
+}
+
+/// The instruction step protocol is used to allow the UI/UX for a set of steps to use `is` switch statements
+/// to determine the type of view to present to the participant.
+public protocol InstructionStep : Step, OptionalNode, ContentNode {
+}
+

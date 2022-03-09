@@ -55,11 +55,12 @@ class AssessmentModelTests: XCTestCase {
         do {
             let schemas = try doc.buildSchemas()
 
-            XCTAssertEqual(schemas.count, 5)
+            XCTAssertEqual(schemas.count, 8)
             
             checkAnswerTypeSchema(schemas)
             checkButtonActionInfoSchema(schemas)
             checkImageInfoSchema(schemas)
+            checkNodeSchema(schemas)
             checkResultDataSchema(schemas)
     
         }
@@ -145,6 +146,29 @@ class AssessmentModelTests: XCTestCase {
         }
     }
     
+    func checkNodeSchema(_ schemas: [JsonSchema]) {
+        guard let schema = schemas.first(where: { $0.id.className == "Node" })
+        else {
+            XCTFail("Failed to build the expected JSON schema for `Node`.")
+            return
+        }
+        
+        let expectedAnswerTypeClassAndType = [
+            ("ChoiceQuestionStepObject","choiceQuestion"),
+        ]
+        expectedAnswerTypeClassAndType.forEach {
+            guard let _ = checkDefinitions(on: schema,
+                                           className: $0.0,
+                                           expectedType: $0.1,
+                                           sharedKeys: ["identifier"],
+                                           expectedSerializableType: "SerializableNodeType")
+            else {
+                XCTFail("Unexpected nil for \($0.0)")
+                return
+            }
+        }
+    }
+    
     func checkResultDataSchema(_ schemas: [JsonSchema]) {
         guard let resultDataSchema = schemas.first(where: { $0.id.className == "ResultData" })
         else {
@@ -212,7 +236,7 @@ class AssessmentModelTests: XCTestCase {
                 
         XCTAssertEqual(.init(className), schema.id)
         // Each class that implements the parent interface should have a reference to "#" as something it conforms to.
-        XCTAssertEqual(["#"], schema.allOf?.map { $0.ref })
+        XCTAssertTrue(schema.allOf?.map { $0.ref }.contains("#") ?? false)
         
         if let defProperties = schema.orderedProperties?.orderedDictionary {
 

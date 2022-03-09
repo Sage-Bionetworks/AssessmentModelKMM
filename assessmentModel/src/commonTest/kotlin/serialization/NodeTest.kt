@@ -248,17 +248,17 @@ open class NodeTest : NodeSerializationTestHelper() {
                 {"text":"choice 1","icon":"choice1","value":1},
                 {"text":"choice 2","value":2},
                 {"text":"choice 3","value":3},
-                {"text":"none of the above","exclusive":true}
+                {"text":"none of the above","selectorType":"exclusive"}
                 ]
            }
            """
         val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1", FetchableImage("choice1")),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3"),
-                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1", "choice1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3"),
+                        JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
                 baseType = BaseType.INTEGER)
         original.uiHint = UIHint.Choice.Checkmark
@@ -292,7 +292,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         val inputString = """
            {
                "identifier": "foo",
-               "type": "comboBoxQuestion",
+               "type": "choiceQuestion",
                "title": "Hello World!",
                "subtitle": "Question subtitle",
                "detail": "Some text. This is a test.",
@@ -318,15 +318,15 @@ open class NodeTest : NodeSerializationTestHelper() {
         val otherInputItem = StringTextInputItemObject()
         otherInputItem.fieldLabel = "Something else"
 
-        val original = ComboBoxQuestionObject(
+        val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive("one"), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive("two"), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive("three"), "choice 3"),
-                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                        JsonChoiceObject(JsonPrimitive("one"), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive("two"), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive("three"), "choice 3"),
+                        JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
-                otherInputItem = otherInputItem)
+                other = otherInputItem)
         original.uiHint = UIHint.Choice.Checkmark
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
@@ -341,10 +341,10 @@ open class NodeTest : NodeSerializationTestHelper() {
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
-        assertTrue(decoded is ComboBoxQuestionObject)
+        assertTrue(decoded is ChoiceQuestionObject)
         assertEqualStep(original, decoded)
         assertEqualContentNodes(original, decoded)
-        assertTrue(restored is ComboBoxQuestionObject)
+        assertTrue(restored is ChoiceQuestionObject)
         assertEqualStep(original, restored)
         assertEqualContentNodes(original, restored)
     }
@@ -438,68 +438,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEquals(original, copy)
         assertEqualActiveStep(original, copy)
         assertEqualContentNodes(original, copy)
-    }
-
-    /**
-     * FormStepObject
-     */
-
-    @Test
-    fun testFormStep_Serialization() {
-        val inputString = """
-            {
-                "identifier": "foobar",
-                "type": "form",
-                "title": "Hello World!",
-                "subtitle": "Subtitle",
-                "detail": "Some text. This is a test.",
-                "image": {    "type" : "fetchable",
-                               "imageName" : "fooIcon"
-                        },
-                "footnote": "This is a footnote.",
-                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
-                            "cancel": { "type": "default", "iconName" : "closeX" }
-                           },
-                "shouldHideActions": ["goBackward"],
-                "inputFields": [
-                           {
-                               "identifier": "foo",
-                               "type": "stringChoiceQuestion",
-                                "choices":["choice 1","choice 2","choice 3"]
-                           }
-                ]
-            }
-            """
-
-        val original = FormStepObject(
-            identifier = "foobar",
-            children = listOf(
-                StringChoiceQuestionObject("foo", listOf("choice 1","choice 2","choice 3"))
-            ),
-            imageInfo = FetchableImage("fooIcon")
-        )
-
-        original.title = "Hello World!"
-        original.subtitle = "Subtitle"
-        original.detail = "Some text. This is a test."
-        original.footnote = "This is a footnote."
-        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
-        original.buttonMap = mapOf(
-            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
-            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
-
-        val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.encodeToString(serializer, original)
-        val restored = jsonCoder.decodeFromString(serializer, jsonString)
-        val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
-        assertTrue(decoded is FormStepObject)
-        assertFormStepNode(original, decoded)
-        assertEqualContentNodes(original, decoded)
-
-        assertTrue(restored is FormStepObject)
-        assertFormStepNode(original, restored)
-        assertEqualContentNodes(original, restored)
     }
 
     /**
@@ -740,7 +678,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                                   },
                 "optional": false,
                 "inputItem":{"type" : "year"},
-                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"},
                 "surveyRules": [{ "matchingAnswer": 1900}]
            }
            """
@@ -755,14 +692,12 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
                 animationDuration = 2.0)
-        original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
         original.surveyRules = listOf(ComparableSurveyRuleObject(JsonPrimitive(1900)))
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
 
         assertTrue(decoded is SimpleQuestionObject)
         assertEqualStep(original, decoded)
@@ -782,66 +717,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, copy)
         assertEquals(original.optional, copy.optional)
         assertEquals(original.surveyRules, copy.surveyRules)
-    }
-
-    /**
-     * MultipleInputQuestion
-     */
-
-    @Test
-    fun testMultipleInputQuestion_Serialization() {
-        val inputString = """
-           {
-               "identifier": "foo",
-               "type": "multipleInputQuestion",
-               "title": "Hello World!",
-               "subtitle": "Question subtitle",
-               "detail": "Some text. This is a test.",
-               "footnote": "This is a footnote.",
-               "image"  : {    "type" : "animated",
-                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "animationDuration" : 2
-                                  },
-                "optional": false,
-                "sequenceSeparator": ",",
-                "inputItems":[
-                    {"type" : "string"},
-                    {"type" : "year"},
-                    {"type" : "integer"},
-                    {"type" : "decimal"}
-                ],
-                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
-           }
-           """
-        val original = MultipleInputQuestionObject(
-                identifier = "foo",
-                inputItems = listOf(
-                    StringTextInputItemObject(),
-                    YearTextInputItemObject(),
-                    IntegerTextInputItemObject(),
-                    DecimalTextInputItemObject()),
-                sequenceSeparator = ",")
-        original.optional = false
-        original.title = "Hello World!"
-        original.subtitle = "Question subtitle"
-        original.detail = "Some text. This is a test."
-        original.footnote = "This is a footnote."
-        original.imageInfo = AnimatedImage(
-                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                animationDuration = 2.0)
-        original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
-
-        val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.encodeToString(serializer, original)
-        val restored = jsonCoder.decodeFromString(serializer, jsonString)
-        val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
-        assertTrue(decoded is MultipleInputQuestionObject)
-        assertEqualStep(original, decoded)
-        assertEqualContentNodes(original, decoded)
-        assertTrue(restored is MultipleInputQuestionObject)
-        assertEqualStep(original, restored)
-        assertEqualContentNodes(original, restored)
     }
 
     /**

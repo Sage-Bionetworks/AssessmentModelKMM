@@ -37,24 +37,15 @@ interface InputItem {
     val resultIdentifier: String?
 
     /**
-     * A UI hint for how the study would prefer that the [InputItem] is displayed to the user.
-     */
-    val uiHint: UIHint
-
-    /**
-     * A localized string that displays a short text offering a hint to the user of the data to be entered for this
-     * field.
-     */
-    val fieldLabel: String?
-
-    /**
-     * A localized string that displays placeholder information for the [InputItem].
+     * The kind of object to expect for the serialization of the answer associated with this [InputItem]. Typically,
+     * this will be a [BaseType], but it is possible for the [InputItem] to translate to an object rather than a
+     * primitive.
      *
-     * You can display placeholder text in a text field or text area to help users understand how to answer the item's
-     * question. If the input field brings up another view to enter the answer, this could also be used at the button
-     * title.
+     * For example, the question could be about blood pressure where the participant answers the question with a string
+     * of "120/70" but the [QuestionState] is responsible for translating that into a data class with systolic and
+     * diastolic as properties that are themselves numbers.
      */
-    val placeholder: String?
+    val answerType: AnswerType
 
     /**
      * Can the input field be left blank? This is subtly different from the [Question.optional] property since a
@@ -62,9 +53,8 @@ interface InputItem {
      *
      * For example, if the designer wants to ask "What year did you first start having symptoms?", the participant may
      * be allowed to enter a number in a text field that conforms to the [KeyboardTextInputItem] interface *or* select
-     * a checkbox that says "I don't know" which conforms to the [ChoiceInputItem] interface where the
-     * [ChoiceInputItem.uiHint] equals [UIHint.Choice.Checkmark], then the [Question.buildInputItems] method will
-     * return 2 input items. Both of those input items are [optional] but the union of them is not.
+     * a checkbox that says "I don't know" which conforms to the [ChoiceInputItem] interface. Both of those input items
+     * are [optional] but the union of them is not.
      *
      * However, if the [Question] requires entering your blood pressure using two fields for the systolic and
      * diastolic readings, then the question may be [optional] but the input items are not. (If you enter a value for
@@ -84,17 +74,6 @@ interface InputItem {
      * item that is exclusive to the other items.
      */
     val exclusive: Boolean
-
-    /**
-     * The kind of object to expect for the serialization of the answer associated with this [InputItem]. Typically,
-     * this will be a [BaseType], but it is possible for the [InputItem] to translate to an object rather than a
-     * primitive.
-     *
-     * For example, the question could be about blood pressure where the participant answers the question with a string
-     * of "120/70" but the [QuestionState] is responsible for translating that into a data class with systolic and
-     * diastolic as properties that are themselves numbers.
-     */
-    val answerType: AnswerType
 }
 
 /**
@@ -102,26 +81,21 @@ interface InputItem {
  */
 
 /**
- * A choice input field is used to describe a choice that may be part of a larger list of choices or combined with a
- * text field to indicate that the text field should be left empty.
+ * A choice input field is used to describe a choice that may be part of a larger list of choices or
+ * combined with a text field to indicate that the text field should be left empty.
  */
 interface ChoiceInputItem : InputItem, ChoiceOption {
 
     /**
-     * [placeholder] does not apply to choice input items and is always null.
-     */
-    override val placeholder: String?
-        get() = null
-
-    /**
-     * A choice input is always optional because it is either a checkbox yes/no input where the difference between
-     * "not selected" and "not answered" is indeterminate, or it is a choice in a list of other choices.
+     * A choice input is always optional because it is either a checkbox yes/no input where the
+     * difference between "not selected" and "not answered" is indeterminate, or it is a choice in a
+     * list of other choices.
      */
     override val optional: Boolean
         get() = true
 
     override val exclusive: Boolean
-        get() = (choiceSelectorType == ChoiceSelectorType.Default)
+        get() = (selectorType == ChoiceSelectorType.Default)
 }
 
 /**
@@ -143,21 +117,20 @@ interface ChoiceOption {
     fun jsonValue(selected: Boolean): JsonElement?
 
     /**
-     * A localized string that displays a short text offering a hint to the user of the data to be entered for this
-     * field.
+     * A localized label (ie. title or text) to display for this choice.
      */
-    val fieldLabel: String
+    val label: String
 
     /**
-     * Additional detail shown below the [fieldLabel]
+     * Additional detail shown below the [label].
      */
     val detail: String?
         get() = null
 
     /**
-     * An image that can be used to represent this choice.
+     * The name of the image to use for this choice.
      */
-    val icon: FetchableImage?
+    val iconName: String?
 
     /**
      * Does selecting this choice mean that the other options should be deselected or selected as
@@ -167,8 +140,24 @@ interface ChoiceOption {
      * choice that is `exclusive` to the other items or an "all of the above" choice that should
      * select `all` other choices as well (except those that are marked as `exclusive`).
      */
-    val choiceSelectorType: ChoiceSelectorType
+    val selectorType: ChoiceSelectorType
         get() = ChoiceSelectorType.Default
+
+}
+
+/**
+ * A [CheckboxInputItem] is intended as a simplified input item that can be included in a compound [Question] where
+ * the goal is to build a mapping of answers to identifiers. As such, [resultIdentifier] and [fieldLabel] are required
+ * fields.
+ */
+interface CheckboxInputItem : ChoiceInputItem {
+    override val resultIdentifier: String
+    override val answerType: AnswerType
+        get() = AnswerType.BOOLEAN
+    override val iconName: String?
+        get() = null
+    override fun jsonValue(selected: Boolean): JsonElement?
+            = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
 }
 
 @Serializable
@@ -190,55 +179,6 @@ enum class ChoiceSelectorType : StringEnum {
 }
 
 /**
- * A [SkipCheckboxInputItemObject] is a special case of input item that can be used to define an "or" option for a text
- * field such as asking the participant to answer a question or allowing them to select "I don't know". This item is
- * always shown using a [UIHint.Choice.Checkbox] and always has a [fieldLabel] value rather than using an [icon] to
- * define the selection. It is always [optional] and [exclusive].
- */
-interface SkipCheckboxInputItem  : ChoiceInputItem {
-
-    override val fieldLabel: String
-
-    val value: JsonElement
-        get() = JsonNull
-
-    override val resultIdentifier: String?
-        get() = null
-
-    override val icon: FetchableImage?
-        get() = null
-
-    override val choiceSelectorType: ChoiceSelectorType
-        get() = ChoiceSelectorType.Exclusive
-
-    override val answerType: AnswerType
-        get() = AnswerType.NULL
-
-    override val uiHint: UIHint
-        get() = UIHint.Choice.Checkbox
-
-    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
-}
-
-/**
- * A [CheckboxInputItem] is intended as a simplified input item that can be included in a compound [Question] where
- * the goal is to build a mapping of answers to identifiers. As such, [resultIdentifier] and [fieldLabel] are required
- * fields.
- */
-interface CheckboxInputItem : ChoiceInputItem {
-    override val resultIdentifier: String
-    override val fieldLabel: String
-    override val uiHint: UIHint
-        get() = UIHint.Choice.Checkbox
-    override val answerType: AnswerType
-        get() = AnswerType.BOOLEAN
-    override val icon: FetchableImage?
-        get() = null
-    override fun jsonValue(selected: Boolean): JsonElement?
-            = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
-}
-
-/**
  * -- KeyboardTextInputItem
  */
 
@@ -249,9 +189,19 @@ interface CheckboxInputItem : ChoiceInputItem {
 interface KeyboardTextInputItem<T> : InputItem {
 
     /**
-     * A [KeyboardTextInputItem] maps to a ui hint subtype of [UIHint.TextField].
+     * A localized string that displays a short text offering a hint to the user of the data to be entered for this
+     * field.
      */
-    override val uiHint: UIHint.TextField
+    val fieldLabel: String?
+
+    /**
+     * A localized string that displays placeholder information for the [InputItem].
+     *
+     * You can display placeholder text in a text field or text area to help users understand how to answer the item's
+     * question. If the input field brings up another view to enter the answer, this could also be used at the button
+     * title.
+     */
+    val placeholder: String?
 
     /**
      * Options for displaying a text field. This is only applicable for certain types of UI hints and data types. If

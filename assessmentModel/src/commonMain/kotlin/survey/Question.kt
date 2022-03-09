@@ -19,7 +19,7 @@ import org.sagebionetworks.assessmentmodel.serialization.ChoiceItemWrapper
 interface Question : ContentNode {
 
     /**
-     * Can the question be skipped?
+     * Is the "Next" button enabled even if this question is not answered?
      */
     val optional: Boolean
 
@@ -32,6 +32,12 @@ interface Question : ContentNode {
      * The [AnswerType] that is associated with this [Question] or null if this [Question] has custom handling.
      */
     val answerType: AnswerType
+
+    /**
+     * This is a "hint" that can be used to vend a view that is appropriate to the given question. If the library
+     * responsible for rendering the question doesn't know how to handle the hint, then it will be ignored.
+     */
+    val uiHint: UIHint?
 
     /**
      * A question will always have at least one [InputItem] that is used to define the question. These fields will form
@@ -53,21 +59,11 @@ interface Question : ContentNode {
 }
 
 /**
- * Interface to explicitly define a an optional [skipCheckbox]. This allows for more control over the UI/UX for
- * optional questions that use a [SkipCheckboxInputItem] to define whether or not the field is [optional]. This is
- * not intended to be implemented directly and should be considered an "abstract" interface. Instead, it is used to
- * simplify allowing the [QuestionState] to exclude this input item from the items used to build the non-null answer.
- */
-interface SkipCheckboxQuestion : Question {
-    val skipCheckbox: SkipCheckboxInputItem?
-}
-
-/**
- * A [SimpleQuestion] is used to explicitly define a question with a single [inputItem] and an optional
- * [skipCheckbox]. It is defined here as an interface to allow for a layout that is appropriate for a question where
+ * A [SimpleQuestion] is used to explicitly define a question with a single [inputItem].
+ * It is defined here as an interface to allow for a layout that is appropriate for a question where
  * there is only one input field.
  */
-interface SimpleQuestion : SkipCheckboxQuestion {
+interface SimpleQuestion : Question {
     val inputItem: InputItem
 
     override val answerType: AnswerType
@@ -75,23 +71,21 @@ interface SimpleQuestion : SkipCheckboxQuestion {
     override val singleAnswer: Boolean
         get() = true
 
-    override fun buildInputItems(): List<InputItem> = listOfNotNull(inputItem, skipCheckbox)
+    override fun buildInputItems(): List<InputItem> = listOf(inputItem)
 }
 
 /**
- * A [MultipleInputQuestion] is used to explicitly define a question with multiple [inputItems] and an optional
- * [skipCheckbox].
+ * A [MultipleInputQuestion] is used to explicitly define a question with multiple [inputItems].
  */
-interface MultipleInputQuestion : SkipCheckboxQuestion {
+interface MultipleInputQuestion : Question {
     val inputItems: List<InputItem>
-    val sequenceSeparator: String?
 
     override val singleAnswer: Boolean
         get() = false
     override val answerType: AnswerType
         get() =  AnswerType.OBJECT
 
-    override fun buildInputItems(): List<InputItem> = skipCheckbox?.let { inputItems.plus(it) } ?: inputItems
+    override fun buildInputItems(): List<InputItem> = inputItems
 }
 
 /**
@@ -102,7 +96,7 @@ interface MultipleInputQuestion : SkipCheckboxQuestion {
 interface ChoiceQuestion : Question {
     val baseType: BaseType
     val choices: List<ChoiceOption>
-    var uiHint: UIHint
+    val other: InputItem?
 
     /**
      * The default implementation for the answer type is to use the [baseType] and return either a [JsonLiteral]
@@ -115,36 +109,7 @@ interface ChoiceQuestion : Question {
      * The default implementation for building the input items is to wrap the [choices].
      */
     override fun buildInputItems(): List<InputItem> = choices.map {
-        ChoiceItemWrapper(it, singleAnswer, AnswerType.valueFor(baseType), uiHint)
-    }
-
-    override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Node {
-        choices.forEach {
-            it.icon?.copyResourceInfo(moduleInfo.resourceInfo)
-        }
-        return super.unpack(originalNode, moduleInfo, registryProvider)
-    }
+        ChoiceItemWrapper(it, AnswerType.valueFor(baseType))
+    }.plus(listOfNotNull(other))
 }
 
-/**
- * A [ComboBoxQuestion] extends the [ChoiceQuestion] interface to add an [otherInputItem] choice to the selected
- * choices. Typically, the [otherInputItem] will be a [KeyboardTextInputItem] but it is generically defined to allow
- * for custom implementations.
- */
-interface ComboBoxQuestion : ChoiceQuestion {
-    val otherInputItem: InputItem
-
-    /**
-     * The default implementation for the [baseType] is determined by the [answerType] of the [otherInputItem].
-     */
-    override val baseType: BaseType
-        get() = otherInputItem.answerType.baseType
-
-    /**
-     * The default implementation for building the input items is to wrap the [choices] and then add the
-     * [otherInputItem] as the last item in the list.
-     */
-    override fun buildInputItems(): List<InputItem> = choices.map {
-        ChoiceItemWrapper(it, singleAnswer, AnswerType.valueFor(baseType), uiHint)
-    }.plus(otherInputItem)
-}
