@@ -148,7 +148,7 @@ public extension SerializableButtonActionInfo {
 
 /// ``ButtonActionInfoObject`` is a concrete implementation of ``ButtonActionInfo`` that can be used to
 /// customize the title and image displayed for a given action of the UI.
-public struct ButtonActionInfoObject : SerializableButtonActionInfo {
+public struct ButtonActionInfoObject : SerializableButtonActionInfo, Equatable {
     private enum CodingKeys : String, CodingKey, CaseIterable {
         case serializableType = "type", buttonTitle, iconName, bundleIdentifier, packageName
     }
@@ -159,6 +159,14 @@ public struct ButtonActionInfoObject : SerializableButtonActionInfo {
     public private(set) var bundleIdentifier: String?
     public private(set) var packageName: String?
     public var factoryBundle: ResourceBundle? = nil
+    
+    public static func == (lhs: ButtonActionInfoObject, rhs: ButtonActionInfoObject) -> Bool {
+        lhs.serializableType == rhs.serializableType &&
+        lhs.buttonTitle == rhs.buttonTitle &&
+        lhs.iconName == rhs.iconName &&
+        lhs.bundleIdentifier == rhs.bundleIdentifier &&
+        lhs.packageName == rhs.packageName
+    }
     
     /// Default initializer for a button with text.
     /// - parameter buttonTitle: The title to display on the button associated with this action.

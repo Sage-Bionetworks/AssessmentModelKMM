@@ -58,7 +58,7 @@ public protocol Node : ResultMapElement {
     /// List of button actions that should be hidden for this node even if the node subtype typically supports displaying
     /// the button on screen. This property can be defined at any level and will default to whichever is the lowest level
     /// for which this mapping is defined.
-    var hideButtons: [ButtonAction] { get }
+    var shouldHideButtons: Set<ButtonAction> { get }
 
     /// A mapping of a ``ButtonAction`` to a ``ButtonActionInfo``.
     ///
@@ -79,7 +79,7 @@ public protocol Node : ResultMapElement {
 public extension Node {
     // Default implementation is that a node can go back unless the button is explicitly hidden.
     func canGoBack() -> Bool {
-        !hideButtons.contains(.navigation(.goBackward))
+        !shouldHideButtons.contains(.navigation(.goBackward))
     }
 }
 

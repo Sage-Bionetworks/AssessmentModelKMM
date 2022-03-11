@@ -67,6 +67,31 @@ public extension Question {
 public protocol QuestionStep : Question, Step, ContentNode {
 }
 
+/// An ``InputItem`` describes a "part" of a ``Question`` representing a single answer.
+///
+/// For example, if a question is "what is your name" then the input items may include "given name" and "family name"
+/// where separate text fields are used to allow the participant to enter their first and last name, and the question
+/// may also include a list of titles from which to choose.
+///
+/// In another example, the input item could be a single cell in a list that shows the possible choices for a question.
+/// In essence, this is akin to a single cell in a table view though the actual implementation may differ.
+public protocol InputItem {
+
+    /// The result identifier is an optional value that can be used to help in building the serializable answer result
+    /// from this ``InputItem``. If null, then it is assumed that the ``Question`` that holds this ``InputItem``
+    /// has some custom serialization strategy or only contains a single answer and this property can be ignored.
+    var resultIdentifier: String? { get }
+    
+    /// The kind of object to expect for the serialization of the answer associated with this ``InputItem``. Typically,
+    /// this will be an ``AnswerType`` that maps to a simple ``JsonType``,  but it is possible for the
+    /// ``InputItem`` to translate to an object rather than a primitive.
+    ///
+    /// For example, the question could be about blood pressure where the participant answers the question with a string
+    /// of "120/70" but the state handler is responsible for translating that into a data class with systolic and
+    /// diastolic as properties that are themselves numbers.
+    var answerType: AnswerType { get }
+}
+
 public struct QuestionUIHint : RawRepresentable, Hashable, Codable {
     public let rawValue: String
     public init(rawValue: String) {
@@ -77,9 +102,24 @@ public struct QuestionUIHint : RawRepresentable, Hashable, Codable {
         case checkbox, radioButton
         public var uiHint: QuestionUIHint { .init(rawValue: rawValue) }
     }
+    
+    public enum NumberField : String, Codable, CaseIterable {
+        case textfield, slider, likert
+        public var uiHint: QuestionUIHint { .init(rawValue: rawValue) }
+    }
+    
+    public enum StringField : String, Codable, CaseIterable {
+        case textfield
+        public var uiHint: QuestionUIHint { .init(rawValue: rawValue) }
+    }
+    
     /// List of all the standard types.
     public static func allStandardTypes() -> [QuestionUIHint] {
-        Choice.allCases.map { $0.uiHint }
+        var hints = Set<QuestionUIHint>()
+        hints.formUnion(Choice.allCases.map { $0.uiHint })
+        hints.formUnion(NumberField.allCases.map { $0.uiHint })
+        hints.formUnion(StringField.allCases.map { $0.uiHint })
+        return Array(hints)
     }
 }
 
@@ -92,5 +132,69 @@ extension QuestionUIHint : ExpressibleByStringLiteral {
 extension QuestionUIHint : DocumentableStringLiteral {
     public static func examples() -> [String] {
         return allStandardTypes().map{ $0.rawValue }
+    }
+}
+
+open class AbstractQuestionStepObject : AbstractStepObject {
+    private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
+        case optional, uiHint
+        var relativeIndex: Int { 5 }
+    }
+    
+    open private(set) var optional: Bool = false
+    open private(set) var uiHint: QuestionUIHint?
+    
+    public init(identifier: String,
+                title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
+                optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
+                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+        super.init(identifier: identifier,
+                   title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+        self.optional = optional ?? self.optional
+        self.uiHint = uiHint ?? self.uiHint
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.optional = try container.decodeIfPresent(Bool.self, forKey: .optional) ?? self.optional
+        self.uiHint = try container.decodeIfPresent(QuestionUIHint.self, forKey: .uiHint) ?? self.uiHint
+    }
+    
+    open override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(optional, forKey: .optional)
+        try container.encodeIfPresent(uiHint, forKey: .uiHint)
+    }
+    
+    override open class func codingKeys() -> [CodingKey] {
+        var keys = super.codingKeys()
+        keys.append(contentsOf: CodingKeys.allCases)
+        return keys
+    }
+
+    override open class func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            return try super.documentProperty(for: codingKey)
+        }
+        switch key {
+        case .optional:
+            return .init(defaultValue: .boolean(false), propertyDescription:
+                            """
+                            If `true`, then the forward button should *always* enabled. If `false`, then the forward
+                            button should be disabled until the question is answered. This is different from "skipping"
+                            a question. Whether or not the skip button is shown in the UI is defined by the
+                            `shouldHideActions` property.
+                            """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n"))
+        case .uiHint:
+            return .init(propertyType: .reference(QuestionUIHint.documentableType()), propertyDescription:
+                            """
+                            This is a "hint" that can be used to vend a view that is appropriate to the given question.
+                            If the library responsible for rendering the question doesn't know how to handle the hint,
+                            then it will be ignored.
+                            """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n"))
+        }
     }
 }

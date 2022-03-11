@@ -37,18 +37,14 @@ import JsonModel
 open class AssessmentFactory : SerializationFactory {
     
     public static var shared = AssessmentFactory.defaultFactory
-
-//    public let inputItemSerializer = InputItemSerializer()
-    
-//    public let taskSerializer = TaskSerializer()
     
     public let answerTypeSerializer = AnswerTypeSerializer()
     public let buttonActionSerializer = ButtonActionSerializer()
     public let imageInfoSerializer = ImageInfoSerializer()
-    public let questionSerializer = QuestionSerializer()
     public let textInputItemSerializer = TextInputItemSerializer()
     public let resultSerializer = ResultDataSerializer()
     public let stepSerializer = NodeSerializer()
+    //    public let taskSerializer = TaskSerializer()
     
     public required init() {
         super.init()
@@ -58,7 +54,6 @@ open class AssessmentFactory : SerializationFactory {
         self.registerSerializer(buttonActionSerializer)
         self.registerSerializer(textInputItemSerializer)
         self.registerSerializer(stepSerializer)
-        self.registerSerializer(questionSerializer)
     }
     
 }

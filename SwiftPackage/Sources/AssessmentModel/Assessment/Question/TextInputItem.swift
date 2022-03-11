@@ -34,6 +34,28 @@
 import Foundation
 import JsonModel
 
+/// An ``TextInputItem`` describes input entry that is freeform with ranges and validation. Typically, this is
+/// presented as a text field, but depending upon the requirements of the survey designer, it may use a slider,
+/// likert scale, date picker, or other custom UI/UX to allow for validation of the entered value.
+public protocol TextInputItem : InputItem {
+
+    /// Options for displaying a text field. This is only applicable for certain types of UI hints
+    /// and data types. If not applicable, it will be ignored.
+    var keyboardOptions: KeyboardOptions { get }
+    
+    /// A localized string that displays a short text offering a hint to the user of the data to be entered for this field.
+    var fieldLabel: String? { get }
+
+    /// A localized string that displays placeholder information for the ``InputItem``.
+    ///
+    /// You can display placeholder text in a text field or text area to help users understand how to answer the item's
+    /// question. If the input field brings up another view to enter the answer, this could also be used at the button title.
+    var placeholder: String? { get }
+
+    /// This can be used to return a class used to format and/or validate the text input.
+    func buildTextValidator() -> TextEntryValidator
+}
+
 public final class TextInputItemSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
     public var documentDescription: String? {
         """
@@ -50,23 +72,10 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
     
     override init() {
         let examples: [SerializableTextInputItem] = [
-            
             DoubleTextInputItemObject(),
             IntegerTextInputItemObject(),
             StringTextInputItemObject(),
             YearTextInputItemObject(),
-//
-//            DateTimeInputItemObject(),
-//            DateInputItemObject(),
-//            TimeInputItemObject(),
-//
-//            StringChoicePickerInputItemObject(choices: []),
-//            ChoicePickerInputItemObject(jsonChoices: []),
-//
-//            CheckboxInputItemObject(fieldLabel: "Checkbox A"),
-//
-//            HeightInputItemObject(),
-//            WeightInputItemObject(),
         ]
         self.examples = examples
     }
@@ -135,7 +144,7 @@ public struct StringTextInputItemObject : SerializableTextInputItem {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, _keyboardOptions = "keyboardOptions", regExValidator
     }
     public private(set) var textInputType: TextInputType = .string
-    public let answerType: AnswerType? = AnswerTypeString()
+    public let answerType: AnswerType = AnswerTypeString()
     
     public let resultIdentifier: String?
     public let fieldLabel: String?
@@ -203,7 +212,7 @@ public struct IntegerTextInputItemObject : SerializableTextInputItem {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
     public private(set) var textInputType: TextInputType = .integer
-    public let answerType: AnswerType? = AnswerTypeInteger()
+    public let answerType: AnswerType = AnswerTypeInteger()
     
     public let resultIdentifier: String?
     public let fieldLabel: String?
@@ -265,7 +274,7 @@ public struct DoubleTextInputItemObject : SerializableTextInputItem {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
     public private(set) var textInputType: TextInputType = .number
-    public let answerType: AnswerType? = AnswerTypeNumber()
+    public let answerType: AnswerType = AnswerTypeNumber()
     
     public let resultIdentifier: String?
     public let fieldLabel: String?
@@ -327,7 +336,7 @@ public struct YearTextInputItemObject : SerializableTextInputItem {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
     public private(set) var textInputType: TextInputType = .year
-    public let answerType: AnswerType? = AnswerTypeInteger()
+    public let answerType: AnswerType = AnswerTypeInteger()
     
     public let resultIdentifier: String?
     public let fieldLabel: String?

@@ -55,7 +55,7 @@ class AssessmentModelTests: XCTestCase {
         do {
             let schemas = try doc.buildSchemas()
 
-            XCTAssertEqual(schemas.count, 8)
+            XCTAssertEqual(schemas.count, 7)
             
             checkAnswerTypeSchema(schemas)
             checkButtonActionInfoSchema(schemas)
@@ -156,6 +156,7 @@ class AssessmentModelTests: XCTestCase {
         
         let expectedAnswerTypeClassAndType = [
             ("ChoiceQuestionStepObject","choiceQuestion"),
+            ("SimpleQuestionStepObject","simpleQuestion"),
         ]
         expectedAnswerTypeClassAndType.forEach {
             guard let _ = checkDefinitions(on: schema,

@@ -95,7 +95,8 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
     
     override init() {
         self.examples = [
-            ChoiceQuestionStepObject.examples().first!
+            SimpleQuestionStepObject.examples().first!,
+            ChoiceQuestionStepObject.examples().first!,
         ]
     }
     
@@ -123,14 +124,14 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
 
 open class AbstractNodeObject : SerializableNode {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case serializableType="type", identifier, comment, hideButtons="shouldHideActions", buttonMap="actions"
+        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions"
         var relativeIndex: Int { 2 }
     }
     public private(set) var serializableType: SerializableNodeType = .init(rawValue: "null")
     
     public let identifier: String
     public let comment: String?
-    open private(set) var hideButtons: [ButtonAction] = []
+    open private(set) var shouldHideButtons: Set<ButtonAction> = []
     open private(set) var buttonMap: [ButtonAction : ButtonActionInfo] = [:]
     
     open class func defaultType() -> SerializableNodeType {
@@ -138,12 +139,12 @@ open class AbstractNodeObject : SerializableNode {
     }
     
     public init(identifier: String,
-                hideButtons: [ButtonAction]? = nil,
+                shouldHideButtons: Set<ButtonAction>? = nil,
                 buttonMap: [ButtonAction : ButtonActionInfo]? = nil,
                 comment: String? = nil) {
         self.identifier = identifier
         self.comment = comment
-        self.hideButtons = hideButtons ?? self.hideButtons
+        self.shouldHideButtons = shouldHideButtons.map { Set($0) } ?? self.shouldHideButtons
         self.buttonMap = buttonMap ?? self.buttonMap
         self.serializableType = type(of: self).defaultType()
     }
@@ -155,15 +156,15 @@ open class AbstractNodeObject : SerializableNode {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.serializableType = try container.decode(SerializableNodeType.self, forKey: .serializableType)
+        self.serializableType = type(of: self).defaultType()
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.comment = try container.decodeIfPresent(String.self, forKey: .comment)
         
-        var hideButtons = Set(self.hideButtons)
-        if let shouldHide = try container.decodeIfPresent([ButtonAction].self, forKey: .hideButtons) {
-            hideButtons.formUnion(shouldHide)
+        var shouldHideButtons = self.shouldHideButtons
+        if let shouldHide = try container.decodeIfPresent(Set<ButtonAction>.self, forKey: .shouldHideButtons) {
+            shouldHideButtons.formUnion(shouldHide)
         }
-        self.hideButtons = Array(hideButtons)
+        self.shouldHideButtons = shouldHideButtons
         
         if container.contains(.buttonMap) {
             let nestedDecoder = try container.superDecoder(forKey: .buttonMap)
@@ -197,8 +198,8 @@ open class AbstractNodeObject : SerializableNode {
                 try encodableAction.encode(to: objectEncoder)
             }
         }
-        if self.hideButtons.count > 0 {
-            try container.encode(self.hideButtons, forKey: .hideButtons)
+        if self.shouldHideButtons.count > 0 {
+            try container.encode(self.shouldHideButtons, forKey: .shouldHideButtons)
         }
     }
 
@@ -230,7 +231,7 @@ open class AbstractNodeObject : SerializableNode {
         case .buttonMap:
             return .init(propertyType: .interfaceDictionary("\(ButtonActionInfo.self)"), propertyDescription:
                             "A mapping of button action to content information for that button.")
-        case .hideButtons:
+        case .shouldHideButtons:
             return .init(propertyType: .referenceArray(ButtonAction.documentableType()), propertyDescription:
                             "A list of buttons that should be hidden even if the default is to show them.")
         }
@@ -250,8 +251,8 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                hideButtons: [ButtonAction]? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
-        super.init(identifier: identifier, hideButtons: hideButtons, buttonMap: buttonMap, comment: comment)
+                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+        super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
         self.title = title
         self.subtitle = subtitle
         self.detail = detail

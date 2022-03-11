@@ -1,5 +1,5 @@
 //
-//  TextInputValidatorObjects.swift
+//  TextEntryValidator.swift
 //
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
 //

@@ -1,5 +1,5 @@
 //
-//  MultipleChoiceQuestions.swift
+//  ChoiceQuestion.swift
 //  
 //
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
@@ -33,6 +33,9 @@
 
 import Foundation
 import JsonModel
+
+public protocol ChoiceInputItem : InputItem, ChoiceOption {
+}
 
 /// A choice option is a light-weight interface for a list of choices that should be displayed to the participant.
 public protocol ChoiceOption {
@@ -68,26 +71,6 @@ public enum ChoiceSelectorType : String, StringEnumSet, DocumentableStringEnum {
     case `default`, exclusive, all
 }
 
-/// A choice input item where the value is defined by a ``JsonElement``.
-public protocol JsonChoice : ChoiceInputItem {
-    var matchingValue: JsonElement? { get }
-}
-
-public extension JsonChoice {
-    
-    var answerType: AnswerType? {
-        matchingValue.map { $0.answerType }
-    }
-    
-    var resultIdentifier: String? {
-        matchingValue.map { "\($0)"}
-    }
-     
-    func jsonElement(selected: Bool) -> JsonElement? {
-        selected ? matchingValue : nil
-    }
-}
-
 public protocol ChoiceQuestion : Question {
     var choices: [JsonChoice] { get }
     var baseType: JsonType { get }
@@ -96,7 +79,7 @@ public protocol ChoiceQuestion : Question {
 
 public extension ChoiceQuestion {
     var answerType: AnswerType {
-        baseType.answerType
+        singleAnswer ? baseType.answerType : AnswerTypeArray(baseType: baseType)
     }
     
     func buildInputItems() -> [InputItem] {
@@ -112,6 +95,27 @@ public extension ChoiceQuestion {
     }
 }
 
+/// A choice input item where the value is defined by a ``JsonElement``.
+public protocol JsonChoice : ChoiceInputItem {
+    var matchingValue: JsonElement? { get }
+}
+
+public extension JsonChoice {
+    
+    var answerType: AnswerType {
+        matchingValue.map { $0.answerType } ?? AnswerTypeNull()
+    }
+    
+    var resultIdentifier: String? {
+        matchingValue.map { "\($0)"}
+    }
+     
+    func jsonElement(selected: Bool) -> JsonElement? {
+        selected ? matchingValue : nil
+    }
+}
+
+/// An abstract implementation is provided to allow different "type" identifiers with the same encoding.
 open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, ChoiceQuestion, QuestionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case baseType, singleAnswer = "singleChoice", choices, other
@@ -127,7 +131,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     public init(identifier: String, choices: [JsonChoiceObject], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                hideButtons: [ButtonAction]? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
         self._choices = choices
         self.baseType = baseType ?? choices.baseType()
         self.singleAnswer = singleChoice
@@ -135,7 +139,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    optional: optional, uiHint: uiHint,
-                   hideButtons: hideButtons, buttonMap: buttonMap, comment: comment)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
         if let error = _validate() {
             fatalError(error.debugDescription)
         }
@@ -181,6 +185,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.singleAnswer, forKey: .singleAnswer)
         try container.encode(self._choices, forKey: .choices)
+        try container.encode(self.baseType, forKey: .baseType)
         try encodeObject(object: self.other, to: encoder, forKey: CodingKeys.other)
     }
     
@@ -251,7 +256,7 @@ public struct JsonChoiceObject : JsonChoice, Codable, Hashable {
     // TODO: Deprecated. Included to supported for older json files that do not support "all of the above". syoung 03/10/2022
     private let _exclusive: Bool?
     
-    public init(value: JsonElement?,
+    public init(value: JsonElement? = nil,
                 text: String,
                 detail: String? = nil,
                 selectorType: ChoiceSelectorType? = nil) {
@@ -326,6 +331,6 @@ fileprivate extension Array where Element : JsonChoice {
     func baseType() -> JsonType {
         first(where: {
             $0.matchingValue != nil && $0.matchingValue != JsonElement.null
-        })!.matchingValue!.jsonType
+        })?.matchingValue?.jsonType ?? .null
     }
 }
