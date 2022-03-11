@@ -56,7 +56,7 @@ public struct SerializableNodeType : TypeRepresentable, Codable, Hashable {
     }
     
     public enum StandardTypes : String, CaseIterable {
-        case choiceQuestion, simpleQuestion
+        case choiceQuestion, simpleQuestion, overview, instruction, completion
         
         public var nodeType: SerializableNodeType {
             .init(rawValue: self.rawValue)
@@ -97,6 +97,8 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
         self.examples = [
             SimpleQuestionStepObject.examples().first!,
             ChoiceQuestionStepObject.examples().first!,
+            InstructionStepObject.examples().first!,
+            OverviewStepObject.examples().first!,
         ]
     }
     
@@ -131,8 +133,8 @@ open class AbstractNodeObject : SerializableNode {
     
     public let identifier: String
     public let comment: String?
-    open private(set) var shouldHideButtons: Set<ButtonAction> = []
-    open private(set) var buttonMap: [ButtonAction : ButtonActionInfo] = [:]
+    public let shouldHideButtons: Set<ButtonAction>
+    public let buttonMap: [ButtonAction : ButtonActionInfo]
     
     open class func defaultType() -> SerializableNodeType {
         fatalError("The default type *must* be overriden for this abstract class")
@@ -144,8 +146,8 @@ open class AbstractNodeObject : SerializableNode {
                 comment: String? = nil) {
         self.identifier = identifier
         self.comment = comment
-        self.shouldHideButtons = shouldHideButtons.map { Set($0) } ?? self.shouldHideButtons
-        self.buttonMap = buttonMap ?? self.buttonMap
+        self.shouldHideButtons = shouldHideButtons ?? []
+        self.buttonMap = buttonMap ?? [:]
         self.serializableType = type(of: self).defaultType()
     }
 
@@ -155,21 +157,14 @@ open class AbstractNodeObject : SerializableNode {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
         self.serializableType = type(of: self).defaultType()
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.comment = try container.decodeIfPresent(String.self, forKey: .comment)
-        
-        var shouldHideButtons = self.shouldHideButtons
-        if let shouldHide = try container.decodeIfPresent(Set<ButtonAction>.self, forKey: .shouldHideButtons) {
-            shouldHideButtons.formUnion(shouldHide)
-        }
-        self.shouldHideButtons = shouldHideButtons
-        
+        self.shouldHideButtons = try container.decodeIfPresent(Set<ButtonAction>.self, forKey: .shouldHideButtons) ?? []
         if container.contains(.buttonMap) {
             let nestedDecoder = try container.superDecoder(forKey: .buttonMap)
             let nestedContainer = try nestedDecoder.container(keyedBy: AnyCodingKey.self)
-            var buttonMap: [ButtonAction : ButtonActionInfo] = self.buttonMap
+            var buttonMap = [ButtonAction : ButtonActionInfo]()
             for key in nestedContainer.allKeys {
                 let objectDecoder = try nestedContainer.superDecoder(forKey: key)
                 let actionType = ButtonAction(rawValue: key.stringValue)
@@ -177,6 +172,9 @@ open class AbstractNodeObject : SerializableNode {
                 buttonMap[actionType] = action
             }
             self.buttonMap = buttonMap
+        }
+        else {
+            self.buttonMap = [:]
         }
     }
 
@@ -244,31 +242,34 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
         var relativeIndex: Int { 3 }
     }
     
-    open private(set) var title: String?
-    open private(set) var subtitle: String?
-    open private(set) var detail: String?
-    open private(set) var imageInfo: ImageInfo?
+    public let title: String?
+    public let subtitle: String?
+    public let detail: String?
+    public let imageInfo: ImageInfo?
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
-        super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
         self.title = title
         self.subtitle = subtitle
         self.detail = detail
         self.imageInfo = imageInfo
+        super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
     }
     
     public required init(from decoder: Decoder) throws {
-        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.title = try container.decodeIfPresent(String.self, forKey: .title) ?? self.title
-        self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle) ?? self.subtitle
-        self.detail = try container.decodeIfPresent(String.self, forKey: .detail) ?? self.detail
+        self.title = try container.decodeIfPresent(String.self, forKey: .title)
+        self.subtitle = try container.decodeIfPresent(String.self, forKey: .subtitle)
+        self.detail = try container.decodeIfPresent(String.self, forKey: .detail)
         if container.contains(.imageInfo) {
             let nestedDecoder = try container.superDecoder(forKey: .imageInfo)
             self.imageInfo = try decoder.serializationFactory.decodePolymorphicObject(ImageInfo.self, from: nestedDecoder)
         }
+        else {
+            self.imageInfo = nil
+        }
+        try super.init(from: decoder)
     }
     
     open override func encode(to encoder: Encoder) throws {
@@ -308,8 +309,9 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
 }
 
 open class AbstractStepObject : AbstractContentNodeObject, Step {
+    /// Default implementation returns `nil`.
     open func spokenInstruction(at timeInterval: TimeInterval) -> String? {
-        nil // TODO: syoung 03/08/2022 Implement encoding for spoken instructions
+        nil
     }
 }
 

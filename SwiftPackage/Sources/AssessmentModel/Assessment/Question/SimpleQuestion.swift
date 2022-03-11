@@ -82,7 +82,6 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
                 shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
-        
         super.init(identifier: identifier, title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo, optional: optional, uiHint: uiHint, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
         self.inputItem = inputItem ?? type(of: self).defaultTextInputItem()
     }

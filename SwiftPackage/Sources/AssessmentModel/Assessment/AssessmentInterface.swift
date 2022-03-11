@@ -145,8 +145,18 @@ public protocol OptionalNode : Node {
     var fullInstructionsOnly: Bool { get }
 }
 
-/// The instruction step protocol is used to allow the UI/UX for a set of steps to use `is` switch statements
-/// to determine the type of view to present to the participant.
-public protocol InstructionStep : Step, OptionalNode, ContentNode {
+/// Information about an assessment.
+public protocol AssessmentInfo : ContentInfo {
+
+    /// The version of this assessment. This may be a semantic version, timestamp, or sequential revision integer.
+    var versionString: String? { get }
+
+    /// The estimated number of minutes that the assessment will take. If `0`, then it is assumed that this value is not
+    /// defined. Where provided, it can be used by an application to indicate to the participant approximately how
+    /// long an assessment is expected to take to complete.
+    var estimatedMinutes: Int { get }
+    
+    /// Copyright information about this assessment.
+    var copyright: String? { get }
 }
 

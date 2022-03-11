@@ -141,25 +141,25 @@ open class AbstractQuestionStepObject : AbstractStepObject {
         var relativeIndex: Int { 5 }
     }
     
-    open private(set) var optional: Bool = false
-    open private(set) var uiHint: QuestionUIHint?
+    public let optional: Bool
+    public let uiHint: QuestionUIHint?
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
                 shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+        self.optional = optional ?? false
+        self.uiHint = uiHint
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
-        self.optional = optional ?? self.optional
-        self.uiHint = uiHint ?? self.uiHint
     }
     
     public required init(from decoder: Decoder) throws {
-        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.optional = try container.decodeIfPresent(Bool.self, forKey: .optional) ?? self.optional
-        self.uiHint = try container.decodeIfPresent(QuestionUIHint.self, forKey: .uiHint) ?? self.uiHint
+        self.optional = try container.decodeIfPresent(Bool.self, forKey: .optional) ?? false
+        self.uiHint = try container.decodeIfPresent(QuestionUIHint.self, forKey: .uiHint)
+        try super.init(from: decoder)
     }
     
     open override func encode(to encoder: Encoder) throws {

@@ -123,7 +123,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     }
     
     public var choices: [JsonChoice] { _choices }
-    private var _choices: [JsonChoiceObject]
+    private let _choices: [JsonChoiceObject]
     public let other: TextInputItem?
     public let baseType: JsonType
     public let singleAnswer: Bool
