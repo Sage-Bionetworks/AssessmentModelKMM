@@ -297,7 +297,7 @@ open class InputItemsTest {
     }
 
     /**
-     * [DecimalTextInputItemObject] Tests
+     * [DoubleTextInputItemObject] Tests
      */
 
     @Test
@@ -364,11 +364,11 @@ open class InputItemsTest {
     }
 
     @Test
-    fun testDecimalInputItemObject_Serialization() {
+    fun testDoubleInputItemObject_Serialization() {
         val inputString = """
            {
             "identifier": "foo",
-            "type": "decimal",
+            "type": "number",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
@@ -382,7 +382,7 @@ open class InputItemsTest {
             }
            }
            """
-        val original = DecimalTextInputItemObject("foo")
+        val original = DoubleTextInputItemObject("foo")
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
         original.formatOptions = DoubleFormatOptions(usesGroupingSeparator = false)
@@ -406,10 +406,10 @@ open class InputItemsTest {
     fun testDecimalTextInputItemObject_DefaultValue_Serialization() {
         val inputString = """
            {
-            "type": "decimal"
+            "type": "number"
            }
            """
-        val original = DecimalTextInputItemObject()
+        val original = DoubleTextInputItemObject()
 
         // Check the defaults for an decimal
         assertTrue(original.formatOptions.usesGroupingSeparator)

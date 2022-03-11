@@ -127,10 +127,7 @@ public extension SerializableTextInputItem {
 }
 
 public enum TextInputType : String, StringEnumSet, DocumentableStringEnum {
-    case decimal, integer, string, year
-    // TODO: syoung 03/10/2022 Implement for dates and height/weight, etc.
-//    case dateTime = "date-time", date, time
-//    case height, weight
+    case number, integer, string, year
 }
 
 public struct StringTextInputItemObject : SerializableTextInputItem {
@@ -267,7 +264,7 @@ public struct DoubleTextInputItemObject : SerializableTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
-    public private(set) var textInputType: TextInputType = .decimal
+    public private(set) var textInputType: TextInputType = .number
     public let answerType: AnswerType? = AnswerTypeNumber()
     
     public let resultIdentifier: String?
@@ -311,7 +308,7 @@ extension DoubleTextInputItemObject : DocumentableStruct {
         }
         switch key {
         case .textInputType:
-            return .init(constValue: TextInputType.decimal)
+            return .init(constValue: TextInputType.number)
         case .resultIdentifier, .fieldLabel, .placeholder:
             return .init(propertyType: .primitive(.string))
         case .formatOptions:

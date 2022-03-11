@@ -124,12 +124,12 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     public let baseType: JsonType
     public let singleAnswer: Bool
     
-    public init(identifier: String, choices: [JsonChoiceObject], singleChoice: Bool = true, other: TextInputItem? = nil,
+    public init(identifier: String, choices: [JsonChoiceObject], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
                 hideButtons: [ButtonAction]? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
         self._choices = choices
-        self.baseType = choices.baseType()
+        self.baseType = baseType ?? choices.baseType()
         self.singleAnswer = singleChoice
         self.other = other
         super.init(identifier: identifier,

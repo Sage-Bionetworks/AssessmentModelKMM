@@ -62,6 +62,7 @@ class AssessmentModelTests: XCTestCase {
             checkImageInfoSchema(schemas)
             checkNodeSchema(schemas)
             checkResultDataSchema(schemas)
+            checkTextInputItemSchema(schemas)
     
         }
         catch let err {
@@ -168,6 +169,33 @@ class AssessmentModelTests: XCTestCase {
             }
         }
     }
+    
+    func checkTextInputItemSchema(_ schemas: [JsonSchema]) {
+        guard let schema = schemas.first(where: { $0.id.className == "TextInputItem" })
+        else {
+            XCTFail("Failed to build the expected JSON schema for `TextInputItem`.")
+            return
+        }
+        
+        let expectedAnswerTypeClassAndType = [
+            ("DoubleTextInputItemObject","number"),
+            ("IntegerTextInputItemObject","integer"),
+            ("StringTextInputItemObject","string"),
+            ("YearTextInputItemObject","year"),
+        ]
+        expectedAnswerTypeClassAndType.forEach {
+            guard let _ = checkDefinitions(on: schema,
+                                           className: $0.0,
+                                           expectedType: $0.1,
+                                           sharedKeys: ["identifier", "fieldLabel", "placeholder"],
+                                           expectedSerializableType: "TextInputType")
+            else {
+                XCTFail("Unexpected nil for \($0.0)")
+                return
+            }
+        }
+    }
+    
     
     func checkResultDataSchema(_ schemas: [JsonSchema]) {
         guard let resultDataSchema = schemas.first(where: { $0.id.className == "ResultData" })

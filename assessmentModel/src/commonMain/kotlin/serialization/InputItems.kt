@@ -6,7 +6,6 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.*
 import kotlinx.serialization.modules.subclass
-import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
@@ -14,7 +13,7 @@ val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
         subclass(CheckboxInputItemObject::class)
         subclass(DateInputItemObject::class)
-        subclass(DecimalTextInputItemObject::class)
+        subclass(DoubleTextInputItemObject::class)
         subclass(IntegerTextInputItemObject::class)
         subclass(StringTextInputItemObject::class)
         subclass(TimeInputItemObject::class)
@@ -22,7 +21,7 @@ val inputItemSerializersModule = SerializersModule {
     }
     polymorphic(KeyboardTextInputItem::class) {
         subclass(DateInputItemObject::class)
-        subclass(DecimalTextInputItemObject::class)
+        subclass(DoubleTextInputItemObject::class)
         subclass(IntegerTextInputItemObject::class)
         subclass(StringTextInputItemObject::class)
         subclass(TimeInputItemObject::class)
@@ -72,10 +71,10 @@ data class KeyboardOptionsObject(override val isSecureTextEntry: Boolean = false
  */
 
 @Serializable
-@SerialName("decimal")
-data class DecimalTextInputItemObject(@SerialName("identifier")
+@SerialName("number")
+data class DoubleTextInputItemObject(@SerialName("identifier")
                                       override val resultIdentifier: String? = null,
-                                      var formatOptions: DoubleFormatOptions = DoubleFormatOptions())
+                                     var formatOptions: DoubleFormatOptions = DoubleFormatOptions())
     : InputItemObject<Double>() {
     override val answerType: AnswerType
         get() = AnswerType.DECIMAL
