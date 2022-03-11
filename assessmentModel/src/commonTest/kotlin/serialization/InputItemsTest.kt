@@ -63,24 +63,8 @@ open class InputItemsTest {
     }
 
     @Test
-    fun testUIHint_Detail_Serialization() {
-        val hints = UIHint.Detail.values().toList()
-        val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["disclosureArrow","button","link"]}"""
-
-        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
-
-        // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.lowercase(), jsonString.lowercase())
-        assertEquals(original, restored)
-        assertEquals(original, decoded)
-    }
-
-    @Test
     fun testUIHint_TextField_Serialization() {
-        val hints = UIHint.TextField.values().toList()
+        val hints = UIHint.StringField.values().toList()
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["textfield","multipleLine","popover"]}"""
 
@@ -96,9 +80,9 @@ open class InputItemsTest {
 
     @Test
     fun testUIHint_CustomAndPicker_Serialization() {
-        val hints = listOf(UIHint.Custom("foo"), UIHint.Picker)
+        val hints = listOf(UIHint.Custom("foo"))
         val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["foo","picker"]}"""
+        val inputString = """{"hints":["foo"]}"""
 
         val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
@@ -111,12 +95,12 @@ open class InputItemsTest {
     }
 
     @Serializable
-    data class UIHintTextFieldWrapper(val types: List<UIHint.TextField>)
+    data class UIHintTextFieldWrapper(val types: List<UIHint>)
 
     @Test
     fun testUIHintTextField_Cast_Serialization() {
-        val original = UIHintTextFieldWrapper(UIHint.TextField.values().toList())
-        val inputString = """{"types":["textfield","multipleLine","popover"]}"""
+        val original = UIHintTextFieldWrapper(UIHint.StringField.values().toList())
+        val inputString = """{"types":["textfield","multipleLine"]}"""
 
         val jsonString = jsonCoder.encodeToString(UIHintTextFieldWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), jsonString)

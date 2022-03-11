@@ -109,7 +109,7 @@ public struct QuestionUIHint : RawRepresentable, Hashable, Codable {
     }
     
     public enum StringField : String, Codable, CaseIterable {
-        case textfield
+        case textfield, multipleLine
         public var uiHint: QuestionUIHint { .init(rawValue: rawValue) }
     }
     

@@ -243,7 +243,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 "optional": false,
                 "singleChoice": false,
                 "baseType": "integer",
-                "uiHint": "checkmark",
+                "uiHint": "checkbox",
                 "choices":[
                 {"text":"choice 1","icon":"choice1","value":1},
                 {"text":"choice 2","value":2},
@@ -261,7 +261,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
                 baseType = BaseType.INTEGER)
-        original.uiHint = UIHint.Choice.Checkmark
+        original.uiHint = UIHint.Choice.Checkbox
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
         original.detail = "Some text. This is a test."
@@ -303,7 +303,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                                   },
                 "optional": false,
                 "singleChoice": false,
-                "uiHint": "checkmark",
+                "uiHint": "checkbox",
                 "choices":[
                 {"text":"choice 1","value":"one"},
                 {"text":"choice 2","value":"two"},
@@ -327,7 +327,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                         JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
                 other = otherInputItem)
-        original.uiHint = UIHint.Choice.Checkmark
+        original.uiHint = UIHint.Choice.Checkbox
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
         original.detail = "Some text. This is a test."
