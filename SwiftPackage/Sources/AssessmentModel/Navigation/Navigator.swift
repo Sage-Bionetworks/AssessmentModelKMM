@@ -33,6 +33,11 @@
 
 import Foundation
 
+/// The navigation state is a means to allow circular references where the navigator may require state information
+/// from the state machine to initialize.
+public protocol NavigationState : AnyObject {
+}
+
 /// The ``Navigator`` is used by the assessment view controller or fragment to determine the order of presentation of
 /// the ``Node`` elements in an assessment. The navigator is responsible for determining navigation based on the input
 /// model, results, and platform context.
@@ -85,7 +90,7 @@ public extension Navigator {
 open class NavigationPoint {
     
     /// The next node to move to in navigating the assessment.
-    public let node: Node
+    public let node: Node?
     
     /// The branch result is the result set at this level of navigation. This allows for explicit mutation or copying of a
     /// result into the form that is required by the assessment ``Navigator``.
@@ -96,7 +101,7 @@ open class NavigationPoint {
     /// to redo a step and the animation should move backwards to show the user that this is what is happening.
     public let direction: PathMarker.Direction
     
-    public init(node: Node, branchResult: BranchNodeResult, direction: PathMarker.Direction) {
+    public init(node: Node?, branchResult: BranchNodeResult, direction: PathMarker.Direction) {
         self.node = node
         self.branchResult = branchResult
         self.direction = direction

@@ -163,7 +163,7 @@ public protocol AssessmentInfo {
 public protocol BranchNode : Node {
 
     /// The ``Navigator`` for this section or assessment.
-    func instatiateNavigator(nodeState: BranchNodeState) -> Navigator
+    func instatiateNavigator(state: NavigationState) -> Navigator
 
     /// The instatiated result should be a branch node result.
     func instatiateBranchNodeResult() -> BranchNodeResult

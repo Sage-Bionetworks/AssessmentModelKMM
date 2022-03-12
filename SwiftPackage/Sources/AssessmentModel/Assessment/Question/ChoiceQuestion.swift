@@ -119,7 +119,7 @@ public extension JsonChoice {
 open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, ChoiceQuestion, QuestionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case baseType, singleAnswer = "singleChoice", choices, other
-        var relativeIndex: Int { 5 }
+        var relativeIndex: Int { 6 }
     }
     
     public var choices: [JsonChoice] { _choices }

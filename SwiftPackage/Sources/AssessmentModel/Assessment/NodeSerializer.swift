@@ -95,10 +95,12 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
     
     override init() {
         self.examples = [
+            AssessmentObject.examples().first!,
             ChoiceQuestionStepObject.examples().first!,
             CompletionStepObject.examples().first!,
             InstructionStepObject.examples().first!,
             OverviewStepObject.examples().first!,
+            SectionObject.examples().first!,
             SimpleQuestionStepObject.examples().first!,
         ]
     }
@@ -152,7 +154,7 @@ open class AbstractNodeObject : SerializableNode {
         self.serializableType = type(of: self).defaultType()
     }
 
-    public func instantiateResult() -> ResultData {
+    open func instantiateResult() -> ResultData {
         ResultObject(identifier: self.identifier)
     }
 
@@ -240,7 +242,7 @@ open class AbstractNodeObject : SerializableNode {
 open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case title, subtitle, detail, imageInfo = "image"
-        var relativeIndex: Int { 3 }
+        var relativeIndex: Int { 4 }
     }
     
     public let title: String?

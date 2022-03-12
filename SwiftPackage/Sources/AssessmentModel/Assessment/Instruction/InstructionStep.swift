@@ -42,7 +42,7 @@ public protocol InstructionStep : Step, OptionalNode, ContentNode {
 open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case _fullInstructionsOnly = "fullInstructionsOnly", spokenInstructions
-        var relativeIndex: Int { 4 }
+        var relativeIndex: Int { 5 }
     }
     
     /// Should this step be displayed if and only if the flag has been set for displaying the full

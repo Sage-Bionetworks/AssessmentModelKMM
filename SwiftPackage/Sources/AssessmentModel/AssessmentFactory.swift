@@ -43,17 +43,21 @@ open class AssessmentFactory : SerializationFactory {
     public let imageInfoSerializer = ImageInfoSerializer()
     public let textInputItemSerializer = TextInputItemSerializer()
     public let resultSerializer = ResultDataSerializer()
-    public let stepSerializer = NodeSerializer()
-    //    public let taskSerializer = TaskSerializer()
+    public let nodeSerializer = NodeSerializer()
+    public let assessmentSerializer = AssessmentSerializer()
     
     public required init() {
         super.init()
+        
         self.registerSerializer(answerTypeSerializer)
         self.registerSerializer(resultSerializer)
         self.registerSerializer(imageInfoSerializer)
         self.registerSerializer(buttonActionSerializer)
         self.registerSerializer(textInputItemSerializer)
-        self.registerSerializer(stepSerializer)
+        self.registerSerializer(nodeSerializer)
+        self.registerSerializer(assessmentSerializer)
+        
+        self.registerRootObject(AssessmentObject())
+        self.registerRootObject(AssessmentResultObject())
     }
-    
 }
