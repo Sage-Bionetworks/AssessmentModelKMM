@@ -146,7 +146,7 @@ public protocol OptionalNode : Node {
 }
 
 /// Information about an assessment.
-public protocol AssessmentInfo : ContentInfo {
+public protocol AssessmentInfo {
 
     /// The version of this assessment. This may be a semantic version, timestamp, or sequential revision integer.
     var versionString: String? { get }
@@ -160,3 +160,23 @@ public protocol AssessmentInfo : ContentInfo {
     var copyright: String? { get }
 }
 
+public protocol BranchNode : Node {
+
+    /// The ``Navigator`` for this section or assessment.
+    func instatiateNavigator(nodeState: BranchNodeState) -> Navigator
+
+    /// The instatiated result should be a branch node result.
+    func instatiateBranchNodeResult() -> BranchNodeResult
+}
+
+public protocol Assessment : BranchNode, ContentNode, AssessmentInfo {
+    
+    /// The instantiated result should be an assessment result.
+    func instatiateAssessmentResult() -> AssessmentResult
+}
+
+public extension Assessment {
+    func instatiateBranchNodeResult() -> BranchNodeResult {
+        instatiateAssessmentResult()
+    }
+}

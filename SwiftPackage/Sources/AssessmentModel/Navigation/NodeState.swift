@@ -1,6 +1,7 @@
 //
-//  OverviewStep.swift
+//  NodeState.swift
 //  
+//
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,18 +32,11 @@
 //
 
 import Foundation
-import JsonModel
 
-public protocol OverviewStep : Step, ContentNode {
+// TODO: syoung 03/11/2022 Decide what, if anything, needs to be included in the `NodeState` protocol.
+
+public protocol NodeState : AnyObject {
 }
 
-/// An overview step is a concrete implementation of a step that is intended to be used to mark the *beginning* of an assessment.
-public final class OverviewStepObject : AbstractStepObject, OverviewStep, Encodable, DocumentableStruct {
-    public override class func defaultType() -> SerializableNodeType {
-        .StandardTypes.overview.nodeType
-    }
-    
-    public static func examples() -> [OverviewStepObject] {
-        [.init(identifier: "example")]
-    }
+public protocol BranchNodeState : NodeState {
 }

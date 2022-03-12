@@ -58,12 +58,6 @@ public protocol Question : ResultMapElement, ContentInfo {
     func instantiateAnswerResult() -> AnswerResult
 }
 
-public extension Question {
-    func instantiateResult() -> ResultData {
-        instantiateAnswerResult()
-    }
-}
-
 public protocol QuestionStep : Question, Step, ContentNode {
 }
 

@@ -128,6 +128,10 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     public let baseType: JsonType
     public let singleAnswer: Bool
     
+    override open func instantiateResult() -> ResultData {
+        instantiateAnswerResult()
+    }
+    
     public init(identifier: String, choices: [JsonChoiceObject], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,

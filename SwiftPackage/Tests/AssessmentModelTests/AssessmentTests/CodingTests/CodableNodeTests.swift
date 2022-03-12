@@ -48,6 +48,8 @@ class CodableQuestionTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    // MARK: Instructions
+    
     func testOverviewStep_Default_Codable() {
         
         let json = """
@@ -59,6 +61,7 @@ class CodableQuestionTests: XCTestCase {
         
         XCTAssertEqual(.StandardTypes.overview.nodeType, OverviewStepObject.defaultType())
         checkDefaultSharedKeys(step: OverviewStepObject(identifier: "foo"))
+        checkResult(step: OverviewStepObject(identifier: "foo"), type: ResultObject.self)
         
         do {
             
@@ -133,6 +136,7 @@ class CodableQuestionTests: XCTestCase {
         
         XCTAssertEqual(.StandardTypes.instruction.nodeType, InstructionStepObject.defaultType())
         checkDefaultSharedKeys(step: InstructionStepObject(identifier: "foo"))
+        checkResult(step: InstructionStepObject(identifier: "foo"), type: ResultObject.self)
         
         do {
             
@@ -204,6 +208,39 @@ class CodableQuestionTests: XCTestCase {
             return
         }
     }
+    
+    func testCompletionStep_Default_Codable() {
+        
+        let json = """
+            {
+                 "identifier": "foo",
+                 "type": "completion"
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        XCTAssertEqual(.StandardTypes.completion.nodeType, CompletionStepObject.defaultType())
+        checkDefaultSharedKeys(step: CompletionStepObject(identifier: "foo"))
+        checkResult(step: CompletionStepObject(identifier: "foo"), type: ResultObject.self)
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<CompletionStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            checkDefaultSharedKeys(step: object)
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.completion.nodeType, object.serializableType)
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    // MARK: Questions
 
     func testSimpleQuestion_Default_Codable() {
         
@@ -216,6 +253,7 @@ class CodableQuestionTests: XCTestCase {
         
         XCTAssertEqual(.StandardTypes.simpleQuestion.nodeType, SimpleQuestionStepObject.defaultType())
         checkDefaultSharedKeys(step: SimpleQuestionStepObject(identifier: "foo"))
+        checkResult(step: SimpleQuestionStepObject(identifier: "foo"), type: AnswerResultObject.self)
         
         do {
             
@@ -308,7 +346,8 @@ class CodableQuestionTests: XCTestCase {
         """.data(using: .utf8)! // our data in native (JSON) format
         
         XCTAssertEqual(.StandardTypes.choiceQuestion.nodeType, ChoiceQuestionStepObject.defaultType())
-        checkDefaultSharedKeys(step: ChoiceQuestionStepObject(identifier: "foo", choices: []))
+        checkDefaultSharedKeys(step: ChoiceQuestionStepObject(identifier: "foo", choices: [.init(text: "bar")]))
+        checkResult(step: ChoiceQuestionStepObject(identifier: "foo", choices: [.init(text: "bar")]), type: AnswerResultObject.self)
         
         do {
             
@@ -404,6 +443,14 @@ class CodableQuestionTests: XCTestCase {
             XCTFail("Failed to decode/encode object: \(err)")
             return
         }
+    }
+    
+    // MARK: helpers
+    
+    func checkResult<T : ResultData>(step: AbstractNodeObject, type: T.Type) {
+        let result = step.instantiateResult()
+        XCTAssertEqual(result.identifier, step.identifier)
+        XCTAssertTrue(result is T)
     }
     
     func checkDefaultSharedKeys(step: AbstractStepObject) {

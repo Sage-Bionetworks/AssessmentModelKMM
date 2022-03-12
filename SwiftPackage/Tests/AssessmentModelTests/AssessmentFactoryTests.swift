@@ -156,9 +156,10 @@ class AssessmentModelTests: XCTestCase {
         
         let expectedAnswerTypeClassAndType = [
             ("ChoiceQuestionStepObject","choiceQuestion"),
-            ("SimpleQuestionStepObject","simpleQuestion"),
+            ("CompletionStepObject","completion"),
             ("InstructionStepObject","instruction"),
             ("OverviewStepObject","overview"),
+            ("SimpleQuestionStepObject","simpleQuestion"),
         ]
         expectedAnswerTypeClassAndType.forEach {
             guard let _ = checkDefinitions(on: schema,

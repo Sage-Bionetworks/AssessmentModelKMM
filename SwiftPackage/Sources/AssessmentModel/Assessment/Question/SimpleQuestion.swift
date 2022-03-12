@@ -77,6 +77,10 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
         StringTextInputItemObject()
     }
     
+    override open func instantiateResult() -> ResultData {
+        instantiateAnswerResult()
+    }
+    
     public init(identifier: String,
                 inputItem: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,

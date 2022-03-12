@@ -1,6 +1,7 @@
 //
-//  OverviewStep.swift
+//  CompletionStep.swift
 //  
+//
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,16 +34,23 @@
 import Foundation
 import JsonModel
 
-public protocol OverviewStep : Step, ContentNode {
+public protocol CompletionStep : Step, ContentNode {
+}
+
+public extension CompletionStep {
+    // Default implementation for a completion step is to block going back.
+    func canGoBack() -> Bool {
+        false
+    }
 }
 
 /// An overview step is a concrete implementation of a step that is intended to be used to mark the *beginning* of an assessment.
-public final class OverviewStepObject : AbstractStepObject, OverviewStep, Encodable, DocumentableStruct {
+public final class CompletionStepObject : AbstractStepObject, CompletionStep, Encodable, DocumentableStruct {
     public override class func defaultType() -> SerializableNodeType {
-        .StandardTypes.overview.nodeType
+        .StandardTypes.completion.nodeType
     }
     
-    public static func examples() -> [OverviewStepObject] {
+    public static func examples() -> [CompletionStepObject] {
         [.init(identifier: "example")]
     }
 }
