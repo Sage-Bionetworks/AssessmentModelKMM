@@ -67,7 +67,7 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.shared.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
     }
     
     override init() {

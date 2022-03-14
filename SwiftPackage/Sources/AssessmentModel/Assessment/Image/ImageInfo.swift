@@ -103,7 +103,7 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.shared.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
     }
     
     override init() {

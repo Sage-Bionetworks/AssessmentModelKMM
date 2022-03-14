@@ -36,8 +36,6 @@ import JsonModel
 
 open class AssessmentFactory : SerializationFactory {
     
-    public static var shared = AssessmentFactory.defaultFactory
-    
     public let answerTypeSerializer = AnswerTypeSerializer()
     public let buttonActionSerializer = ButtonActionSerializer()
     public let imageInfoSerializer = ImageInfoSerializer()
