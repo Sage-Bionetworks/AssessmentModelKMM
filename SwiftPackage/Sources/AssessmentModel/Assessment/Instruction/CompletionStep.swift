@@ -34,18 +34,18 @@
 import Foundation
 import JsonModel
 
+/// An completion step is intended to be used to mark the *end* of an assessment.
 public protocol CompletionStep : Step, ContentNode {
 }
 
-public extension CompletionStep {
-    // Default implementation for a completion step is to block going back.
-    func canGoBack() -> Bool {
+open class AbstractCompletionStepObject : AbstractStepObject, CompletionStep {
+    /// Default implementation for a completion step is to block going back.
+    open override func canGoBack() -> Bool {
         false
     }
 }
 
-/// An overview step is a concrete implementation of a step that is intended to be used to mark the *beginning* of an assessment.
-public final class CompletionStepObject : AbstractStepObject, CompletionStep, Encodable, DocumentableStruct {
+public final class CompletionStepObject : AbstractCompletionStepObject, Encodable, DocumentableStruct {
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.completion.nodeType
     }

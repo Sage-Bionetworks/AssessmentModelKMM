@@ -76,13 +76,6 @@ public protocol Node : ResultMapElement {
     func canGoBack() -> Bool
 }
 
-public extension Node {
-    // Default implementation is that a node can go back unless the button is explicitly hidden.
-    func canGoBack() -> Bool {
-        !shouldHideButtons.contains(.navigation(.goBackward))
-    }
-}
-
 /// Content info is general information about a ``Node``, ``Question``, or other UI/UX element where the syntax
 /// for title, subtitle, and detail should be consistent.
 public protocol ContentInfo {

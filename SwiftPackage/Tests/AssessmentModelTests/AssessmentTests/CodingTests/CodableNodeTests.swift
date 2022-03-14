@@ -48,6 +48,192 @@ class CodableQuestionTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    // MARK: Branch and Assessment
+    
+    func testAssessment_Default_Codable() {
+        
+        let json = """
+            {
+                 "identifier": "foo",
+                 "type": "assessment",
+                 "steps": [
+                    {
+                         "identifier": "foo",
+                         "type": "instruction"
+                    }
+                ]
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        XCTAssertEqual(.StandardTypes.assessment.nodeType, AssessmentObject.defaultType())
+        checkDefaultSharedKeys(step: AssessmentObject(identifier: "foo", children: []))
+        checkResult(step: AssessmentObject(identifier: "foo", children: []), type: AssessmentResultObject.self)
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<AssessmentObject>.self, from: json)
+            let object = wrapper.node
+            
+            checkDefaultSharedKeys(step: object)
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.assessment.nodeType, object.serializableType)
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testAssessment_AllFields_Codable() {
+        
+        let json = """
+        {
+            "type": "assessment",
+            "identifier": "foo",
+            "version":"0.1.2",
+            "estimatedMinutes":3,
+            "copyright":"Baroo, Inc.",
+            "comment": "comment",
+            "shouldHideActions": ["skip"],
+            "actions": {
+                "goForward": {
+                    "type": "default",
+                    "buttonTitle": "Go, Dogs! Go!"
+                }
+            },
+            "title": "Hello World!",
+            "subtitle": "Question subtitle",
+            "detail": "Some text. This is a test.",
+            "image": {
+                "type": "animated",
+                "imageNames": ["foo1", "foo2", "foo3", "foo4"],
+                "animationDuration": 2
+            },
+             "steps": [
+                {
+                     "identifier": "foo",
+                     "type": "instruction"
+                }
+            ]
+        }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<AssessmentObject>.self, from: json)
+            let object = wrapper.node
+            
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.assessment.nodeType, object.serializableType)
+            XCTAssertEqual(1, object.children.count)
+            XCTAssertTrue(object.children.first is InstructionStepObject)
+            XCTAssertEqual("0.1.2", object.versionString)
+            XCTAssertEqual("Baroo, Inc.", object.copyright)
+            XCTAssertEqual(3, object.estimatedMinutes)
+            
+            checkSharedEncodingKeys(step: object)
+
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testSection_Default_Codable() {
+        
+        let json = """
+            {
+                 "identifier": "foo",
+                 "type": "section",
+                 "steps": [
+                    {
+                         "identifier": "foo",
+                         "type": "instruction"
+                    }
+                ]
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        XCTAssertEqual(.StandardTypes.section.nodeType, SectionObject.defaultType())
+        checkDefaultSharedKeys(step: SectionObject(identifier: "foo", children: []))
+        checkResult(step: SectionObject(identifier: "foo", children: []), type: BranchNodeResultObject.self)
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<SectionObject>.self, from: json)
+            let object = wrapper.node
+            
+            checkDefaultSharedKeys(step: object)
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.section.nodeType, object.serializableType)
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testSection_AllFields_Codable() {
+        
+        let json = """
+        {
+            "type": "section",
+            "identifier": "foo",
+            "comment": "comment",
+            "shouldHideActions": ["skip"],
+            "actions": {
+                "goForward": {
+                    "type": "default",
+                    "buttonTitle": "Go, Dogs! Go!"
+                }
+            },
+            "title": "Hello World!",
+            "subtitle": "Question subtitle",
+            "detail": "Some text. This is a test.",
+            "image": {
+                "type": "animated",
+                "imageNames": ["foo1", "foo2", "foo3", "foo4"],
+                "animationDuration": 2
+            },
+             "steps": [
+                {
+                     "identifier": "foo",
+                     "type": "instruction"
+                }
+            ]
+        }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<SectionObject>.self, from: json)
+            let object = wrapper.node
+            
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.section.nodeType, object.serializableType)
+            XCTAssertEqual(1, object.children.count)
+            XCTAssertTrue(object.children.first is InstructionStepObject)
+            
+            checkSharedEncodingKeys(step: object)
+
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
     // MARK: Instructions
     
     func testOverviewStep_Default_Codable() {
@@ -453,7 +639,7 @@ class CodableQuestionTests: XCTestCase {
         XCTAssertTrue(result is T)
     }
     
-    func checkDefaultSharedKeys(step: AbstractStepObject) {
+    func checkDefaultSharedKeys(step: AbstractContentNodeObject) {
         XCTAssertEqual(type(of: step).defaultType(), step.serializableType)
         XCTAssertNil(step.comment)
         XCTAssertTrue(step.shouldHideButtons.isEmpty)
@@ -464,7 +650,7 @@ class CodableQuestionTests: XCTestCase {
         XCTAssertNil(step.imageInfo)
     }
     
-    func checkSharedEncodingKeys(step: AbstractStepObject) {
+    func checkSharedEncodingKeys(step: AbstractContentNodeObject) {
         XCTAssertEqual(type(of: step).defaultType(), step.serializableType)
         XCTAssertEqual("foo", step.identifier)
         XCTAssertEqual("comment", step.comment)

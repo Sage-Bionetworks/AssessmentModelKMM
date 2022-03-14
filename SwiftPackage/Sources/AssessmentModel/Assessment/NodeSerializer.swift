@@ -143,6 +143,16 @@ open class AbstractNodeObject : SerializableNode {
         fatalError("The default type *must* be overriden for this abstract class")
     }
     
+    /// Default implementation is that a node can go back unless the button is explicitly hidden.
+    open func canGoBack() -> Bool {
+        !shouldHideButtons.contains(.navigation(.goBackward))
+    }
+    
+    /// Default implementation is to return a ``ResultObject``.
+    open func instantiateResult() -> ResultData {
+        ResultObject(identifier: self.identifier)
+    }
+    
     public init(identifier: String,
                 shouldHideButtons: Set<ButtonAction>? = nil,
                 buttonMap: [ButtonAction : ButtonActionInfo]? = nil,
@@ -152,10 +162,6 @@ open class AbstractNodeObject : SerializableNode {
         self.shouldHideButtons = shouldHideButtons ?? []
         self.buttonMap = buttonMap ?? [:]
         self.serializableType = type(of: self).defaultType()
-    }
-
-    open func instantiateResult() -> ResultData {
-        ResultObject(identifier: self.identifier)
     }
 
     public required init(from decoder: Decoder) throws {

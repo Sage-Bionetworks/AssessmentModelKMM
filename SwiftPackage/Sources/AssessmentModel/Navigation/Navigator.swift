@@ -78,12 +78,6 @@ public protocol Navigator {
     func isCompleted(currentNode: Node, branchResult: BranchNodeResult) -> Bool
 }
 
-public extension Navigator {
-    func isCompleted(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
-        !self.allowBackNavigation(currentNode: currentNode, branchResult: branchResult) && currentNode is CompletionStep
-    }
-}
-
 /// The naviation point is a data packet that the ``Navigator`` can use to pass information about how to traverse
 /// the assessment.  This class is defined as `open` to allow subclasses to include additional information that is
 /// relevant to navigation that may not be included in the branch result.

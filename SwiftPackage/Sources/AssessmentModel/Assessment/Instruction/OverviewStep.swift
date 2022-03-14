@@ -33,10 +33,10 @@
 import Foundation
 import JsonModel
 
+/// An overview step is  intended to be used to mark the *beginning* of an assessment.
 public protocol OverviewStep : Step, ContentNode {
 }
 
-/// An overview step is a concrete implementation of a step that is intended to be used to mark the *beginning* of an assessment.
 public final class OverviewStepObject : AbstractStepObject, OverviewStep, Encodable, DocumentableStruct {
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.overview.nodeType

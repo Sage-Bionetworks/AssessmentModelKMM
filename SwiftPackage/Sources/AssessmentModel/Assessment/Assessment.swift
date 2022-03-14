@@ -34,7 +34,7 @@
 import Foundation
 import JsonModel
 
-open class AbstractBranchNodeObject : AbstractContentNodeObject {
+open class AbstractNodeContainerObject : AbstractContentNodeObject {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case children = "steps"
         var relativeIndex: Int { 5 }
@@ -66,18 +66,18 @@ open class AbstractBranchNodeObject : AbstractContentNodeObject {
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
-        let nestedContainer = container.nestedUnkeyedContainer(forKey: .children)
+        var nestedContainer = container.nestedUnkeyedContainer(forKey: .children)
         try children.forEach { node in
             guard let encodable = node as? Encodable else {
                 throw EncodingError.invalidValue(node, .init(codingPath: nestedContainer.codingPath, debugDescription:
                                                                 "\(node) does not match the Encodable protocol."))
             }
-            let nestedEncoder = container.superEncoder()
+            let nestedEncoder = nestedContainer.superEncoder()
             try encodable.encode(to: nestedEncoder)
         }
     }
     
-    override open class func codingKeys() -> [CodingKey] {
+    open override class func codingKeys() -> [CodingKey] {
         var keys = super.codingKeys()
         keys.append(contentsOf: CodingKeys.allCases)
         return keys
@@ -99,7 +99,7 @@ open class AbstractBranchNodeObject : AbstractContentNodeObject {
     }
 }
 
-open class AbstractSectionObject : AbstractBranchNodeObject, BranchNode {
+open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode {
     open func instatiateBranchNodeResult() -> BranchNodeResult {
         BranchNodeResultObject(identifier: self.identifier)
     }
@@ -122,7 +122,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct {
     }
 }
 
-open class AbstractAssessmentObject : AbstractBranchNodeObject, Assessment {
+open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case versionString = "version", estimatedMinutes, copyright
         var relativeIndex: Int { 3 }
@@ -166,11 +166,11 @@ open class AbstractAssessmentObject : AbstractBranchNodeObject, Assessment {
         AssessmentResultObject(identifier: self.identifier)
     }
     
-    override open func instantiateResult() -> ResultData {
+    open override func instantiateResult() -> ResultData {
         instatiateAssessmentResult()
     }
     
-    override open class func codingKeys() -> [CodingKey] {
+    open override class func codingKeys() -> [CodingKey] {
         var keys = super.codingKeys()
         keys.append(contentsOf: CodingKeys.allCases)
         return keys
@@ -225,7 +225,7 @@ extension AssessmentObject : DocumentableRootObject {
 public final class AssessmentSerializer : IdentifiableInterfaceSerializer, PolymorphicSerializer {
     public var documentDescription: String? {
         """
-        The interface for any `Node` that is serialized using the `Codable` protocol and the
+        The interface for any `Assessment` that is serialized using the `Codable` protocol and the
         polymorphic serialization defined by this framework.
         """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n")
     }

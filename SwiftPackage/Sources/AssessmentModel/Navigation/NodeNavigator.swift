@@ -34,7 +34,7 @@
 import Foundation
 
 //  TODO: syoung 03/11/2022 Replace stubbed out navigator with rule-based implementation
-open class NodeNavigator : Navigator {
+public final class NodeNavigator : Navigator {
     
     public let identifier: String
     public let nodes: [Node]
@@ -83,7 +83,12 @@ open class NodeNavigator : Navigator {
     }
     
     public func progress(currentNode: Node, branchResult: BranchNodeResult) -> Progress? {
-        nil
+        guard let idx = nodeIndex(currentNode) else { return nil }
+        return .init(current: idx, total: nodes.count, isEstimated: false)
+    }
+    
+    public func isCompleted(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
+        !self.allowBackNavigation(currentNode: currentNode, branchResult: branchResult) && currentNode is CompletionStep
     }
     
     func nodeIndex(_ node: Node?) -> Int? {
