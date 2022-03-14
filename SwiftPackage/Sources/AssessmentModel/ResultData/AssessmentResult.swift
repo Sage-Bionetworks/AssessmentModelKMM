@@ -1,5 +1,5 @@
 //
-//  AssessmentResultObject.swift
+//  AssessmentResult.swift
 //  
 //
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.

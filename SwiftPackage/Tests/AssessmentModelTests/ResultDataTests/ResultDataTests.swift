@@ -374,13 +374,21 @@ class ResultDataTests: XCTestCase {
         
         let branchResult = BranchNodeResultObject(identifier: "test")
         let answers = ["a" : 3, "b": 5, "c" : 7]
-        answers.forEach {
-            let answerResult = AnswerResultObject(identifier: $0.key, value: .integer($0.value))
-            branchResult.stepHistory.append(answerResult)
+        let identifiers = ["a", "b", "c"]
+        identifiers.forEach {
+            let answerResult = AnswerResultObject(identifier: $0, value: .integer(answers[$0]!))
+            branchResult.appendStepHistory(with: answerResult)
         }
         branchResult.asyncResults = [
             AnswerResultObject(identifier: "async", value: .integer(8))
         ]
+        
+        let expectedPath: [PathMarker] = [
+            .init(identifier: "a", direction: .forward),
+            .init(identifier: "b", direction: .forward),
+            .init(identifier: "c", direction: .forward),
+        ]
+        XCTAssertEqual(expectedPath, branchResult.path)
 
         if let result = (branchResult as AnswerFinder).findAnswer(with: "a") {
             XCTAssertEqual(result.jsonValue, .integer(3))

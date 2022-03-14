@@ -68,6 +68,36 @@ public extension BranchNodeResult {
     func findResult(with identifier: String) -> ResultData? {
         self.stepHistory.last(where: { $0.identifier == identifier })
     }
+    
+    /// Append the result to the end of the step history. If the last result has the same
+    /// identifier, then remove it.
+    /// - parameter result:  The result to add to the step history.
+    /// - returns: The previous result or `nil` if there wasn't one.
+    @discardableResult
+    func appendStepHistory(with result: ResultData, direction: PathMarker.Direction = .forward) -> ResultData? {
+        var previousResult: ResultData?
+        if let idx = stepHistory.lastIndex(where: { $0.identifier == result.identifier }) {
+            previousResult = (idx == stepHistory.count - 1) ? stepHistory.remove(at: idx) : stepHistory[idx]
+        }
+        stepHistory.append(result)
+        let marker = PathMarker(identifier: result.identifier, direction: direction)
+        if path.last != marker {
+            path.append(marker)
+        }
+        return previousResult
+    }
+    
+    /// Remove the nodePath from `stepIdentifier` to the end of the result set.
+    /// - parameter stepIdentifier:  The identifier of the result associated with the given step.
+    /// - returns: The previous results or `nil` if there weren't any.
+    @discardableResult
+    func removeStepHistory(from stepIdentifier: String) -> Array<ResultData>? {
+        if let idx = path.lastIndex(where: { $0.identifier == stepIdentifier }) {
+            path.removeSubrange(idx...)
+        }
+        guard let idx = stepHistory.lastIndex(where: { $0.identifier == stepIdentifier }) else { return nil }
+        return Array(stepHistory[idx...])
+    }
 }
 
 /// A path marker is used in tracking the *current* path that the user is navigating.
