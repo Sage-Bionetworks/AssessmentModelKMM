@@ -57,30 +57,14 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
-        assertEquals(original, restored)
-        assertEquals(original, decoded)
-    }
-
-    @Test
-    fun testUIHint_Detail_Serialization() {
-        val hints = UIHint.Detail.values().toList()
-        val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["disclosureArrow","button","link"]}"""
-
-        val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
-        val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
-        val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
-
-        // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
 
     @Test
     fun testUIHint_TextField_Serialization() {
-        val hints = UIHint.TextField.values().toList()
+        val hints = UIHint.StringField.values().toList()
         val original = TestUIHintWrapper(hints)
         val inputString = """{"hints":["textfield","multipleLine","popover"]}"""
 
@@ -89,41 +73,41 @@ open class InputItemsTest {
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
 
     @Test
     fun testUIHint_CustomAndPicker_Serialization() {
-        val hints = listOf(UIHint.Custom("foo"), UIHint.Picker)
+        val hints = listOf(UIHint.Custom("foo"))
         val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["foo","picker"]}"""
+        val inputString = """{"hints":["foo"]}"""
 
         val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
         val decoded = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
 
     @Serializable
-    data class UIHintTextFieldWrapper(val types: List<UIHint.TextField>)
+    data class UIHintTextFieldWrapper(val types: List<UIHint>)
 
     @Test
     fun testUIHintTextField_Cast_Serialization() {
-        val original = UIHintTextFieldWrapper(UIHint.TextField.values().toList())
-        val inputString = """{"types":["textfield","multipleLine","popover"]}"""
+        val original = UIHintTextFieldWrapper(UIHint.StringField.values().toList())
+        val inputString = """{"types":["textfield","multipleLine"]}"""
 
         val jsonString = jsonCoder.encodeToString(UIHintTextFieldWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), jsonString)
         val decoded = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), inputString)
 
         // Look to see that the restored, decoded, and original all are equal
-        assertEquals(inputString.toLowerCase(), jsonString.toLowerCase())
+        assertEquals(inputString.lowercase(), jsonString.lowercase())
         assertEquals(original, restored)
         assertEquals(original, decoded)
     }
@@ -135,7 +119,7 @@ open class InputItemsTest {
     @Test
     fun testCheckboxInputItem() {
         val inputString = """{"type":"checkbox","fieldLabel":"Pick me!","identifier":"pickMe"}"""
-        val original = CheckboxInputItemObject(resultIdentifier = "pickMe", fieldLabel = "Pick me!")
+        val original = CheckboxInputItemObject(resultIdentifier = "pickMe", label = "Pick me!")
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -152,15 +136,15 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Boolean() {
-        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
-        val original = ChoiceOptionObject(
+        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","selectorType" : "exclusive","detail":"more info"}"""
+        val original = JsonChoiceObject(
                 value = JsonPrimitive(true),
-                fieldLabel = "Pick me!",
-                icon = FetchableImage("pickMe"),
-                exclusive = true,
+                text = "Pick me!",
+                iconName = "pickMe",
+                selectorType = ChoiceSelectorType.Exclusive,
                 detail = "more info")
 
-        val serializer = ChoiceOptionObject.serializer()
+        val serializer = JsonChoiceObject.serializer()
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
@@ -172,15 +156,15 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_String() {
-        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
-        val original = ChoiceOptionObject(
+        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","selectorType":"exclusive":"more info"}"""
+        val original = JsonChoiceObject(
                 value = JsonPrimitive("foo"),
-                fieldLabel = "Pick me!",
-                icon = FetchableImage("pickMe"),
-                exclusive = true,
+                text = "Pick me!",
+                iconName = "pickMe",
+                selectorType = ChoiceSelectorType.Exclusive,
                 detail = "more info")
 
-        val serializer = ChoiceOptionObject.serializer()
+        val serializer = JsonChoiceObject.serializer()
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
@@ -192,15 +176,15 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Int() {
-        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","exclusive":true,"detail":"more info"}"""
-        val original = ChoiceOptionObject(
+        val inputString = """{"value":1,"text":"Pick me!","icon":"pickMe","selectorType":"exclusive","detail":"more info"}"""
+        val original = JsonChoiceObject(
                 value = JsonPrimitive(1),
-                fieldLabel = "Pick me!",
-                icon = FetchableImage("pickMe"),
-                exclusive = true,
+                text = "Pick me!",
+                iconName = "pickMe",
+                selectorType = ChoiceSelectorType.Exclusive,
                 detail = "more info")
 
-        val serializer = ChoiceOptionObject.serializer()
+        val serializer = JsonChoiceObject.serializer()
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
@@ -297,7 +281,7 @@ open class InputItemsTest {
     }
 
     /**
-     * [DecimalTextInputItemObject] Tests
+     * [DoubleTextInputItemObject] Tests
      */
 
     @Test
@@ -364,12 +348,11 @@ open class InputItemsTest {
     }
 
     @Test
-    fun testDecimalInputItemObject_Serialization() {
+    fun testDoubleInputItemObject_Serialization() {
         val inputString = """
            {
             "identifier": "foo",
-            "type": "decimal",
-            "uiHint": "popover",
+            "type": "number",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
@@ -383,10 +366,9 @@ open class InputItemsTest {
             }
            }
            """
-        val original = DecimalTextInputItemObject("foo")
+        val original = DoubleTextInputItemObject("foo")
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
-        original.uiHint = UIHint.TextField.Popover
         original.formatOptions = DoubleFormatOptions(usesGroupingSeparator = false)
         original.formatOptions.minimumValue = 0.0
         original.formatOptions.maximumValue = 1000.0
@@ -408,10 +390,10 @@ open class InputItemsTest {
     fun testDecimalTextInputItemObject_DefaultValue_Serialization() {
         val inputString = """
            {
-            "type": "decimal"
+            "type": "number"
            }
            """
-        val original = DecimalTextInputItemObject()
+        val original = DoubleTextInputItemObject()
 
         // Check the defaults for an decimal
         assertTrue(original.formatOptions.usesGroupingSeparator)
@@ -588,7 +570,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "integer",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "keyboardOptions" : {
@@ -608,7 +589,6 @@ open class InputItemsTest {
         val original = IntegerTextInputItemObject("foo")
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
-        original.uiHint = UIHint.TextField.Popover
         original.textOptions = KeyboardOptionsObject(
                 keyboardType = KeyboardType.NumbersAndPunctuation,
                 isSecureTextEntry = true)
@@ -652,24 +632,6 @@ open class InputItemsTest {
     }
 
     /**
-     * SkipCheckboxInputItem
-     */
-
-    @Test
-    fun testSkipCheckboxInputItem() {
-        val inputString = """{"type":"skipCheckbox","fieldLabel":"Pick me!","value":-1}"""
-        val original = SkipCheckboxInputItemObject("Pick me!", JsonPrimitive(-1))
-
-        val serializer = PolymorphicSerializer(InputItem::class)
-        val jsonString = jsonCoder.encodeToString(serializer, original)
-        val restored = jsonCoder.decodeFromString(serializer, jsonString)
-        val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
-        assertEquals(original, restored)
-        assertEquals(original, decoded)
-    }
-
-    /**
      * [StringTextInputItemObject] Tests
      */
 
@@ -679,7 +641,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "string",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "keyboardOptions" : {
@@ -695,7 +656,6 @@ open class InputItemsTest {
         val original = StringTextInputItemObject("foo")
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
-        original.uiHint = UIHint.TextField.Popover
         original.textOptions = KeyboardOptionsObject(
                 autocapitalizationType = AutoCapitalizationType.Words,
                 keyboardType = KeyboardType.AsciiCapable,
@@ -825,7 +785,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "year",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "exclusive": true,
@@ -839,7 +798,6 @@ open class InputItemsTest {
         original.exclusive = true
         original.fieldLabel = "Favorite color"
         original.placeholder = "Blue, no! Red!"
-        original.uiHint = UIHint.TextField.Popover
         original.formatOptions = YearFormatOptions(allowFuture = false, minimumYear = 1900)
 
         val serializer = PolymorphicSerializer(InputItem::class)

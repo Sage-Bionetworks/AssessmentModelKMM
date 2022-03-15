@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.sagebionetworks.assessmentmodel.ViewTheme
 
+@Deprecated("Defining the view identifier and storyboard is deprecated.")
 @Serializable
 data class ViewThemeObject(
     override val viewIdentifier: String? = null,

@@ -68,14 +68,8 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
     /**
      * The navigation rule (if any) associated with this node.
      */
-    open fun navigationRuleFor(node: Node, parentResult: BranchNodeResult) : NavigationRule? {
-        val result = parentResult.pathHistoryResults.lastOrNull { it.identifier == node.resultId() }
-        return if (result is ResultNavigationRule && result.nextNodeIdentifier != null) {
-            result
-        } else {
-            (node as? NavigationRule)
-        }
-    }
+    open fun navigationRuleFor(node: Node, parentResult: BranchNodeResult) : NavigationRule?
+        = (node as? NavigationRule)
 
     private val children
         get() = node.children

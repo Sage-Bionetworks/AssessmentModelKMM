@@ -48,7 +48,3 @@ interface SurveyNavigationRule : DirectNavigationRule, ResultMapElement {
         }
     }
 }
-
-interface ResultNavigationRule : DirectNavigationRule, Result {
-    override var nextNodeIdentifier: String?
-}

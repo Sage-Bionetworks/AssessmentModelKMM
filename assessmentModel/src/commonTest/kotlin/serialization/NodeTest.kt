@@ -1,19 +1,32 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.IdentifierPath
-import org.sagebionetworks.assessmentmodel.recorders.MotionRecorderConfiguration
 import org.sagebionetworks.assessmentmodel.resourcemanagement.*
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
 
 open class NodeTest : NodeSerializationTestHelper() {
 
-    private val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder =  Json{
+        serializersModule = Serialization.SerializersModule.default
+            .plus( SerializersModule {
+                polymorphic(AsyncActionConfiguration::class) {
+                    subclass(MotionRecorderConfiguration::class)
+                }
+            })
+        encodeDefaults = true
+    }
 
     /**
      * ActiveStepObject
@@ -39,7 +52,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                                         "end": "Stop moving"},
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
             }
            """
@@ -58,7 +70,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.shouldEndOnInterrupt = true
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.commands = setOf(
             ActiveStepCommand.PlaySoundOnStart,
@@ -227,38 +238,36 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
                 "singleChoice": false,
                 "baseType": "integer",
-                "uiHint": "checkmark",
+                "uiHint": "checkbox",
                 "choices":[
                 {"text":"choice 1","icon":"choice1","value":1},
                 {"text":"choice 2","value":2},
                 {"text":"choice 3","value":3},
-                {"text":"none of the above","exclusive":true}
+                {"text":"none of the above","selectorType":"exclusive"}
                 ]
            }
            """
         val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive(1), "choice 1", FetchableImage("choice1")),
-                        ChoiceOptionObject(JsonPrimitive(2), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive(3), "choice 3"),
-                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                        JsonChoiceObject(JsonPrimitive(1), "choice 1", "choice1"),
+                        JsonChoiceObject(JsonPrimitive(2), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive(3), "choice 3"),
+                        JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
                 baseType = BaseType.INTEGER)
-        original.uiHint = UIHint.Choice.Checkmark
+        original.uiHint = UIHint.Choice.Checkbox
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
         original.detail = "Some text. This is a test."
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -283,19 +292,18 @@ open class NodeTest : NodeSerializationTestHelper() {
         val inputString = """
            {
                "identifier": "foo",
-               "type": "comboBoxQuestion",
+               "type": "choiceQuestion",
                "title": "Hello World!",
                "subtitle": "Question subtitle",
                "detail": "Some text. This is a test.",
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
                 "singleChoice": false,
-                "uiHint": "checkmark",
+                "uiHint": "checkbox",
                 "choices":[
                 {"text":"choice 1","value":"one"},
                 {"text":"choice 2","value":"two"},
@@ -310,23 +318,22 @@ open class NodeTest : NodeSerializationTestHelper() {
         val otherInputItem = StringTextInputItemObject()
         otherInputItem.fieldLabel = "Something else"
 
-        val original = ComboBoxQuestionObject(
+        val original = ChoiceQuestionObject(
                 identifier = "foo",
                 choices = listOf(
-                        ChoiceOptionObject(JsonPrimitive("one"), "choice 1"),
-                        ChoiceOptionObject(JsonPrimitive("two"), "choice 2"),
-                        ChoiceOptionObject(JsonPrimitive("three"), "choice 3"),
-                        ChoiceOptionObject(JsonNull, "none of the above", null, true)
+                        JsonChoiceObject(JsonPrimitive("one"), "choice 1"),
+                        JsonChoiceObject(JsonPrimitive("two"), "choice 2"),
+                        JsonChoiceObject(JsonPrimitive("three"), "choice 3"),
+                        JsonChoiceObject(JsonNull, "none of the above", null, ChoiceSelectorType.Exclusive)
                 ),
-                otherInputItem = otherInputItem)
-        original.uiHint = UIHint.Choice.Checkmark
+                other = otherInputItem)
+        original.uiHint = UIHint.Choice.Checkbox
         original.title = "Hello World!"
         original.subtitle = "Question subtitle"
         original.detail = "Some text. This is a test."
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -334,10 +341,10 @@ open class NodeTest : NodeSerializationTestHelper() {
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
 
-        assertTrue(decoded is ComboBoxQuestionObject)
+        assertTrue(decoded is ChoiceQuestionObject)
         assertEqualStep(original, decoded)
         assertEqualContentNodes(original, decoded)
-        assertTrue(restored is ComboBoxQuestionObject)
+        assertTrue(restored is ChoiceQuestionObject)
         assertEqualStep(original, restored)
         assertEqualContentNodes(original, restored)
     }
@@ -387,7 +394,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                                         "end": "Stop moving"},
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
             }
            """
@@ -406,7 +412,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.shouldEndOnInterrupt = true
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
         original.commands = setOf(
             ActiveStepCommand.PlaySoundOnStart,
@@ -436,68 +441,6 @@ open class NodeTest : NodeSerializationTestHelper() {
     }
 
     /**
-     * FormStepObject
-     */
-
-    @Test
-    fun testFormStep_Serialization() {
-        val inputString = """
-            {
-                "identifier": "foobar",
-                "type": "form",
-                "title": "Hello World!",
-                "subtitle": "Subtitle",
-                "detail": "Some text. This is a test.",
-                "image": {    "type" : "fetchable",
-                               "imageName" : "fooIcon"
-                        },
-                "footnote": "This is a footnote.",
-                "actions": { "goForward": { "type": "default", "buttonTitle" : "Go, Dogs! Go!" },
-                            "cancel": { "type": "default", "iconName" : "closeX" }
-                           },
-                "shouldHideActions": ["goBackward"],
-                "inputFields": [
-                           {
-                               "identifier": "foo",
-                               "type": "stringChoiceQuestion",
-                                "choices":["choice 1","choice 2","choice 3"]
-                           }
-                ]
-            }
-            """
-
-        val original = FormStepObject(
-            identifier = "foobar",
-            children = listOf(
-                StringChoiceQuestionObject("foo", listOf("choice 1","choice 2","choice 3"))
-            ),
-            imageInfo = FetchableImage("fooIcon")
-        )
-
-        original.title = "Hello World!"
-        original.subtitle = "Subtitle"
-        original.detail = "Some text. This is a test."
-        original.footnote = "This is a footnote."
-        original.hideButtons = listOf(ButtonAction.Navigation.GoBackward)
-        original.buttonMap = mapOf(
-            ButtonAction.Navigation.GoForward to ButtonActionInfoObject(buttonTitle = "Go, Dogs! Go!"),
-            ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
-
-        val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.encodeToString(serializer, original)
-        val restored = jsonCoder.decodeFromString(serializer, jsonString)
-        val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
-        assertTrue(decoded is FormStepObject)
-        assertFormStepNode(original, decoded)
-        assertEqualContentNodes(original, decoded)
-
-        assertTrue(restored is FormStepObject)
-        assertFormStepNode(original, restored)
-        assertEqualContentNodes(original, restored)
-    }
-
-    /**
      * InstructionStepObject
      */
 
@@ -519,7 +462,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "shouldHideActions": ["goBackward"],
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "viewTheme": { 
@@ -541,15 +483,8 @@ open class NodeTest : NodeSerializationTestHelper() {
                 ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.spokenInstructions = mapOf(SpokenInstructionTiming.Keyword.Start to "Start now")
-        original.viewTheme = ViewThemeObject(
-            viewIdentifier = "Moo",
-            storyboardIdentifier = "Ba",
-            fragmentIdentifier = "La",
-            fragmentLayout = "LaLa"
-        )
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -606,7 +541,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                 ],
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
            }
            """
@@ -625,7 +559,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         ))
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -684,7 +617,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                            },
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2}
            }
            """
@@ -701,7 +633,6 @@ open class NodeTest : NodeSerializationTestHelper() {
             ButtonAction.Navigation.Cancel to ButtonActionInfoObject(iconName ="closeX"))
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-            imagePlacement = ImagePlacement.Standard.TopBackground,
             animationDuration = 2.0)
 
         val serializer = PolymorphicSerializer(Node::class)
@@ -743,12 +674,10 @@ open class NodeTest : NodeSerializationTestHelper() {
                "footnote": "This is a footnote.",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   },
                 "optional": false,
                 "inputItem":{"type" : "year"},
-                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"},
                 "surveyRules": [{ "matchingAnswer": 1900}]
            }
            """
@@ -762,16 +691,13 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.footnote = "This is a footnote."
         original.imageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
-        original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
         original.surveyRules = listOf(ComparableSurveyRuleObject(JsonPrimitive(1900)))
 
         val serializer = PolymorphicSerializer(Node::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
         val restored = jsonCoder.decodeFromString(serializer, jsonString)
         val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
 
         assertTrue(decoded is SimpleQuestionObject)
         assertEqualStep(original, decoded)
@@ -791,68 +717,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         assertEqualContentNodes(original, copy)
         assertEquals(original.optional, copy.optional)
         assertEquals(original.surveyRules, copy.surveyRules)
-    }
-
-    /**
-     * MultipleInputQuestion
-     */
-
-    @Test
-    fun testMultipleInputQuestion_Serialization() {
-        val inputString = """
-           {
-               "identifier": "foo",
-               "type": "multipleInputQuestion",
-               "title": "Hello World!",
-               "subtitle": "Question subtitle",
-               "detail": "Some text. This is a test.",
-               "footnote": "This is a footnote.",
-               "image"  : {    "type" : "animated",
-                               "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
-                               "animationDuration" : 2
-                                  },
-                "optional": false,
-                "sequenceSeparator": ",",
-                "inputItems":[
-                    {"type" : "string"},
-                    {"type" : "year"},
-                    {"type" : "integer"},
-                    {"type" : "decimal"}
-                ],
-                "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
-           }
-           """
-        val original = MultipleInputQuestionObject(
-                identifier = "foo",
-                inputItems = listOf(
-                    StringTextInputItemObject(),
-                    YearTextInputItemObject(),
-                    IntegerTextInputItemObject(),
-                    DecimalTextInputItemObject()),
-                sequenceSeparator = ",")
-        original.optional = false
-        original.title = "Hello World!"
-        original.subtitle = "Question subtitle"
-        original.detail = "Some text. This is a test."
-        original.footnote = "This is a footnote."
-        original.imageInfo = AnimatedImage(
-                imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
-                animationDuration = 2.0)
-        original.skipCheckbox = SkipCheckboxInputItemObject("No answer")
-
-        val serializer = PolymorphicSerializer(Node::class)
-        val jsonString = jsonCoder.encodeToString(serializer, original)
-        val restored = jsonCoder.decodeFromString(serializer, jsonString)
-        val decoded = jsonCoder.decodeFromString(serializer, inputString)
-
-        assertTrue(decoded is MultipleInputQuestionObject)
-        assertEqualStep(original, decoded)
-        assertEqualContentNodes(original, decoded)
-        assertTrue(restored is MultipleInputQuestionObject)
-        assertEqualStep(original, restored)
-        assertEqualContentNodes(original, restored)
     }
 
     /**
@@ -997,7 +861,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "title": "Hello World!",
                "image"  : {    "type" : "animated",
                                "imageNames" : ["foo1", "foo2", "foo3", "foo4"],
-                               "placementType" : "topBackground",
                                "animationDuration" : 2
                                   }
            }
@@ -1008,7 +871,6 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.title = "Hello World!"
         val originalImageInfo = AnimatedImage(
                 imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
-                imagePlacement = ImagePlacement.Standard.TopBackground,
                 animationDuration = 2.0)
         original.imageInfo = originalImageInfo
 
@@ -1410,7 +1272,6 @@ open class NodeSerializationTestHelper {
     fun assertEqualStep(expected: Step, actual: Step) {
         assertEqualNodes(expected, actual)
         assertEquals(expected.spokenInstructions, actual.spokenInstructions)
-        assertEquals(expected.viewTheme, actual.viewTheme)
     }
 
     fun assertEqualActiveStep(expected: ActiveStep, actual: ActiveStep) {
@@ -1434,3 +1295,11 @@ open class NodeSerializationTestHelper {
         }
     }
 }
+
+@Serializable
+@SerialName("motion")
+data class MotionRecorderConfiguration(
+    override val identifier: String,
+    override val comment: String? = null,
+    override val startStepIdentifier: String? = null
+) : AsyncActionConfiguration

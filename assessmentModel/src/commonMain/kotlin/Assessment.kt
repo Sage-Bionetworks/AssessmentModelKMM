@@ -386,14 +386,7 @@ interface Step : Node {
      */
     val spokenInstructions: Map<SpokenInstructionTiming, String>?
 
-    /**
-     * The [ViewTheme] to use to provide a custom view for this step.
-     */
-    val viewTheme: ViewTheme?
-        get() = null
-
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): Step {
-        viewTheme?.copyResourceInfo(moduleInfo.resourceInfo)
         super.unpack(originalNode, moduleInfo, registryProvider)
         return this
     }
@@ -579,7 +572,7 @@ enum class ActiveStepCommand : StringEnum {
     ;
 
     companion object {
-        private val mapping = values().map { it.name.decapitalize() to setOf(it) }.toMap().plus(mapOf(
+        private val mapping = values().map { str -> str.name.replaceFirstChar { it.lowercase() } to setOf(str) }.toMap().plus(mapOf(
             "playSound" to setOf(PlaySoundOnStart, PlaySoundOnFinish),
             "transitionAutomatically" to setOf(StartTimerAutomatically, ContinueOnFinish),
             "vibrate" to setOf(VibrateOnStart, VibrateOnFinish)

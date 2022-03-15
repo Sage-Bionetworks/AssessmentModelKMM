@@ -7,7 +7,7 @@ let package = Package(
     name: "AssessmentModel",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v14),
         .macOS(.v11),
     ],
     products: [
@@ -15,35 +15,45 @@ let package = Package(
         .library(
             name: "AssessmentModel",
             targets: ["AssessmentModel",
-                      "AssessmentModelUI",
+//                      "AssessmentModelUI",
             ]),
     ],
     dependencies: [
-        .package(name: "MobilePassiveData",
-                 url: "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
-                 from: "1.1.0"),
         .package(name: "JsonModel",
                  url: "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
-                 from: "1.2.0"),
+                 from: "2.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .binaryTarget(name: "AssessmentModel",
-                      path: "SwiftPackage/Binaries/AssessmentModel.xcframework"),
-        .testTarget(
-            name: "AssessmentModelTests",
-            dependencies: ["AssessmentModel"],
-            path: "SwiftPackage/Tests/AssessmentModelTests",
-            resources: [ .process("Resources")]),
         
-        .target(name: "AssessmentModelUI",
+        // TODO: syoung 03/02/2022 Add in the kotlin binary for testing purposes.
+//        .binaryTarget(name: "AssessmentModelKMM",
+//                      path: "SwiftPackage/Binaries/AssessmentModelKMM.xcframework"),
+        
+        .target(name: "AssessmentModel",
                 dependencies: [
-                    "AssessmentModel",
-                    .product(name: "MobilePassiveData", package: "MobilePassiveData"),
                     "JsonModel",
                 ],
-                path: "SwiftPackage/Sources/AssessmentModelUI",
-                resources: [ .process("Resources")]),
+                path: "SwiftPackage/Sources/AssessmentModel"),
+        
+        .testTarget(
+            name: "AssessmentModelTests",
+            dependencies: [
+                "AssessmentModel"
+            ],
+            path: "SwiftPackage/Tests/AssessmentModelTests",
+            resources: [
+                .process("Resources")
+            ]),
+        
+//        .target(name: "AssessmentModelUI",
+//                dependencies: [
+//                    "AssessmentModel",
+//                    .product(name: "MobilePassiveData", package: "MobilePassiveData"),
+//                    "JsonModel",
+//                ],
+//                path: "SwiftPackage/Sources/AssessmentModelUI",
+//                resources: [ .process("Resources")]),
     ]
 )

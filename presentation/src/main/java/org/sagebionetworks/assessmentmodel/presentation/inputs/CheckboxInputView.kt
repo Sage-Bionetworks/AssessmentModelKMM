@@ -24,7 +24,7 @@ class CheckboxInputView : LinearLayout {
     fun setup(inputItem: CheckboxInputItem) {
         //val input = questionStep.inputItem as CheckboxInputItem
         //placeholder = questionStep.inputItem.fieldLabel.toString()
-        placeholder = inputItem.fieldLabel
+        placeholder = inputItem.label
     }
 
     fun updateResult(inputItem: CheckboxInputItem) {

@@ -14,7 +14,6 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.*
-import org.sagebionetworks.assessmentmodel.navigation.ResultNavigationRule
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 val resultSerializersModule = SerializersModule {
@@ -38,7 +37,8 @@ data class AnswerResultObject(override val identifier: String,
                               override var startDateTime: Instant = Clock.System.now(),
                               @SerialName("endDate")
                               @Serializable(with = InstantSerializer::class)
-                              override var endDateTime: Instant? = null) : AnswerResult {
+                              override var endDateTime: Instant? = null)
+    : AnswerResult {
     override fun copyResult(identifier: String): AnswerResult = this.copy(identifier = identifier)
 }
 
@@ -60,10 +60,8 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("endDate")
                                   @Serializable(with = InstantSerializer::class)
                                   override var endDateTime: Instant? = null,
-                                  override val path: MutableList<PathMarker> = mutableListOf(),
-                                  @SerialName("skipToIdentifier")
-                                  override var nextNodeIdentifier: String? = null)
-    : AssessmentResult, ResultNavigationRule {
+                                  override val path: MutableList<PathMarker> = mutableListOf())
+    : AssessmentResult {
     override fun copyResult(identifier: String): AssessmentResult = this.copy(
             identifier = identifier,
             pathHistoryResults = pathHistoryResults.copyResults(),
@@ -78,9 +76,8 @@ data class ResultObject(override val identifier: String,
                         override var startDateTime: Instant = Clock.System.now(),
                         @SerialName("endDate")
                         @Serializable(with = InstantSerializer::class)
-                        override var endDateTime: Instant? = null,
-                        @SerialName("skipToIdentifier")
-                        override var nextNodeIdentifier: String? = null) : Result, ResultNavigationRule {
+                        override var endDateTime: Instant? = null)
+    : Result {
     override fun copyResult(identifier: String): Result = this.copy(identifier = identifier)
 }
 
@@ -94,9 +91,8 @@ data class CollectionResultObject(override val identifier: String,
                                   override var startDateTime: Instant = Clock.System.now(),
                                   @SerialName("endDate")
                                   @Serializable(with = InstantSerializer::class)
-                                  override var endDateTime: Instant? = null,
-                                  @SerialName("skipToIdentifier")
-                                  override var nextNodeIdentifier: String? = null) : CollectionResult, ResultNavigationRule {
+                                  override var endDateTime: Instant? = null)
+    : CollectionResult {
     override fun copyResult(identifier: String): CollectionResult = this.copy(
             identifier = identifier,
             inputResults = inputResults.copyResults())
@@ -115,9 +111,8 @@ data class BranchNodeResultObject(override val identifier: String,
                                   @SerialName("endDate")
                                   @Serializable(with = InstantSerializer::class)
                                   override var endDateTime: Instant? = null,
-                                  override val path: MutableList<PathMarker> = mutableListOf(),
-                                  @SerialName("skipToIdentifier")
-                                  override var nextNodeIdentifier: String? = null) : BranchNodeResult, ResultNavigationRule {
+                                  override val path: MutableList<PathMarker> = mutableListOf())
+    : BranchNodeResult {
     override fun copyResult(identifier: String): BranchNodeResult = this.copy(
             identifier = identifier,
             pathHistoryResults = pathHistoryResults.copyResults(),
