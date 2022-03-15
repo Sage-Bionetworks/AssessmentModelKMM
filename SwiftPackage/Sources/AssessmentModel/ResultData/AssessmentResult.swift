@@ -55,13 +55,16 @@ public protocol AssessmentResult : BranchNodeResult {
     var schemaIdentifier: String?  { get }
 }
 
-/// ``AssessmentResultObject`` is a result associated with a task. This object includes a step history,
-/// task run UUID,  and asynchronous results.
-public final class AssessmentResultObject : SerializableResultData, AssessmentResult, MultiplatformResultData, Codable {
+/// Abstract implementation to allow extending an assessment result while retaining the serializable type.
+open class AbstractAssessmentResultObject : Codable {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case serializableType = "type", identifier, schemaIdentifier, startDate, endDate, assessmentIdentifier, versionString, taskRunUUID, stepHistory, asyncResults, path
     }
-    public private(set) var serializableType: SerializableResultType = .StandardTypes.assessment.resultType
+    public private(set) var serializableType: SerializableResultType = "null"
+    
+    open class func defaultType() -> SerializableResultType {
+        fatalError("Default serializable type not defined for abstract.")
+    }
 
     /// The identifier associated with the task, step, or asynchronous action.
     public let identifier: String
@@ -98,6 +101,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
         self.stepHistory = stepHistory
         self.asyncResults = asyncResults
         self.path = path
+        self.serializableType = type(of: self).defaultType()
     }
 
     /// Initialize from a `Decoder`. This decoding method will use the ``SerializationFactory`` instance associated
@@ -105,7 +109,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
     ///
     /// - parameter decoder: The decoder to use to decode this instance.
     /// - throws: `DecodingError`
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.startDateTime = try container.decode(Date.self, forKey: .startDate)
@@ -123,12 +127,14 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
             let asyncResultsContainer = try container.nestedUnkeyedContainer(forKey: .asyncResults)
             self.asyncResults = try decoder.serializationFactory.decodePolymorphicArray(ResultData.self, from: asyncResultsContainer)
         }
+        
+        self.serializableType = type(of: self).defaultType()
     }
 
     /// Encode the result to the given encoder.
     /// - parameter encoder: The encoder to use to encode this instance.
     /// - throws: `EncodingError`
-    public func encode(to encoder: Encoder) throws {
+    open func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(identifier, forKey: .identifier)
         try container.encode(serializableType, forKey: .serializableType)
@@ -154,43 +160,12 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
             }
         }
     }
-
-    public func deepCopy() -> AssessmentResultObject {
-        let copy = AssessmentResultObject(identifier: self.identifier,
-                                          versionString: self.versionString,
-                                          assessmentIdentifier: self.assessmentIdentifier,
-                                          schemaIdentifier: self.schemaIdentifier)
-        copy.startDateTime = self.startDateTime
-        copy.endDateTime = self.endDateTime
-        copy.taskRunUUID = self.taskRunUUID
-        copy.stepHistory = self.stepHistory.map { $0.deepCopy() }
-        copy.asyncResults = self.asyncResults?.map { $0.deepCopy() }
-        copy.path = self.path
-        return copy
-    }
-}
-
-extension AssessmentResultObject : DocumentableRootObject {
-
-    public convenience init() {
-        self.init(identifier: "example")
-    }
-
-    public var jsonSchema: URL {
-        URL(string: "\(self.className).json", relativeTo: kSageJsonSchemaBaseURL)!
-    }
-
-    public var documentDescription: String? {
-        "A top-level result for this assessment."
-    }
-}
-
-extension AssessmentResultObject : DocumentableStruct {
-    public static func codingKeys() -> [CodingKey] {
+    
+    open class func codingKeys() -> [CodingKey] {
         CodingKeys.allCases
     }
 
-    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+    open class func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
         switch key {
         case .serializableType, .identifier, .startDate, .taskRunUUID, .stepHistory:
@@ -200,7 +175,7 @@ extension AssessmentResultObject : DocumentableStruct {
         }
     }
 
-    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+    open class func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
         guard let key = codingKey as? CodingKeys else {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
@@ -246,6 +221,47 @@ extension AssessmentResultObject : DocumentableStruct {
                             "The path traversed by this branch.")
         }
     }
+}
+
+/// ``AssessmentResultObject`` is a result associated with a task. This object includes a step history,
+/// task run UUID,  and asynchronous results.
+public final class AssessmentResultObject : AbstractAssessmentResultObject, SerializableResultData, AssessmentResult, MultiplatformResultData {
+    
+    public override class func defaultType() -> SerializableResultType {
+        .StandardTypes.assessment.resultType
+    }
+    
+    public func deepCopy() -> AssessmentResultObject {
+        let copy = AssessmentResultObject(identifier: self.identifier,
+                                          versionString: self.versionString,
+                                          assessmentIdentifier: self.assessmentIdentifier,
+                                          schemaIdentifier: self.schemaIdentifier)
+        copy.startDateTime = self.startDateTime
+        copy.endDateTime = self.endDateTime
+        copy.taskRunUUID = self.taskRunUUID
+        copy.stepHistory = self.stepHistory.map { $0.deepCopy() }
+        copy.asyncResults = self.asyncResults?.map { $0.deepCopy() }
+        copy.path = self.path
+        return copy
+    }
+}
+
+extension AssessmentResultObject : DocumentableRootObject {
+
+    public convenience init() {
+        self.init(identifier: "example")
+    }
+
+    public var jsonSchema: URL {
+        URL(string: "\(self.className).json", relativeTo: kSageJsonSchemaBaseURL)!
+    }
+
+    public var documentDescription: String? {
+        "A top-level result for this assessment."
+    }
+}
+
+extension AssessmentResultObject : DocumentableStruct {
 
     public static func examples() -> [AssessmentResultObject] {
 
