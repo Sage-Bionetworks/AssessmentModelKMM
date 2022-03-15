@@ -50,13 +50,16 @@ public protocol AssessmentResult : BranchNodeResult {
     /// assessment. This could be a schedule identifier or an identifier in a different namespace
     /// than the "task identifier" used by the assessment developers to identify their assessments.
     var assessmentIdentifier: String? { get }
+    
+    /// An identifier that can be used either by the assessment developer or scientist to make to services.
+    var schemaIdentifier: String?  { get }
 }
 
 /// ``AssessmentResultObject`` is a result associated with a task. This object includes a step history,
 /// task run UUID,  and asynchronous results.
 public final class AssessmentResultObject : SerializableResultData, AssessmentResult, MultiplatformResultData, Codable {
     private enum CodingKeys : String, OrderedEnumCodingKey {
-        case serializableType = "type", identifier, startDate, endDate, assessmentIdentifier, versionString, taskRunUUID, stepHistory, asyncResults, path
+        case serializableType = "type", identifier, schemaIdentifier, startDate, endDate, assessmentIdentifier, versionString, taskRunUUID, stepHistory, asyncResults, path
     }
     public private(set) var serializableType: SerializableResultType = .StandardTypes.assessment.resultType
 
@@ -66,7 +69,8 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
     public var endDateTime: Date?
     
     public let versionString: String?
-    public let assessmentIdentifier: String?
+    public var assessmentIdentifier: String?
+    public var schemaIdentifier: String?
 
     public var taskRunUUID: UUID
     public var stepHistory: [ResultData]
@@ -77,6 +81,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
     public init(identifier: String,
                 versionString: String? = nil,
                 assessmentIdentifier: String? = nil,
+                schemaIdentifier: String? = nil,
                 startDate: Date = Date(),
                 endDate: Date? = nil,
                 taskRunUUID: UUID = UUID(),
@@ -86,6 +91,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
         self.identifier = identifier
         self.versionString = versionString
         self.assessmentIdentifier = assessmentIdentifier
+        self.schemaIdentifier = schemaIdentifier
         self.startDateTime = startDate
         self.endDateTime = endDate
         self.taskRunUUID = taskRunUUID
@@ -108,6 +114,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
         self.path = try container.decodeIfPresent([PathMarker].self, forKey: .path) ?? []
         self.versionString = try container.decodeIfPresent(String.self, forKey: .versionString)
         self.assessmentIdentifier = try container.decodeIfPresent(String.self, forKey: .assessmentIdentifier)
+        self.schemaIdentifier = try container.decodeIfPresent(String.self, forKey: .schemaIdentifier)
 
         let resultsContainer = try container.nestedUnkeyedContainer(forKey: .stepHistory)
         self.stepHistory = try decoder.serializationFactory.decodePolymorphicArray(ResultData.self, from: resultsContainer)
@@ -130,6 +137,7 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
         try container.encode(taskRunUUID, forKey: .taskRunUUID)
         try container.encode(path, forKey: .path)
         try container.encodeIfPresent(self.assessmentIdentifier, forKey: .assessmentIdentifier)
+        try container.encodeIfPresent(self.schemaIdentifier, forKey: .schemaIdentifier)
         try container.encodeIfPresent(self.versionString, forKey: .versionString)
 
         var nestedContainer = container.nestedUnkeyedContainer(forKey: .stepHistory)
@@ -150,7 +158,8 @@ public final class AssessmentResultObject : SerializableResultData, AssessmentRe
     public func deepCopy() -> AssessmentResultObject {
         let copy = AssessmentResultObject(identifier: self.identifier,
                                           versionString: self.versionString,
-                                          assessmentIdentifier: self.assessmentIdentifier)
+                                          assessmentIdentifier: self.assessmentIdentifier,
+                                          schemaIdentifier: self.schemaIdentifier)
         copy.startDateTime = self.startDateTime
         copy.endDateTime = self.endDateTime
         copy.taskRunUUID = self.taskRunUUID
@@ -210,7 +219,9 @@ extension AssessmentResultObject : DocumentableStruct {
             assessment. This could be a schedule identifier or an identifier in a different namespace
             than the "task identifier" used by the assessment developers to identify their assessments.
             """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n"))
-                            
+        case .schemaIdentifier:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+            "An identifier that can be used either by the developer or researcher for custom mapping.")
         case .versionString:
             return .init(propertyType: .primitive(.string), propertyDescription:
             "The versioning key used by the developer to version this assessment.")

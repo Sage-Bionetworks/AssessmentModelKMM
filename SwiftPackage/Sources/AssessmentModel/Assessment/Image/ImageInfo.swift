@@ -42,6 +42,16 @@ public protocol ImageInfo : ResourceInfo {
     
     /// A caption or label to display for the image in a localized string.
     var label: String? { get }
+    
+    /// A unique identifier that can be used to validate that the image shown in a reusable view
+    /// is the same image as the one fetched.
+    var imageIdentifier: String { get }
+    
+    /// The preferred placement of the image. Default placement is `iconBefore` if undefined.
+    var placementHint: String? { get }
+    
+    /// The image size. If `.zero` or `nil` then default sizing will be used.
+    var imageSize: ImageSize? { get }
 }
 
 /// `AnimatedImageInfo` defines a series of images that can be animated.
@@ -59,7 +69,7 @@ public protocol AnimatedImageInfo : ImageInfo {
 
 public extension AnimatedImageInfo {
     var imageName: String {
-        imageNames.first ?? "null"
+        imageIdentifier
     }
 }
 
@@ -139,7 +149,7 @@ public extension SerializableImageInfo {
 /// `FetchableImage` is a `Codable` concrete implementation of `ImageInfo`.
 public struct FetchableImage : ImageInfo, SerializableImageInfo {
     private enum CodingKeys : String, OrderedEnumCodingKey {
-        case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension"
+        case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size"
     }
     public private(set) var serializableType: ImageInfoType = .fetchable
     
@@ -149,12 +159,18 @@ public struct FetchableImage : ImageInfo, SerializableImageInfo {
     public var factoryBundle: ResourceBundle?
     public let bundleIdentifier: String?
     public var packageName: String?
+    public let placementHint: String?
+    public let imageSize: ImageSize?
     
     public var resourceName: String {
-        return imageName
+        imageName
     }
     
-    public init(imageName: String, bundle: ResourceBundle? = nil, packageName: String? = nil, bundleIdentifier: String? = nil, label: String? = nil) {
+    public var imageIdentifier: String {
+        imageName
+    }
+    
+    public init(imageName: String, bundle: ResourceBundle? = nil, packageName: String? = nil, bundleIdentifier: String? = nil, label: String? = nil, placementHint: String? = nil, imageSize: ImageSize? = nil) {
         let splitFile = imageName.splitFilename()
         self.imageName = splitFile.resourceName
         self.rawFileExtension = splitFile.fileExtension
@@ -162,6 +178,8 @@ public struct FetchableImage : ImageInfo, SerializableImageInfo {
         self.bundleIdentifier = bundleIdentifier
         self.packageName = packageName
         self.label = label
+        self.placementHint = placementHint
+        self.imageSize = imageSize
     }
 }
 
@@ -202,6 +220,12 @@ extension FetchableImage : DocumentableStruct {
         case .rawFileExtension:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "For a raw resource file, this is the file extension for getting at the resource.")
+        case .placementHint:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "A hint to the preferred placement of the image.")
+        case .imageSize:
+            return .init(propertyType: .reference(ImageSize.documentableType()),
+                         propertyDescription: "The preferred size (in pixels) of the image.")
         }
     }
     
@@ -218,7 +242,7 @@ extension FetchableImage : DocumentableStruct {
 /// `AnimatedImage` is a `Codable` concrete implementation of `AnimatedImageInfo`.
 public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo {
     private enum CodingKeys: String, OrderedEnumCodingKey {
-        case serializableType = "type", imageNames, animationDuration, animationRepeatCount, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension"
+        case serializableType = "type", imageNames, animationDuration, animationRepeatCount, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size", _imageIdentifier = "imageIdentifier"
     }
     public private(set) var serializableType: ImageInfoType = .animated
     
@@ -230,15 +254,23 @@ public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo {
     public var factoryBundle: ResourceBundle? = nil
     public var packageName: String?
     public let rawFileExtension: String?
+    public let placementHint: String?
+    public let imageSize: ImageSize?
+    
+    public var imageIdentifier: String { _imageIdentifier ?? imageNames.first ?? "null" }
+    private let _imageIdentifier: String?
 
     /// Default initializer.
-    public init(imageNames: [String], animationDuration: TimeInterval, bundleIdentifier: String? = nil, animationRepeatCount: Int = 0, label: String? = nil) {
+    public init(imageNames: [String], animationDuration: TimeInterval, bundleIdentifier: String? = nil, animationRepeatCount: Int = 0, label: String? = nil, placementHint: String? = nil, imageSize: ImageSize? = nil) {
         self.imageNames = imageNames
         self.bundleIdentifier = bundleIdentifier
         self.animationDuration = animationDuration
         self.animationRepeatCount = animationRepeatCount
         self.rawFileExtension = nil
         self.label = label
+        self._imageIdentifier = nil
+        self.placementHint = placementHint
+        self.imageSize = imageSize
     }
 }
 
@@ -285,6 +317,15 @@ extension AnimatedImage : DocumentableStruct {
         case .rawFileExtension:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "For a raw resource file, this is the file extension for getting at the resource.")
+        case .placementHint:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "A hint to the preferred placement of the image.")
+        case .imageSize:
+            return .init(propertyType: .reference(ImageSize.documentableType()), propertyDescription:
+                            "The preferred size (in pixels) of the image.")
+        case ._imageIdentifier:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "An identifier for the image.")
         }
     }
     
@@ -307,6 +348,42 @@ extension String {
             resource = split.first!
         }
         return (resource, ext)
+    }
+}
+
+/// `ImageSize` is a codable struct for defining the size of a drawable.
+public struct ImageSize : Codable {
+    private enum CodingKeys : String, CodingKey, CaseIterable {
+        case width, height
+    }
+    public let width: Double
+    public let height: Double
+    
+    public init(width: Double, height: Double) {
+        self.width = width
+        self.height = height
+    }
+}
+
+extension ImageSize : DocumentableStruct {
+
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+    
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        true
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let _ = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
+        }
+        return .init(propertyType: .primitive(.number))
+    }
+    
+    public static func examples() -> [ImageSize] {
+        [ImageSize(width: 10.0, height: 20.0)]
     }
 }
 

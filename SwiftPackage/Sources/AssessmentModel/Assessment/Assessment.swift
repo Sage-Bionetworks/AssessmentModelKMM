@@ -49,7 +49,7 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     public init(identifier: String,
                 children: [Node],
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.children = children
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
@@ -109,7 +109,7 @@ open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode {
     }
 }
 
-public final class SectionObject : AbstractSectionObject, DocumentableStruct {
+public final class SectionObject : AbstractSectionObject, DocumentableStruct, CopyWithIdentifier {
 
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.section.nodeType
@@ -119,6 +119,13 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct {
         [.init(identifier: "section", children: [
             SimpleQuestionStepObject(identifier: "favoriteColor", title: "What is your favorite color")
         ])]
+    }
+    
+    public func copy(with identifier: String) -> SectionObject {
+        .init(identifier: identifier,
+              children: children,
+              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
     }
 }
 
@@ -135,7 +142,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public init(identifier: String, children: [Node],
                 version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.versionString = version
         self.estimatedMinutes = estimatedMinutes
         self.copyright = copyright
@@ -163,7 +170,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     }
     
     open func instatiateAssessmentResult() -> AssessmentResult {
-        AssessmentResultObject(identifier: self.identifier)
+        AssessmentResultObject(identifier: self.identifier, versionString: self.versionString)
     }
     
     open override func instantiateResult() -> ResultData {

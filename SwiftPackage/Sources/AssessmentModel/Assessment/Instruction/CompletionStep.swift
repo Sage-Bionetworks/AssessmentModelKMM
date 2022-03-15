@@ -38,19 +38,18 @@ import JsonModel
 public protocol CompletionStep : Step, ContentNode {
 }
 
-open class AbstractCompletionStepObject : AbstractStepObject, CompletionStep {
-    /// Default implementation for a completion step is to block going back.
-    open override func canGoBack() -> Bool {
-        false
-    }
-}
-
-public final class CompletionStepObject : AbstractCompletionStepObject, Encodable, DocumentableStruct {
+public final class CompletionStepObject : AbstractStepObject, CompletionStep, Encodable, DocumentableStruct, CopyWithIdentifier {
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.completion.nodeType
     }
     
     public static func examples() -> [CompletionStepObject] {
         [.init(identifier: "example")]
+    }
+    
+    public func copy(with identifier: String) -> CompletionStepObject {
+        .init(identifier: identifier,
+              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
     }
 }

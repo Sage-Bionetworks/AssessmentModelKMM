@@ -84,7 +84,7 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
                 inputItem: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         super.init(identifier: identifier, title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo, optional: optional, uiHint: uiHint, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
         self.inputItem = inputItem ?? type(of: self).defaultTextInputItem()
     }
@@ -132,7 +132,7 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
     }
 }
 
-public final class SimpleQuestionStepObject : AbstractSimpleQuestionStepObject, Encodable, DocumentableStruct {
+public final class SimpleQuestionStepObject : AbstractSimpleQuestionStepObject, Encodable, DocumentableStruct, CopyWithIdentifier {
     
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.simpleQuestion.nodeType
@@ -140,5 +140,13 @@ public final class SimpleQuestionStepObject : AbstractSimpleQuestionStepObject, 
     
     public static func examples() -> [SimpleQuestionStepObject] {
         [.init(identifier: "foo")]
+    }
+    
+    public func copy(with identifier: String) -> SimpleQuestionStepObject {
+        .init(identifier: identifier,
+              inputItem: inputItem,
+              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+              optional: optional, uiHint: uiHint,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
     }
 }

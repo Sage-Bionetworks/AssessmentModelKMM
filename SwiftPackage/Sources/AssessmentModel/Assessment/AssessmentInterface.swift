@@ -53,27 +53,7 @@ public protocol ResultMapElement : PolymorphicTyped {
 
 /// A ``Node`` is any object defined within the structure of an ``Assessment`` that is used to organize and describe UI/UX
 /// for an ``Assessment``.
-public protocol Node : ResultMapElement {
-
-    /// List of button actions that should be hidden for this node even if the node subtype typically supports displaying
-    /// the button on screen. This property can be defined at any level and will default to whichever is the lowest level
-    /// for which this mapping is defined.
-    var shouldHideButtons: Set<ButtonAction> { get }
-
-    /// A mapping of a ``ButtonAction`` to a ``ButtonActionInfo``.
-    ///
-    /// For example, this mapping can be used to  to customize the title of the ``ButtonAction.navigation(.goForward)``
-    /// button. It can also define the title, icon, etc. on a custom button as long as the application knows how to
-    /// interpret the custom action.
-    ///
-    /// Finally, a mapping can be used to explicitly mark a button as "should display" even if the overall assessment or
-    /// section includes the button action in the list of hidden buttons. For example, an assessment may define the
-    /// skip button as hidden but a lower level step within that assessment's hierarchy can return a mapping for the
-    /// skip button. The lower level mapping should be respected and the button should be displayed for that step only.
-    var buttonMap: [ButtonAction : ButtonActionInfo] { get }
-    
-    /// Does this ``Node`` support backward navigation?
-    func canGoBack() -> Bool
+public protocol Node : ResultMapElement, ButtonActionHandler {
 }
 
 /// Content info is general information about a ``Node``, ``Question``, or other UI/UX element where the syntax

@@ -95,26 +95,6 @@ public extension ChoiceQuestion {
     }
 }
 
-/// A choice input item where the value is defined by a ``JsonElement``.
-public protocol JsonChoice : ChoiceInputItem {
-    var matchingValue: JsonElement? { get }
-}
-
-public extension JsonChoice {
-    
-    var answerType: AnswerType {
-        matchingValue.map { $0.answerType } ?? AnswerTypeNull()
-    }
-    
-    var resultIdentifier: String? {
-        matchingValue.map { "\($0)"}
-    }
-     
-    func jsonElement(selected: Bool) -> JsonElement? {
-        selected ? matchingValue : nil
-    }
-}
-
 /// An abstract implementation is provided to allow different "type" identifiers with the same encoding.
 open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, ChoiceQuestion, QuestionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
@@ -122,8 +102,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         var relativeIndex: Int { 6 }
     }
     
-    public var choices: [JsonChoice] { _choices }
-    private let _choices: [JsonChoiceObject]
+    public let choices: [JsonChoice]
     public let other: TextInputItem?
     public let baseType: JsonType
     public let singleAnswer: Bool
@@ -132,11 +111,11 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         instantiateAnswerResult()
     }
     
-    public init(identifier: String, choices: [JsonChoiceObject], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
+    public init(identifier: String, choices: [JsonChoice], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
-        self._choices = choices
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+        self.choices = choices
         self.baseType = baseType ?? choices.baseType()
         self.singleAnswer = singleChoice
         self.other = other
@@ -151,8 +130,8 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let choices = try container.decode([JsonChoiceObject].self, forKey: .choices)
-        self._choices = choices
+        let choices = try container.decode([JsonChoice].self, forKey: .choices)
+        self.choices = choices
         self.baseType = try container.decodeIfPresent(JsonType.self, forKey: .baseType) ?? choices.baseType()
         self.singleAnswer = try container.decodeIfPresent(Bool.self, forKey: .singleAnswer) ?? true
         if container.contains(.other) {
@@ -188,7 +167,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.singleAnswer, forKey: .singleAnswer)
-        try container.encode(self._choices, forKey: .choices)
+        try container.encode(self.choices, forKey: .choices)
         try container.encode(self.baseType, forKey: .baseType)
         try encodeObject(object: self.other, to: encoder, forKey: CodingKeys.other)
     }
@@ -215,7 +194,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
             return .init(propertyType: .reference(JsonType.documentableType()), propertyDescription:
                             "The json type of the choices in this collection. The `value` for all choices should be either of the same json type or null.")
         case .choices:
-            return .init(propertyType: .referenceArray(JsonChoiceObject.documentableType()), propertyDescription:
+            return .init(propertyType: .referenceArray(JsonChoice.documentableType()), propertyDescription:
                             "The list of choices for this question.")
         case .singleAnswer:
             return .init(propertyType: .primitive(.boolean), propertyDescription:
@@ -227,7 +206,7 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     }
 }
 
-public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, Encodable, DocumentableStruct {
+public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, Encodable, DocumentableStruct, CopyWithIdentifier {
 
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.choiceQuestion.nodeType
@@ -241,9 +220,17 @@ public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, 
         // For simplicity, the base type is required.
         super.isRequired(codingKey) || codingKey.stringValue == "baseType"
     }
+    
+    public func copy(with identifier: String) -> ChoiceQuestionStepObject {
+        .init(identifier: identifier,
+              choices: choices, baseType: baseType, singleChoice: singleAnswer, other: other,
+              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+              optional: optional, uiHint: uiHint,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+    }
 }
 
-public struct JsonChoiceObject : JsonChoice, Codable, Hashable {
+public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case matchingValue = "value", label = "text", detail, iconName = "icon", _selectorType = "selectorType", _exclusive = "exclusive"
     }
@@ -280,9 +267,21 @@ public struct JsonChoiceObject : JsonChoice, Codable, Hashable {
         self._exclusive = nil
         self.iconName = nil
     }
+    
+    public var answerType: AnswerType {
+        matchingValue.map { $0.answerType } ?? AnswerTypeNull()
+    }
+    
+    public var resultIdentifier: String? {
+        matchingValue.map { "\($0)"}
+    }
+     
+    public func jsonElement(selected: Bool) -> JsonElement? {
+        selected ? matchingValue : nil
+    }
 }
 
-extension JsonChoiceObject : DocumentableStruct {
+extension JsonChoice : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
         CodingKeys.allCases.filter { $0 != ._exclusive }
     }
@@ -326,12 +325,12 @@ extension JsonChoiceObject : DocumentableStruct {
         }
     }
     
-    public static func examples() -> [JsonChoiceObject] {
+    public static func examples() -> [JsonChoice] {
         return [.init(value: .integer(1), text: "One")]
     }
 }
 
-fileprivate extension Array where Element : JsonChoice {
+fileprivate extension Array where Element == JsonChoice {
     func baseType() -> JsonType {
         first(where: {
             $0.matchingValue != nil && $0.matchingValue != JsonElement.null

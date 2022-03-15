@@ -1,6 +1,7 @@
 //
-//  OverviewStep.swift
-//  
+//  RSDUIActionHandler.swift
+//  Research
+//
 //  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,24 +32,9 @@
 //
 
 import Foundation
-import JsonModel
 
-/// An overview step is  intended to be used to mark the *beginning* of an assessment.
-public protocol OverviewStep : Step, ContentNode {
-}
-
-public final class OverviewStepObject : AbstractStepObject, OverviewStep, Encodable, DocumentableStruct, CopyWithIdentifier {
-    public override class func defaultType() -> SerializableNodeType {
-        .StandardTypes.overview.nodeType
-    }
-    
-    public static func examples() -> [OverviewStepObject] {
-        [.init(identifier: "example")]
-    }
-    
-    public func copy(with identifier: String) -> OverviewStepObject {
-        .init(identifier: identifier,
-              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
-    }
+/// `ButtonActionHandler` implements the custom actions of the step.
+public protocol ButtonActionHandler {
+    func button(_ buttonType: ButtonType, node: Node) -> ButtonActionInfo?
+    func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool?
 }

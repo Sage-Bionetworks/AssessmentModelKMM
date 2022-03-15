@@ -54,7 +54,7 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     /// A mapping of the localized text that represents an instructional voice prompt to the time
     /// marker for speaking the instruction.
-    let spokenInstructions: [SpokenInstructionKey : String]?
+    public let spokenInstructions: [SpokenInstructionKey : String]?
     
     public enum SpokenInstructionKey : String, OrderedEnumCodingKey {
         case start, end
@@ -81,7 +81,7 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     public init(identifier: String,
                          title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                         shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil,
+                         shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil,
                          fullInstructionsOnly: Bool? = nil, spokenInstructions: [SpokenInstructionKey : String]? = nil) {
         self._fullInstructionsOnly = fullInstructionsOnly
         self.spokenInstructions = spokenInstructions
@@ -147,13 +147,20 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     }
 }
 
-public final class InstructionStepObject : AbstractInstructionStepObject, Encodable, DocumentableStruct {
+public final class InstructionStepObject : AbstractInstructionStepObject, Encodable, DocumentableStruct, CopyWithIdentifier {
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.instruction.nodeType
     }
     
     public static func examples() -> [InstructionStepObject] {
         [.init(identifier: "example")]
+    }
+    
+    public func copy(with identifier: String) -> InstructionStepObject {
+        .init(identifier: identifier,
+              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment,
+              fullInstructionsOnly: fullInstructionsOnly, spokenInstructions: spokenInstructions)
     }
 }
 

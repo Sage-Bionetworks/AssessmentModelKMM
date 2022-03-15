@@ -141,7 +141,7 @@ open class AbstractQuestionStepObject : AbstractStepObject {
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.optional = optional ?? false
         self.uiHint = uiHint
         super.init(identifier: identifier,

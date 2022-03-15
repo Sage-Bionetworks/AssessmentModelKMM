@@ -34,6 +34,14 @@
 import Foundation
 import JsonModel
 
+/// A lightweight protocol for copying objects with a new identifier.
+public protocol CopyWithIdentifier {
+    
+    /// Copy the step to a new instance with the given identifier, but otherwise, equal.
+    /// - parameter identifier: The new identifier.
+    func copy(with identifier: String) -> Self
+}
+
 open class AssessmentFactory : SerializationFactory {
     
     public let answerTypeSerializer = AnswerTypeSerializer()

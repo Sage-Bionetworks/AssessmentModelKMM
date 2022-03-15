@@ -545,12 +545,12 @@ class CodableQuestionTests: XCTestCase {
             XCTAssertEqual(.StandardTypes.choiceQuestion.nodeType, object.serializableType)
             XCTAssertEqual(.string, object.baseType)
             
-            let choices: [JsonChoiceObject] = [
+            let choices: [JsonChoice] = [
                 .init(value: .string("one"), text: "one"),
                 .init(value: .string("two"), text: "two"),
                 .init(text: "none", selectorType: .exclusive)
             ]
-            XCTAssertEqual(choices, object.choices as? [JsonChoiceObject])
+            XCTAssertEqual(choices, object.choices)
             
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
@@ -612,12 +612,12 @@ class CodableQuestionTests: XCTestCase {
             XCTAssertEqual(.StandardTypes.choiceQuestion.nodeType, object.serializableType)
             XCTAssertEqual(.integer, object.baseType)
             
-            let choices: [JsonChoiceObject] = [
+            let choices: [JsonChoice] = [
                 .init(value: .integer(1), text: "one"),
                 .init(value: .integer(2), text: "two"),
                 .init(text: "none", selectorType: .exclusive)
             ]
-            XCTAssertEqual(choices, object.choices as? [JsonChoiceObject])
+            XCTAssertEqual(choices, object.choices)
             XCTAssertTrue(object.other is IntegerTextInputItemObject)
             
             checkSharedEncodingKeys(question: object)
@@ -654,11 +654,11 @@ class CodableQuestionTests: XCTestCase {
         XCTAssertEqual(type(of: step).defaultType(), step.serializableType)
         XCTAssertEqual("foo", step.identifier)
         XCTAssertEqual("comment", step.comment)
-        XCTAssertEqual([ButtonAction.navigation(.skip)], step.shouldHideButtons)
-        let expectedButtonMap: [ButtonAction : ButtonActionInfoObject] = [
+        XCTAssertEqual([ButtonType.navigation(.skip)], step.shouldHideButtons)
+        let expectedButtonMap: [ButtonType : ButtonActionInfoObject] = [
             .navigation(.goForward) : ButtonActionInfoObject(buttonTitle: "Go, Dogs! Go!")
         ]
-        XCTAssertEqual(expectedButtonMap, step.buttonMap as? [ButtonAction : ButtonActionInfoObject])
+        XCTAssertEqual(expectedButtonMap, step.buttonMap as? [ButtonType : ButtonActionInfoObject])
         XCTAssertEqual("Hello World!", step.title)
         XCTAssertEqual("Question subtitle", step.subtitle)
         XCTAssertEqual("Some text. This is a test.", step.detail)

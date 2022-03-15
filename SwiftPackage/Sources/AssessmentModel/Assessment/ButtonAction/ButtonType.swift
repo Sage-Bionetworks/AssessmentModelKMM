@@ -33,9 +33,9 @@
 import Foundation
 import JsonModel
 
-/// The ``ButtonAction`` enum describes standard navigation actions that are common to a
+/// The ``ButtonType`` enum describes standard navigation actions that are common to a
 /// given UI step. It is extendable using the custom field.
-public enum ButtonAction {
+public enum ButtonType {
     
     /// Standard navigation elements that are common to most steps.
     case navigation(Navigation)
@@ -76,7 +76,7 @@ public enum ButtonAction {
     }
 }
 
-extension ButtonAction: RawRepresentable, Codable, Hashable {
+extension ButtonType: RawRepresentable, Codable, Hashable {
     
     public init(rawValue: String) {
         if let subtype = Navigation(rawValue: rawValue) {
@@ -98,13 +98,13 @@ extension ButtonAction: RawRepresentable, Codable, Hashable {
     }
 }
 
-extension ButtonAction : ExpressibleByStringLiteral {
+extension ButtonType : ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
 
-extension ButtonAction : CodingKey {
+extension ButtonType : CodingKey {
     public var stringValue: String {
         return self.rawValue
     }
@@ -122,7 +122,7 @@ extension ButtonAction : CodingKey {
     }
 }
 
-extension ButtonAction : DocumentableStringEnum {
+extension ButtonType : DocumentableStringEnum {
     public static func allValues() -> [String] {
         Navigation.allCases.map { $0.rawValue }
     }

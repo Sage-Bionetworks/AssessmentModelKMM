@@ -113,14 +113,14 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
     
     /// Insert the given example into the example array, replacing any existing example with the
     /// same `typeName` as one of the new example.
-    public func add(_ example: SerializableNode) {
+    public func add(_ example: Node) {
         examples.removeAll(where: { $0.typeName == example.typeName })
         examples.append(example)
     }
     
     /// Insert the given examples into the example array, replacing any existing examples with the
     /// same `typeName` as one of the new examples.
-    public func add(contentsOf newExamples: [SerializableNode]) {
+    public func add(contentsOf newExamples: [Node]) {
         let newNames = newExamples.map { $0.typeName }
         self.examples.removeAll(where: { newNames.contains($0.typeName) })
         self.examples.append(contentsOf: newExamples)
@@ -136,16 +136,26 @@ open class AbstractNodeObject : SerializableNode {
     
     public let identifier: String
     public let comment: String?
-    public let shouldHideButtons: Set<ButtonAction>
-    public let buttonMap: [ButtonAction : ButtonActionInfo]
+    
+    /// List of button actions that should be hidden for this node even if the node subtype typically supports displaying
+    /// the button on screen. This property can be defined at any level and will default to whichever is the lowest level
+    /// for which this mapping is defined.
+    public let shouldHideButtons: Set<ButtonType>
+    
+    /// A mapping of a ``ButtonAction`` to a ``ButtonActionInfo``.
+    ///
+    /// For example, this mapping can be used to  to customize the title of the ``ButtonAction.navigation(.goForward)``
+    /// button. It can also define the title, icon, etc. on a custom button as long as the application knows how to
+    /// interpret the custom action.
+    ///
+    /// Finally, a mapping can be used to explicitly mark a button as "should display" even if the overall assessment or
+    /// section includes the button action in the list of hidden buttons. For example, an assessment may define the
+    /// skip button as hidden but a lower level step within that assessment's hierarchy can return a mapping for the
+    /// skip button. The lower level mapping should be respected and the button should be displayed for that step only.
+    public let buttonMap: [ButtonType : ButtonActionInfo]
     
     open class func defaultType() -> SerializableNodeType {
         fatalError("The default type *must* be overriden for this abstract class")
-    }
-    
-    /// Default implementation is that a node can go back unless the button is explicitly hidden.
-    open func canGoBack() -> Bool {
-        !shouldHideButtons.contains(.navigation(.goBackward))
     }
     
     /// Default implementation is to return a ``ResultObject``.
@@ -153,9 +163,17 @@ open class AbstractNodeObject : SerializableNode {
         ResultObject(identifier: self.identifier)
     }
     
+    open func button(_ buttonType: ButtonType, node: Node) -> ButtonActionInfo? {
+        ((node as? AbstractNodeObject) === self) ? buttonMap[buttonType] : nil
+    }
+    
+    open func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool? {
+        ((node as? AbstractNodeObject) === self) ? shouldHideButtons.contains(buttonType) : nil
+    }
+    
     public init(identifier: String,
-                shouldHideButtons: Set<ButtonAction>? = nil,
-                buttonMap: [ButtonAction : ButtonActionInfo]? = nil,
+                shouldHideButtons: Set<ButtonType>? = nil,
+                buttonMap: [ButtonType : ButtonActionInfo]? = nil,
                 comment: String? = nil) {
         self.identifier = identifier
         self.comment = comment
@@ -169,14 +187,14 @@ open class AbstractNodeObject : SerializableNode {
         self.serializableType = type(of: self).defaultType()
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.comment = try container.decodeIfPresent(String.self, forKey: .comment)
-        self.shouldHideButtons = try container.decodeIfPresent(Set<ButtonAction>.self, forKey: .shouldHideButtons) ?? []
+        self.shouldHideButtons = try container.decodeIfPresent(Set<ButtonType>.self, forKey: .shouldHideButtons) ?? []
         if container.contains(.buttonMap) {
             let nestedDecoder = try container.superDecoder(forKey: .buttonMap)
             let nestedContainer = try nestedDecoder.container(keyedBy: AnyCodingKey.self)
-            var buttonMap = [ButtonAction : ButtonActionInfo]()
+            var buttonMap = [ButtonType : ButtonActionInfo]()
             for key in nestedContainer.allKeys {
                 let objectDecoder = try nestedContainer.superDecoder(forKey: key)
-                let actionType = ButtonAction(rawValue: key.stringValue)
+                let actionType = ButtonType(rawValue: key.stringValue)
                 let action = try decoder.serializationFactory.decodePolymorphicObject(ButtonActionInfo.self, from: objectDecoder)
                 buttonMap[actionType] = action
             }
@@ -198,7 +216,7 @@ open class AbstractNodeObject : SerializableNode {
         try container.encodeIfPresent(comment, forKey: .comment)
         
         if self.buttonMap.count > 0 {
-            var nestedContainer = container.nestedContainer(keyedBy: ButtonAction.self, forKey: .buttonMap)
+            var nestedContainer = container.nestedContainer(keyedBy: ButtonType.self, forKey: .buttonMap)
             try self.buttonMap.forEach { (key, action) in
                 guard let encodableAction = action as? Encodable else { return }
                 let objectEncoder = nestedContainer.superEncoder(forKey: key)
@@ -239,7 +257,7 @@ open class AbstractNodeObject : SerializableNode {
             return .init(propertyType: .interfaceDictionary("\(ButtonActionInfo.self)"), propertyDescription:
                             "A mapping of button action to content information for that button.")
         case .shouldHideButtons:
-            return .init(propertyType: .referenceArray(ButtonAction.documentableType()), propertyDescription:
+            return .init(propertyType: .referenceArray(ButtonType.documentableType()), propertyDescription:
                             "A list of buttons that should be hidden even if the default is to show them.")
         }
     }
@@ -258,7 +276,7 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonAction>? = nil, buttonMap: [ButtonAction : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.detail = detail
