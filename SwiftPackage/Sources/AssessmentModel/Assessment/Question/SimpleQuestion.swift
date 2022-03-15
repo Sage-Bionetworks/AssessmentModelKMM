@@ -35,7 +35,7 @@ import Foundation
 import JsonModel
 
 /// A simple question can be represented as text entry of a single value. The UI/UX for presenting the question
-/// may not use a text field, based on the ``QuestionUIHint`` and the requirements of the application
+/// might not use a text field, based on the ``QuestionUIHint`` and the requirements of the application
 /// design, but it translates into a single json value that can be represented as a string.
 public protocol SimpleQuestion : Question {
     

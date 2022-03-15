@@ -33,7 +33,7 @@
 import Foundation
 import JsonModel
 
-/// A ``Question`` can be an input of a form or it might be a stand-alone question. It represents a
+/// A ``Question`` can be an input of a form or it might be a stand-alone question. It represents
 /// something that, when composited, will result in a single answer. It may compose input fields to do
 /// so such as "What is your name?" with an answer of `{ "familyName" : "Smith", "givenName" : "John" }`
 public protocol Question : ResultMapElement, ContentInfo {

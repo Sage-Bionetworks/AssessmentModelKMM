@@ -51,7 +51,7 @@ public protocol AssessmentResult : BranchNodeResult {
     /// than the "task identifier" used by the assessment developers to identify their assessments.
     var assessmentIdentifier: String? { get }
     
-    /// An identifier that can be used either by the assessment developer or scientist to make to services.
+    /// An identifier that can be used either by the assessment developers or scientists as needed.
     var schemaIdentifier: String?  { get }
 }
 

@@ -70,7 +70,7 @@ public protocol ContentInfo {
     var detail: String? { get }
 }
 
-/// a ``ContentNode`` is a node that includes information, depending upon the UI design and available real-estate.
+/// A ``ContentNode`` is a node that includes information, depending upon the UI design and available real-estate.
 public protocol ContentNode : Node, ContentInfo {
     
     /// The primary text to display for the node in a localized string. The UI should display this using a larger font.
@@ -97,7 +97,7 @@ public protocol ContentNode : Node, ContentInfo {
 public protocol Step : Node {
 
     /// Localized text that represents an instructional voice prompt. Instructional speech begins when the
-    /// step passes the time indicated by the given time.  If `timeInterval` is greater than or equal to
+    /// step passes the time indicated by the given time interval.  If `timeInterval` is greater than or equal to
     /// `duration` or is equal to `Double.infinity`, then the spoken instruction returned should be for
     /// when the step is finished.
     ///
@@ -136,20 +136,20 @@ public protocol AssessmentInfo {
 public protocol BranchNode : Node {
 
     /// The ``Navigator`` for this section or assessment.
-    func instatiateNavigator(state: NavigationState) -> Navigator
+    func instantiateNavigator(state: NavigationState) -> Navigator
 
-    /// The instatiated result should be a branch node result.
-    func instatiateBranchNodeResult() -> BranchNodeResult
+    /// The instantiated result should be a branch node result.
+    func instantiateBranchNodeResult() -> BranchNodeResult
 }
 
 public protocol Assessment : BranchNode, ContentNode, AssessmentInfo {
     
     /// The instantiated result should be an assessment result.
-    func instatiateAssessmentResult() -> AssessmentResult
+    func instantiateAssessmentResult() -> AssessmentResult
 }
 
 public extension Assessment {
-    func instatiateBranchNodeResult() -> BranchNodeResult {
-        instatiateAssessmentResult()
+    func instantiateBranchNodeResult() -> BranchNodeResult {
+        instantiateAssessmentResult()
     }
 }

@@ -34,7 +34,7 @@
 import Foundation
 import JsonModel
 
-/// An completion step is intended to be used to mark the *end* of an assessment.
+/// A completion step is intended to be used to mark the *end* of an assessment.
 public protocol CompletionStep : Step, ContentNode {
 }
 
