@@ -42,7 +42,7 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     
     public let children: [Node]
     
-    open func instatiateNavigator(state: NavigationState) -> Navigator {
+    open func instantiateNavigator(state: NavigationState) -> Navigator {
         NodeNavigator(identifier: identifier, nodes: children)
     }
     
@@ -100,12 +100,12 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
 }
 
 open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode {
-    open func instatiateBranchNodeResult() -> BranchNodeResult {
+    open func instantiateBranchNodeResult() -> BranchNodeResult {
         BranchNodeResultObject(identifier: self.identifier)
     }
     
     override open func instantiateResult() -> ResultData {
-        instatiateBranchNodeResult()
+        instantiateBranchNodeResult()
     }
 }
 
@@ -169,12 +169,12 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         }
     }
     
-    open func instatiateAssessmentResult() -> AssessmentResult {
+    open func instantiateAssessmentResult() -> AssessmentResult {
         AssessmentResultObject(identifier: self.identifier, versionString: self.versionString)
     }
     
     open override func instantiateResult() -> ResultData {
-        instatiateAssessmentResult()
+        instantiateAssessmentResult()
     }
     
     open override class func codingKeys() -> [CodingKey] {
