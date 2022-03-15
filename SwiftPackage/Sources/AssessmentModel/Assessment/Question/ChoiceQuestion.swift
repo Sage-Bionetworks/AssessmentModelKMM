@@ -37,7 +37,7 @@ import JsonModel
 public protocol ChoiceInputItem : InputItem, ChoiceOption {
 }
 
-/// A choice option is a light-weight interface for a list of choices that should be displayed to the participant.
+/// A choice option is a lightweight interface for a list of choices that should be displayed to the participant.
 public protocol ChoiceOption {
 
     /// This is the JSON serializable element selected as one of the possible answers for a ``Question``. For certain
@@ -48,10 +48,10 @@ public protocol ChoiceOption {
     /// if not while for the "No", it could be `false` if ``selected`` and `null` if not.
     func jsonElement(selected: Bool) -> JsonElement?
 
-    /// A localized label (ie. title) for this choice.
+    /// A localized label (i.e. title) for this choice.
     var label: String { get }
 
-    /// Additional detail shown below the ``label``
+    /// Additional detail shown below the ``label``.
     var detail: String? { get }
     
     /// An image associated with this choice.
@@ -244,7 +244,7 @@ public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
     }
     private let _selectorType: ChoiceSelectorType?
     
-    // TODO: Deprecated. Included to supported for older json files that do not support "all of the above". syoung 03/10/2022
+    // TODO: Deprecated. Included to support older json files that do not support "all of the above". syoung 03/10/2022
     private let _exclusive: Bool?
     
     public init(value: JsonElement? = nil,

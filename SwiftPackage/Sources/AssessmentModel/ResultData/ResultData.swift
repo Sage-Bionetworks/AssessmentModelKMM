@@ -36,13 +36,13 @@ import JsonModel
 /// `ResultData` is the base protocol for an object that stores data.
 ///
 ///  syoung 12/09/2020 `ResultData` is included as a part of the JsonModel module to allow
-///  progress and additions to be made to the frameworks used by SageResearch that are independant
+///  progress and additions to be made to the frameworks used by SageResearch that are independent
 ///  of the version of https://github.com/Sage-Bionetworks/SageResearch-Apple.git that is
 ///  referenced by third-party frameworks. Our experience is that third-party developers will
 ///  pin to a specific version of SageResearch, which breaks the dependency model that we use
 ///  internally in our applications.
 ///
-///  The work-around to this is to include a light-weight model here since this framework is fairly
+///  The work-around to this is to include a lightweight model here since this framework is fairly
 ///  static and in most cases where the `RSDResult` is referenced, those classes already import
 ///  JsonModel. This will allow us to divorce *our* code from SageResearch so that we can iterate
 ///  independently of third-party frameworks.

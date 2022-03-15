@@ -45,7 +45,7 @@ public protocol NavigationRule {
 }
 
 public protocol DirectNavigationRule : NavigationRule {
-    /// The next node to jump to. This is used where direct navigation is required. For example, to allow the
+    /// The next node to jump to. This is used where direct navigation is required--for example, to allow the
     /// assessment to display information or a question on an alternate path and then exit the task. In that case,
     /// the main branch of navigation will need to "jump" over the alternate path step and the alternate path
     /// step will need to "jump" to the "exit".

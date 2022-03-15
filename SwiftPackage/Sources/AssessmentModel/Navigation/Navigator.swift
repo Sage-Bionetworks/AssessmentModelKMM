@@ -78,7 +78,7 @@ public protocol Navigator {
     func isCompleted(currentNode: Node, branchResult: BranchNodeResult) -> Bool
 }
 
-/// The naviation point is a data packet that the ``Navigator`` can use to pass information about how to traverse
+/// The navigation point is a data packet that the ``Navigator`` can use to pass information about how to traverse
 /// the assessment.  This class is defined as `open` to allow subclasses to include additional information that is
 /// relevant to navigation that may not be included in the branch result.
 open class NavigationPoint {
