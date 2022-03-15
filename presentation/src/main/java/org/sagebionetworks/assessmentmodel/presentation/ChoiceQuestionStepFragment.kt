@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.koin.android.ext.android.bind
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ChoiceQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion

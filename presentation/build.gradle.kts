@@ -25,7 +25,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
+        //useIR = true
     }
 
     buildTypes {
@@ -42,14 +42,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     api(project(":assessmentModel"))
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.core:core-ktx:1.2.0")
-    implementation("io.insert-koin:koin-android:3.0.1")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("io.insert-koin:koin-android:3.1.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
   
     testImplementation("junit:junit:4.12")
