@@ -73,7 +73,7 @@ public extension AnimatedImageInfo {
     }
 }
 
-/// The type of the image theme. This is used to decode a `ImageInfo` using a `AssessmentFactory`. It can also be used
+/// The type of the image theme. This is used to decode an `ImageInfo` using an `AssessmentFactory`. It can also be used
 /// to customize the UI.
 public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
     public let rawValue: String
@@ -85,7 +85,7 @@ public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
     /// Defaults to creating a ``FetchableImageInfoObject``.
     public static let fetchable: ImageInfoType = "fetchable"
     
-    /// Defaults to creating a ``AnimatedImageInfoObject``.
+    /// Defaults to creating an ``AnimatedImageInfoObject``.
     public static let animated: ImageInfoType = "animated"
     
     public static func allStandardTypes() -> [ImageInfoType] {
@@ -338,7 +338,7 @@ extension AnimatedImage : DocumentableStruct {
 
 extension String {
     
-    /// Convenience utility for spliting a string that represents a file into it's name and extension.
+    /// Convenience utility for spliting a string that represents a file into its name and extension.
     fileprivate func splitFilename(defaultExtension: String? = nil) -> (resourceName: String, fileExtension: String?) {
         var resource = self
         var ext = defaultExtension

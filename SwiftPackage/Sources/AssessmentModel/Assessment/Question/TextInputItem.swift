@@ -1,5 +1,5 @@
 //
-//  KeyboardTextInputItems.swift
+//  TextInputItems.swift
 //  
 //
 //  Copyright © 2020-2022 Sage Bionetworks. All rights reserved.
@@ -36,7 +36,7 @@ import JsonModel
 
 /// An ``TextInputItem`` describes input entry that is freeform with ranges and validation. Typically, this is
 /// presented as a text field, but depending upon the requirements of the survey designer, it may use a slider,
-/// likert scale, date picker, or other custom UI/UX to allow for validation of the entered value.
+/// Likert scale, date picker, or other custom UI/UX to allow for validation of the entered value.
 public protocol TextInputItem : InputItem {
 
     /// Options for displaying a text field. This is only applicable for certain types of UI hints
@@ -61,7 +61,7 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
         """
         An `TextInputItem` describes input entry that is freeform with ranges and validation.
         Typically, this is presented as a text field, but depending upon the requirements of the
-        survey designer, it may use a slider, likert scale, date picker, or other custom UI/UX to
+        survey designer, it may use a slider, Likert scale, date picker, or other custom UI/UX to
         allow for validation of the entered value.
         """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n")
     }
