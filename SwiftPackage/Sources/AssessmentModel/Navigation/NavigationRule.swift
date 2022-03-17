@@ -32,6 +32,7 @@
 //
 
 import Foundation
+import JsonModel
 
 /// The navigation rule is used to allow the assessment navigator to check if a node has a navigation rule and
 /// apply as necessary.

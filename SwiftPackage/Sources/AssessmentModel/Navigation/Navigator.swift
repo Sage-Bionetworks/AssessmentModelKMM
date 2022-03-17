@@ -32,6 +32,7 @@
 //
 
 import Foundation
+import JsonModel
 
 /// The navigation state is a means to allow circular references where the navigator may require state information
 /// from the state machine to initialize.

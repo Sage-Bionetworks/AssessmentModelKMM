@@ -42,21 +42,17 @@ public protocol CopyWithIdentifier {
     func copy(with identifier: String) -> Self
 }
 
-open class AssessmentFactory : SerializationFactory {
+open class AssessmentFactory : ResultDataFactory {
     
-    public let answerTypeSerializer = AnswerTypeSerializer()
     public let buttonActionSerializer = ButtonActionSerializer()
     public let imageInfoSerializer = ImageInfoSerializer()
     public let textInputItemSerializer = TextInputItemSerializer()
-    public let resultSerializer = ResultDataSerializer()
     public let nodeSerializer = NodeSerializer()
     public let assessmentSerializer = AssessmentSerializer()
     
     public required init() {
         super.init()
         
-        self.registerSerializer(answerTypeSerializer)
-        self.registerSerializer(resultSerializer)
         self.registerSerializer(imageInfoSerializer)
         self.registerSerializer(buttonActionSerializer)
         self.registerSerializer(textInputItemSerializer)

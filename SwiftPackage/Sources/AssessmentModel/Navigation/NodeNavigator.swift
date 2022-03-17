@@ -32,6 +32,7 @@
 //
 
 import Foundation
+import JsonModel
 
 //  TODO: syoung 03/11/2022 Replace stubbed out navigator with rule-based implementation
 public final class NodeNavigator : Navigator {
