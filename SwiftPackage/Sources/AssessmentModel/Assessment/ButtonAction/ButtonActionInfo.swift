@@ -138,7 +138,7 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     }
 }
 
-public protocol SerializableButtonActionInfo : ButtonActionInfo, PolymorphicRepresentable, Encodable {
+public protocol SerializableButtonActionInfo : ButtonActionInfo, DecodableBundleInfo, PolymorphicRepresentable, Encodable {
     var serializableType: ButtonActionInfoType { get }
 }
 
@@ -157,7 +157,7 @@ public struct ButtonActionInfoObject : SerializableButtonActionInfo, Equatable {
     public private(set) var buttonTitle: String?
     public private(set) var iconName: String?
     public private(set) var bundleIdentifier: String?
-    public private(set) var packageName: String?
+    public var packageName: String?
     public var factoryBundle: ResourceBundle? = nil
     
     public static func == (lhs: ButtonActionInfoObject, rhs: ButtonActionInfoObject) -> Bool {

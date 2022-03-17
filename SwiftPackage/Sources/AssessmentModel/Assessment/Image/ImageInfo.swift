@@ -138,7 +138,7 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
     }
 }
 
-public protocol SerializableImageInfo : ImageInfo, PolymorphicRepresentable, Encodable {
+public protocol SerializableImageInfo : ImageInfo, DecodableBundleInfo, PolymorphicRepresentable, Encodable {
     var serializableType: ImageInfoType { get }
 }
 
@@ -147,7 +147,7 @@ public extension SerializableImageInfo {
 }
 
 /// `FetchableImage` is a `Codable` concrete implementation of `ImageInfo`.
-public struct FetchableImage : ImageInfo, SerializableImageInfo {
+public struct FetchableImage : SerializableImageInfo {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size"
     }
