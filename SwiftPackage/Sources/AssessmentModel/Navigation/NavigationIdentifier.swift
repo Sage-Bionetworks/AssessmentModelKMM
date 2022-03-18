@@ -1,8 +1,8 @@
 //
-//  NavigationRule.swift
+//  NavigationIdentifier.swift
 //  
 //
-//  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
+//  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -34,29 +34,73 @@
 import Foundation
 import JsonModel
 
-/// The navigation rule is used to allow the assessment navigator to check if a node has a navigation rule and
-/// apply as necessary.
-public protocol NavigationRule {
-
-    /// Identifier for the next step to navigate to based on the current task result and the conditional rule associated
-    /// with this task. The ``branchResult`` is the current result for the associated navigator. The variable
-    /// ``isPeeking`` equals `true` if this is used in a call that sets up button state and equals `false` in a
-    /// call used to navigate to the next node.
-    func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> String?
+public enum NavigationIdentifier {
+    
+    case reserved(ReservedKey)
+    
+    public enum ReservedKey : String, StringEnumSet, DocumentableStringEnum {
+        case exit, nextSection
+    }
+    
+    case node(String)
 }
 
-public protocol DirectNavigationRule : NavigationRule {
-    /// The next node to jump to. This is used where direct navigation is required--for example, to allow the
-    /// assessment to display information or a question on an alternate path and then exit the task. In that case,
-    /// the main branch of navigation will need to "jump" over the alternate path step and the alternate path
-    /// step will need to "jump" to the "exit".
-    var nextNodeIdentifier: String? { get }
-}
-
-extension DirectNavigationRule {
-
-    public func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> String? {
-        !isPeeking ? nextNodeIdentifier : nil
+extension NavigationIdentifier: RawRepresentable, Codable, Hashable {
+    
+    public init(rawValue: String) {
+        if let subtype = ReservedKey(rawValue: rawValue) {
+            self = .reserved(subtype)
+        }
+        else {
+            self = .node(rawValue)
+        }
+    }
+    
+    public var rawValue: String {
+        switch (self) {
+        case .reserved(let value):
+            return value.rawValue
+            
+        case .node(let value):
+            return value
+        }
+    }
+    
+    public static func == (lhs: NavigationIdentifier, rhs: String) -> Bool {
+        lhs.rawValue == rhs
+    }
+    
+    public static func == (lhs: String, rhs: NavigationIdentifier) -> Bool {
+        lhs == rhs.rawValue
     }
 }
 
+extension NavigationIdentifier : ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+extension NavigationIdentifier : CodingKey {
+    public var stringValue: String {
+        return self.rawValue
+    }
+    
+    public init?(stringValue: String) {
+        self.init(rawValue: stringValue)
+    }
+    
+    public var intValue: Int? {
+        return nil
+    }
+    
+    public init?(intValue: Int) {
+        return nil
+    }
+}
+
+extension NavigationIdentifier : DocumentableStringEnum {
+    public static func allValues() -> [String] {
+        ReservedKey.allValues()
+    }
+}

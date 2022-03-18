@@ -129,7 +129,7 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
 
 open class AbstractNodeObject : SerializableNode {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions"
+        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions", nextNode = "skipToIdentifier"
         var relativeIndex: Int { 2 }
     }
     public private(set) var serializableType: SerializableNodeType = .init(rawValue: "null")
@@ -154,6 +154,10 @@ open class AbstractNodeObject : SerializableNode {
     /// skip button. The lower level mapping should be respected and the button should be displayed for that step only.
     public let buttonMap: [ButtonType : ButtonActionInfo]
     
+    /// The identifier for the node that the navigator should move to next. This is included in the base class so that branches
+    /// can set up next node logic for direct navigation.
+    public let nextNode: NavigationIdentifier?
+    
     open class func defaultType() -> SerializableNodeType {
         fatalError("The default type *must* be overriden for this abstract class")
     }
@@ -171,12 +175,18 @@ open class AbstractNodeObject : SerializableNode {
         ((node as? AbstractNodeObject) === self) ? shouldHideButtons.contains(buttonType) : nil
     }
     
+    open func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier? {
+        nextNode
+    }
+    
     public init(identifier: String,
                 shouldHideButtons: Set<ButtonType>? = nil,
                 buttonMap: [ButtonType : ButtonActionInfo]? = nil,
-                comment: String? = nil) {
+                comment: String? = nil,
+                nextNode: NavigationIdentifier? = nil) {
         self.identifier = identifier
         self.comment = comment
+        self.nextNode = nextNode
         self.shouldHideButtons = shouldHideButtons ?? []
         self.buttonMap = buttonMap ?? [:]
         self.serializableType = type(of: self).defaultType()
@@ -187,6 +197,7 @@ open class AbstractNodeObject : SerializableNode {
         self.serializableType = type(of: self).defaultType()
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.comment = try container.decodeIfPresent(String.self, forKey: .comment)
+        self.nextNode = try container.decodeIfPresent(NavigationIdentifier.self, forKey: .nextNode)
         self.shouldHideButtons = try container.decodeIfPresent(Set<ButtonType>.self, forKey: .shouldHideButtons) ?? []
         if container.contains(.buttonMap) {
             let nestedDecoder = try container.superDecoder(forKey: .buttonMap)
@@ -214,6 +225,7 @@ open class AbstractNodeObject : SerializableNode {
         try container.encode(serializableType, forKey: .serializableType)
         try container.encode(identifier, forKey: .identifier)
         try container.encodeIfPresent(comment, forKey: .comment)
+        try container.encodeIfPresent(nextNode, forKey: .nextNode)
         
         if self.buttonMap.count > 0 {
             var nestedContainer = container.nestedContainer(keyedBy: ButtonType.self, forKey: .buttonMap)
@@ -229,9 +241,17 @@ open class AbstractNodeObject : SerializableNode {
     }
 
     // DocumentableObject implementation
+    
+    class func supportsNextNode() -> Bool {
+        true
+    }
 
     open class func codingKeys() -> [CodingKey] {
-        CodingKeys.allCases
+        var keys = CodingKeys.allCases
+        if !supportsNextNode() {
+            keys.removeAll(where: { $0 == .nextNode })
+        }
+        return keys
     }
 
     open class func isRequired(_ codingKey: CodingKey) -> Bool {
@@ -259,6 +279,9 @@ open class AbstractNodeObject : SerializableNode {
         case .shouldHideButtons:
             return .init(propertyType: .referenceArray(ButtonType.documentableType()), propertyDescription:
                             "A list of buttons that should be hidden even if the default is to show them.")
+        case .nextNode:
+            return .init(propertyType: .reference(NavigationIdentifier.documentableType()), propertyDescription:
+                            "Used in direct navigation to allow the node to indicate that the navigator should jump to the given node identifier.")
         }
     }
 }
@@ -276,12 +299,12 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.detail = detail
         self.imageInfo = imageInfo
-        super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+        super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -335,7 +358,7 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     }
 }
 
-open class AbstractStepObject : AbstractContentNodeObject, Step {
+open class AbstractStepObject : AbstractContentNodeObject, Step, NavigationRule {
     /// Default implementation returns `nil`.
     open func spokenInstruction(at timeInterval: TimeInterval) -> String? {
         nil

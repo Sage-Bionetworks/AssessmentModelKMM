@@ -49,11 +49,11 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     public init(identifier: String,
                 children: [Node],
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.children = children
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -99,7 +99,7 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     }
 }
 
-open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode {
+open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode, NavigationRule {
     open func instantiateBranchNodeResult() -> BranchNodeResult {
         BranchNodeResultObject(identifier: self.identifier)
     }
@@ -125,7 +125,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
         .init(identifier: identifier,
               children: children,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
 }
 
@@ -142,13 +142,13 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public init(identifier: String, children: [Node],
                 version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.versionString = version
         self.estimatedMinutes = estimatedMinutes
         self.copyright = copyright
         super.init(identifier: identifier, children: children,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -175,6 +175,11 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     
     open override func instantiateResult() -> ResultData {
         instantiateAssessmentResult()
+    }
+    
+    // Top-level Assessment nodes do not support direct navigation.
+    override class func supportsNextNode() -> Bool {
+        false
     }
     
     open override class func codingKeys() -> [CodingKey] {

@@ -34,6 +34,17 @@
 import Foundation
 import JsonModel
 
+/// The navigation rule is used to allow the assessment navigator to check if a node has a navigation rule and
+/// apply as necessary.
+public protocol NavigationRule {
+
+    /// Identifier for the next step to navigate to based on the current task result and the conditional rule associated
+    /// with this task. The ``branchResult`` is the current result for the associated navigator. The variable
+    /// ``isPeeking`` equals `true` if this is used in a call that sets up button state and equals `false` in a
+    /// call used to navigate to the next node.
+    func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier?
+}
+
 //  TODO: syoung 03/11/2022 Replace stubbed out navigator with rule-based implementation
 public final class NodeNavigator : Navigator {
     
