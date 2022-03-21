@@ -94,11 +94,14 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
 @Serializable
 abstract class StepObject : NodeObject(), ContentNodeStep {
     override var spokenInstructions: Map<SpokenInstructionTiming, String>? = null
+    // Include deprecated view theme in case used by MTB. syoung 03/21/2022
+    var viewTheme: ViewThemeObject? = null
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)
         if (original is StepObject) {
             this.spokenInstructions = original.spokenInstructions
+            this.viewTheme = original.viewTheme
         }
     }
 }
