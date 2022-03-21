@@ -173,7 +173,7 @@ enum class ChoiceSelectorType : StringEnum {
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
         override fun serialize(encoder: Encoder, value: ChoiceSelectorType) {
-            encoder.encodeString(value.name)
+            encoder.encodeString(value.name.lowercase())
         }
     }
 }

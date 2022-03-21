@@ -16,7 +16,7 @@ fun StringEnum.matchingName() = serialName ?: name
  * different conventions.
  */
 fun <T> Array<T>.matching(name: String) where T : StringEnum =
-        this.firstOrNull { it.matchingName().toLowerCase() == name.toLowerCase() }
+        this.firstOrNull { it.matchingName().lowercase() == name.lowercase() }
 
 /**
  * An interface for sealed classes to use to define "enum" behavior.
