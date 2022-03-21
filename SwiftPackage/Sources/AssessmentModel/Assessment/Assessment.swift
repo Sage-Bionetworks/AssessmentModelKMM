@@ -42,8 +42,8 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     
     public let children: [Node]
     
-    open func instantiateNavigator(state: NavigationState) -> Navigator {
-        NodeNavigator(identifier: identifier, nodes: children)
+    open func instantiateNavigator(state: NavigationState) throws -> Navigator {
+        try NodeNavigator(identifier: identifier, nodes: children)
     }
     
     public init(identifier: String,
