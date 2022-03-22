@@ -49,6 +49,6 @@ public final class OverviewStepObject : AbstractStepObject, OverviewStep, Encoda
     public func copy(with identifier: String) -> OverviewStepObject {
         .init(identifier: identifier,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
 }

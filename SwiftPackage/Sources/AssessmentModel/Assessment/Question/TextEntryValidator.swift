@@ -536,6 +536,10 @@ public struct DoubleFormatOptions : Codable, NumberValidator {
         set(newValue) { _maximumFractionDigits = newValue }
     }
     private var _maximumFractionDigits: Int?
+    
+    public var significantDigits : Int? {
+        _maximumFractionDigits
+    }
 
     public var minimumValue: Double?
     public var maximumValue: Double?

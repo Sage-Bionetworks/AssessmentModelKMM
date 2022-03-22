@@ -136,7 +136,7 @@ public protocol AssessmentInfo {
 public protocol BranchNode : Node {
 
     /// The ``Navigator`` for this section or assessment.
-    func instantiateNavigator(state: NavigationState) -> Navigator
+    func instantiateNavigator(state: NavigationState) throws -> Navigator
 
     /// The instantiated result should be a branch node result.
     func instantiateBranchNodeResult() -> BranchNodeResult

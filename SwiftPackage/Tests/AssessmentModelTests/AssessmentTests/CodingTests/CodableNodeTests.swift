@@ -93,7 +93,7 @@ class CodableQuestionTests: XCTestCase {
         {
             "type": "assessment",
             "identifier": "foo",
-            "version":"0.1.2",
+            "versionString":"0.1.2",
             "estimatedMinutes":3,
             "copyright":"Baroo, Inc.",
             "comment": "comment",
@@ -227,6 +227,12 @@ class CodableQuestionTests: XCTestCase {
 
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(.StandardTypes.section.nodeType, copy.serializableType)
+            XCTAssertEqual(1, copy.children.count)
+            checkSharedEncodingKeys(step: copy)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -304,6 +310,11 @@ class CodableQuestionTests: XCTestCase {
 
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            checkSharedEncodingKeys(step: copy)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -388,6 +399,12 @@ class CodableQuestionTests: XCTestCase {
 
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            XCTAssertTrue(copy.fullInstructionsOnly)
+            checkSharedEncodingKeys(step: copy)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -486,7 +503,8 @@ class CodableQuestionTests: XCTestCase {
             "uiHint": "allThatJazz",
             "inputItem": {
                 "type": "year"
-            }
+            },
+            "surveyRules": [{"skipToIdentifier" : "boomer", "matchingAnswer" : 1964, "ruleOperator": "lt" }]
         }
         """.data(using: .utf8)! // our data in native (JSON) format
         
@@ -495,13 +513,23 @@ class CodableQuestionTests: XCTestCase {
             let wrapper = try decoder.decode(NodeWrapper<SimpleQuestionStepObject>.self, from: json)
             let object = wrapper.node
             
+            let expectedRules = [JsonSurveyRuleObject(skipToIdentifier: "boomer", matchingValue: .integer(1964), ruleOperator: .lessThan)]
+            
             XCTAssertEqual("foo", object.identifier)
             XCTAssertEqual(.StandardTypes.simpleQuestion.nodeType, object.serializableType)
             XCTAssertTrue(object.inputItem is YearTextInputItemObject)
+            XCTAssertEqual(expectedRules, object.surveyRules)
             checkSharedEncodingKeys(question: object)
 
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            XCTAssertTrue(copy.inputItem is YearTextInputItemObject)
+            XCTAssertEqual(expectedRules, copy.surveyRules)
+            checkSharedEncodingKeys(question: copy)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -600,6 +628,7 @@ class CodableQuestionTests: XCTestCase {
             },
             "optional": true,
             "uiHint": "allThatJazz",
+            "surveyRules": [{"skipToIdentifier" : "one", "matchingAnswer" : 1, "ruleOperator": "le" }]
         }
         """.data(using: .utf8)! // our data in native (JSON) format
         
@@ -608,9 +637,12 @@ class CodableQuestionTests: XCTestCase {
             let wrapper = try decoder.decode(NodeWrapper<ChoiceQuestionStepObject>.self, from: json)
             let object = wrapper.node
             
+            let expectedRules = [JsonSurveyRuleObject(skipToIdentifier: "one", matchingValue: .integer(1), ruleOperator: .lessThanEqual)]
+            
             XCTAssertEqual("foo", object.identifier)
             XCTAssertEqual(.StandardTypes.choiceQuestion.nodeType, object.serializableType)
             XCTAssertEqual(.integer, object.baseType)
+            XCTAssertEqual(expectedRules, object.surveyRules)
             
             let choices: [JsonChoice] = [
                 .init(value: .integer(1), text: "one"),
@@ -624,6 +656,15 @@ class CodableQuestionTests: XCTestCase {
 
             let actualEncoding = try encoder.encode(object)
             try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            XCTAssertEqual(.integer, copy.baseType)
+            XCTAssertEqual(choices, copy.choices)
+            XCTAssertTrue(copy.other is IntegerTextInputItemObject)
+            XCTAssertEqual(expectedRules, object.surveyRules)
+            checkSharedEncodingKeys(question: copy)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -652,7 +693,6 @@ class CodableQuestionTests: XCTestCase {
     
     func checkSharedEncodingKeys(step: AbstractContentNodeObject) {
         XCTAssertEqual(type(of: step).defaultType(), step.serializableType)
-        XCTAssertEqual("foo", step.identifier)
         XCTAssertEqual("comment", step.comment)
         XCTAssertEqual([ButtonType.navigation(.skip)], step.shouldHideButtons)
         let expectedButtonMap: [ButtonType : ButtonActionInfoObject] = [

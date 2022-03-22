@@ -37,8 +37,8 @@ data class IconInfoObject(
 data class FetchableImage(override val imageName: String,
                           override val label: String? = null,
                           @SerialName("placementType")
-                          override val placementHint: String? = null,
-                          override val size: Size? = null,
+                          val placementHint: String? = null,
+                          val size: ImageSize? = null,
                           @Transient
                           override var decoderBundle: Any? = null,
                           override val bundleIdentifier: String? = null,
@@ -53,8 +53,8 @@ data class AnimatedImage(override val imageNames: List<String>,
                          override val animationRepeatCount: Int? = null,
                          override val label: String? = null,
                          @SerialName("placementType")
-                         override val placementHint: String? = null,
-                         override val size: Size? = null,
+                         val placementHint: String? = null,
+                         val size: ImageSize? = null,
                          @Transient
                          override var decoderBundle: Any? = null,
                          override val bundleIdentifier: String? = null,
@@ -83,4 +83,4 @@ object ImageNameSerializer : KSerializer<FetchableImage> {
  * are whatever unit is required by the implementing UI screens.
  */
 @Serializable
-data class Size(val width: Double, val height: Double)
+data class ImageSize(val width: Double, val height: Double)

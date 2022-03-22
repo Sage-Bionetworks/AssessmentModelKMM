@@ -131,28 +131,31 @@ extension QuestionUIHint : DocumentableStringLiteral {
 
 open class AbstractQuestionStepObject : AbstractStepObject {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case optional, uiHint
+        case optional, uiHint, surveyRules
         var relativeIndex: Int { 5 }
     }
     
     public let optional: Bool
     public let uiHint: QuestionUIHint?
+    public let surveyRules: [JsonSurveyRuleObject]?
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+                optional: Bool? = nil, uiHint: QuestionUIHint? = nil, surveyRules: [JsonSurveyRuleObject]? = nil,
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.optional = optional ?? false
         self.uiHint = uiHint
+        self.surveyRules = surveyRules
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.optional = try container.decodeIfPresent(Bool.self, forKey: .optional) ?? false
         self.uiHint = try container.decodeIfPresent(QuestionUIHint.self, forKey: .uiHint)
+        self.surveyRules = try container.decodeIfPresent([JsonSurveyRuleObject].self, forKey: .surveyRules)
         try super.init(from: decoder)
     }
     
@@ -161,6 +164,12 @@ open class AbstractQuestionStepObject : AbstractStepObject {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(optional, forKey: .optional)
         try container.encodeIfPresent(uiHint, forKey: .uiHint)
+        try container.encodeIfPresent(surveyRules, forKey: .surveyRules)
+    }
+    
+    override open func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier? {
+        // If peeking, then rules are ignored, otherwise, look at both the answer rules and the next node.
+        isPeeking ? nil : self.surveyRules?.evaluateRules(result: branchResult.findAnswer(with: self.identifier)) ?? self.nextNode
     }
     
     override open class func codingKeys() -> [CodingKey] {
@@ -189,6 +198,20 @@ open class AbstractQuestionStepObject : AbstractStepObject {
                             If the library responsible for rendering the question doesn't know how to handle the hint,
                             then it will be ignored.
                             """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n"))
+        case .surveyRules:
+            return .init(propertyType: .referenceArray(JsonSurveyRuleObject.documentableType()), propertyDescription:
+                            "A list of rules that may be applied to determine navigation.")
         }
+    }
+}
+
+extension Array where Element : SurveyRule {
+    func evaluateRules(result: ResultData?) -> NavigationIdentifier? {
+        for rule in self {
+            if let next = rule.evaluateRule(with: result) {
+                return next
+            }
+        }
+        return nil
     }
 }
