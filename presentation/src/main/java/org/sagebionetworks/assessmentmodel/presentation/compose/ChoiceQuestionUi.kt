@@ -86,7 +86,7 @@ private fun MultipleChoiceQuestion(
             when (inputState) {
                 is ChoiceInputItemStateImpl -> {
                     ChoiceQuestionInput(
-                        title = inputState.inputItem.fieldLabel!!,
+                        title = inputState.inputItem.label!!,
                         choiceSelected = inputState.selectedState.value,
                         singleChoice = question.singleAnswer,
                         onChoiceSelected = { selected ->

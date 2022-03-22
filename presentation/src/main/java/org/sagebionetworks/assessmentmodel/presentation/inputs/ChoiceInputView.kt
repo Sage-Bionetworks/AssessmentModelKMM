@@ -34,7 +34,7 @@ class ChoiceInputView : LinearLayout {
             val choiceItemBinding = ChoiceItemBinding.inflate(inflater, this, true)
             choiceBindingList.add(choiceItemBinding)
             choiceItemBinding.choiceRow.tag = choiceItemState
-            choiceItemBinding.singleChoiceText.text = choiceItemState.inputItem.fieldLabel
+            choiceItemBinding.singleChoiceText.text = choiceItemState.inputItem.label
             choiceItemBinding.choiceRow.isSelected = choiceItemState.selected
             choiceItemBinding.choiceRow.setOnClickListener {
                 questionState.didChangeSelectionState(!choiceItemState.selected, choiceItemState)

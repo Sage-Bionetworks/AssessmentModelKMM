@@ -79,7 +79,7 @@ open class ResultTest {
                         "type": "collection",
                         "startDate": "2020-01-21T12:00:00.000-03:00",
                         "endDate": "2020-01-21T12:05:00.000-03:00",
-                        "inputResults": [
+                        "children": [
                             {"identifier": "asyncResultA","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"},
                             {"identifier": "asyncResultB","type": "base","startDate": "2020-01-21T12:00:00.000-03:00","endDate": "2020-01-21T12:05:00.000-03:00"}
                         ]

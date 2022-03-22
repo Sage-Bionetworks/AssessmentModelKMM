@@ -101,7 +101,6 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
         val selectedAnswer = choice.jsonValue(true) ?: return false
         val resultIdentifier = choice.resultIdentifier ?: "$index"
         return when {
-            node.singleAnswer || choice is SkipCheckboxInputItem -> answer == selectedAnswer
             answer is JsonArray -> answer.contains(selectedAnswer)
             answer is JsonObject -> answer[resultIdentifier] == selectedAnswer
             else -> {
@@ -120,7 +119,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
         val question = node
         return when {
             answer is JsonNull -> null
-            question is ComboBoxQuestion -> {
+            question is ChoiceQuestion -> {
                 val choiceAnswers = question.choices.map { it.jsonValue(true) }
                 if (question.singleAnswer) {
                     if (choiceAnswers.contains(answer)) null else answer
@@ -177,24 +176,12 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
         }
 
         // Update the result.
-        val isSkipCheckbox = changedItem.inputItem is SkipCheckboxInputItem
-        if (isSkipCheckbox && changedItem.selected) {
-            // For a skip checkbox, use the changeItem's answer to mark the current result.
-            currentResult.jsonValue = changedItem.currentAnswer
-        } else {
-            val map = itemStates.mapNotNull {
-                // If the state change to uncheck the skip checkbox, then need to update the selected state
-                // for previously stored answers.
-                if (isSkipCheckbox && it is AnyInputItemState) {
-                    it.selected = (it.storedAnswer != null)
-                    refresh = refresh || it.selected
-                }
-                // Create a mapping of the non-null currentAnswer to the item identifier.
-                val itemAnswer = it.currentAnswer
-                if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
-            }.toMap()
-            currentResult.jsonValue = jsonValue(map)
-        }
+        val map = itemStates.mapNotNull {
+            // Create a mapping of the non-null currentAnswer to the item identifier.
+            val itemAnswer = it.currentAnswer
+            if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
+        }.toMap()
+        currentResult.jsonValue = jsonValue(map)
         return refresh
     }
 
@@ -216,8 +203,6 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
 interface InputItemState {
     val index: Int
     val inputItem: InputItem
-    val viewIdentifier: String
-        get() = inputItem.uiHint.name
     val itemIdentifier: String
         get() = inputItem.resultIdentifier ?: "$index"
     var currentAnswer: JsonElement?
