@@ -25,7 +25,7 @@ val answerTypeSerializersModule = SerializersModule {
         subclass(AnswerType.STRING::class)
         subclass(AnswerType.BOOLEAN::class)
         subclass(AnswerType.INTEGER::class)
-        subclass(AnswerType.DECIMAL::class)
+        subclass(AnswerType.Decimal::class)
     }
 }
 
@@ -109,7 +109,7 @@ abstract class AnswerType {
 
     @Serializable
     @SerialName("number")
-    object DECIMAL : AnswerType() {
+    data class Decimal(val significantDigits: Int? = null) : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.NUMBER
     }
@@ -138,7 +138,7 @@ abstract class AnswerType {
             BaseType.BOOLEAN -> BOOLEAN
             BaseType.ARRAY -> Array()
             BaseType.OBJECT -> OBJECT
-            BaseType.NUMBER -> DECIMAL
+            BaseType.NUMBER -> Decimal()
             BaseType.INTEGER -> INTEGER
             BaseType.STRING -> STRING
         }
@@ -213,7 +213,7 @@ enum class BaseType : StringEnum {
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
         }
         override fun serialize(encoder: Encoder, value: BaseType) {
-            encoder.encodeString(value.name)
+            encoder.encodeString(value.name.lowercase())
         }
     }
 }

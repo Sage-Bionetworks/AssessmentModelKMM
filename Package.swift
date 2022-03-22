@@ -20,8 +20,9 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "JsonModel",
+                 //path: "../JsonModel-Swift"),
                  url: "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
-                 from: "1.4.3"),
+                 from: "1.4.4"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

@@ -156,6 +156,19 @@ class AssessmentJsonResourceLoader(private val resourceName: String, bundle: NSB
     }
 }
 
+class ResultDecoder(private val jsonString: String) {
+    private val jsonCoder: Json = Serialization.JsonCoder.default
+    @Throws(Throwable::class)
+    fun decodeObject(): Result {
+        try {
+            val serializer = PolymorphicSerializer(Result::class)
+            return jsonCoder.decodeFromString(serializer, jsonString)
+        } catch (err: Exception) {
+            throw Throwable(err.message)
+        }
+    }
+}
+
 class ResultEncoder(private val result: Result) {
     private val jsonCoder: Json = Serialization.JsonCoder.default
     @Throws(Throwable::class)

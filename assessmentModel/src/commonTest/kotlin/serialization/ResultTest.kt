@@ -179,7 +179,7 @@ open class ResultTest {
     fun testAnswerType_Primitive_jsonElementFor() {
         assertEquals(JsonPrimitive(true), AnswerType.BOOLEAN.jsonElementFor(true))
         assertEquals(JsonPrimitive(3), AnswerType.INTEGER.jsonElementFor(3))
-        assertEquals(JsonPrimitive(3.2), AnswerType.DECIMAL.jsonElementFor(3.2))
+        assertEquals(JsonPrimitive(3.2), AnswerType.Decimal().jsonElementFor(3.2))
         assertEquals(JsonPrimitive("foo"), AnswerType.STRING.jsonElementFor("foo"))
     }
 
@@ -230,7 +230,7 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Decimal() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.DECIMAL, JsonPrimitive(3.2), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.Decimal(4), JsonPrimitive(3.2), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
         val inputString = """
                 { "result":
                     {
@@ -239,7 +239,8 @@ open class ResultTest {
                         "startDate": "2020-01-21T12:00:00.000-03:00",
                         "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
-                            "type": "number"
+                            "type": "number",
+                            "significantDigits": 4
                         },
                         "value" : 3.2
                     }
