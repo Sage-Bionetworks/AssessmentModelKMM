@@ -27,6 +27,7 @@ val nodeSerializersModule = SerializersModule {
         subclass(AssessmentPlaceholderObject::class)
         subclass(AssessmentObject::class)
         subclass(ChoiceQuestionObject::class)
+        subclass(CompletionStepObject::class)
         subclass(CountdownStepObject::class)
         subclass(InstructionStepObject::class)
         subclass(MultipleInputQuestionObject::class)
@@ -245,6 +246,14 @@ data class InstructionStepObject(
      override var imageInfo: ImageInfo? = null,
      override var fullInstructionsOnly: Boolean = false
 ) : StepObject(), InstructionStep
+
+@Serializable
+@SerialName("completion")
+data class CompletionStepObject(
+    override val identifier: String,
+    @SerialName("image")
+    override var imageInfo: ImageInfo? = null
+) : StepObject(), CompletionStep
 
 @Serializable
 @SerialName("permission")

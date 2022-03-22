@@ -131,7 +131,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
 
 open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case versionString = "version", estimatedMinutes, copyright
+        case versionString, estimatedMinutes, copyright
         var relativeIndex: Int { 3 }
     }
     

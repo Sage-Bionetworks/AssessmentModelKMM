@@ -93,7 +93,7 @@ class CodableQuestionTests: XCTestCase {
         {
             "type": "assessment",
             "identifier": "foo",
-            "version":"0.1.2",
+            "versionString":"0.1.2",
             "estimatedMinutes":3,
             "copyright":"Baroo, Inc.",
             "comment": "comment",

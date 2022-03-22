@@ -129,7 +129,7 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
 
 open class AbstractNodeObject : SerializableNode {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions", nextNode = "skipToIdentifier"
+        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions", nextNode = "nextStepIdentifier"
         var relativeIndex: Int { 2 }
     }
     public private(set) var serializableType: SerializableNodeType = .init(rawValue: "null")
