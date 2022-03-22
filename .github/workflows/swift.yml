@@ -1,4 +1,4 @@
-name: Swift
+name: KMM, iOS, and macOS Tests
 
 on:
   push:
