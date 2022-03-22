@@ -1,6 +1,0 @@
-framework module AssessmentModel {
-    umbrella header "AssessmentModel.h"
-
-    export *
-    module * { export * }
-}
