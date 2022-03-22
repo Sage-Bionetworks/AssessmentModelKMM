@@ -274,7 +274,9 @@ public struct DoubleTextInputItemObject : SerializableTextInputItem {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
     public private(set) var textInputType: TextInputType = .number
-    public let answerType: AnswerType = AnswerTypeNumber()
+    public var answerType: AnswerType {
+        AnswerTypeNumber(significantDigits: formatOptions?.significantDigits)
+    }
     
     public let resultIdentifier: String?
     public let fieldLabel: String?

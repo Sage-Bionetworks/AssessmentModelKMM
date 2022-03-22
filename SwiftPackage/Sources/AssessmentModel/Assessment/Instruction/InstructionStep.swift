@@ -81,13 +81,13 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     public init(identifier: String,
                          title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                         shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil,
+                         shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil,
                          fullInstructionsOnly: Bool? = nil, spokenInstructions: [SpokenInstructionKey : String]? = nil) {
         self._fullInstructionsOnly = fullInstructionsOnly
         self.spokenInstructions = spokenInstructions
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -159,7 +159,7 @@ public final class InstructionStepObject : AbstractInstructionStepObject, Encoda
     public func copy(with identifier: String) -> InstructionStepObject {
         .init(identifier: identifier,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode,
               fullInstructionsOnly: fullInstructionsOnly, spokenInstructions: spokenInstructions)
     }
 }

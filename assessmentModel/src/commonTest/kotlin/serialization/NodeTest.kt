@@ -309,7 +309,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 {"text":"choice 2","value":"two"},
                 {"text":"choice 3","value":"three"}
                 ],
-                "otherInputItem":{
+                "other":{
                     "type": "string",
                     "fieldLabel": "Something else"
                    }

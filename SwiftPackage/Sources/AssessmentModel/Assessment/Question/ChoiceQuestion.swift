@@ -113,16 +113,16 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
     
     public init(identifier: String, choices: [JsonChoice], baseType: JsonType? = nil, singleChoice: Bool = true, other: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+                optional: Bool? = nil, uiHint: QuestionUIHint? = nil, surveyRules: [JsonSurveyRuleObject]? = nil,
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.choices = choices
         self.baseType = baseType ?? choices.baseType()
         self.singleAnswer = singleChoice
         self.other = other
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   optional: optional, uiHint: uiHint,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                   optional: optional, uiHint: uiHint, surveyRules: surveyRules,
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
         if let error = _validate() {
             fatalError(error.debugDescription)
         }
@@ -225,8 +225,8 @@ public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, 
         .init(identifier: identifier,
               choices: choices, baseType: baseType, singleChoice: singleAnswer, other: other,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              optional: optional, uiHint: uiHint,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+              optional: optional, uiHint: uiHint, surveyRules: surveyRules,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
 }
 

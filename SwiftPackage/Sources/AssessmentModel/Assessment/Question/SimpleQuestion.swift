@@ -83,9 +83,9 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
     public init(identifier: String,
                 inputItem: TextInputItem? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                optional: Bool? = nil, uiHint: QuestionUIHint? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
-        super.init(identifier: identifier, title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo, optional: optional, uiHint: uiHint, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+                optional: Bool? = nil, uiHint: QuestionUIHint? = nil, surveyRules: [JsonSurveyRuleObject]? = nil,
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
+        super.init(identifier: identifier, title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo, optional: optional, uiHint: uiHint, surveyRules: surveyRules, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
         self.inputItem = inputItem ?? type(of: self).defaultTextInputItem()
     }
     
@@ -146,7 +146,7 @@ public final class SimpleQuestionStepObject : AbstractSimpleQuestionStepObject, 
         .init(identifier: identifier,
               inputItem: inputItem,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              optional: optional, uiHint: uiHint,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+              optional: optional, uiHint: uiHint, surveyRules: surveyRules,
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
 }

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     id("com.android.library")
@@ -51,23 +52,11 @@ kotlin {
        publishAllLibraryVariants()
     }
 
-    val iOSTargetName  = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
-    val iOSTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget =
-            if (iOSTargetName.startsWith("iphoneos"))
-                ::iosArm64
-            else if (iOSTargetName.startsWith("macos"))
-                ::macosX64
-            else
-                ::iosX64
-    iOSTarget("ios") {
-        binaries {
-            framework {
-                baseName = "AssessmentModel"
-                // Include DSYM in the release build
-                freeCompilerArgs += "-Xg0"
-                // Include Generics in the module header.
-                freeCompilerArgs += "-Xobjc-generics"
-            }
+    val xcf = XCFramework("KotlinModel")
+    ios {
+        binaries.framework {
+            baseName = "KotlinModel"
+            xcf.add(this)
         }
     }
 
@@ -92,20 +81,20 @@ kotlin {
         }
 
     }
-
-    val packForXcode by tasks.creating(Sync::class) {
-        group = "build"
-        val mode = System.getenv("CONFIGURATION") ?: project.findProperty("XCODE_CONFIGURATION") as? String ?: "DEBUG"
-        val sdkName = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
-        val targetName = "ios"// + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
-        val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
-        inputs.property("mode", mode)
-        dependsOn(framework.linkTask)
-        val targetDir = File(buildDir, "xcode-frameworks")
-        from({ framework.outputDirectory })
-        into(targetDir)
-    }
-    tasks.getByName("build").dependsOn(packForXcode)
+//
+//    val packForXcode by tasks.creating(Sync::class) {
+//        group = "build"
+//        val mode = System.getenv("CONFIGURATION") ?: project.findProperty("XCODE_CONFIGURATION") as? String ?: "DEBUG"
+//        val sdkName = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
+//        val targetName = "ios"// + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
+//        val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
+//        inputs.property("mode", mode)
+//        dependsOn(framework.linkTask)
+//        val targetDir = File(buildDir, "xcode-frameworks")
+//        from({ framework.outputDirectory })
+//        into(targetDir)
+//    }
+//    tasks.getByName("build").dependsOn(packForXcode)
 }
 
 publishing {
@@ -120,17 +109,3 @@ publishing {
     }
 }
 
-//TODO: syoung 03/24/2020 Figure out why getting a warning that this was already added.
-//tasks.register("iosTest")  {
-//    val  device = project.findProperty("iosDevice") as? String ?: "iPhone 8"
-//    dependsOn("linkDebugTestIos")
-//    group = JavaBasePlugin.VERIFICATION_GROUP
-//    description = "Runs tests for target 'ios' on an iOS simulator"
-//
-//    doLast {
-//        val  binary = (kotlin.targets["ios"] as KotlinNativeTarget).binaries.getTest("DEBUG").outputFile
-//        exec {
-//            commandLine("xcrun", "simctl", "spawn", "--standalone", device, binary.absolutePath)
-//        }
-//    }
-//}

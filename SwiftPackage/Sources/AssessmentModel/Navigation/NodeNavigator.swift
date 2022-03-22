@@ -34,15 +34,34 @@
 import Foundation
 import JsonModel
 
-//  TODO: syoung 03/11/2022 Replace stubbed out navigator with rule-based implementation
+/// The navigation rule is used to allow the assessment navigator to check if a node has a navigation rule and
+/// apply as necessary.
+public protocol NavigationRule {
+
+    /// Identifier for the next step to navigate to based on the current task result and the conditional rule associated
+    /// with this task. The ``branchResult`` is the current result for the associated navigator. The variable
+    /// ``isPeeking`` equals `true` if this is used in a call that sets up button state and equals `false` in a
+    /// call used to navigate to the next node.
+    func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier?
+}
+
+//  TODO: syoung 03/21/2022 refactor navigation tests to move from SageResearch/Kotlin implementations to this framework.
+
 public final class NodeNavigator : Navigator {
     
     public let identifier: String
     public let nodes: [Node]
     
-    public init(identifier: String, nodes: [Node]) {
+    public init(identifier: String, nodes: [Node]) throws {
+        guard Set(nodes.map { $0.identifier }).count == nodes.count else {
+            throw NodeNavigatorError.notUniqueIdentifiers
+        }
         self.identifier = identifier
         self.nodes = nodes
+    }
+    
+    enum NodeNavigatorError : Error {
+        case notUniqueIdentifiers
     }
     
     public func node(identifier: String) -> Node? {
@@ -50,11 +69,20 @@ public final class NodeNavigator : Navigator {
     }
     
     public func nodeAfter(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
-        guard let idx = self.nodeIndex(currentNode)
-        else {
+        guard let currentNode = currentNode, let idx = self.nodeIndex(currentNode) else {
             return .init(node: nodes.first, branchResult: branchResult, direction: .forward)
         }
-        if idx + 1 >= nodes.count {
+
+        if let navId = self.nextNodeIdentifier(currentNode: currentNode, branchResult: branchResult, isPeeking: false) {
+            switch navId {
+            case .reserved(let reservedKey):
+                return .init(node: nil, branchResult: branchResult, direction: reservedKey == .exit ? .exit : .forward)
+            case .node(let identifier):
+                // This implementation does not support switching the direction of navigation so always forward.
+                return .init(node: self.node(identifier: identifier), branchResult: branchResult, direction: .forward)
+            }
+        }
+        else if idx + 1 >= nodes.count {
             return .init(node: nil, branchResult: branchResult, direction: .forward)
         }
         else {
@@ -63,33 +91,44 @@ public final class NodeNavigator : Navigator {
     }
     
     public func nodeBefore(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
-        guard let idx = self.nodeIndex(currentNode)
-        else {
-            return .init(node: nodes.last, branchResult: branchResult, direction: .backward)
-        }
-        if idx - 1 <= 0 {
-            return .init(node: nil, branchResult: branchResult, direction: .backward)
-        }
-        else {
-            return .init(node: nodes[idx - 1], branchResult: branchResult, direction: .backward)
-        }
+        return .init(node: self.previousNode(currentNode: currentNode, branchResult: branchResult),
+                     branchResult: branchResult,
+                     direction: .backward)
     }
     
     public func hasNodeAfter(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
-        nodeIndex(currentNode).map { $0 + 1 < self.nodes.count } ?? false
+        if let navId = self.nextNodeIdentifier(currentNode: currentNode, branchResult: branchResult, isPeeking: true) {
+            switch navId {
+            case .reserved(_):
+                return false
+            case .node(let identifier):
+                // This implementation does not support switching the direction of navigation so always forward.
+                return self.nodes.contains(where: { $0.identifier == identifier })
+            }
+        }
+        else {
+            return nodeIndex(currentNode).map { $0 + 1 < self.nodes.count } ?? false
+        }
     }
     
     public func allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
-        nodeIndex(currentNode).map { $0 - 1 >= 0 } ?? false
+        self.previousNode(currentNode: currentNode, branchResult: branchResult) != nil
     }
     
     public func progress(currentNode: Node, branchResult: BranchNodeResult) -> Progress? {
         guard let idx = nodeIndex(currentNode) else { return nil }
-        return .init(current: idx, total: nodes.count, isEstimated: false)
+        
+        return .init(current: idx, total: nodes.count, isEstimated: true)
     }
     
     public func isCompleted(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
         !self.allowBackNavigation(currentNode: currentNode, branchResult: branchResult) && currentNode is CompletionStep
+    }
+    
+    // MARK: Node navigation
+    
+    private func nextNodeIdentifier(currentNode: Node, branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier? {
+        (currentNode as? NavigationRule)?.nextNodeIdentifier(branchResult: branchResult, isPeeking: isPeeking)
     }
     
     func nodeIndex(_ node: Node?) -> Int? {
@@ -98,4 +137,29 @@ public final class NodeNavigator : Navigator {
         }
         return self.nodes.firstIndex(where: { $0.identifier == node.identifier })
     }
+    
+    func previousNode(currentNode: Node?, branchResult: BranchNodeResult) -> Node? {
+        // If the current node is nil then return the last node in the step history (if any).
+        guard let currentNode = currentNode else {
+            return branchResult.stepHistory.last.flatMap { self.node(identifier: $0.identifier) }
+        }
+        // If this branch state handler does not support path markers then return the index before the current node.
+        guard branchResult.path.count > 0 else {
+            return self.nodeIndex(currentNode).flatMap { idx in
+                idx - 1 >= 0 ? self.nodes[idx - 1] : nil
+            }
+        }
+        // If the path index (going forward) for the current node is not found or it's the first node
+        // then return nil.
+        guard let pathIndex = branchResult.path.lastIndex(where: {
+            $0.identifier == currentNode.identifier && $0.direction == .forward
+        }), pathIndex > 0
+        else {
+            return nil
+        }
+        // Return the node with the marker index.
+        let markerBefore = branchResult.path[pathIndex - 1]
+        return self.node(identifier: markerBefore.identifier)
+    }
 }
+

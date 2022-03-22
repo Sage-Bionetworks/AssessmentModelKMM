@@ -103,6 +103,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
         return when {
             answer is JsonArray -> answer.contains(selectedAnswer)
             answer is JsonObject -> answer[resultIdentifier] == selectedAnswer
+            answer is JsonPrimitive -> answer == selectedAnswer
             else -> {
                 println("WARNING! Cannot interpret answer mapping for $answer")
                 false

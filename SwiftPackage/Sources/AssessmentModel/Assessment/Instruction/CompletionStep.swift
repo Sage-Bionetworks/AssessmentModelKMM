@@ -50,6 +50,6 @@ public final class CompletionStepObject : AbstractStepObject, CompletionStep, En
     public func copy(with identifier: String) -> CompletionStepObject {
         .init(identifier: identifier,
               title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
+              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
 }

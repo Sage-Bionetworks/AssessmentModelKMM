@@ -83,6 +83,7 @@ class QuestionTest : NavigationTestHelper() {
     fun testComboBoxQuestion_AnswerType_MultipleChoice() {
         val original = ChoiceQuestionObject(
                 identifier = "foo",
+                baseType = BaseType.INTEGER,
                 choices = listOf(
                         JsonChoiceObject(JsonPrimitive(1), "choice 1"),
                         JsonChoiceObject(JsonPrimitive(2), "choice 2"),
@@ -96,6 +97,7 @@ class QuestionTest : NavigationTestHelper() {
     fun testComboBoxQuestion_AnswerType_SingleChoice() {
         val original = ChoiceQuestionObject(
                 identifier = "foo",
+                baseType = BaseType.INTEGER,
                 choices = listOf(
                         JsonChoiceObject(JsonPrimitive(1), "choice 1"),
                         JsonChoiceObject(JsonPrimitive(2), "choice 2"),
@@ -350,13 +352,13 @@ class QuestionTest : NavigationTestHelper() {
         assertEquals(3, questionState.itemStates.count())
         val firstItem = questionState.itemStates.first()
         assertTrue(firstItem is ChoiceInputItemState, "$firstItem not of expected type")
-        assertFalse(firstItem.selected)
+        assertFalse(firstItem.selected, "firstItem should not be selected")
         val secondItem = questionState.itemStates[1]
         assertTrue(secondItem is ChoiceInputItemState, "$secondItem not of expected type")
-        assertTrue(secondItem.selected)
+        assertTrue(secondItem.selected, "secondItem should be selected")
         val lastItem = questionState.itemStates.last()
         assertTrue(lastItem is ChoiceInputItemState, "$lastItem not of expected type")
-        assertFalse(lastItem.selected)
+        assertFalse(lastItem.selected, "lastItem should not be selected")
 
         // Check expectations for the result and answer type.
         assertEquals(previousResult, questionState.currentResult)
@@ -635,41 +637,41 @@ class QuestionTest : NavigationTestHelper() {
         val noneItem = questionState.itemStates.last() as ChoiceInputItemState
 
         val refresh1 = questionState.didChangeSelectionState(true, thirdItem)
-        assertFalse(refresh1)
-        assertFalse(firstItem.selected)
-        assertFalse(secondItem.selected)
-        assertTrue(thirdItem.selected)
-        assertFalse(noneItem.selected)
+        assertFalse(refresh1, "refresh1")
+        assertFalse(firstItem.selected, "1: firstItem.selected")
+        assertFalse(secondItem.selected, "1: secondItem.selected")
+        assertTrue(thirdItem.selected, "1: thirdItem.selected")
+        assertFalse(noneItem.selected, "1: noneItem.selected")
         val result1 = questionState.currentResult.jsonValue
-        assertTrue(result1 is JsonArray)
+        assertTrue(result1 is JsonArray, "expected result1 to be an array")
         assertEquals(setOf(JsonPrimitive("item3")), result1.toSet())
 
         val refresh2 = questionState.didChangeSelectionState(true, secondItem)
-        assertFalse(refresh2)
-        assertFalse(firstItem.selected)
-        assertTrue(secondItem.selected)
-        assertTrue(thirdItem.selected)
-        assertFalse(noneItem.selected)
+        assertFalse(refresh2,"refresh2")
+        assertFalse(firstItem.selected, "2: firstItem.selected")
+        assertTrue(secondItem.selected, "2: secondItem.selected")
+        assertTrue(thirdItem.selected, "2: thirdItem.selected")
+        assertFalse(noneItem.selected, "2: noneItem.selected")
         val result2 = questionState.currentResult.jsonValue
-        assertTrue(result2 is JsonArray)
+        assertTrue(result2 is JsonArray, "expected result2 to be an array")
         assertEquals(setOf(JsonPrimitive("item3"), JsonPrimitive("item2")), result2.toSet())
 
         val refresh3 = questionState.didChangeSelectionState(false, secondItem)
-        assertFalse(refresh3)
-        assertFalse(firstItem.selected)
-        assertFalse(secondItem.selected)
-        assertTrue(thirdItem.selected)
-        assertFalse(noneItem.selected)
+        assertFalse(refresh3,"refresh3")
+        assertFalse(firstItem.selected, "3: firstItem.selected")
+        assertFalse(secondItem.selected, "3: secondItem.selected")
+        assertTrue(thirdItem.selected, "3: thirdItem.selected")
+        assertFalse(noneItem.selected, "3: noneItem.selected")
         val result3 = questionState.currentResult.jsonValue
         assertTrue(result3 is JsonArray)
         assertEquals(setOf(JsonPrimitive("item3")), result3.toSet())
 
         val refresh4 = questionState.didChangeSelectionState(true, noneItem)
-        assertTrue(refresh4)
-        assertFalse(firstItem.selected)
-        assertFalse(secondItem.selected)
-        assertFalse(thirdItem.selected)
-        assertTrue(noneItem.selected)
+        assertTrue(refresh4,"refresh4")
+        assertFalse(firstItem.selected, "4: firstItem.selected")
+        assertFalse(secondItem.selected, "4: secondItem.selected")
+        assertFalse(thirdItem.selected, "4: thirdItem.selected")
+        assertTrue(noneItem.selected, "4: noneItem.selected")
         assertEquals(JsonArray(listOf()), questionState.currentResult.jsonValue)
     }
 

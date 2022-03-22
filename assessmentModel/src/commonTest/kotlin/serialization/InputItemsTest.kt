@@ -50,7 +50,7 @@ open class InputItemsTest {
     fun testUIHint_Choice_Serialization() {
         val hints = UIHint.Choice.values().toList()
         val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["list","checkmark","checkbox","radiobutton"]}"""
+        val inputString = """{"hints":["checkbox","radiobutton"]}"""
 
         val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
@@ -66,7 +66,7 @@ open class InputItemsTest {
     fun testUIHint_TextField_Serialization() {
         val hints = UIHint.StringField.values().toList()
         val original = TestUIHintWrapper(hints)
-        val inputString = """{"hints":["textfield","multipleLine","popover"]}"""
+        val inputString = """{"hints":["multipleLine"]}"""
 
         val jsonString = jsonCoder.encodeToString(TestUIHintWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(TestUIHintWrapper.serializer(), jsonString)
@@ -99,8 +99,8 @@ open class InputItemsTest {
 
     @Test
     fun testUIHintTextField_Cast_Serialization() {
-        val original = UIHintTextFieldWrapper(UIHint.StringField.values().toList())
-        val inputString = """{"types":["textfield","multipleLine"]}"""
+        val original = UIHintTextFieldWrapper(listOf(UIHint.TextField))
+        val inputString = """{"types":["textfield"]}"""
 
         val jsonString = jsonCoder.encodeToString(UIHintTextFieldWrapper.serializer(), original)
         val restored = jsonCoder.decodeFromString(UIHintTextFieldWrapper.serializer(), jsonString)
@@ -118,7 +118,7 @@ open class InputItemsTest {
 
     @Test
     fun testCheckboxInputItem() {
-        val inputString = """{"type":"checkbox","fieldLabel":"Pick me!","identifier":"pickMe"}"""
+        val inputString = """{"type":"checkbox","label":"Pick me!","identifier":"pickMe"}"""
         val original = CheckboxInputItemObject(resultIdentifier = "pickMe", label = "Pick me!")
 
         val serializer = PolymorphicSerializer(InputItem::class)
@@ -136,7 +136,7 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_Boolean() {
-        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","selectorType" : "exclusive","detail":"more info"}"""
+        val inputString = """{"value":true,"text":"Pick me!","icon":"pickMe","selectorType":"exclusive","detail":"more info"}"""
         val original = JsonChoiceObject(
                 value = JsonPrimitive(true),
                 text = "Pick me!",
@@ -156,7 +156,7 @@ open class InputItemsTest {
 
     @Test
     fun testChoiceOptionObject_String() {
-        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","selectorType":"exclusive":"more info"}"""
+        val inputString = """{"value":"foo","text":"Pick me!","icon":"pickMe","selectorType":"exclusive","detail":"more info"}"""
         val original = JsonChoiceObject(
                 value = JsonPrimitive("foo"),
                 text = "Pick me!",
@@ -204,7 +204,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "date",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
@@ -236,7 +235,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "date",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
@@ -699,7 +697,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "time",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
@@ -731,7 +728,6 @@ open class InputItemsTest {
            {
             "identifier": "foo",
             "type": "time",
-            "uiHint": "popover",
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
