@@ -57,8 +57,8 @@
         {"text":"Fabulous!","value":1},
         {"text":"Neutral","value":2},
         {"text":"Sleepy","value":3},
-        {"text":"None of the above", "value": 4, "exclusive":true},
-        {"text":"Prefer not to answer", "value": 5, "exclusive":true}
+        {"text":"None of the above", "value": 4, "selectorType":"Exclusive"},
+        {"text":"Prefer not to answer", "value": 5, "selectorType":"Exclusive"}
       ]
     },
     {
@@ -94,7 +94,7 @@
     },
     {
       "identifier": "colorOther",
-      "type": "comboBoxQuestion",
+      "type": "choiceQuestion",
       "title": "What is your favorite animal?",
       "subtitle": "Select one",
       "detail": "Some text. This is a test.",
@@ -105,7 +105,8 @@
       "choices":[
         {"text":"Cat","value":"Cat"},
         {"text":"Dog","value":"Dog"}
-      ]
+      ],
+      "other": {"type" : "string", "fieldLabel" :  "Other"}
     },
     {
       "identifier": "checkboxQuestion",
@@ -120,8 +121,7 @@
         "animationDuration" : 2
       },
       "optional": true,
-      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "fieldLabel": "Check for Yes"},
-      "skipCheckbox":{"type": "skipCheckbox", "fieldLabel": "No answer"}
+      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "label": "Check for Yes"}
     },
     {
       "identifier": "stringQuestion",
@@ -136,8 +136,7 @@
         "animationDuration" : 2
       },
       "optional": true,
-      "inputItem":{"type" : "string", "placeholder" :  "Enter text"},
-      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+      "inputItem":{"type" : "string", "placeholder" :  "Enter text"}
     },
     {
       "identifier": "yearQuestion",
@@ -152,8 +151,7 @@
         "animationDuration" : 2
       },
       "optional": true,
-      "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
-      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"Skip checkbox"}
+      "inputItem":{"type" : "year", "placeholder" :  "Enter year"}
     },
     {
       "identifier": "multipleInputQuestion",
