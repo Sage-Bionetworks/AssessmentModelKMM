@@ -95,7 +95,7 @@ interface ChoiceInputItem : InputItem, ChoiceOption {
         get() = true
 
     override val exclusive: Boolean
-        get() = (selectorType == ChoiceSelectorType.Default)
+        get() = (selectorType == ChoiceSelectorType.Exclusive)
 }
 
 /**
