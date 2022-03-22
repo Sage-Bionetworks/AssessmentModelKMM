@@ -13,27 +13,14 @@
 		7555FF85242A565B00829871 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7555FF84242A565B00829871 /* Assets.xcassets */; };
 		7555FF88242A565B00829871 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7555FF87242A565B00829871 /* Preview Assets.xcassets */; };
 		7555FF8B242A565B00829871 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7555FF89242A565B00829871 /* LaunchScreen.storyboard */; };
-		7555FF96242A565B00829871 /* iosAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF95242A565B00829871 /* iosAppTests.swift */; };
 		7555FFA1242A565B00829871 /* iosAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FFA0242A565B00829871 /* iosAppUITests.swift */; };
-		FF2ECC0E265C3DD900831866 /* Permissions.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF2ECC0D265C3DD900831866 /* Permissions.xcassets */; };
-		FF2ECC11265C3E5300831866 /* PermissionsOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2ECC10265C3E5300831866 /* PermissionsOnboarding.swift */; };
-		FF2ECC13265C3F0800831866 /* AssessmentModel+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2ECC12265C3F0800831866 /* AssessmentModel+Utils.swift */; };
-		FF2ECC15265C55A600831866 /* PreviewBranchNodeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF2ECC14265C55A600831866 /* PreviewBranchNodeState.swift */; };
-		FF6F6DE6265DAD17007C6B92 /* MobilePassiveData in Frameworks */ = {isa = PBXBuildFile; productRef = FF6F6DE5265DAD17007C6B92 /* MobilePassiveData */; };
-		FF6F6DE8265DAD17007C6B92 /* MotionSensor in Frameworks */ = {isa = PBXBuildFile; productRef = FF6F6DE7265DAD17007C6B92 /* MotionSensor */; };
-		FF6F6DEA265DAD17007C6B92 /* WeatherRecorder in Frameworks */ = {isa = PBXBuildFile; productRef = FF6F6DE9265DAD17007C6B92 /* WeatherRecorder */; };
-		FF6F6DEC265DAD17007C6B92 /* AudioRecorder in Frameworks */ = {isa = PBXBuildFile; productRef = FF6F6DEB265DAD17007C6B92 /* AudioRecorder */; };
-		FF6F6FBC266021B5007C6B92 /* SampleSurvey.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6F6FBB266021B5007C6B92 /* SampleSurvey.swift */; };
-		FF6F6FC72661A2F6007C6B92 /* JsonElement+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6F6FC62661A2F6007C6B92 /* JsonElement+Utils.swift */; };
-		FF74B05A26545A3900C48966 /* BranchNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF74B05926545A3900C48966 /* BranchNavigationView.swift */; };
-		FF8AD1A4265C848F00C33260 /* PermissionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8AD1A3265C848F00C33260 /* PermissionsHandler.swift */; };
-		FFA5E6FC264DA1FC0042D694 /* InstructionStepContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA5E6FB264DA1FC0042D694 /* InstructionStepContentView.swift */; };
 		FFA5E759264DBD7D0042D694 /* Bundle+module.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA5E758264DBD7D0042D694 /* Bundle+module.swift */; };
-		FFA5E811264DC5830042D694 /* BranchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA5E810264DC5830042D694 /* BranchViewModel.swift */; };
-		FFACEDBA2672833C00F764E5 /* SharedMobileUI in Frameworks */ = {isa = PBXBuildFile; productRef = FFACEDB92672833C00F764E5 /* SharedMobileUI */; };
-		FFACEDBE2672852300F764E5 /* ResourceInfo+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFACEDBD2672852300F764E5 /* ResourceInfo+Utils.swift */; };
-		FFE636B0264D9ECD00F3D027 /* AssessmentModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */; };
-		FFE636B1264D9ECD00F3D027 /* AssessmentModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FFD3240627EA4CB900823D3B /* AssessmentModel in Frameworks */ = {isa = PBXBuildFile; productRef = FFD3240527EA4CB900823D3B /* AssessmentModel */; };
+		FFD3240827EA4D2100823D3B /* KotlinModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFD3240727EA4D2100823D3B /* KotlinModel.xcframework */; };
+		FFD3240927EA4D2100823D3B /* KotlinModel.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FFD3240727EA4D2100823D3B /* KotlinModel.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FFD3240D27EA4D5600823D3B /* AssessmentModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD3240A27EA4D5600823D3B /* AssessmentModelTests.swift */; };
+		FFD3240E27EA4D5600823D3B /* SwiftTestAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD3240B27EA4D5600823D3B /* SwiftTestAssessment.swift */; };
+		FFD3240F27EA4D5600823D3B /* KMMSerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD3240C27EA4D5600823D3B /* KMMSerializationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,7 +47,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FFE636B1264D9ECD00F3D027 /* AssessmentModel.framework in Embed Frameworks */,
+				FFD3240927EA4D2100823D3B /* KotlinModel.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,7 +64,6 @@
 		7555FF8A242A565B00829871 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7555FF91242A565B00829871 /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7555FF95242A565B00829871 /* iosAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppTests.swift; sourceTree = "<group>"; };
 		7555FF97242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7555FF9C242A565B00829871 /* iosAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FFA0242A565B00829871 /* iosAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppUITests.swift; sourceTree = "<group>"; };
@@ -90,86 +76,14 @@
 		FF6F6FC62661A2F6007C6B92 /* JsonElement+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JsonElement+Utils.swift"; sourceTree = "<group>"; };
 		FF74B05926545A3900C48966 /* BranchNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchNavigationView.swift; sourceTree = "<group>"; };
 		FF8AD1A3265C848F00C33260 /* PermissionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsHandler.swift; sourceTree = "<group>"; };
-		FF8AD203265D69C900C33260 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		FF8AD206265D69C900C33260 /* Bundle+Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Util.swift"; sourceTree = "<group>"; };
-		FF8AD208265D69C900C33260 /* StandardPermission_Camera.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = StandardPermission_Camera.json; sourceTree = "<group>"; };
-		FF8AD20A265D69C900C33260 /* OpenWeather_Response.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = OpenWeather_Response.json; sourceTree = "<group>"; };
-		FF8AD20B265D69C900C33260 /* AirNow_Response.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AirNow_Response.json; sourceTree = "<group>"; };
-		FF8AD20F265D69C900C33260 /* PermisssionAuthorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermisssionAuthorizationTests.swift; sourceTree = "<group>"; };
-		FF8AD211265D69C900C33260 /* SystemClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemClockTests.swift; sourceTree = "<group>"; };
-		FF8AD212265D69C900C33260 /* RecordSampleLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSampleLoggerTests.swift; sourceTree = "<group>"; };
-		FF8AD213265D69C900C33260 /* JsonDocumentableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonDocumentableTests.swift; sourceTree = "<group>"; };
-		FF8AD215265D69C900C33260 /* AirNowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowTests.swift; sourceTree = "<group>"; };
-		FF8AD216265D69C900C33260 /* OpenWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherTests.swift; sourceTree = "<group>"; };
-		FF8AD218265D69C900C33260 /* CodableMotionRecorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableMotionRecorderTests.swift; sourceTree = "<group>"; };
-		FF8AD219265D69C900C33260 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		FF8AD21A265D69C900C33260 /* Package.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Package.resolved; sourceTree = "<group>"; };
-		FF8AD21B265D69C900C33260 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		FF8AD21E265D69C900C33260 /* swift.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swift.yml; sourceTree = "<group>"; };
-		FF8AD21F265D69C900C33260 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		FF8AD222265D69C900C33260 /* LocationAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAuthorization.swift; sourceTree = "<group>"; };
-		FF8AD224265D69C900C33260 /* OpenWeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeatherService.swift; sourceTree = "<group>"; };
-		FF8AD225265D69C900C33260 /* WeatherConfigurationObject+Vendor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherConfigurationObject+Vendor.swift"; sourceTree = "<group>"; };
-		FF8AD226265D69C900C33260 /* WeatherRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRecorder.swift; sourceTree = "<group>"; };
-		FF8AD227265D69C900C33260 /* AirNowService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirNowService.swift; sourceTree = "<group>"; };
-		FF8AD229265D69C900C33260 /* AudioRecorderAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderAuthorization.swift; sourceTree = "<group>"; };
-		FF8AD22A265D69C900C33260 /* AudioLevelRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLevelRecord.swift; sourceTree = "<group>"; };
-		FF8AD22B265D69C900C33260 /* AudioRecorderConfiguration+Vendor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioRecorderConfiguration+Vendor.swift"; sourceTree = "<group>"; };
-		FF8AD22C265D69C900C33260 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
-		FF8AD22E265D69C900C33260 /* MotionRecorderConfiguration+Vendor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MotionRecorderConfiguration+Vendor.swift"; sourceTree = "<group>"; };
-		FF8AD22F265D69C900C33260 /* MotionRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionRecorder.swift; sourceTree = "<group>"; };
-		FF8AD230265D69C900C33260 /* MotionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionRecord.swift; sourceTree = "<group>"; };
-		FF8AD231265D69C900C33260 /* MotionAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionAuthorization.swift; sourceTree = "<group>"; };
-		FF8AD233265D69C900C33260 /* DistanceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceRecorder.swift; sourceTree = "<group>"; };
-		FF8AD234265D69C900C33260 /* DistanceRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceRecord.swift; sourceTree = "<group>"; };
-		FF8AD235265D69C900C33260 /* DistanceRecorderConfiguration+Vendor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DistanceRecorderConfiguration+Vendor.swift"; sourceTree = "<group>"; };
-		FF8AD237265D69C900C33260 /* MPDExceptionHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPDExceptionHandler.m; sourceTree = "<group>"; };
-		FF8AD239265D69C900C33260 /* MPDExceptionHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPDExceptionHandler.h; sourceTree = "<group>"; };
-		FF8AD23C265D69C900C33260 /* NSLocale+UnitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSLocale+UnitTest.h"; sourceTree = "<group>"; };
-		FF8AD23D265D69C900C33260 /* NSLocale+UnitTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+UnitTest.m"; sourceTree = "<group>"; };
-		FF8AD240265D69C900C33260 /* DistanceRecorderConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceRecorderConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD241265D69C900C33260 /* WeatherConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD242265D69C900C33260 /* AudioRecorderConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD243265D69C900C33260 /* MotionRecorderConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionRecorderConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD245265D69C900C33260 /* AsyncActionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncActionStatus.swift; sourceTree = "<group>"; };
-		FF8AD246265D69C900C33260 /* AsyncActionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncActionController.swift; sourceTree = "<group>"; };
-		FF8AD247265D69C900C33260 /* AsyncActionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncActionConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD248265D69C900C33260 /* ValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationError.swift; sourceTree = "<group>"; };
-		FF8AD24A265D69C900C33260 /* SystemClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemClock.swift; sourceTree = "<group>"; };
-		FF8AD24B265D69C900C33260 /* SampleRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleRecorder.swift; sourceTree = "<group>"; };
-		FF8AD24C265D69C900C33260 /* FileUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtility.swift; sourceTree = "<group>"; };
-		FF8AD24D265D69C900C33260 /* RecordSampleLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSampleLogger.swift; sourceTree = "<group>"; };
-		FF8AD24E265D69C900C33260 /* SampleRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleRecord.swift; sourceTree = "<group>"; };
-		FF8AD24F265D69C900C33260 /* RecordMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordMarker.swift; sourceTree = "<group>"; };
-		FF8AD250265D69C900C33260 /* RecorderConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD251265D69C900C33260 /* StringSeparatedEncodingFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringSeparatedEncodingFormat.swift; sourceTree = "<group>"; };
-		FF8AD252265D69C900C33260 /* DataLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLogger.swift; sourceTree = "<group>"; };
-		FF8AD254265D69C900C33260 /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
-		FF8AD255265D69C900C33260 /* AudioSessionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionSettings.swift; sourceTree = "<group>"; };
-		FF8AD256265D69C900C33260 /* VoicePrompter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicePrompter.swift; sourceTree = "<group>"; };
-		FF8AD257265D69C900C33260 /* AudioSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionController.swift; sourceTree = "<group>"; };
-		FF8AD259265D69C900C33260 /* MobilePassiveDataFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePassiveDataFactory.swift; sourceTree = "<group>"; };
-		FF8AD25B265D69C900C33260 /* MotionRecorderConfigurationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionRecorderConfigurationObject.swift; sourceTree = "<group>"; };
-		FF8AD25C265D69C900C33260 /* AsyncActionConfigurationSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncActionConfigurationSerializer.swift; sourceTree = "<group>"; };
-		FF8AD25D265D69C900C33260 /* DistanceRecorderConfigurationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceRecorderConfigurationObject.swift; sourceTree = "<group>"; };
-		FF8AD25E265D69C900C33260 /* AudioRecorderConfigurationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderConfigurationObject.swift; sourceTree = "<group>"; };
-		FF8AD25F265D69C900C33260 /* WeatherConfigurationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherConfigurationObject.swift; sourceTree = "<group>"; };
-		FF8AD261265D69C900C33260 /* WeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResult.swift; sourceTree = "<group>"; };
-		FF8AD265265D69C900C33260 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		FF8AD266265D69C900C33260 /* Silence.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Silence.wav; sourceTree = "<group>"; };
-		FF8AD268265D69C900C33260 /* StandardPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardPermission.swift; sourceTree = "<group>"; };
-		FF8AD269265D69C900C33260 /* PermissionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionConfiguration.swift; sourceTree = "<group>"; };
-		FF8AD26A265D69C900C33260 /* PermissionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionType.swift; sourceTree = "<group>"; };
-		FF8AD26B265D69C900C33260 /* PermissionAuthorizationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionAuthorizationHandler.swift; sourceTree = "<group>"; };
-		FF8AD26C265D69C900C33260 /* PermissionAuthorizationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionAuthorizationStatus.swift; sourceTree = "<group>"; };
-		FF8AD26F265D69C900C33260 /* package.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = package.xcworkspace; sourceTree = "<group>"; };
-		FF8AD273265D69C900C33260 /* xcschememanagement.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = xcschememanagement.plist; sourceTree = "<group>"; };
-		FF8F8D1E261F858900366307 /* AssessmentModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssessmentModel.framework; path = ../assessmentModel/build/bin/ios/debugFramework/AssessmentModel.framework; sourceTree = "<group>"; };
 		FFA5E6FB264DA1FC0042D694 /* InstructionStepContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionStepContentView.swift; sourceTree = "<group>"; };
 		FFA5E758264DBD7D0042D694 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+module.swift"; sourceTree = "<group>"; };
 		FFA5E810264DC5830042D694 /* BranchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchViewModel.swift; sourceTree = "<group>"; };
 		FFACEDBD2672852300F764E5 /* ResourceInfo+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResourceInfo+Utils.swift"; sourceTree = "<group>"; };
-		FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssessmentModel.framework; path = ../assessmentModel/build/bin/ios/debugFramework/AssessmentModel.framework; sourceTree = "<group>"; };
+		FFD3240727EA4D2100823D3B /* KotlinModel.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KotlinModel.xcframework; path = ../assessmentModel/build/XCFrameworks/debug/KotlinModel.xcframework; sourceTree = "<group>"; };
+		FFD3240A27EA4D5600823D3B /* AssessmentModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssessmentModelTests.swift; sourceTree = "<group>"; };
+		FFD3240B27EA4D5600823D3B /* SwiftTestAssessment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTestAssessment.swift; sourceTree = "<group>"; };
+		FFD3240C27EA4D5600823D3B /* KMMSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMMSerializationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,12 +91,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF6F6DEC265DAD17007C6B92 /* AudioRecorder in Frameworks */,
-				FF6F6DE6265DAD17007C6B92 /* MobilePassiveData in Frameworks */,
-				FF6F6DEA265DAD17007C6B92 /* WeatherRecorder in Frameworks */,
-				FFACEDBA2672833C00F764E5 /* SharedMobileUI in Frameworks */,
-				FFE636B0264D9ECD00F3D027 /* AssessmentModel.framework in Frameworks */,
-				FF6F6DE8265DAD17007C6B92 /* MotionSensor in Frameworks */,
+				FFD3240827EA4D2100823D3B /* KotlinModel.xcframework in Frameworks */,
+				FFD3240627EA4CB900823D3B /* AssessmentModel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,7 +162,9 @@
 		7555FF94242A565B00829871 /* iosAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				7555FF95242A565B00829871 /* iosAppTests.swift */,
+				FFD3240A27EA4D5600823D3B /* AssessmentModelTests.swift */,
+				FFD3240C27EA4D5600823D3B /* KMMSerializationTests.swift */,
+				FFD3240B27EA4D5600823D3B /* SwiftTestAssessment.swift */,
 				7555FF97242A565B00829871 /* Info.plist */,
 			);
 			path = iosAppTests;
@@ -270,9 +182,7 @@
 		7555FFB0242A642200829871 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FF8AD202265D69C900C33260 /* MobilePassiveData-SDK */,
-				FFE636AF264D9ECD00F3D027 /* AssessmentModel.framework */,
-				FF8F8D1E261F858900366307 /* AssessmentModel.framework */,
+				FFD3240727EA4D2100823D3B /* KotlinModel.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -305,392 +215,6 @@
 				FF8AD1A3265C848F00C33260 /* PermissionsHandler.swift */,
 			);
 			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		FF8AD202265D69C900C33260 /* MobilePassiveData-SDK */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD203265D69C900C33260 /* LICENSE */,
-				FF8AD204265D69C900C33260 /* shared_resources */,
-				FF8AD20C265D69C900C33260 /* Tests */,
-				FF8AD219265D69C900C33260 /* README.md */,
-				FF8AD21A265D69C900C33260 /* Package.resolved */,
-				FF8AD21B265D69C900C33260 /* .gitignore */,
-				FF8AD21C265D69C900C33260 /* .github */,
-				FF8AD21F265D69C900C33260 /* Package.swift */,
-				FF8AD220265D69C900C33260 /* Sources */,
-				FF8AD26D265D69C900C33260 /* .swiftpm */,
-			);
-			name = "MobilePassiveData-SDK";
-			path = "../../MobilePassiveData-SDK";
-			sourceTree = "<group>";
-		};
-		FF8AD204265D69C900C33260 /* shared_resources */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD205265D69C900C33260 /* tests */,
-			);
-			path = shared_resources;
-			sourceTree = "<group>";
-		};
-		FF8AD205265D69C900C33260 /* tests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD206265D69C900C33260 /* Bundle+Util.swift */,
-				FF8AD207265D69C900C33260 /* Json */,
-			);
-			path = tests;
-			sourceTree = "<group>";
-		};
-		FF8AD207265D69C900C33260 /* Json */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD208265D69C900C33260 /* StandardPermission_Camera.json */,
-				FF8AD209265D69C900C33260 /* WeatherRecorder */,
-			);
-			path = Json;
-			sourceTree = "<group>";
-		};
-		FF8AD209265D69C900C33260 /* WeatherRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD20A265D69C900C33260 /* OpenWeather_Response.json */,
-				FF8AD20B265D69C900C33260 /* AirNow_Response.json */,
-			);
-			path = WeatherRecorder;
-			sourceTree = "<group>";
-		};
-		FF8AD20C265D69C900C33260 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD20D265D69C900C33260 /* MobilePassiveDataTests */,
-				FF8AD214265D69C900C33260 /* WeatherRecorderTests */,
-				FF8AD217265D69C900C33260 /* MotionSensorTests */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		FF8AD20D265D69C900C33260 /* MobilePassiveDataTests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD20E265D69C900C33260 /* PermissionAuthorizationTests */,
-				FF8AD210265D69C900C33260 /* RecordersTests */,
-				FF8AD213265D69C900C33260 /* JsonDocumentableTests.swift */,
-			);
-			path = MobilePassiveDataTests;
-			sourceTree = "<group>";
-		};
-		FF8AD20E265D69C900C33260 /* PermissionAuthorizationTests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD20F265D69C900C33260 /* PermisssionAuthorizationTests.swift */,
-			);
-			path = PermissionAuthorizationTests;
-			sourceTree = "<group>";
-		};
-		FF8AD210265D69C900C33260 /* RecordersTests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD211265D69C900C33260 /* SystemClockTests.swift */,
-				FF8AD212265D69C900C33260 /* RecordSampleLoggerTests.swift */,
-			);
-			path = RecordersTests;
-			sourceTree = "<group>";
-		};
-		FF8AD214265D69C900C33260 /* WeatherRecorderTests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD215265D69C900C33260 /* AirNowTests.swift */,
-				FF8AD216265D69C900C33260 /* OpenWeatherTests.swift */,
-			);
-			path = WeatherRecorderTests;
-			sourceTree = "<group>";
-		};
-		FF8AD217265D69C900C33260 /* MotionSensorTests */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD218265D69C900C33260 /* CodableMotionRecorderTests.swift */,
-			);
-			path = MotionSensorTests;
-			sourceTree = "<group>";
-		};
-		FF8AD21C265D69C900C33260 /* .github */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD21D265D69C900C33260 /* workflows */,
-			);
-			path = .github;
-			sourceTree = "<group>";
-		};
-		FF8AD21D265D69C900C33260 /* workflows */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD21E265D69C900C33260 /* swift.yml */,
-			);
-			path = workflows;
-			sourceTree = "<group>";
-		};
-		FF8AD220265D69C900C33260 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD221265D69C900C33260 /* LocationAuthorization */,
-				FF8AD223265D69C900C33260 /* WeatherRecorder */,
-				FF8AD228265D69C900C33260 /* AudioRecorder */,
-				FF8AD22D265D69C900C33260 /* MotionSensor */,
-				FF8AD232265D69C900C33260 /* DistanceRecorder */,
-				FF8AD236265D69C900C33260 /* ExceptionHandler */,
-				FF8AD23A265D69C900C33260 /* NSLocaleSwizzle */,
-				FF8AD23E265D69C900C33260 /* MobilePassiveData */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		FF8AD221265D69C900C33260 /* LocationAuthorization */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD222265D69C900C33260 /* LocationAuthorization.swift */,
-			);
-			path = LocationAuthorization;
-			sourceTree = "<group>";
-		};
-		FF8AD223265D69C900C33260 /* WeatherRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD224265D69C900C33260 /* OpenWeatherService.swift */,
-				FF8AD225265D69C900C33260 /* WeatherConfigurationObject+Vendor.swift */,
-				FF8AD226265D69C900C33260 /* WeatherRecorder.swift */,
-				FF8AD227265D69C900C33260 /* AirNowService.swift */,
-			);
-			path = WeatherRecorder;
-			sourceTree = "<group>";
-		};
-		FF8AD228265D69C900C33260 /* AudioRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD229265D69C900C33260 /* AudioRecorderAuthorization.swift */,
-				FF8AD22A265D69C900C33260 /* AudioLevelRecord.swift */,
-				FF8AD22B265D69C900C33260 /* AudioRecorderConfiguration+Vendor.swift */,
-				FF8AD22C265D69C900C33260 /* AudioRecorder.swift */,
-			);
-			path = AudioRecorder;
-			sourceTree = "<group>";
-		};
-		FF8AD22D265D69C900C33260 /* MotionSensor */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD22E265D69C900C33260 /* MotionRecorderConfiguration+Vendor.swift */,
-				FF8AD22F265D69C900C33260 /* MotionRecorder.swift */,
-				FF8AD230265D69C900C33260 /* MotionRecord.swift */,
-				FF8AD231265D69C900C33260 /* MotionAuthorization.swift */,
-			);
-			path = MotionSensor;
-			sourceTree = "<group>";
-		};
-		FF8AD232265D69C900C33260 /* DistanceRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD233265D69C900C33260 /* DistanceRecorder.swift */,
-				FF8AD234265D69C900C33260 /* DistanceRecord.swift */,
-				FF8AD235265D69C900C33260 /* DistanceRecorderConfiguration+Vendor.swift */,
-			);
-			path = DistanceRecorder;
-			sourceTree = "<group>";
-		};
-		FF8AD236265D69C900C33260 /* ExceptionHandler */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD237265D69C900C33260 /* MPDExceptionHandler.m */,
-				FF8AD238265D69C900C33260 /* include */,
-			);
-			path = ExceptionHandler;
-			sourceTree = "<group>";
-		};
-		FF8AD238265D69C900C33260 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD239265D69C900C33260 /* MPDExceptionHandler.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		FF8AD23A265D69C900C33260 /* NSLocaleSwizzle */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD23B265D69C900C33260 /* include */,
-				FF8AD23D265D69C900C33260 /* NSLocale+UnitTest.m */,
-			);
-			path = NSLocaleSwizzle;
-			sourceTree = "<group>";
-		};
-		FF8AD23B265D69C900C33260 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD23C265D69C900C33260 /* NSLocale+UnitTest.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		FF8AD23E265D69C900C33260 /* MobilePassiveData */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD23F265D69C900C33260 /* Configuations */,
-				FF8AD244265D69C900C33260 /* AsyncActions */,
-				FF8AD249265D69C900C33260 /* SampleRecorder */,
-				FF8AD253265D69C900C33260 /* AudioSoundToolbox */,
-				FF8AD258265D69C900C33260 /* Serialization */,
-				FF8AD262265D69C900C33260 /* Resources */,
-				FF8AD267265D69C900C33260 /* Permissions */,
-			);
-			path = MobilePassiveData;
-			sourceTree = "<group>";
-		};
-		FF8AD23F265D69C900C33260 /* Configuations */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD240265D69C900C33260 /* DistanceRecorderConfiguration.swift */,
-				FF8AD241265D69C900C33260 /* WeatherConfiguration.swift */,
-				FF8AD242265D69C900C33260 /* AudioRecorderConfiguration.swift */,
-				FF8AD243265D69C900C33260 /* MotionRecorderConfiguration.swift */,
-			);
-			path = Configuations;
-			sourceTree = "<group>";
-		};
-		FF8AD244265D69C900C33260 /* AsyncActions */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD245265D69C900C33260 /* AsyncActionStatus.swift */,
-				FF8AD246265D69C900C33260 /* AsyncActionController.swift */,
-				FF8AD247265D69C900C33260 /* AsyncActionConfiguration.swift */,
-				FF8AD248265D69C900C33260 /* ValidationError.swift */,
-			);
-			path = AsyncActions;
-			sourceTree = "<group>";
-		};
-		FF8AD249265D69C900C33260 /* SampleRecorder */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD24A265D69C900C33260 /* SystemClock.swift */,
-				FF8AD24B265D69C900C33260 /* SampleRecorder.swift */,
-				FF8AD24C265D69C900C33260 /* FileUtility.swift */,
-				FF8AD24D265D69C900C33260 /* RecordSampleLogger.swift */,
-				FF8AD24E265D69C900C33260 /* SampleRecord.swift */,
-				FF8AD24F265D69C900C33260 /* RecordMarker.swift */,
-				FF8AD250265D69C900C33260 /* RecorderConfiguration.swift */,
-				FF8AD251265D69C900C33260 /* StringSeparatedEncodingFormat.swift */,
-				FF8AD252265D69C900C33260 /* DataLogger.swift */,
-			);
-			path = SampleRecorder;
-			sourceTree = "<group>";
-		};
-		FF8AD253265D69C900C33260 /* AudioSoundToolbox */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD254265D69C900C33260 /* SoundPlayer.swift */,
-				FF8AD255265D69C900C33260 /* AudioSessionSettings.swift */,
-				FF8AD256265D69C900C33260 /* VoicePrompter.swift */,
-				FF8AD257265D69C900C33260 /* AudioSessionController.swift */,
-			);
-			path = AudioSoundToolbox;
-			sourceTree = "<group>";
-		};
-		FF8AD258265D69C900C33260 /* Serialization */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD259265D69C900C33260 /* MobilePassiveDataFactory.swift */,
-				FF8AD25A265D69C900C33260 /* AsyncActionConfigurations */,
-				FF8AD260265D69C900C33260 /* Results */,
-			);
-			path = Serialization;
-			sourceTree = "<group>";
-		};
-		FF8AD25A265D69C900C33260 /* AsyncActionConfigurations */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD25B265D69C900C33260 /* MotionRecorderConfigurationObject.swift */,
-				FF8AD25C265D69C900C33260 /* AsyncActionConfigurationSerializer.swift */,
-				FF8AD25D265D69C900C33260 /* DistanceRecorderConfigurationObject.swift */,
-				FF8AD25E265D69C900C33260 /* AudioRecorderConfigurationObject.swift */,
-				FF8AD25F265D69C900C33260 /* WeatherConfigurationObject.swift */,
-			);
-			path = AsyncActionConfigurations;
-			sourceTree = "<group>";
-		};
-		FF8AD260265D69C900C33260 /* Results */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD261265D69C900C33260 /* WeatherResult.swift */,
-			);
-			path = Results;
-			sourceTree = "<group>";
-		};
-		FF8AD262265D69C900C33260 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD263265D69C900C33260 /* Strings */,
-				FF8AD266265D69C900C33260 /* Silence.wav */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		FF8AD263265D69C900C33260 /* Strings */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD264265D69C900C33260 /* Localizable.strings */,
-			);
-			path = Strings;
-			sourceTree = "<group>";
-		};
-		FF8AD267265D69C900C33260 /* Permissions */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD268265D69C900C33260 /* StandardPermission.swift */,
-				FF8AD269265D69C900C33260 /* PermissionConfiguration.swift */,
-				FF8AD26A265D69C900C33260 /* PermissionType.swift */,
-				FF8AD26B265D69C900C33260 /* PermissionAuthorizationHandler.swift */,
-				FF8AD26C265D69C900C33260 /* PermissionAuthorizationStatus.swift */,
-			);
-			path = Permissions;
-			sourceTree = "<group>";
-		};
-		FF8AD26D265D69C900C33260 /* .swiftpm */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD26E265D69C900C33260 /* xcode */,
-			);
-			path = .swiftpm;
-			sourceTree = "<group>";
-		};
-		FF8AD26E265D69C900C33260 /* xcode */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD26F265D69C900C33260 /* package.xcworkspace */,
-				FF8AD270265D69C900C33260 /* xcuserdata */,
-			);
-			path = xcode;
-			sourceTree = "<group>";
-		};
-		FF8AD270265D69C900C33260 /* xcuserdata */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD271265D69C900C33260 /* syoung.xcuserdatad */,
-			);
-			path = xcuserdata;
-			sourceTree = "<group>";
-		};
-		FF8AD271265D69C900C33260 /* syoung.xcuserdatad */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD272265D69C900C33260 /* xcschemes */,
-			);
-			path = syoung.xcuserdatad;
-			sourceTree = "<group>";
-		};
-		FF8AD272265D69C900C33260 /* xcschemes */ = {
-			isa = PBXGroup;
-			children = (
-				FF8AD273265D69C900C33260 /* xcschememanagement.plist */,
-			);
-			path = xcschemes;
 			sourceTree = "<group>";
 		};
 		FFA5E6FA264DA18C0042D694 /* AssessmentModelUI */ = {
@@ -732,11 +256,7 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
-				FF6F6DE5265DAD17007C6B92 /* MobilePassiveData */,
-				FF6F6DE7265DAD17007C6B92 /* MotionSensor */,
-				FF6F6DE9265DAD17007C6B92 /* WeatherRecorder */,
-				FF6F6DEB265DAD17007C6B92 /* AudioRecorder */,
-				FFACEDB92672833C00F764E5 /* SharedMobileUI */,
+				FFD3240527EA4CB900823D3B /* AssessmentModel */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
@@ -811,8 +331,6 @@
 			);
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
-				FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */,
-				FFACEDB82672833C00F764E5 /* XCRemoteSwiftPackageReference "SharedMobileUI-AppleOS" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -830,7 +348,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF2ECC0E265C3DD900831866 /* Permissions.xcassets in Resources */,
 				7555FF8B242A565B00829871 /* LaunchScreen.storyboard in Resources */,
 				7555FF88242A565B00829871 /* Preview Assets.xcassets in Resources */,
 				7555FF85242A565B00829871 /* Assets.xcassets in Resources */,
@@ -869,7 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :assessmentModel:packForXCode -PXCODE_CONFIGURATION=${CONFIGURATION}\n";
+			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :assessmentModel:assembleKotlinModelDebugXCFramework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -878,20 +395,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF6F6FC72661A2F6007C6B92 /* JsonElement+Utils.swift in Sources */,
-				FF2ECC11265C3E5300831866 /* PermissionsOnboarding.swift in Sources */,
 				FFA5E759264DBD7D0042D694 /* Bundle+module.swift in Sources */,
 				7555FF7F242A565900829871 /* AppDelegate.swift in Sources */,
-				FFA5E6FC264DA1FC0042D694 /* InstructionStepContentView.swift in Sources */,
-				FFACEDBE2672852300F764E5 /* ResourceInfo+Utils.swift in Sources */,
 				7555FF81242A565900829871 /* SceneDelegate.swift in Sources */,
-				FF2ECC13265C3F0800831866 /* AssessmentModel+Utils.swift in Sources */,
-				FF74B05A26545A3900C48966 /* BranchNavigationView.swift in Sources */,
-				FFA5E811264DC5830042D694 /* BranchViewModel.swift in Sources */,
-				FF2ECC15265C55A600831866 /* PreviewBranchNodeState.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
-				FF6F6FBC266021B5007C6B92 /* SampleSurvey.swift in Sources */,
-				FF8AD1A4265C848F00C33260 /* PermissionsHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -899,7 +406,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7555FF96242A565B00829871 /* iosAppTests.swift in Sources */,
+				FFD3240F27EA4D5600823D3B /* KMMSerializationTests.swift in Sources */,
+				FFD3240D27EA4D5600823D3B /* AssessmentModelTests.swift in Sources */,
+				FFD3240E27EA4D5600823D3B /* SwiftTestAssessment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -933,14 +442,6 @@
 				7555FF8A242A565B00829871 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		FF8AD264265D69C900C33260 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FF8AD265265D69C900C33260 /* en */,
-			);
-			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -997,7 +498,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1052,7 +553,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1110,7 +611,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = iosAppTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1131,7 +632,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = iosAppTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1224,50 +725,10 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
-			};
-		};
-		FFACEDB82672833C00F764E5 /* XCRemoteSwiftPackageReference "SharedMobileUI-AppleOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		FF6F6DE5265DAD17007C6B92 /* MobilePassiveData */ = {
+		FFD3240527EA4CB900823D3B /* AssessmentModel */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */;
-			productName = MobilePassiveData;
-		};
-		FF6F6DE7265DAD17007C6B92 /* MotionSensor */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */;
-			productName = MotionSensor;
-		};
-		FF6F6DE9265DAD17007C6B92 /* WeatherRecorder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */;
-			productName = WeatherRecorder;
-		};
-		FF6F6DEB265DAD17007C6B92 /* AudioRecorder */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FF6F6DE4265DAD17007C6B92 /* XCRemoteSwiftPackageReference "MobilePassiveData-SDK" */;
-			productName = AudioRecorder;
-		};
-		FFACEDB92672833C00F764E5 /* SharedMobileUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FFACEDB82672833C00F764E5 /* XCRemoteSwiftPackageReference "SharedMobileUI-AppleOS" */;
-			productName = SharedMobileUI;
+			productName = AssessmentModel;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

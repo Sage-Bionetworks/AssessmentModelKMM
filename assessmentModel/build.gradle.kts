@@ -47,10 +47,10 @@ kotlin {
        publishAllLibraryVariants()
     }
 
-    val xcf = XCFramework("AssessmentModelKMM")
+    val xcf = XCFramework("KotlinModel")
     ios {
         binaries.framework {
-            baseName = "AssessmentModelKMM"
+            baseName = "KotlinModel"
             xcf.add(this)
         }
     }
