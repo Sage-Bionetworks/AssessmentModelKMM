@@ -37,7 +37,9 @@ data class AnswerResultObject(override val identifier: String,
                               override var startDateTime: Instant = Clock.System.now(),
                               @SerialName("endDate")
                               @Serializable(with = InstantSerializer::class)
-                              override var endDateTime: Instant? = null)
+                              override var endDateTime: Instant? = null,
+                              override val questionText: String? = null,
+                              val questionData: JsonElement? = null)
     : AnswerResult {
     override fun copyResult(identifier: String): AnswerResult = this.copy(identifier = identifier)
 }

@@ -123,4 +123,9 @@ interface AnswerResult : Result {
      * The answer held by this result.
      */
     var jsonValue: JsonElement?
+
+    /**
+     * The text of the question displayed to the participant.
+     */
+    val questionText: String?
 }
