@@ -200,7 +200,7 @@ data class AssessmentObject(
     override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
     @SerialName("asyncActions")
-    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+    override val asyncActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {
@@ -222,7 +222,7 @@ data class SectionObject(
     @SerialName("steps")
     override val children: List<Node>,
     @SerialName("asyncActions")
-    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+    override val asyncActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): SectionObject {
         super<Section>.unpack(originalNode, moduleInfo, registryProvider)
@@ -263,8 +263,6 @@ data class PermissionStepObject(
         @SerialName("image")
         override var imageInfo: ImageInfo? = null,
         override val optional: Boolean = true,
-        override val requiresBackground: Boolean = false,
-        override val reason: String? = null,
         override val restrictedMessage: String? = null,
         override val deniedMessage: String? = null
 ) : StepObject(), PermissionStep, PermissionInfo {
@@ -287,8 +285,6 @@ data class OverviewStepObject(
 data class PermissionInfoObject(
     override val permissionType: PermissionType,
     override val optional: Boolean = false,
-    override val requiresBackground: Boolean = false,
-    override val reason: String? = null,
     override val restrictedMessage: String? = null,
     override val deniedMessage: String? = null
 ) : PermissionInfo

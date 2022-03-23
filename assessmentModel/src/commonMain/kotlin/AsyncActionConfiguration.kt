@@ -7,13 +7,25 @@ package org.sagebionetworks.assessmentmodel
  * the background. Depending upon the parameters and how the action is set up, this could be something that is run
  * continuously or else is paused or reset based on a timeout interval.
  */
-interface AsyncActionConfiguration : ResultMapElement {
+interface AsyncActionConfiguration {
+
+    /**
+     * The identifier for the node.
+     */
+    val identifier: String
 
     /**
      * An identifier marking the step to start the action. If `null`, then the action will be started when the
      * [AsyncActionContainer] is started.
      */
     val startStepIdentifier: String?
+        get() = null
+
+    /**
+     * List of the permissions required for this action.
+     */
+    val permissionTypes: List<PermissionType>
+        get() = listOf()
 }
 
 // TODO: syoung 03/22/2022 delete or move to MobilePassiveData-SDK

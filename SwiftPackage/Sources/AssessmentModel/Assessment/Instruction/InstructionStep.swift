@@ -79,6 +79,12 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     // MARK: Initializers and serialization
     
+    public init(identifier: String, copyFrom object: AbstractInstructionStepObject) {
+        self._fullInstructionsOnly = object._fullInstructionsOnly
+        self.spokenInstructions = object.spokenInstructions
+        super.init(identifier: identifier, copyFrom: object)
+    }
+    
     public init(identifier: String,
                          title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                          shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil,
@@ -157,10 +163,7 @@ public final class InstructionStepObject : AbstractInstructionStepObject, Encoda
     }
     
     public func copy(with identifier: String) -> InstructionStepObject {
-        .init(identifier: identifier,
-              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode,
-              fullInstructionsOnly: fullInstructionsOnly, spokenInstructions: spokenInstructions)
+        .init(identifier: identifier, copyFrom: self)
     }
 }
 

@@ -36,6 +36,7 @@ import JsonModel
 
 /// A lightweight protocol for copying objects with a new identifier.
 public protocol CopyWithIdentifier {
+    var identifier: String { get }
     
     /// Copy the step to a new instance with the given identifier, but otherwise, equal.
     /// - parameter identifier: The new identifier.
@@ -49,6 +50,7 @@ open class AssessmentFactory : ResultDataFactory {
     public let textInputItemSerializer = TextInputItemSerializer()
     public let nodeSerializer = NodeSerializer()
     public let assessmentSerializer = AssessmentSerializer()
+    public let asyncActionSerializer = AsyncActionConfigurationSerializer()
     
     public required init() {
         super.init()
@@ -57,6 +59,7 @@ open class AssessmentFactory : ResultDataFactory {
         self.registerSerializer(buttonActionSerializer)
         self.registerSerializer(textInputItemSerializer)
         self.registerSerializer(nodeSerializer)
+        self.registerSerializer(asyncActionSerializer)
         self.registerSerializer(assessmentSerializer)
         
         self.registerRootObject(AssessmentObject())

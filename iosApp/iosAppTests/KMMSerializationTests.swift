@@ -76,7 +76,13 @@ class KMMSerializationTests: XCTestCase {
                 XCTFail("Failed to decode the instruction step as the second step")
             }
             
-            if let section = kmmAssessment.children[2] as? KotlinModel.SectionObject {
+            if let permission = kmmAssessment.children[2] as? KotlinModel.PermissionStepObject {
+                checkObjects(swiftNode: swiftPermissionStep, kmmNode: permission)
+            } else {
+                XCTFail("Failed to decode the instruction step as the second step")
+            }
+            
+            if let section = kmmAssessment.children[3] as? KotlinModel.SectionObject {
                 checkObjects(swiftNode: swiftQuestionSection, kmmNode: section)
                 swiftQuestionSection.children.enumerated().forEach { node in
                     guard let swiftNode = node.element as? AssessmentModel.AbstractQuestionStepObject,

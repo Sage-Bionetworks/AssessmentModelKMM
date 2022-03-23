@@ -69,14 +69,21 @@ let swiftCompletionStep = CompletionStepObject(identifier: "completion",
                                           nextNode: .reserved(.exit))
 
 let swiftOverviewStep = OverviewStepObject(identifier: "overview",
-                                      title: "title",
-                                      subtitle: "subtitle",
-                                      detail: "detail",
-                                      imageInfo: swiftFetchableImage,
-                                      shouldHideButtons: [.navigation(.pause)],
-                                      buttonMap: [.navigation(.goForward) : swiftGoButton],
-                                      comment: "comment",
-                                      nextNode: .reserved(.nextSection))
+                                           title: "title",
+                                           subtitle: "subtitle",
+                                           detail: "detail",
+                                           imageInfo: swiftFetchableImage,
+                                           permissions: [.init(permission: .weather, optional: false, restrictedMessage: "restricted", deniedMessage: "denied")],
+                                           shouldHideButtons: [.navigation(.pause)],
+                                           buttonMap: [.navigation(.goForward) : swiftGoButton],
+                                           comment: "comment",
+                                           nextNode: .reserved(.nextSection))
+
+let swiftPermissionStep = PermissionStepObject(identifier: "permission",
+                                               permissionType: .init(.weather),
+                                               optional: false,
+                                               restrictedMessage: "Resticted",
+                                               deniedMessage: "You are denied.")
 
 let regex = try! NSRegularExpression(pattern: "/[a-z]+/g", options: [])
 let swiftStringTextInputItem = StringTextInputItemObject(fieldLabel: "Question 1",
@@ -158,7 +165,7 @@ let swiftQuestionSection = SectionObject(identifier: "questionSection",
                                          ])
 
 let swiftAssessment = AssessmentObject(identifier: "foo",
-                                       children: [swiftOverviewStep, swiftInstructionStep, swiftQuestionSection, swiftCompletionStep],
+                                       children: [swiftOverviewStep, swiftInstructionStep, swiftPermissionStep, swiftQuestionSection, swiftCompletionStep],
                                        version: "0.0.1",
                                        estimatedMinutes: 2)
 
