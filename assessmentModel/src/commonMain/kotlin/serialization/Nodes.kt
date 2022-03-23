@@ -392,7 +392,7 @@ abstract class BaseActiveStepObject : StepObject(), ActiveStep {
 
     override var commands: Set<ActiveStepCommand>
         get() = ActiveStepCommand.fromStrings(commandStrings)
-        set(value) { commandStrings = value.map { it.name.decapitalize() }.toSet() }
+        set(value) { commandStrings = value.map { it.name.replaceFirstChar { it.lowercase() } }.toSet() }
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)

@@ -47,8 +47,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertTrue(result is AssessmentResultObject)
         assertEquals(result.inputResults.count(), 0)
         assertEquals(result.pathHistoryResults.count(), 0)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -66,8 +64,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeList[3], point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -85,8 +81,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -106,8 +100,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeList[4], point.node)
         assertEquals(NavigationPoint.Direction.Forward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -127,8 +119,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Exit, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     // TODO: syoung 03/07/2022 Decide how we want to handle navigation where there is a skipToIdentifier on the *result*
@@ -184,8 +174,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -204,8 +192,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertNull(point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -229,8 +215,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeList[2], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     /**
@@ -288,8 +272,6 @@ class NodeNavigatorTest : NavigationTestHelper() {
         assertEquals(nodeList[1], point.node)
         assertEquals(NavigationPoint.Direction.Backward, point.direction)
         assertEquals(result, point.branchResult)
-        assertNull(point.requestedPermissions)
-        assertNull(point.asyncActionNavigations)
     }
 
     @Test
@@ -980,11 +962,11 @@ open class NavigationTestHelper {
             return (node is Step)
         }
 
-        override fun handleGoBack(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        override fun handleGoBack(nodeState: NodeState) {
             show(nodeState, NavigationPoint.Direction.Backward)
         }
 
-        override fun handleGoForward(nodeState: NodeState, requestedPermissions: Set<PermissionInfo>?, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+        override fun handleGoForward(nodeState: NodeState) {
             show(nodeState, NavigationPoint.Direction.Forward)
         }
 

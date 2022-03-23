@@ -33,7 +33,7 @@ open class AssessmentViewModel(
     }
 
     fun cancel() {
-        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false), null)
+        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
     }
 
     override fun canHandle(node: Node): Boolean {
@@ -41,31 +41,23 @@ open class AssessmentViewModel(
     }
 
     override fun handleGoForward(
-        nodeState: NodeState,
-        requestedPermissions: Set<PermissionInfo>?,
-        asyncActionNavigations: Set<AsyncActionNavigation>?
+        nodeState: NodeState
     ) {
         //Update the LiveData stream with the new node
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
-                NavigationPoint.Direction.Forward,
-                requestedPermissions,
-                asyncActionNavigations
+                NavigationPoint.Direction.Forward
             )
     }
 
     override fun handleGoBack(
-        nodeState: NodeState,
-        requestedPermissions: Set<PermissionInfo>?,
-        asyncActionNavigations: Set<AsyncActionNavigation>?
+        nodeState: NodeState
     ) {
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
-                NavigationPoint.Direction.Backward,
-                requestedPermissions,
-                asyncActionNavigations
+                NavigationPoint.Direction.Backward
             )
     }
 
@@ -75,8 +67,6 @@ open class AssessmentViewModel(
     data class ShowNodeState(
         val nodeState: NodeState,
         val direction: NavigationPoint.Direction,
-        val requestedPermissions: Set<PermissionInfo>?,
-        val asyncActionNavigations: Set<AsyncActionNavigation>?,
         var hasBeenHandled: Boolean = false
     )
 

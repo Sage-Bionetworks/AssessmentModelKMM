@@ -16,14 +16,10 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         } else if (shouldExitEarly(currentNode, branchResult, false)) {
             direction = NavigationPoint.Direction.Exit
         }
-        val actions = asyncActionNavigations(currentNode, next, branchResult)
-        val permissions = requestedPermissions(currentNode, next, branchResult, actions)
         return NavigationPoint(
             node = next,
             branchResult = branchResult,
-            direction = direction,
-            asyncActionNavigations = actions,
-            requestedPermissions = permissions
+            direction = direction
         )
     }
 
@@ -115,59 +111,61 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         }
     }
 
-    // MARK: Async action handling
-
-    open val asyncActionContainer: AsyncActionContainer?
-        get() = (node as? AsyncActionContainer)
-
-    protected open fun asyncActionNavigations(previousNode: Node?,
-                                              nextNode: Node?,
-                                              parentResult: BranchNodeResult) : Set<AsyncActionNavigation>? {
-        val start = asyncActionContainer?.backgroundActionsToStart(previousNode, nextNode)
-        val stopNode = nextNode?.let { if (this.isCompleted(it, parentResult)) null else it }
-        val stop = asyncActionContainer?.backgroundActionsToStop(stopNode)
-        return if (!start.isNullOrEmpty() || !stop.isNullOrEmpty()) {
-            setOf(AsyncActionNavigation(node.identifier, start, stop))
-        } else null
-    }
-
-    protected open fun requestedPermissions(previousNode: Node?,
-                                            nextNode: Node?,
-                                            parentResult: BranchNodeResult,
-                                            asyncActions: Set<AsyncActionNavigation>?) : Set<PermissionInfo>? {
-        val permissions: MutableSet<PermissionInfo> = (previousNode as? PermissionStep)?.permissions?.toMutableSet() ?: mutableSetOf()
-        asyncActions?.forEach {  nav ->
-            nav.startAsyncActions?.forEach { action ->
-                (action as? RecorderConfiguration)?.permissions?.forEach { permission ->
-                    if (!permissions.any { it.permissionType == permission }) {
-                        permissions.add(permission)
-                    }
-                }
-            }
-        }
-        return if (permissions.size > 0) permissions else null
-    }
+    // TODO: syoung 03/22/2022 Delete or move to MobilePassiveData-SDK
+//    // MARK: Async action handling
+//
+//    open val asyncActionContainer: AsyncActionContainer?
+//        get() = (node as? AsyncActionContainer)
+//
+//    protected open fun asyncActionNavigations(previousNode: Node?,
+//                                              nextNode: Node?,
+//                                              parentResult: BranchNodeResult) : Set<AsyncActionNavigation>? {
+//        val start = asyncActionContainer?.backgroundActionsToStart(previousNode, nextNode)
+//        val stopNode = nextNode?.let { if (this.isCompleted(it, parentResult)) null else it }
+//        val stop = asyncActionContainer?.backgroundActionsToStop(stopNode)
+//        return if (!start.isNullOrEmpty() || !stop.isNullOrEmpty()) {
+//            setOf(AsyncActionNavigation(node.identifier, start, stop))
+//        } else null
+//    }
+//
+//    protected open fun requestedPermissions(previousNode: Node?,
+//                                            nextNode: Node?,
+//                                            parentResult: BranchNodeResult,
+//                                            asyncActions: Set<AsyncActionNavigation>?) : Set<PermissionInfo>? {
+//        val permissions: MutableSet<PermissionInfo> = (previousNode as? PermissionStep)?.permissions?.toMutableSet() ?: mutableSetOf()
+//        asyncActions?.forEach {  nav ->
+//            nav.startAsyncActions?.forEach { action ->
+//                (action as? RecorderConfiguration)?.permissions?.forEach { permission ->
+//                    if (!permissions.any { it.permissionType == permission }) {
+//                        permissions.add(permission)
+//                    }
+//                }
+//            }
+//        }
+//        return if (permissions.size > 0) permissions else null
+//    }
 }
 
 internal fun <T> Collection<T>?.toNonEmptySet() : Set<T>?
     = if (this.isNullOrEmpty()) null else this.toSet()
 
-internal fun AsyncActionContainer.filterBackgroundActions(func: (it : AsyncActionConfiguration) -> Boolean)
-        : Set<AsyncActionConfiguration>?
-    = this.backgroundActions.filter(func).toNonEmptySet()
-
-fun AsyncActionContainer.backgroundActionsToStart(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
-    = nextNode?.let { node ->
-    filterBackgroundActions {
-        (node.identifier == it.startStepIdentifier) || ((previousNode == null) && it.startStepIdentifier == null)
-    }
-}
-
-fun AsyncActionContainer.backgroundActionsToStop(nextNode: Node?) : Set<AsyncActionConfiguration>?
-    = filterBackgroundActions { it.shouldStop(nextNode) }
-
-fun AsyncActionConfiguration.shouldStop(nextNode: Node?) : Boolean
-    = when (this) {
-        is RecorderConfiguration -> (nextNode?.identifier == this.stopStepIdentifier)
-        else -> (nextNode == null)
-    }
+// TODO: syoung 03/22/2022 Delete or move to MobilePassiveData-SDK
+//internal fun AsyncActionContainer.filterBackgroundActions(func: (it : AsyncActionConfiguration) -> Boolean)
+//        : Set<AsyncActionConfiguration>?
+//    = this.backgroundActions.filter(func).toNonEmptySet()
+//
+//fun AsyncActionContainer.backgroundActionsToStart(previousNode: Node?, nextNode: Node?) : Set<AsyncActionConfiguration>?
+//    = nextNode?.let { node ->
+//    filterBackgroundActions {
+//        (node.identifier == it.startStepIdentifier) || ((previousNode == null) && it.startStepIdentifier == null)
+//    }
+//}
+//
+//fun AsyncActionContainer.backgroundActionsToStop(nextNode: Node?) : Set<AsyncActionConfiguration>?
+//    = filterBackgroundActions { it.shouldStop(nextNode) }
+//
+//fun AsyncActionConfiguration.shouldStop(nextNode: Node?) : Boolean
+//    = when (this) {
+//        is RecorderConfiguration -> (nextNode?.identifier == this.stopStepIdentifier)
+//        else -> (nextNode == null)
+//    }
