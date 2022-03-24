@@ -370,7 +370,6 @@ data class ComparableSurveyRuleObject(
     override val matchingAnswer: JsonElement = JsonNull,
     override val skipToIdentifier: String = ReservedNavigationIdentifier.Exit.name,
     override val ruleOperator: SurveyRuleOperator? = null,
-    override val accuracy: Double = 0.00001
 ) : ComparableSurveyRule
 
 /**

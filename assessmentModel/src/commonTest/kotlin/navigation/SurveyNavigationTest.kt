@@ -120,18 +120,25 @@ class SurveyNavigationTest : NavigationTestHelper() {
         val elementA: JsonElement = JsonNull
 
         assertTrue(elementA.compareTo(JsonNull, SurveyRuleOperator.Equal), "compareTo(elementLessThan, SurveyRuleOperator.equal)")
-        assertTrue(elementA.compareTo(JsonNull, SurveyRuleOperator.LessThanEqual),"compareTo(elementLessThan, SurveyRuleOperator.lessThanEqual)")
+        assertFalse(elementA.compareTo(JsonNull, SurveyRuleOperator.LessThanEqual),"compareTo(elementLessThan, SurveyRuleOperator.lessThanEqual)")
         assertFalse(elementA.compareTo(JsonNull, SurveyRuleOperator.LessThan), "compareTo(elementLessThan, SurveyRuleOperator.lessThan)")
-        assertTrue(elementA.compareTo(JsonNull, SurveyRuleOperator.GreaterThanEqual), "compareTo(elementLessThan, SurveyRuleOperator.greaterThanEqual)")
+        assertFalse(elementA.compareTo(JsonNull, SurveyRuleOperator.GreaterThanEqual), "compareTo(elementLessThan, SurveyRuleOperator.greaterThanEqual)")
         assertFalse(elementA.compareTo(JsonNull, SurveyRuleOperator.GreaterThan), "compareTo(elementLessThan, SurveyRuleOperator.greaterThan)")
         assertFalse(elementA.compareTo(JsonNull, SurveyRuleOperator.NotEqual), "compareTo(elementLessThan, SurveyRuleOperator.notEqual)")
 
         assertTrue(elementA.compareTo(null, SurveyRuleOperator.Equal), "compareTo(elementLessThan, SurveyRuleOperator.equal)")
-        assertTrue(elementA.compareTo(null, SurveyRuleOperator.LessThanEqual),"compareTo(elementLessThan, SurveyRuleOperator.lessThanEqual)")
+        assertFalse(elementA.compareTo(null, SurveyRuleOperator.LessThanEqual),"compareTo(elementLessThan, SurveyRuleOperator.lessThanEqual)")
         assertFalse(elementA.compareTo(null, SurveyRuleOperator.LessThan), "compareTo(elementLessThan, SurveyRuleOperator.lessThan)")
-        assertTrue(elementA.compareTo(null, SurveyRuleOperator.GreaterThanEqual), "compareTo(elementLessThan, SurveyRuleOperator.greaterThanEqual)")
+        assertFalse(elementA.compareTo(null, SurveyRuleOperator.GreaterThanEqual), "compareTo(elementLessThan, SurveyRuleOperator.greaterThanEqual)")
         assertFalse(elementA.compareTo(null, SurveyRuleOperator.GreaterThan), "compareTo(elementLessThan, SurveyRuleOperator.greaterThan)")
         assertFalse(elementA.compareTo(null, SurveyRuleOperator.NotEqual), "compareTo(elementLessThan, SurveyRuleOperator.notEqual)")
+
+        assertFalse(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.Equal), "compareTo(elementLessThan, SurveyRuleOperator.equal)")
+        assertFalse(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.LessThanEqual),"compareTo(elementLessThan, SurveyRuleOperator.lessThanEqual)")
+        assertFalse(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.LessThan), "compareTo(elementLessThan, SurveyRuleOperator.lessThan)")
+        assertFalse(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.GreaterThanEqual), "compareTo(elementLessThan, SurveyRuleOperator.greaterThanEqual)")
+        assertFalse(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.GreaterThan), "compareTo(elementLessThan, SurveyRuleOperator.greaterThan)")
+        assertTrue(elementA.compareTo(JsonPrimitive(0), SurveyRuleOperator.NotEqual), "compareTo(elementLessThan, SurveyRuleOperator.notEqual)")
     }
 
     @Test
@@ -165,7 +172,7 @@ class SurveyNavigationTest : NavigationTestHelper() {
             SurveyRuleOperator.NotEqual,
         )
         val original = TestSurveyRuleOperatorWrapper(operators)
-        val inputString = """{"operators":["always","eq","gt","ge","lt","le","ne","de"]}"""
+        val inputString = """{"operators":["eq","gt","ge","lt","le","ne"]}"""
 
         val serializer = TestSurveyRuleOperatorWrapper.serializer()
         val jsonString = jsonCoder.encodeToString(serializer, original)
@@ -188,10 +195,10 @@ class SurveyNavigationTest : NavigationTestHelper() {
             identifier = "foo",
             inputItem = YearTextInputItemObject())
         step.surveyRules = listOf(
-            ComparableSurveyRuleObject(JsonPrimitive(2525),"equal"),
+            ComparableSurveyRuleObject(JsonPrimitive(2525),"equal", SurveyRuleOperator.Equal),
             ComparableSurveyRuleObject(JsonPrimitive(2525),"greaterThan", SurveyRuleOperator.GreaterThan),
             ComparableSurveyRuleObject(JsonPrimitive(2525),"lessThan", SurveyRuleOperator.LessThan),
-            ComparableSurveyRuleObject(JsonNull,"skip")
+            ComparableSurveyRuleObject(JsonNull,"skip", SurveyRuleOperator.Equal)
         )
 
         val answerResult = step.createResult()
@@ -207,6 +214,9 @@ class SurveyNavigationTest : NavigationTestHelper() {
 
         answerResult.jsonValue = JsonPrimitive(2524)
         assertEquals("lessThan", step.nextNodeIdentifier(branchResult, false))
+
+        answerResult.jsonValue = null
+        assertEquals("skip", step.nextNodeIdentifier(branchResult, false))
 
         answerResult.jsonValue = JsonNull
         assertEquals("skip", step.nextNodeIdentifier(branchResult, false))
