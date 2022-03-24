@@ -40,10 +40,9 @@ interface ComparableSurveyRule : SurveyRule {
     val matchingAnswer: JsonElement
 
     /**
-     * Optional skip identifier for this rule. If available, this will be used as the skip identifier, otherwise
-     * the [skipToIdentifier] will be assumed to be an "exit" identifier.
+     * Skip identifier for this rule.
      */
-    val skipToIdentifier: String?
+    val skipToIdentifier: String
 
     /**
      * The rule operator to apply. If `null`, `.equal` will be assumed unless the [matchingAnswer] is [JsonNull], in
@@ -58,12 +57,10 @@ interface ComparableSurveyRule : SurveyRule {
         get() = 0.00001
 
     override fun evaluateRuleWith(result: Result?) : String? = (result as? AnswerResult)?.let {  answerResult ->
-        val operator = ruleOperator ?: if (matchingAnswer == JsonNull) SurveyRuleOperator.Skip else SurveyRuleOperator.Equal
-        val skipTo = skipToIdentifier ?: ReservedNavigationIdentifier.Exit.name
-        val jsonValue = answerResult.jsonValue
-        if (jsonValue == null || jsonValue == JsonNull) {
-            if (operator == SurveyRuleOperator.Skip) skipTo else null
-        } else if (jsonValue.compareTo(matchingAnswer, operator, accuracy)) {
+        val operator = ruleOperator ?: SurveyRuleOperator.Equal
+        val skipTo = skipToIdentifier
+        val jsonValue = answerResult.jsonValue ?: JsonNull
+        if (jsonValue.compareTo(matchingAnswer, operator, accuracy)) {
             skipTo
         } else {
             null
@@ -104,18 +101,6 @@ enum class SurveyRuleOperator : StringEnum {
     /// The answer value is greater than or equal to the matching answer.
     @SerialName("ge")
     GreaterThanEqual,
-
-    /**
-     * The rule should always evaluate to true.
-     */
-    @SerialName("always")
-    Always,
-
-    /**
-     * Survey rule for checking if the answer was skipped.
-     */
-    @SerialName("de")
-    Skip,
     ;
 }
 
@@ -124,8 +109,6 @@ fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, acc
     return (jsonValue as? JsonPrimitive)?.let { jsonLiteral ->
         (this as? JsonPrimitive)?.compareTo(jsonLiteral, operator, accuracy)
     } ?: when (operator) {
-        SurveyRuleOperator.Always -> true
-        SurveyRuleOperator.Skip -> this == JsonNull && jsonValue == JsonNull
         SurveyRuleOperator.Equal -> this == jsonValue
         SurveyRuleOperator.NotEqual -> this != jsonValue
         else -> false
@@ -140,8 +123,6 @@ internal fun JsonPrimitive.compareTo(value: JsonPrimitive, operator: SurveyRuleO
         }
     }
     return when (operator) {
-        SurveyRuleOperator.Always -> true
-        SurveyRuleOperator.Skip -> this == JsonNull && value == JsonNull
         SurveyRuleOperator.NotEqual -> !isEqual
         SurveyRuleOperator.Equal -> isEqual
         SurveyRuleOperator.GreaterThan -> !isEqual && this.content > value.content
