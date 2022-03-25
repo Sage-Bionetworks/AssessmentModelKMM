@@ -81,26 +81,8 @@ extension NavigationIdentifier : ExpressibleByStringLiteral {
     }
 }
 
-extension NavigationIdentifier : CodingKey {
-    public var stringValue: String {
-        return self.rawValue
-    }
-    
-    public init?(stringValue: String) {
-        self.init(rawValue: stringValue)
-    }
-    
-    public var intValue: Int? {
-        return nil
-    }
-    
-    public init?(intValue: Int) {
-        return nil
-    }
-}
-
-extension NavigationIdentifier : DocumentableStringEnum {
-    public static func allValues() -> [String] {
+extension NavigationIdentifier : DocumentableStringLiteral {
+    public static func examples() -> [String] {
         ReservedKey.allValues()
     }
 }
