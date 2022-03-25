@@ -342,7 +342,7 @@ interface AsyncActionContainer : Node {
      * (such as a sensor recorder or web service) that should should be started when this [Node] in the [Assessment] is
      * presented to the user.
      */
-    val backgroundActions: List<AsyncActionConfiguration>
+    val asyncActions: List<AsyncActionConfiguration>
 }
 
 /**

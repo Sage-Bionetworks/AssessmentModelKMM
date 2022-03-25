@@ -34,40 +34,67 @@
 import Foundation
 import JsonModel
 
-open class AbstractNodeContainerObject : AbstractContentNodeObject {
+open class AbstractNodeContainerObject : AbstractContentNodeObject, AsyncActionContainer {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case children = "steps"
+        case children = "steps", asyncActions
         var relativeIndex: Int { 5 }
     }
     
     public let children: [Node]
+    
+    public var asyncActions: [AsyncActionConfiguration] { _asyncActions ?? [] }
+    private let _asyncActions: [AsyncActionConfiguration]?
     
     open func instantiateNavigator(state: NavigationState) throws -> Navigator {
         try NodeNavigator(identifier: identifier, nodes: children)
     }
     
     public init(identifier: String,
-                children: [Node],
+                children: [Node], asyncActions: [AsyncActionConfiguration]? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
         self.children = children
+        self._asyncActions = asyncActions
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+    }
+    
+    public init(identifier: String, copyFrom object: AbstractNodeContainerObject) {
+        self.children = object.children.map { child in
+            (child as? CopyWithIdentifier).map { $0.copy(with: $0.identifier) as! Node } ?? child
+        }
+        self._asyncActions = object._asyncActions?.map { action in
+            (action as? CopyWithIdentifier).map { $0.copy(with: $0.identifier) as! AsyncActionConfiguration } ?? action
+        }
+        super.init(identifier: identifier, copyFrom: object)
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
         self.children = try decoder.serializationFactory.decodePolymorphicArray(Node.self, from: childrenContainer)
+        if container.contains(.asyncActions) {
+            let actionsContainer = try container.nestedUnkeyedContainer(forKey: .asyncActions)
+            self._asyncActions = try decoder.serializationFactory.decodePolymorphicArray(AsyncActionConfiguration.self, from: actionsContainer)
+        } else {
+            self._asyncActions = nil
+        }
         try super.init(from: decoder)
     }
     
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
+        try encodeArray(children, forKey: .children, to: encoder)
+        if let actions = self._asyncActions {
+            try encodeArray(actions, forKey: .asyncActions, to: encoder)
+        }
+    }
+    
+    private func encodeArray<T>(_ array: [T], forKey key: CodingKeys, to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        var nestedContainer = container.nestedUnkeyedContainer(forKey: .children)
-        try children.forEach { node in
+        var nestedContainer = container.nestedUnkeyedContainer(forKey: key)
+        try array.forEach { node in
             guard let encodable = node as? Encodable else {
                 throw EncodingError.invalidValue(node, .init(codingPath: nestedContainer.codingPath, debugDescription:
                                                                 "\(node) does not match the Encodable protocol."))
@@ -84,7 +111,7 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
     }
     
     open override class func isRequired(_ codingKey: CodingKey) -> Bool {
-        (codingKey is CodingKeys) || super.isRequired(codingKey)
+        (codingKey as? CodingKeys).map { $0 == .children } ?? super.isRequired(codingKey)
     }
     
     open override class func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
@@ -95,6 +122,9 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject {
         case .children:
             return .init(propertyType: .interfaceArray("\(Node.self)"), propertyDescription:
                             "A sequential list of the nodes to display for this assessment or section.")
+        case .asyncActions:
+            return .init(propertyType: .interfaceArray("\(AsyncActionConfiguration.self)"), propertyDescription:
+                            "A list of elements used to describe the configuration for background actions.")
         }
     }
 }
@@ -122,10 +152,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
     }
     
     public func copy(with identifier: String) -> SectionObject {
-        .init(identifier: identifier,
-              children: children,
-              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+        .init(identifier: identifier, copyFrom: self)
     }
 }
 
@@ -149,6 +176,13 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         super.init(identifier: identifier, children: children,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+    }
+    
+    public init(identifier: String, copyFrom object: AbstractAssessmentObject) {
+        self.versionString = object.versionString
+        self.estimatedMinutes = object.estimatedMinutes
+        self.copyright = object.copyright
+        super.init(identifier: identifier, copyFrom: object)
     }
     
     public required init(from decoder: Decoder) throws {

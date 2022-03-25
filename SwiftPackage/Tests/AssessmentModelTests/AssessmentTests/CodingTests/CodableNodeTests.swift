@@ -294,7 +294,10 @@ class CodableQuestionTests: XCTestCase {
                 "type": "animated",
                 "imageNames": ["foo1", "foo2", "foo3", "foo4"],
                 "animationDuration": 2
-            }
+            },
+            "permissions": [
+                {"permissionType" : "motion"}
+            ]
         }
         """.data(using: .utf8)! // our data in native (JSON) format
         
@@ -392,6 +395,68 @@ class CodableQuestionTests: XCTestCase {
             
             XCTAssertEqual("foo", object.identifier)
             XCTAssertEqual(.StandardTypes.instruction.nodeType, object.serializableType)
+            XCTAssertTrue(object.fullInstructionsOnly)
+            XCTAssertEqual([.start : "Begin now", .end : "You are done!"], object.spokenInstructions)
+            
+            checkSharedEncodingKeys(step: object)
+
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            XCTAssertTrue(copy.fullInstructionsOnly)
+            checkSharedEncodingKeys(step: copy)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    
+    func testPermissionStep_AllFields_Codable() {
+        
+        let json = """
+        {
+            "type": "permission",
+            "identifier": "foo",
+            "permissionType": "motion",
+            "optional": false,
+            "restrictedMessage": "This device is restricted.",
+            "deniedMessage": "You have previously denied this permission.",
+            "comment": "comment",
+            "shouldHideActions": ["skip"],
+            "actions": {
+                "goForward": {
+                    "type": "default",
+                    "buttonTitle": "Go, Dogs! Go!"
+                }
+            },
+            "title": "Hello World!",
+            "subtitle": "Question subtitle",
+            "detail": "Some text. This is a test.",
+            "image": {
+                "type": "animated",
+                "imageNames": ["foo1", "foo2", "foo3", "foo4"],
+                "animationDuration": 2
+            },
+            "fullInstructionsOnly": true,
+            "spokenInstructions": {
+                "start": "Begin now",
+                "end": "You are done!"
+            }
+        }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<PermissionStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.permission.nodeType, object.serializableType)
             XCTAssertTrue(object.fullInstructionsOnly)
             XCTAssertEqual([.start : "Begin now", .end : "You are done!"], object.spokenInstructions)
             

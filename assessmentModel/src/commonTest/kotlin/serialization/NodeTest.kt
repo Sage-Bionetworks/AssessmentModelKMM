@@ -180,7 +180,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")),
-                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp")))
+                asyncActions = listOf(MotionRecorderConfiguration("shakeItUp")))
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
         original.detail = "Some text. This is a test."
@@ -535,7 +535,6 @@ open class NodeTest : NodeSerializationTestHelper() {
                "permissions":[
                     {
                         "permissionType":"motion",
-                        "reason":"Access to Motion and Fitness sensors is used to measure the phone's orientation.",
                         "optional":true
                    }
                 ],
@@ -554,8 +553,7 @@ open class NodeTest : NodeSerializationTestHelper() {
         original.icons = listOf(IconInfoObject("cuteDogs", "Cute Dogs"))
         original.permissions = listOf(PermissionInfoObject(
             permissionType = PermissionType.Standard.Motion,
-            optional = true,
-            reason = "Access to Motion and Fitness sensors is used to measure the phone's orientation."
+            optional = true
         ))
         original.imageInfo = AnimatedImage(
             imageNames = listOf("foo1", "foo2", "foo3", "foo4"),
@@ -765,7 +763,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 children = listOf(
                         buildInstructionStep("step1", "Step 1"),
                         buildInstructionStep("step2", "Step 2")),
-                backgroundActions = listOf(MotionRecorderConfiguration("shakeItUp"))
+                asyncActions = listOf(MotionRecorderConfiguration("shakeItUp"))
         )
         original.title = "Hello World!"
         original.subtitle = "Subtitle"
@@ -1300,6 +1298,5 @@ open class NodeSerializationTestHelper {
 @SerialName("motion")
 data class MotionRecorderConfiguration(
     override val identifier: String,
-    override val comment: String? = null,
     override val startStepIdentifier: String? = null
 ) : AsyncActionConfiguration
