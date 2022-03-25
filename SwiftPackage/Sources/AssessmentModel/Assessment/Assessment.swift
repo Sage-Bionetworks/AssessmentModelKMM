@@ -158,7 +158,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
 
 open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case versionString, estimatedMinutes, copyright
+        case jsonSchema = "$schema", versionString, estimatedMinutes, copyright
         var relativeIndex: Int { 3 }
     }
     
@@ -166,22 +166,29 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public let estimatedMinutes: Int
     public let copyright: String?
     
+    open var jsonSchema: URL {
+        _jsonSchema ?? URL(string: "\(type(of: self)).json", relativeTo: kSageJsonSchemaBaseURL)!
+    }
+    private let _jsonSchema: URL?
+    
     public init(identifier: String, children: [Node],
                 version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
-                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.versionString = version
         self.estimatedMinutes = estimatedMinutes
         self.copyright = copyright
+        self._jsonSchema = nil
         super.init(identifier: identifier, children: children,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
     }
     
     public init(identifier: String, copyFrom object: AbstractAssessmentObject) {
         self.versionString = object.versionString
         self.estimatedMinutes = object.estimatedMinutes
         self.copyright = object.copyright
+        self._jsonSchema = object._jsonSchema
         super.init(identifier: identifier, copyFrom: object)
     }
     
@@ -190,6 +197,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         self.versionString = try container.decodeIfPresent(String.self, forKey: .versionString)
         self.estimatedMinutes = try container.decodeIfPresent(Int.self, forKey: .estimatedMinutes) ?? 0
         self.copyright = try container.decodeIfPresent(String.self, forKey: .copyright)
+        self._jsonSchema = try container.decodeIfPresent(URL.self, forKey: .jsonSchema)
         try super.init(from: decoder)
     }
     
@@ -198,6 +206,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(self.versionString, forKey: .versionString)
         try container.encodeIfPresent(self.copyright, forKey: .copyright)
+        try container.encode(self.jsonSchema, forKey: .jsonSchema)
         if estimatedMinutes > 0 {
             try container.encode(estimatedMinutes, forKey: .estimatedMinutes)
         }
@@ -236,6 +245,9 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         case .estimatedMinutes:
             return .init(defaultValue: .integer(0), propertyDescription:
                             "Estimated number of minutes to perform the assessment.")
+        case .jsonSchema:
+            return .init(propertyType: .format(.uri), propertyDescription:
+                            "The URI for the json schema for this assessment.")
         }
     }
 }
@@ -249,7 +261,9 @@ public final class AssessmentObject : AbstractAssessmentObject, DocumentableStru
     public static func examples() -> [AssessmentObject] {
         [.init(identifier: "assessment", children: [
             SimpleQuestionStepObject(identifier: "favoriteColor", title: "What is your favorite color")
-        ])]
+        ]),
+         surveyA
+        ]
     }
 }
 
@@ -257,10 +271,6 @@ extension AssessmentObject : DocumentableRootObject {
 
     public convenience init() {
         self.init(identifier: "example", children: [])
-    }
-
-    public var jsonSchema: URL {
-        URL(string: "\(self.className).json", relativeTo: kSageJsonSchemaBaseURL)!
     }
 
     public var documentDescription: String? {
