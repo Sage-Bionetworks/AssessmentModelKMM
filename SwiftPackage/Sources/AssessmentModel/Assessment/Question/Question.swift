@@ -135,7 +135,9 @@ open class AbstractQuestionStepObject : AbstractStepObject {
         var relativeIndex: Int { 5 }
     }
     
-    public let optional: Bool
+    public var optional: Bool { _optional ?? false }
+    private let _optional: Bool?
+    
     public let uiHint: QuestionUIHint?
     public let surveyRules: [JsonSurveyRuleObject]?
     
@@ -143,7 +145,7 @@ open class AbstractQuestionStepObject : AbstractStepObject {
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil, surveyRules: [JsonSurveyRuleObject]? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
-        self.optional = optional ?? false
+        self._optional = optional
         self.uiHint = uiHint
         self.surveyRules = surveyRules
         super.init(identifier: identifier,
@@ -151,9 +153,16 @@ open class AbstractQuestionStepObject : AbstractStepObject {
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
     }
     
+    public init(identifier: String, copyFrom object: AbstractQuestionStepObject) {
+        self._optional = object._optional
+        self.uiHint = object.uiHint
+        self.surveyRules = object.surveyRules
+        super.init(identifier: identifier, copyFrom: object)
+    }
+    
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.optional = try container.decodeIfPresent(Bool.self, forKey: .optional) ?? false
+        self._optional = try container.decodeIfPresent(Bool.self, forKey: .optional)
         self.uiHint = try container.decodeIfPresent(QuestionUIHint.self, forKey: .uiHint)
         self.surveyRules = try container.decodeIfPresent([JsonSurveyRuleObject].self, forKey: .surveyRules)
         try super.init(from: decoder)
@@ -162,7 +171,7 @@ open class AbstractQuestionStepObject : AbstractStepObject {
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(optional, forKey: .optional)
+        try container.encodeIfPresent(_optional, forKey: .optional)
         try container.encodeIfPresent(uiHint, forKey: .uiHint)
         try container.encodeIfPresent(surveyRules, forKey: .surveyRules)
     }

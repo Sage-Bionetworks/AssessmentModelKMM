@@ -33,6 +33,7 @@
 
 import XCTest
 import AssessmentModel
+import JsonModel
 import KotlinModel
 
 class KMMSerializationTests: XCTestCase {
@@ -75,7 +76,13 @@ class KMMSerializationTests: XCTestCase {
                 XCTFail("Failed to decode the instruction step as the second step")
             }
             
-            if let section = kmmAssessment.children[2] as? KotlinModel.SectionObject {
+            if let permission = kmmAssessment.children[2] as? KotlinModel.PermissionStepObject {
+                checkObjects(swiftNode: swiftPermissionStep, kmmNode: permission)
+            } else {
+                XCTFail("Failed to decode the instruction step as the second step")
+            }
+            
+            if let section = kmmAssessment.children[3] as? KotlinModel.SectionObject {
                 checkObjects(swiftNode: swiftQuestionSection, kmmNode: section)
                 swiftQuestionSection.children.enumerated().forEach { node in
                     guard let swiftNode = node.element as? AssessmentModel.AbstractQuestionStepObject,
@@ -121,4 +128,70 @@ class KMMSerializationTests: XCTestCase {
             XCTAssertEqual(value.imageInfo?.imageName, swiftBtn.iconName)
         }
     }
+    
+    func testResultCodable() {
+        let factory = AssessmentFactory()
+        let encoder = factory.createJSONEncoder()
+        let decoder = factory.createJSONDecoder()
+
+        do {
+            let json = try encoder.encode(swiftAssessmentResult)
+            let jsonString = String(data: json, encoding: .utf8)!
+            print(jsonString)
+            
+            let loader = KotlinModel.ResultDecoder(jsonString: jsonString)
+            let kmmAssessmentResult = try loader.decodeObject() as? KotlinModel.AssessmentResultObject
+            XCTAssertNotNil(kmmAssessmentResult)
+            
+            guard let kmmAssessmentResult = kmmAssessmentResult else {
+                XCTFail("Failed to decode assessment result from the kotlin model.")
+                return
+            }
+            
+            let kmmEncoder = KotlinModel.ResultEncoder(result: kmmAssessmentResult)
+            let kmmJsonString = try kmmEncoder.encodeObject()
+            let kmmJson = kmmJsonString.data(using: .utf8)!
+            let decodedResult = try decoder.decode(AssessmentResultObject.self, from: kmmJson)
+            
+            checkResults(swiftResult: swiftAssessmentResult, decodedResult: decodedResult)
+
+        } catch {
+            XCTFail("Failed to encode or decode the assessment: \(error)")
+        }
+    }
+    
+    func checkResults(swiftResult: JsonModel.ResultData, decodedResult: JsonModel.ResultData) {
+        XCTAssertEqual(swiftResult.typeName, decodedResult.typeName, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.identifier, decodedResult.identifier, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.startDate.timeIntervalSinceReferenceDate, decodedResult.startDate.timeIntervalSinceReferenceDate, accuracy: 0.1, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.endDate.timeIntervalSinceReferenceDate, decodedResult.endDate.timeIntervalSinceReferenceDate, accuracy: 0.1, "\(swiftResult.identifier)")
+        
+        if let answerResult = swiftResult as? JsonModel.AnswerResultObject {
+            if let decoded = decodedResult as? JsonModel.AnswerResultObject {
+                XCTAssertEqual(answerResult.questionText, decoded.questionText, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.questionData, decoded.questionData, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.jsonValue, decoded.jsonValue, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.jsonAnswerType?.typeName, decoded.jsonAnswerType?.typeName, "\(swiftResult.identifier)")
+            }
+            else {
+                XCTFail("Failed to decode the correct type. expected=\(swiftResult), actual=\(decodedResult)")
+            }
+        }
+        else if let branchResult = swiftResult as? JsonModel.BranchNodeResult {
+            if let decoded = decodedResult as? JsonModel.BranchNodeResult {
+                branchResult.stepHistory.forEach { childResult in
+                    if let decodedChild = decoded.stepHistory.first(where: { $0.identifier == childResult.identifier }) {
+                        checkResults(swiftResult: childResult, decodedResult: decodedChild)
+                    }
+                    else {
+                        XCTFail("Failed to decode the matching child. expected=\(childResult)")
+                    }
+                }
+            }
+            else {
+                XCTFail("Failed to decode the correct type. expected=\(swiftResult), actual=\(decodedResult)")
+            }
+        }
+    }
 }
+

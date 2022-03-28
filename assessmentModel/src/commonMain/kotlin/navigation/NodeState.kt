@@ -22,16 +22,12 @@ interface NodeUIController {
     /**
      * Handle going forward to the given [nodeState] with appropriate UI, View, and animations.
      */
-    fun handleGoForward(nodeState: NodeState,
-                        requestedPermissions: Set<PermissionInfo>? = null,
-                        asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun handleGoForward(nodeState: NodeState)
 
     /**
      * Handle going back to the given [nodeState] with appropriate UI, View, and animations.
      */
-    fun handleGoBack(nodeState: NodeState,
-                     requestedPermissions: Set<PermissionInfo>? = null,
-                     asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun handleGoBack(nodeState: NodeState)
 }
 
 /**
@@ -106,26 +102,22 @@ interface NodeState {
     /**
      * Method to call when the participant taps the "Next" button or a timed step is completed.
      */
-    fun goForward(requestedPermissions: Set<PermissionInfo>? = null,
-                  asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun goForward()
 
     /**
      * Method to call when the participant taps the "Back" button or the active step gets a signal to go back to the
      * previous node in the navigation.
      */
-    fun goBackward(requestedPermissions: Set<PermissionInfo>? = null,
-                   asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun goBackward()
 
 }
 
-fun NodeState.goIn(direction: NavigationPoint.Direction,
-                   requestedPermissions: Set<PermissionInfo>? = null,
-                   asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
+fun NodeState.goIn(direction: NavigationPoint.Direction) {
     if (direction == NavigationPoint.Direction.Forward) {
-        goForward(requestedPermissions, asyncActionNavigations)
+        goForward()
     }
     else {
-        goBackward(requestedPermissions, asyncActionNavigations)
+        goBackward()
     }
 }
 
@@ -185,16 +177,14 @@ interface BranchNodeState : NodeState {
      *
      * WARNING: This method should *only* be called by the [currentChild].
      */
-    fun moveToNextNode(direction: NavigationPoint.Direction,
-                       requestedPermissions: Set<PermissionInfo>? = null,
-                       asyncActionNavigations: Set<AsyncActionNavigation>? = null)
+    fun moveToNextNode(direction: NavigationPoint.Direction)
 
     /**
      * Allow for chaining up to the top node state when the navigation should end early.
      *
      * WARNING: This method should *only* be called by the [currentChild].
      */
-    fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?)
+    fun exitEarly(finishedReason: FinishedReason)
 
     /**
      * Returns the [Progress] of the assessment based on the [currentChild] and [currentResult]. If `null`
@@ -211,14 +201,12 @@ interface BranchNodeState : NodeState {
 interface LeafNodeState : NodeState {
     override val parent: BranchNodeState
 
-    override fun goForward(requestedPermissions: Set<PermissionInfo>?,
-                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
+    override fun goForward() {
+        parent.moveToNextNode(NavigationPoint.Direction.Forward)
     }
 
-    override fun goBackward(requestedPermissions: Set<PermissionInfo>?,
-                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        parent.moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
+    override fun goBackward() {
+        parent.moveToNextNode(NavigationPoint.Direction.Backward)
     }
 }
 
@@ -253,21 +241,16 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         set(value) {_customNodeStateProvider = value}
     private var _customNodeStateProvider: CustomNodeStateProvider? = null
 
-    override fun goForward(requestedPermissions: Set<PermissionInfo>?,
-                           asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward, requestedPermissions, asyncActionNavigations)
+    override fun goForward() {
+        lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward)
     }
 
-    override fun goBackward(requestedPermissions: Set<PermissionInfo>?,
-                            asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        lowestBranch().moveToNextNode(NavigationPoint.Direction.Backward, requestedPermissions, asyncActionNavigations)
+    override fun goBackward() {
+        lowestBranch().moveToNextNode(NavigationPoint.Direction.Backward)
     }
 
-    override fun moveToNextNode(direction: NavigationPoint.Direction,
-                                requestedPermissions: Set<PermissionInfo>?,
-                                asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun moveToNextNode(direction: NavigationPoint.Direction) {
         val next = getNextNode(direction) ?: return
-        unionNavigationSets(next, requestedPermissions, asyncActionNavigations)
         // Before moving to the next node (or ending the task), mark the end data for the current node.
         currentChild?.currentResult?.endDateTime = Clock.System.now()
         if (next.node != null) {
@@ -306,9 +289,9 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
                     callUpReadyToSaveChain()
                 }
                 if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
-                    controller.handleGoForward(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                    controller.handleGoForward(nodeState)
                 } else {
-                    controller.handleGoBack(nodeState, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                    controller.handleGoBack(nodeState)
                 }
             } ?: run {
                 TODO("syoung 02/10/2020 Not implemented. Handle case where a step is skipped by the branch state.")
@@ -317,7 +300,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
             // Otherwise, see if we have a node to move to.
             getBranchNodeState(navigationPoint)?.let { nodeState ->
                 currentChild = nodeState
-                nodeState.goIn(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                nodeState.goIn(navigationPoint.direction)
             } ?: run {
                 TODO("syoung 02/04/2020 Not implemented. Handle case where a step is skipped by the root controller.")
             }
@@ -396,13 +379,13 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
         markFinalResultIfNeeded()
         when {
             navigationPoint.direction == NavigationPoint.Direction.Exit ->
-                exitEarly(FinishedReason.Incomplete(SaveResults.Never, markFinished = false, declined = false), navigationPoint.asyncActionNavigations)
+                exitEarly(FinishedReason.Incomplete(SaveResults.Never, markFinished = false, declined = false))
             parent == null -> {
                 callReadyToSaveIfNeeded(FinishedReason.Complete)
                 rootNodeController?.handleFinished(FinishedReason.Complete, this)
             }
             else ->
-                parent.moveToNextNode(navigationPoint.direction, navigationPoint.requestedPermissions, navigationPoint.asyncActionNavigations)
+                parent.moveToNextNode(navigationPoint.direction)
         }
     }
 
@@ -412,14 +395,14 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      * Warning: If you override this method, you should still call through to super to allow the
      * base class to manage its internal navigation state.
      */
-    override fun exitEarly(finishedReason: FinishedReason, asyncActionNavigations: Set<AsyncActionNavigation>?) {
+    override fun exitEarly(finishedReason: FinishedReason) {
         appendChildResultIfNeeded()
         markFinalResultIfNeeded()
         if (parent == null) {
             callReadyToSaveIfNeeded(finishedReason)
             rootNodeController?.handleFinished(finishedReason, this)
         } else {
-            parent.exitEarly(finishedReason, asyncActionNavigations)
+            parent.exitEarly(finishedReason)
         }
     }
 
@@ -456,20 +439,6 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return (navigationPoint.node as? BranchNode)?.let {
             customNodeStateProvider?.customBranchNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
-        }
-    }
-
-    /**
-     * Union the requested permissions and async actions with the returned navigation point.
-     */
-    open fun unionNavigationSets(navigationPoint: NavigationPoint,
-                                 requestedPermissions: Set<PermissionInfo>?,
-                                 asyncActionNavigations: Set<AsyncActionNavigation>?) {
-        if (requestedPermissions != null) {
-            navigationPoint.requestedPermissions = requestedPermissions.plus(navigationPoint.requestedPermissions ?: setOf())
-        }
-        if (asyncActionNavigations != null) {
-            navigationPoint.asyncActionNavigations = asyncActionNavigations.union(navigationPoint.asyncActionNavigations ?: setOf())
         }
     }
 

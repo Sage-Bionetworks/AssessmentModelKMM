@@ -153,3 +153,14 @@ public extension Assessment {
         instantiateAssessmentResult()
     }
 }
+
+/// An ``AsyncActionContainer`` is a node that contains the model description for asynchronous background actions that
+/// should be started when this ``Node`` in the ``Assessment`` is presented to the user.
+public protocol AsyncActionContainer : Node {
+
+    /// A list of the ``AsyncActionConfiguration`` elements used to describe the configuration for background actions
+    /// (such as a sensor recorder or web service) that should should be started when this ``Node`` in the ``Assessment``
+    /// is presented to the user.
+    var asyncActions: [AsyncActionConfiguration] { get }
+}
+

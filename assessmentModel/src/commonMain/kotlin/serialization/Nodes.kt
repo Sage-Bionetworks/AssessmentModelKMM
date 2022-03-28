@@ -205,7 +205,10 @@ data class AssessmentObject(
     override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
     @SerialName("asyncActions")
-    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+    override val asyncActions: List<AsyncActionConfiguration> = listOf(),
+    override val copyright: String? = null,
+    @SerialName("\$schema")
+    override val schema: String? = null,
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {
@@ -227,7 +230,7 @@ data class SectionObject(
     @SerialName("steps")
     override val children: List<Node>,
     @SerialName("asyncActions")
-    override val backgroundActions: List<AsyncActionConfiguration> = listOf()
+    override val asyncActions: List<AsyncActionConfiguration> = listOf()
 ) : NodeContainerObject(), Section, AsyncActionContainer {
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): SectionObject {
         super<Section>.unpack(originalNode, moduleInfo, registryProvider)
@@ -268,8 +271,6 @@ data class PermissionStepObject(
         @SerialName("image")
         override var imageInfo: ImageInfo? = null,
         override val optional: Boolean = true,
-        override val requiresBackground: Boolean = false,
-        override val reason: String? = null,
         override val restrictedMessage: String? = null,
         override val deniedMessage: String? = null
 ) : StepObject(), PermissionStep, PermissionInfo {
@@ -302,8 +303,6 @@ data class OverviewStepObject(
 data class PermissionInfoObject(
     override val permissionType: PermissionType,
     override val optional: Boolean = false,
-    override val requiresBackground: Boolean = false,
-    override val reason: String? = null,
     override val restrictedMessage: String? = null,
     override val deniedMessage: String? = null
 ) : PermissionInfo
@@ -387,9 +386,8 @@ data class ChoiceQuestionObject(
 @Serializable
 data class ComparableSurveyRuleObject(
     override val matchingAnswer: JsonElement = JsonNull,
-    override val skipToIdentifier: String? = null,
+    override val skipToIdentifier: String = ReservedNavigationIdentifier.Exit.name,
     override val ruleOperator: SurveyRuleOperator? = null,
-    override val accuracy: Double = 0.00001
 ) : ComparableSurveyRule
 
 /**
@@ -407,7 +405,7 @@ abstract class BaseActiveStepObject : StepObject(), ActiveStep {
 
     override var commands: Set<ActiveStepCommand>
         get() = ActiveStepCommand.fromStrings(commandStrings)
-        set(value) { commandStrings = value.map { it.name.decapitalize() }.toSet() }
+        set(value) { commandStrings = value.map { it.name.replaceFirstChar { it.lowercase() } }.toSet() }
 
     override fun copyFrom(original: ContentNode) {
         super.copyFrom(original)

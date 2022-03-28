@@ -56,7 +56,7 @@ public struct SerializableNodeType : TypeRepresentable, Codable, Hashable {
     }
     
     public enum StandardTypes : String, CaseIterable {
-        case assessment, section, overview, instruction, choiceQuestion, simpleQuestion, completion
+        case assessment, section, overview, instruction, permission, choiceQuestion, simpleQuestion, completion
         
         public var nodeType: SerializableNodeType {
             .init(rawValue: self.rawValue)
@@ -100,6 +100,7 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
             CompletionStepObject.examples().first!,
             InstructionStepObject.examples().first!,
             OverviewStepObject.examples().first!,
+            PermissionStepObject.examples().first!,
             SectionObject.examples().first!,
             SimpleQuestionStepObject.examples().first!,
         ]
@@ -189,12 +190,21 @@ open class AbstractNodeObject : SerializableNode {
         self.nextNode = nextNode
         self.shouldHideButtons = shouldHideButtons ?? []
         self.buttonMap = buttonMap ?? [:]
-        self.serializableType = type(of: self).defaultType()
+        self.serializableType = Self.defaultType()
+    }
+    
+    public init(identifier: String, copyFrom object: AbstractNodeObject) {
+        self.identifier = identifier
+        self.comment = object.comment
+        self.nextNode = object.nextNode
+        self.shouldHideButtons = object.shouldHideButtons
+        self.buttonMap = object.buttonMap
+        self.serializableType = Self.defaultType()
     }
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.serializableType = type(of: self).defaultType()
+        self.serializableType = Self.defaultType()
         self.identifier = try container.decode(String.self, forKey: .identifier)
         self.comment = try container.decodeIfPresent(String.self, forKey: .comment)
         self.nextNode = try container.decodeIfPresent(NavigationIdentifier.self, forKey: .nextNode)
@@ -305,6 +315,14 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
         self.detail = detail
         self.imageInfo = imageInfo
         super.init(identifier: identifier, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+    }
+    
+    public init(identifier: String, copyFrom object: AbstractContentNodeObject) {
+        self.title = object.title
+        self.subtitle = object.subtitle
+        self.detail = object.detail
+        self.imageInfo = object.imageInfo
+        super.init(identifier: identifier, copyFrom: object)
     }
     
     public required init(from decoder: Decoder) throws {

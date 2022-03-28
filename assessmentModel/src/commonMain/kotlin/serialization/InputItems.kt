@@ -77,7 +77,7 @@ data class DoubleTextInputItemObject(@SerialName("identifier")
                                      var formatOptions: DoubleFormatOptions = DoubleFormatOptions())
     : InputItemObject<Double>() {
     override val answerType: AnswerType
-        get() = AnswerType.DECIMAL
+        get() = AnswerType.Decimal(significantDigits = formatOptions.maximumFractionDigits)
 
     override val keyboardOptions: KeyboardOptions
         get() = KeyboardOptionsObject.DecimalEntryOptions

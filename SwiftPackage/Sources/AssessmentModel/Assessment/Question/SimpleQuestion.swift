@@ -69,7 +69,7 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
         var relativeIndex: Int { 6 }
     }
     
-    public private(set) var inputItem: TextInputItem = StringTextInputItemObject()
+    public let inputItem: TextInputItem
     
     /// Allow subclasses to define their own default for the input item type.
     open class func defaultTextInputItem() -> TextInputItem {
@@ -85,20 +85,25 @@ open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, Questi
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 optional: Bool? = nil, uiHint: QuestionUIHint? = nil, surveyRules: [JsonSurveyRuleObject]? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
+        self.inputItem = inputItem ?? Self.defaultTextInputItem()
         super.init(identifier: identifier, title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo, optional: optional, uiHint: uiHint, surveyRules: surveyRules, shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
-        self.inputItem = inputItem ?? type(of: self).defaultTextInputItem()
+    }
+    
+    public init(identifier: String, copyFrom object: AbstractSimpleQuestionStepObject) {
+        self.inputItem = object.inputItem
+        super.init(identifier: identifier, copyFrom: object)
     }
     
     public required init(from decoder: Decoder) throws {
-        try super.init(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if container.contains(.inputItem) {
             let nestedDecoder = try container.superDecoder(forKey: .inputItem)
             self.inputItem = try decoder.serializationFactory.decodePolymorphicObject(TextInputItem.self, from: nestedDecoder)
         }
         else {
-            self.inputItem = type(of: self).defaultTextInputItem()
+            self.inputItem = Self.defaultTextInputItem()
         }
+        try super.init(from: decoder)
     }
 
     public override func encode(to encoder: Encoder) throws {
@@ -143,10 +148,6 @@ public final class SimpleQuestionStepObject : AbstractSimpleQuestionStepObject, 
     }
     
     public func copy(with identifier: String) -> SimpleQuestionStepObject {
-        .init(identifier: identifier,
-              inputItem: inputItem,
-              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              optional: optional, uiHint: uiHint, surveyRules: surveyRules,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+        .init(identifier: identifier, copyFrom: self)
     }
 }

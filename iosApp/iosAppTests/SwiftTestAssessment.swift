@@ -33,7 +33,7 @@
 
 import Foundation
 import AssessmentModel
-
+import JsonModel
 
 let swiftFetchableImage = FetchableImage(imageName: "instructionFoo",
                                     label: "labelFoo",
@@ -69,14 +69,21 @@ let swiftCompletionStep = CompletionStepObject(identifier: "completion",
                                           nextNode: .reserved(.exit))
 
 let swiftOverviewStep = OverviewStepObject(identifier: "overview",
-                                      title: "title",
-                                      subtitle: "subtitle",
-                                      detail: "detail",
-                                      imageInfo: swiftFetchableImage,
-                                      shouldHideButtons: [.navigation(.pause)],
-                                      buttonMap: [.navigation(.goForward) : swiftGoButton],
-                                      comment: "comment",
-                                      nextNode: .reserved(.nextSection))
+                                           title: "title",
+                                           subtitle: "subtitle",
+                                           detail: "detail",
+                                           imageInfo: swiftFetchableImage,
+                                           permissions: [.init(permission: .weather, optional: false, restrictedMessage: "restricted", deniedMessage: "denied")],
+                                           shouldHideButtons: [.navigation(.pause)],
+                                           buttonMap: [.navigation(.goForward) : swiftGoButton],
+                                           comment: "comment",
+                                           nextNode: .reserved(.nextSection))
+
+let swiftPermissionStep = PermissionStepObject(identifier: "permission",
+                                               permissionType: .init(.weather),
+                                               optional: false,
+                                               restrictedMessage: "Resticted",
+                                               deniedMessage: "You are denied.")
 
 let regex = try! NSRegularExpression(pattern: "/[a-z]+/g", options: [])
 let swiftStringTextInputItem = StringTextInputItemObject(fieldLabel: "Question 1",
@@ -158,6 +165,49 @@ let swiftQuestionSection = SectionObject(identifier: "questionSection",
                                          ])
 
 let swiftAssessment = AssessmentObject(identifier: "foo",
-                                       children: [swiftOverviewStep, swiftInstructionStep, swiftQuestionSection, swiftCompletionStep],
+                                       children: [swiftOverviewStep, swiftInstructionStep, swiftPermissionStep, swiftQuestionSection, swiftCompletionStep],
                                        version: "0.0.1",
                                        estimatedMinutes: 2)
+
+let swiftAssessmentResult: AssessmentResultObject = {
+    let assessmentResult = swiftAssessment.instantiateAssessmentResult() as! AssessmentResultObject
+    swiftAssessment.children.forEach { node in
+        var result = node.instantiateResult()
+        result.endDate = result.startDate.addingTimeInterval(30)
+        assessmentResult.stepHistory.append(result)
+        if let section = node as? SectionObject,
+           let branchResult = result as? BranchNodeResultObject {
+            section.children.forEach { child in
+                let qResult = child.instantiateResult()
+                branchResult.stepHistory.append(qResult)
+                if let question = child as? QuestionStep,
+                   let answerResult = qResult as? AnswerResultObject {
+                    answerResult.endDateTime = answerResult.startDate.addingTimeInterval(30)
+                    let jsonValue: JsonElement? = {
+                        switch question.answerType.baseType {
+                        case .integer:
+                            return .integer(2)
+                        case .boolean:
+                            return .boolean(true)
+                        case .number:
+                            return .number(2.3)
+                        case .string:
+                            return .string("baroo")
+                        default:
+                            return nil
+                        }
+                    }()
+                    if question.answerType is AnswerTypeArray {
+                        answerResult.jsonValue = jsonValue.map { .array([$0.jsonObject()]) }
+                    }
+                    else {
+                        answerResult.jsonValue = jsonValue
+                    }
+                }
+                branchResult.endDateTime = qResult.endDate
+            }
+        }
+    }
+    return assessmentResult
+}()
+

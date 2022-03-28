@@ -128,6 +128,14 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         }
     }
     
+    public init(identifier: String, copyFrom object: AbstractChoiceQuestionStepObject) {
+        self.choices = object.choices
+        self.baseType = object.baseType
+        self.singleAnswer = object.singleAnswer
+        self.other = object.other
+        super.init(identifier: identifier, copyFrom: object)
+    }
+    
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let choices = try container.decode([JsonChoice].self, forKey: .choices)
@@ -222,11 +230,7 @@ public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, 
     }
     
     public func copy(with identifier: String) -> ChoiceQuestionStepObject {
-        .init(identifier: identifier,
-              choices: choices, baseType: baseType, singleChoice: singleAnswer, other: other,
-              title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
-              optional: optional, uiHint: uiHint, surveyRules: surveyRules,
-              shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)
+        .init(identifier: identifier, copyFrom: self)
     }
 }
 
@@ -281,6 +285,12 @@ public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
     }
 }
 
+extension JsonChoice : ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(text: value)
+    }
+}
+
 extension JsonChoice : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
         CodingKeys.allCases.filter { $0 != ._exclusive }
@@ -330,10 +340,14 @@ extension JsonChoice : DocumentableStruct {
     }
 }
 
-fileprivate extension Array where Element == JsonChoice {
+extension Array where Element == JsonChoice {
     func baseType() -> JsonType {
         first(where: {
             $0.matchingValue != nil && $0.matchingValue != JsonElement.null
         })?.matchingValue?.jsonType ?? .null
+    }
+    
+    static func booleanChoices() -> [JsonChoice] {
+        [.init(value: .boolean(true), text: "Yes"), .init(value: .boolean(false), text: "No")]
     }
 }

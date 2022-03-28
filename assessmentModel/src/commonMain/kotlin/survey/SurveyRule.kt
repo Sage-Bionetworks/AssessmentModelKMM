@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.*
 import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 /**
  * [SurveyRule] defines an evaluation rule and returns a step identifier if appropriate.
@@ -40,10 +43,9 @@ interface ComparableSurveyRule : SurveyRule {
     val matchingAnswer: JsonElement
 
     /**
-     * Optional skip identifier for this rule. If available, this will be used as the skip identifier, otherwise
-     * the [skipToIdentifier] will be assumed to be an "exit" identifier.
+     * Skip identifier for this rule.
      */
-    val skipToIdentifier: String?
+    val skipToIdentifier: String
 
     /**
      * The rule operator to apply. If `null`, `.equal` will be assumed unless the [matchingAnswer] is [JsonNull], in
@@ -51,19 +53,13 @@ interface ComparableSurveyRule : SurveyRule {
      */
     val ruleOperator: SurveyRuleOperator?
 
-    /**
-     * The accuracy to use if this is a double.
-     */
-    val accuracy: Double
-        get() = 0.00001
-
     override fun evaluateRuleWith(result: Result?) : String? = (result as? AnswerResult)?.let {  answerResult ->
-        val operator = ruleOperator ?: if (matchingAnswer == JsonNull) SurveyRuleOperator.Skip else SurveyRuleOperator.Equal
-        val skipTo = skipToIdentifier ?: ReservedNavigationIdentifier.Exit.name
-        val jsonValue = answerResult.jsonValue
-        if (jsonValue == null || jsonValue == JsonNull) {
-            if (operator == SurveyRuleOperator.Skip) skipTo else null
-        } else if (jsonValue.compareTo(matchingAnswer, operator, accuracy)) {
+        val operator = ruleOperator ?: SurveyRuleOperator.Equal
+        val skipTo = skipToIdentifier
+        val digits: Int? = (answerResult.answerType as? AnswerType.Decimal)?.significantDigits
+        val significantDigits = digits ?: if (answerResult.answerType == AnswerType.INTEGER) 0 else 5
+        val jsonValue = answerResult.jsonValue ?: JsonNull
+        if (jsonValue.compareTo(matchingAnswer, operator, significantDigits)) {
             skipTo
         } else {
             null
@@ -104,44 +100,36 @@ enum class SurveyRuleOperator : StringEnum {
     /// The answer value is greater than or equal to the matching answer.
     @SerialName("ge")
     GreaterThanEqual,
-
-    /**
-     * The rule should always evaluate to true.
-     */
-    @SerialName("always")
-    Always,
-
-    /**
-     * Survey rule for checking if the answer was skipped.
-     */
-    @SerialName("de")
-    Skip,
     ;
 }
 
-fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, accuracy: Double = 0.00001) : Boolean {
+fun JsonElement.compareTo(value: JsonElement?, operator: SurveyRuleOperator, significantDigits: Int = 5) : Boolean {
     val jsonValue = value ?: JsonNull
     return (jsonValue as? JsonPrimitive)?.let { jsonLiteral ->
-        (this as? JsonPrimitive)?.compareTo(jsonLiteral, operator, accuracy)
+        (this as? JsonPrimitive)?.compareTo(jsonLiteral, operator, significantDigits)
     } ?: when (operator) {
-        SurveyRuleOperator.Always -> true
-        SurveyRuleOperator.Skip -> this == JsonNull && jsonValue == JsonNull
         SurveyRuleOperator.Equal -> this == jsonValue
         SurveyRuleOperator.NotEqual -> this != jsonValue
         else -> false
     }
 }
 
-internal fun JsonPrimitive.compareTo(value: JsonPrimitive, operator: SurveyRuleOperator, accuracy: Double) : Boolean {
+internal fun JsonPrimitive.compareTo(value: JsonPrimitive, operator: SurveyRuleOperator, significantDigits: Int) : Boolean {
     var isEqual = this.content == value.content
+    if ((this is JsonNull) || (value is JsonNull)) {
+        return when (operator) {
+            SurveyRuleOperator.NotEqual -> !isEqual
+            SurveyRuleOperator.Equal -> isEqual
+            else -> false
+        }
+    }
     this.doubleOrNull?.let {
         value.doubleOrNull?.let { v ->
-            isEqual = abs(it - v) <= accuracy
+            val roundToValue = 10.0.pow(significantDigits)
+            isEqual = round(it * roundToValue) == round(v * roundToValue)
         }
     }
     return when (operator) {
-        SurveyRuleOperator.Always -> true
-        SurveyRuleOperator.Skip -> this == JsonNull && value == JsonNull
         SurveyRuleOperator.NotEqual -> !isEqual
         SurveyRuleOperator.Equal -> isEqual
         SurveyRuleOperator.GreaterThan -> !isEqual && this.content > value.content

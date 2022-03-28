@@ -77,19 +77,10 @@ interface Navigator {
  *
  * The [branchResult] is the result set at this level of navigation. This allows for explicit mutation or copying of a
  * result into the form that is required by the assessment [Navigator].
- *
- * The [requestedPermissions] are the permissions to request *before* transitioning to the next node. Typically, these
- * are permissions that are required to run an async action.
- *
- * The [asyncActionNavigations] includes a list of async actions to start or stop with this step transition. These
- * actions are just the configuration. It is up to the view controller or fragment to determine how and if they are
- * supported.
  */
-data class NavigationPoint(val node: Node?,
-                           val branchResult: BranchNodeResult,
-                           val direction: Direction = Direction.Forward,
-                           var requestedPermissions: Set<PermissionInfo>? = null,
-                           var asyncActionNavigations: Set<AsyncActionNavigation>? = null) {
+class NavigationPoint(val node: Node?,
+                      val branchResult: BranchNodeResult,
+                      val direction: Direction = Direction.Forward) {
     @Serializable
     enum class Direction {
         /**
@@ -108,50 +99,51 @@ data class NavigationPoint(val node: Node?,
     }
 }
 
-/**
- * A container for the async actions to start/stop and any permissions to request.
- *
- * The [sectionIdentifier] is an optional identifier to allow for repeating a section with async actions on that
- * section. This is an identifier that can be used organizationally to differentiate between recorders within an
- * assessment. How it is used is up to the assessment developer.
- *
- * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
- *
- * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
- */
-data class AsyncActionNavigation(val sectionIdentifier: String? = null,
-                                 val startAsyncActions: Set<AsyncActionConfiguration>? = null,
-                                 val stopAsyncActions: Set<AsyncActionConfiguration>? = null) {
-    fun isEmpty(): Boolean
-            = ((startAsyncActions == null) && (stopAsyncActions == null))
-}
-
-/**
- * Merge the two sets together. The start actions are the previous start actions plus the new start actions minus the
- * new stop actions (don't start it if the later navigation stops it). The stop actions are the previous stop actions
- * plus the new stop actions minus the new start actions (don't stop it if the later navigation starts it).
- */
-fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<AsyncActionNavigation> {
-    val ret = this.toMutableSet()
-    values.filter { !it.isEmpty() }.forEach { value ->
-        val existing = ret.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
-        if (existing == null) {
-            ret.add(value)
-        } else {
-            val existingStart = existing.startAsyncActions ?: setOf()
-            val existingStop = existing.stopAsyncActions ?: setOf()
-            val valueStart = value.startAsyncActions ?: setOf()
-            val valueStop = value.stopAsyncActions ?: setOf()
-            val start = existingStart.plus(valueStart).minus(valueStop)
-            val stop = existingStop.plus(valueStop).minus(valueStart)
-            ret.remove(existing)
-            ret.add(AsyncActionNavigation(value.sectionIdentifier,
-                    if (start.count() > 0) start else null,
-                    if (stop.count() > 0) stop else null))
-        }
-    }
-    return ret
-}
+// TODO: syoung 03/22/2022 Delete or move to MobilePassiveData-SDK
+///**
+// * A container for the async actions to start/stop and any permissions to request.
+// *
+// * The [sectionIdentifier] is an optional identifier to allow for repeating a section with async actions on that
+// * section. This is an identifier that can be used organizationally to differentiate between recorders within an
+// * assessment. How it is used is up to the assessment developer.
+// *
+// * The [startAsyncActions] lists the async actions to start *after* transitioning to the next node.
+// *
+// * The [stopAsyncActions] lists the async actions to stop *before* transitioning to the next node.
+// */
+//data class AsyncActionNavigation(val sectionIdentifier: String? = null,
+//                                 val startAsyncActions: Set<AsyncActionConfiguration>? = null,
+//                                 val stopAsyncActions: Set<AsyncActionConfiguration>? = null) {
+//    fun isEmpty(): Boolean
+//            = ((startAsyncActions == null) && (stopAsyncActions == null))
+//}
+//
+///**
+// * Merge the two sets together. The start actions are the previous start actions plus the new start actions minus the
+// * new stop actions (don't start it if the later navigation stops it). The stop actions are the previous stop actions
+// * plus the new stop actions minus the new start actions (don't stop it if the later navigation starts it).
+// */
+//fun Set<AsyncActionNavigation>.union(values: Set<AsyncActionNavigation>): Set<AsyncActionNavigation> {
+//    val ret = this.toMutableSet()
+//    values.filter { !it.isEmpty() }.forEach { value ->
+//        val existing = ret.firstOrNull { it.sectionIdentifier == value.sectionIdentifier }
+//        if (existing == null) {
+//            ret.add(value)
+//        } else {
+//            val existingStart = existing.startAsyncActions ?: setOf()
+//            val existingStop = existing.stopAsyncActions ?: setOf()
+//            val valueStart = value.startAsyncActions ?: setOf()
+//            val valueStop = value.stopAsyncActions ?: setOf()
+//            val start = existingStart.plus(valueStart).minus(valueStop)
+//            val stop = existingStop.plus(valueStop).minus(valueStart)
+//            ret.remove(existing)
+//            ret.add(AsyncActionNavigation(value.sectionIdentifier,
+//                    if (start.count() > 0) start else null,
+//                    if (stop.count() > 0) stop else null))
+//        }
+//    }
+//    return ret
+//}
 
 /**
  * A marker used to indicate progress through the assessment. This includes the [current] step (zero indexed), the

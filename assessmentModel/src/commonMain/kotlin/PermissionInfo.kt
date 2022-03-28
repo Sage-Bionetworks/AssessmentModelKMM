@@ -37,17 +37,6 @@ interface PermissionInfo {
     val optional: Boolean
 
     /**
-     * Whether or not the permission requires accessing the sensors or services in the background.
-     */
-    val requiresBackground: Boolean
-
-    /**
-     * A localized string to display (when appropriate) that includes a reason why this assessment may want permission
-     * to access the sensor or run in the background.
-     */
-    val reason: String?
-
-    /**
      * The localized message to show when displaying an alert the participant that the application cannot run an
      * assessment because access to a required sensor is restricted.
      */
@@ -73,24 +62,21 @@ sealed class PermissionType() : StringEnum {
      * A list of standard sensors.
      */
     sealed class Standard(override val name: String) : PermissionType() {
-        object Camera : Standard("camera")
-        object Location : Standard("location")
         object Microphone : Standard("microphone")
         object Motion : Standard("motion")
-        object PhotoLibrary : Standard("photoLibrary")
-        object LocationWhenInUse : Standard("locationWhenInUse")
         object Notifications : Standard("notifications")
+        object Weather : Standard("weather")
 
         companion object : StringEnumCompanion<Standard> {
             override fun values(): Array<Standard>
-                    = arrayOf(Camera, Location, Microphone, Motion, PhotoLibrary)
+                    = arrayOf(Microphone, Motion, Notifications, Weather)
         }
     }
 
     data class Custom(override val name: String) : PermissionType()
 
-    fun createPermissionInfo(optional: Boolean = false, requiresBackground: Boolean = false, reason: String? = null)
-            = PermissionInfoObject(this, optional, requiresBackground, reason)
+    fun createPermissionInfo(optional: Boolean = false)
+            = PermissionInfoObject(this)
 
     // TODO: syoung 01/23/2020 Keep an eye out for improvements to serialization of "inline" values. Currently Kotlin
     //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the

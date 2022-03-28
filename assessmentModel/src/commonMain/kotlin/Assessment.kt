@@ -52,6 +52,18 @@ interface AssessmentInfo {
      * long an assessment is expected to take to complete.
      */
     val estimatedMinutes: Int
+
+    /**
+     * A copyright for the published assessment.
+     */
+    val copyright: String?
+        get() = null
+
+    /**
+     * A URI for the json schema that defines this object's serialization.
+     */
+    val schema: String?
+        get() = null
 }
 
 /**
@@ -342,7 +354,7 @@ interface AsyncActionContainer : Node {
      * (such as a sensor recorder or web service) that should should be started when this [Node] in the [Assessment] is
      * presented to the user.
      */
-    val backgroundActions: List<AsyncActionConfiguration>
+    val asyncActions: List<AsyncActionConfiguration>
 }
 
 /**
