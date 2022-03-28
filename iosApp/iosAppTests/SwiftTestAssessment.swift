@@ -167,7 +167,12 @@ let swiftQuestionSection = SectionObject(identifier: "questionSection",
 let swiftAssessment = AssessmentObject(identifier: "foo",
                                        children: [swiftOverviewStep, swiftInstructionStep, swiftPermissionStep, swiftQuestionSection, swiftCompletionStep],
                                        version: "0.0.1",
-                                       estimatedMinutes: 2)
+                                       estimatedMinutes: 2,
+                                       interruptionHandling: .init(reviewIdentifier: .node(swiftInstructionStep.identifier),
+                                                                   canResume: false,
+                                                                   canContinueLater: false,
+                                                                   canSkip: false)
+)
 
 let swiftAssessmentResult: AssessmentResultObject = {
     let assessmentResult = swiftAssessment.instantiateAssessmentResult() as! AssessmentResultObject

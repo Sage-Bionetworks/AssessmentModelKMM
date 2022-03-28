@@ -580,7 +580,9 @@ open class InputItemsTest {
                         "stepInterval" : 10,
                         "minInvalidMessage" : "Min is zero",
                         "maxInvalidMessage" : "Max is one thousand",
-                        "invalidMessage" : "You must enter an integer between 0 and 1000"
+                        "invalidMessage" : "You must enter an integer between 0 and 1000",
+                        "minimumLabel" : "None",
+                        "maximumLabel" : "A thousand"
             }
            }
            """
@@ -597,6 +599,8 @@ open class InputItemsTest {
         original.formatOptions.minInvalidMessage = InvalidMessageObject("Min is zero")
         original.formatOptions.maxInvalidMessage = InvalidMessageObject("Min is one thousand")
         original.formatOptions.invalidMessage = InvalidMessageObject("You must enter an integer between 0 and 1000")
+        original.formatOptions.maximumLabel = "A thousand"
+        original.formatOptions.minimumLabel = "None"
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
