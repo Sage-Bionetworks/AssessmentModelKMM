@@ -111,6 +111,12 @@ class CodableQuestionTests: XCTestCase {
                 "imageNames": ["foo1", "foo2", "foo3", "foo4"],
                 "animationDuration": 2
             },
+            "interruptionHandling": {
+                "reviewIdentifier" : "foo",
+                "canSaveForLater" : false,
+                "canResume" : false,
+                "canSkip" : false
+            },
              "steps": [
                 {
                      "identifier": "foo",
