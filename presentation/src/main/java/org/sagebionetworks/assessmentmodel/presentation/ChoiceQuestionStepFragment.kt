@@ -40,16 +40,16 @@ class ChoiceQuestionStepFragment: StepFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
-        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
-        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
-        binding.navBar.setup(questionStep as Step)
+//        binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
+//        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
+//        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
+//        binding.navBar.setup(questionStep as Step)
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             //AssesmentModelKotlinNativeas36Theme {
                 // A surface container using the 'background' color from the theme
                 //Surface(color = MaterialTheme.colors.background) {
-                    QuestionContent(questionState = questionState)
+                    QuestionContent(questionState = questionState, assessmentViewModel = assessmentViewModel)
                 //}
             //}
         }

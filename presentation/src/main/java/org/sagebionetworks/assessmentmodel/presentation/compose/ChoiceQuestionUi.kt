@@ -1,52 +1,109 @@
 package org.sagebionetworks.assessmentmodel.presentation.compose
 
-import android.widget.EditText
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
+import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
 internal fun QuestionContent(
     questionState: QuestionState,
+    assessmentViewModel: AssessmentViewModel,
     modifier: Modifier = Modifier
 ) {
     val question = questionState.node as ChoiceQuestion
 
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp)
+    Column(
+        modifier = modifier.fillMaxHeight()
+            .background(Color(0xFFF6F6F6))
+            .padding(start = 20.dp, end = 32.dp)
+            .verticalScroll(rememberScrollState())
+            ,
     ) {
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-            if (question.title != null) {
-                QuestionTitle(question.title!!)
-                Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+        question.subtitle?.let { subtitle ->
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+                )
             }
-            if (question.subtitle != null) {
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = question.subtitle!!,
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(bottom = 18.dp, start = 8.dp, end = 8.dp)
-                    )
-                }
-            }
-            MultipleChoiceQuestion(
-                questionState = questionState,
-                modifier = Modifier.fillParentMaxWidth())
+        }
+        question.title?.let { title ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+            )
+        }
+        question.detail?.let { detail ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = detail,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(48.dp))
+        MultipleChoiceQuestion(
+            questionState = questionState,
+            modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.weight(1f))
+        BottomNavigation({assessmentViewModel.goBackward()}, {assessmentViewModel.goForward()})
+    }
+}
+
+@Composable
+fun BottomNavigation(
+    onBackClicked: () -> Unit,
+    onNextClicked: () -> Unit
+) {
+    Row(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
+        .fillMaxWidth()) {
+        FloatingActionButton(
+            onClick = onBackClicked,
+            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
+            backgroundColor = Color.White,
+            ) {
+            Icon(
+                imageVector =Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "back",
+            )
 
         }
+        Spacer(modifier = Modifier.weight(1f))
+        FloatingActionButton(
+            onClick = onNextClicked,
+            backgroundColor = Color.Black,
+            contentColor = Color.White
+            ) {
+            Icon(
+                imageVector =Icons.Filled.KeyboardArrowRight,
+                contentDescription = "back",
+            )
+        }
+
     }
 }
 
@@ -86,7 +143,7 @@ private fun MultipleChoiceQuestion(
             when (inputState) {
                 is ChoiceInputItemStateImpl -> {
                     ChoiceQuestionInput(
-                        title = inputState.inputItem.label!!,
+                        title = inputState.inputItem.label,
                         choiceSelected = inputState.selectedState.value,
                         singleChoice = question.singleAnswer,
                         onChoiceSelected = { selected ->
@@ -105,16 +162,6 @@ private fun MultipleChoiceQuestion(
                     )
                 }
             }
-//            val choiceItemState = inputState as ChoiceInputItemStateImpl
-//            ChoiceQuestionInput(
-//                title = choiceItemState.inputItem.fieldLabel!!,
-//                choiceSelected = choiceItemState.selectedState.value,
-//                singleChoice = question.singleAnswer,
-//                onChoiceSelected = { selected ->
-//                    questionState.didChangeSelectionState(selected, choiceItemState)
-//                }
-//            )
-
         }
     }
 }
@@ -184,6 +231,9 @@ private fun OtherInput(
                     ),
                 )
             }
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "Other:")
             TextField(
                 value = text,
                 onValueChange = {
@@ -209,22 +259,17 @@ private fun ChoiceQuestionInput(
     modifier: Modifier = Modifier
 ) {
     //TODO: Handle otherInputItem -nbrown 03/26/20
-    val answerBorderColor = if (choiceSelected) {
-        MaterialTheme.colors.primary.copy(alpha = 0.5f)
-    } else {
-        MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
-    }
     val answerBackgroundColor = if (choiceSelected) {
         MaterialTheme.colors.primary.copy(alpha = 0.12f)
     } else {
         MaterialTheme.colors.background
     }
     Surface(
-        shape = MaterialTheme.shapes.small,
-        border = BorderStroke(
-            width = 1.dp,
-            color = answerBorderColor
-        ),
+        shape = if (singleChoice) {
+            MaterialTheme.shapes.small.copy(CornerSize(100))
+        } else {
+            MaterialTheme.shapes.small},
+        elevation = Dp(5f),
         modifier = Modifier
             .padding(vertical = 8.dp)
     ) {
@@ -267,7 +312,13 @@ private fun ChoiceQuestionInput(
                 text = title)
         }
     }
+}
 
-
+@Preview
+@Composable
+private fun ChoiceQuestionInputPreview() {
+    //BottomNavigation()
+    //OtherInput(choiceSelected = true, singleChoice = true, onChoiceSelected = { } )
+    //ChoiceQuestionInput(title = "Cat", choiceSelected = false, singleChoice = false, onChoiceSelected = { } )
 }
 

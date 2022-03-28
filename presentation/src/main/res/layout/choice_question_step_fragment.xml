@@ -10,7 +10,7 @@
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/question_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"/>
 
 <!--    <include layout="@layout/include_question_header"-->
@@ -29,23 +29,23 @@
 <!--            android:layout_height="wrap_content" />-->
 <!--    </ScrollView>-->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar
-            android:id="@+id/nav_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0">
-        </org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        <org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar-->
+<!--            android:id="@+id/nav_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="1dp"-->
+<!--            android:layout_marginEnd="1dp"-->
+<!--            android:layout_marginBottom="1dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintVertical_bias="0.0">-->
+<!--        </org.sagebionetworks.assessmentmodel.presentation.views.StepNavigationBar>-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 </RelativeLayout>
