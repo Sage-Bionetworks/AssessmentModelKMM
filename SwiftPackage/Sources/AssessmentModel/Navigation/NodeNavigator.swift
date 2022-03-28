@@ -140,7 +140,9 @@ public final class NodeNavigator : Navigator {
     
     func previousNode(currentNode: Node?, branchResult: BranchNodeResult) -> Node? {
         // If the current node is nil then return the last node in the step history (if any).
-        guard let currentNode = currentNode else {
+        guard let currentNode = currentNode,
+              let currentIdx = nodes.firstIndex(where: { $0.identifier == currentNode.identifier })
+        else {
             return branchResult.stepHistory.last.flatMap { self.node(identifier: $0.identifier) }
         }
         // If this branch state handler does not support path markers then return the index before the current node.
@@ -151,15 +153,36 @@ public final class NodeNavigator : Navigator {
         }
         // If the path index (going forward) for the current node is not found or it's the first node
         // then return nil.
-        guard let pathIndex = branchResult.path.lastIndex(where: {
-            $0.identifier == currentNode.identifier && $0.direction == .forward
-        }), pathIndex > 0
+        guard let previousIdx = findIndexBefore(currentNode, in: branchResult.path, findLast: true)
         else {
             return nil
         }
-        // Return the node with the marker index.
-        let markerBefore = branchResult.path[pathIndex - 1]
-        return self.node(identifier: markerBefore.identifier)
+
+        // If the path is looping, then need to check that the previously shown node
+        // is *after* the current node sequentially.
+        if previousIdx < currentIdx {
+            // Exit early if the previous shown is *before* this node.
+            return self.nodes[previousIdx]
+        }
+        
+        // Otherwise, look to see that the first time the node was shown has a "before" node
+        // and move to that node.
+        return findIndexBefore(currentNode, in: branchResult.path, findLast: false).map {
+            self.nodes[$0]
+        }
+    }
+    
+    private func findIndexBefore(_ currentNode: Node, in path: [PathMarker], findLast: Bool) -> Int? {
+        func matching(_ marker: PathMarker) -> Bool {
+            marker.identifier == currentNode.identifier && marker.direction == .forward
+        }
+        guard let index = findLast ? path.lastIndex(where: {matching($0)}) : path.firstIndex(where: {matching($0)}),
+                index > 0
+        else {
+            return nil
+        }
+        let markerBeforeLast = path[index - 1]
+        return self.nodes.firstIndex(where: { markerBeforeLast.identifier == $0.identifier })
     }
 }
 
