@@ -285,6 +285,12 @@ public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
     }
 }
 
+extension JsonChoice : ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(text: value)
+    }
+}
+
 extension JsonChoice : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
         CodingKeys.allCases.filter { $0 != ._exclusive }
@@ -334,10 +340,14 @@ extension JsonChoice : DocumentableStruct {
     }
 }
 
-fileprivate extension Array where Element == JsonChoice {
+extension Array where Element == JsonChoice {
     func baseType() -> JsonType {
         first(where: {
             $0.matchingValue != nil && $0.matchingValue != JsonElement.null
         })?.matchingValue?.jsonType ?? .null
+    }
+    
+    static func booleanChoices() -> [JsonChoice] {
+        [.init(value: .boolean(true), text: "Yes"), .init(value: .boolean(false), text: "No")]
     }
 }

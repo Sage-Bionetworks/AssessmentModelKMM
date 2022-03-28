@@ -59,7 +59,7 @@ public protocol TextInputItem : InputItem {
 public final class TextInputItemSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
     public var documentDescription: String? {
         """
-        An `TextInputItem` describes input entry that is freeform with ranges and validation.
+        A `TextInputItem` describes input entry that is freeform with ranges and validation.
         Typically, this is presented as a text field, but depending upon the requirements of the
         survey designer, it may use a slider, Likert scale, date picker, or other custom UI/UX to
         allow for validation of the entered value.

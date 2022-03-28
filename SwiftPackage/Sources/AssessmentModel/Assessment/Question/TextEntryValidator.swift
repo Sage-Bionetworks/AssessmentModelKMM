@@ -359,9 +359,10 @@ public struct IntegerFormatOptions : Codable, NumberValidator {
 
     private enum CodingKeys : String, CodingKey, CaseIterable {
         case _numberStyle = "numberStyle",
-        _usesGroupingSeparator = "usesGroupingSeparator",
-        minimumValue, maximumValue, stepInterval,
-        minInvalidMessage, maxInvalidMessage, invalidMessage
+             _usesGroupingSeparator = "usesGroupingSeparator",
+             minimumValue, maximumValue, stepInterval,
+             minInvalidMessage, maxInvalidMessage, invalidMessage,
+             minimumLabel, maximumLabel
     }
 
     public var numberStyle: NumberFormatStyle! {
@@ -381,6 +382,9 @@ public struct IntegerFormatOptions : Codable, NumberValidator {
     public var minimumValue: Int?
     public var maximumValue: Int?
     public var stepInterval: Int?
+    
+    public var minimumLabel: String?
+    public var maximumLabel: String?
 
     public var minInvalidMessage: String?
     public var maxInvalidMessage: String?
@@ -390,7 +394,11 @@ public struct IntegerFormatOptions : Codable, NumberValidator {
         number.intValue
     }
 
-    public init() {
+    public init(minimumValue: Int? = nil, maximumValue: Int? = nil, minimumLabel: String? = nil, maximumLabel: String? = nil) {
+        self.minimumValue = minimumValue
+        self.maximumValue = maximumValue
+        self.minimumLabel = minimumLabel
+        self.maximumLabel = maximumLabel
     }
 }
 
@@ -413,6 +421,8 @@ extension IntegerFormatOptions : DocumentableStruct {
         case .minimumValue, .maximumValue, .stepInterval:
             return .init(propertyType: .primitive(.integer))
         case .minInvalidMessage, .maxInvalidMessage, .invalidMessage:
+            return .init(propertyType: .primitive(.string))
+        case .minimumLabel, .maximumLabel:
             return .init(propertyType: .primitive(.string))
         }
     }
@@ -439,6 +449,25 @@ public struct YearFormatOptions : Codable, NumberValidator {
         case allowFuture, allowPast, minimumYear, maximumYear,
             minInvalidMessage, maxInvalidMessage, invalidMessage
     }
+    
+    public static let pastOnly: YearFormatOptions = {
+        var options = YearFormatOptions()
+        options.allowFuture = false
+        return options
+    }()
+    
+    public static let futureOnly: YearFormatOptions = {
+        var options = YearFormatOptions()
+        options.allowPast = false
+        return options
+    }()
+    
+    public static let birthYear: YearFormatOptions = {
+        var options = YearFormatOptions()
+        options.allowFuture = false
+        options.minimumYear = 1900
+        return options
+    }()
 
     public var allowFuture: Bool?
     public var allowPast: Bool?
@@ -513,10 +542,11 @@ public struct DoubleFormatOptions : Codable, NumberValidator {
 
     private enum CodingKeys : String, CodingKey, CaseIterable {
         case _numberStyle = "numberStyle",
-        _usesGroupingSeparator = "usesGroupingSeparator",
-        _maximumFractionDigits = "maximumFractionDigits",
-        minimumValue, maximumValue, stepInterval,
-        minInvalidMessage, maxInvalidMessage, invalidMessage
+             _usesGroupingSeparator = "usesGroupingSeparator",
+             _maximumFractionDigits = "maximumFractionDigits",
+             minimumValue, maximumValue, stepInterval,
+             minInvalidMessage, maxInvalidMessage, invalidMessage,
+             minimumLabel, maximumLabel
     }
 
     public var numberStyle: NumberFormatStyle! {
@@ -544,12 +574,19 @@ public struct DoubleFormatOptions : Codable, NumberValidator {
     public var minimumValue: Double?
     public var maximumValue: Double?
     public var stepInterval: Double?
+    
+    public var minimumLabel: String?
+    public var maximumLabel: String?
 
     public var minInvalidMessage: String?
     public var maxInvalidMessage: String?
     public var invalidMessage: String?
 
-    public init() {
+    public init(minimumValue: Double? = nil, maximumValue: Double? = nil, minimumLabel: String? = nil, maximumLabel: String? = nil) {
+        self.minimumValue = minimumValue
+        self.maximumValue = maximumValue
+        self.minimumLabel = minimumLabel
+        self.maximumLabel = maximumLabel
     }
 
     public func convertToValue(from number: NSNumber) -> Double {
@@ -578,6 +615,8 @@ extension DoubleFormatOptions : DocumentableStruct {
         case .minimumValue, .maximumValue, .stepInterval:
             return .init(propertyType: .primitive(.number))
         case .minInvalidMessage, .maxInvalidMessage, .invalidMessage:
+            return .init(propertyType: .primitive(.string))
+        case .minimumLabel, .maximumLabel:
             return .init(propertyType: .primitive(.string))
         }
     }

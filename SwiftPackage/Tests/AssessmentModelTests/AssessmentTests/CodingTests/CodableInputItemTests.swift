@@ -1,6 +1,5 @@
 //
 //  CodableInputItemTests.swift
-//  ResearchTests_iOS
 //
 //  Copyright © 2020-2022 Sage Bionetworks. All rights reserved.
 //

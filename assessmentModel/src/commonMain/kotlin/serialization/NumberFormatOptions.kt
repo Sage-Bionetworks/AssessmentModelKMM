@@ -41,6 +41,17 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
     override var maxInvalidMessage: InvalidMessageObject? = null
     override var invalidMessage: InvalidMessageObject = InvalidMessageObject("The number entered is not valid.")
 
+
+    /**
+     * A label for the minimum value.
+     */
+    var minimumLabel: String? = null
+
+    /**
+     * A label for the maximum value.
+     */
+    var maximumLabel: String? = null
+
     /**
      * Hint to use for the formatter.
      */

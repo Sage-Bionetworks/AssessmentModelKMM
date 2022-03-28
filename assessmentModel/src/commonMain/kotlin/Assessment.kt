@@ -52,6 +52,18 @@ interface AssessmentInfo {
      * long an assessment is expected to take to complete.
      */
     val estimatedMinutes: Int
+
+    /**
+     * A copyright for the published assessment.
+     */
+    val copyright: String?
+        get() = null
+
+    /**
+     * A URI for the json schema that defines this object's serialization.
+     */
+    val schema: String?
+        get() = null
 }
 
 /**

@@ -200,7 +200,10 @@ data class AssessmentObject(
     override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
     @SerialName("asyncActions")
-    override val asyncActions: List<AsyncActionConfiguration> = listOf()
+    override val asyncActions: List<AsyncActionConfiguration> = listOf(),
+    override val copyright: String? = null,
+    @SerialName("\$schema")
+    override val schema: String? = null,
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {

@@ -1,5 +1,5 @@
 //
-//  NavigationIdentifier.swift
+//  ExampleAssessmentTests.swift
 //  
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -32,57 +32,31 @@
 //
 
 import Foundation
+@testable import AssessmentModel
 import JsonModel
+import XCTest
 
-public enum NavigationIdentifier {
+class ExampleAssessmentTests: XCTestCase {
     
-    case reserved(ReservedKey)
-    
-    public enum ReservedKey : String, StringEnumSet, DocumentableStringEnum {
-        case exit, nextSection
+    let decoder = AssessmentFactory().createJSONDecoder()
+    let encoder = AssessmentFactory().createJSONEncoder()
+
+    override func setUp() {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
+
+    override func tearDown() {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    case node(String)
-}
-
-extension NavigationIdentifier: RawRepresentable, Codable, Hashable {
-    
-    public init(rawValue: String) {
-        if let subtype = ReservedKey(rawValue: rawValue) {
-            self = .reserved(subtype)
+    func testSurveyAEncoding() {
+        do {
+            encoder.outputFormatting.formUnion([.withoutEscapingSlashes])
+            let json = try encoder.encode(surveyA)
+            let jsonString = String(data: json, encoding: .utf8)!
+            print(jsonString)
+        } catch {
+            XCTFail("Failed to encode/decode object. \(error)")
         }
-        else {
-            self = .node(rawValue)
-        }
-    }
-    
-    public var rawValue: String {
-        switch (self) {
-        case .reserved(let value):
-            return value.rawValue
-            
-        case .node(let value):
-            return value
-        }
-    }
-    
-    public static func == (lhs: NavigationIdentifier, rhs: String) -> Bool {
-        lhs.rawValue == rhs
-    }
-    
-    public static func == (lhs: String, rhs: NavigationIdentifier) -> Bool {
-        lhs == rhs.rawValue
-    }
-}
-
-extension NavigationIdentifier : ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
-    }
-}
-
-extension NavigationIdentifier : DocumentableStringLiteral {
-    public static func examples() -> [String] {
-        ReservedKey.allValues()
     }
 }
