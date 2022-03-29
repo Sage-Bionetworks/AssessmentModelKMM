@@ -9,6 +9,7 @@ import androidx.compose.material.Surface
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.presentation.compose.QuestionContent
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ChoiceQuestionStepFragmentBinding
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 
@@ -46,12 +47,12 @@ class ChoiceQuestionStepFragment: StepFragment() {
 //        binding.navBar.setup(questionStep as Step)
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
-            //AssesmentModelKotlinNativeas36Theme {
+            SageSurveyTheme {
                 // A surface container using the 'background' color from the theme
                 //Surface(color = MaterialTheme.colors.background) {
                     QuestionContent(questionState = questionState, assessmentViewModel = assessmentViewModel)
                 //}
-            //}
+            }
         }
     }
 }

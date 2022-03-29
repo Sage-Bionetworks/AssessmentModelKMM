@@ -75,39 +75,6 @@ internal fun QuestionContent(
 }
 
 @Composable
-fun BottomNavigation(
-    onBackClicked: () -> Unit,
-    onNextClicked: () -> Unit
-) {
-    Row(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
-        .fillMaxWidth()) {
-        FloatingActionButton(
-            onClick = onBackClicked,
-            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
-            backgroundColor = Color.White,
-            ) {
-            Icon(
-                imageVector =Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "back",
-            )
-
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        FloatingActionButton(
-            onClick = onNextClicked,
-            backgroundColor = Color.Black,
-            contentColor = Color.White
-            ) {
-            Icon(
-                imageVector =Icons.Filled.KeyboardArrowRight,
-                contentDescription = "back",
-            )
-        }
-
-    }
-}
-
-@Composable
 private fun QuestionTitle(title: String) {
     val backgroundColor = if (MaterialTheme.colors.isLight) {
         MaterialTheme.colors.onSurface.copy(alpha = 0.04f)
