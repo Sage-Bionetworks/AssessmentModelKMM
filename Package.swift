@@ -15,7 +15,7 @@ let package = Package(
         .library(
             name: "AssessmentModel",
             targets: ["AssessmentModel",
-//                      "AssessmentModelUI",
+                      "AssessmentModelUI",
             ]),
     ],
     dependencies: [
@@ -43,13 +43,11 @@ let package = Package(
                 .process("Resources")
             ]),
         
-//        .target(name: "AssessmentModelUI",
-//                dependencies: [
-//                    "AssessmentModel",
-//                    .product(name: "MobilePassiveData", package: "MobilePassiveData"),
-//                    "JsonModel",
-//                ],
-//                path: "SwiftPackage/Sources/AssessmentModelUI",
-//                resources: [ .process("Resources")]),
+        .target(name: "AssessmentModelUI",
+                dependencies: [
+                    "AssessmentModel",
+                    "JsonModel",
+                ],
+                path: "SwiftPackage/Sources/AssessmentModelUI"),
     ]
 )
