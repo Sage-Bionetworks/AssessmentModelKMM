@@ -36,10 +36,10 @@ import JsonModel
 
 public protocol InterruptionHandling {
     
-    /// Once interupted, can the associated assessment be resumed?
+    /// Once interrupted, can the associated assessment be resumed?
     var canResume: Bool { get }
     
-    /// Can partial results for this assessment be saved and the assessment resumed at some indeterminant time in the future?
+    /// Can partial results for this assessment be saved and the assessment resumed at some indeterminate time in the future?
     var canSaveForLater: Bool { get }
     
     /// Can this assessment be skipped or is it required for subsequent assessments that rely upon this one?
@@ -100,7 +100,7 @@ extension InterruptionHandlingObject : DocumentableStruct {
                             "Can partial results of this assessment be restored if the assessment is ended and continued later?")
         case ._canResume:
             return .init(defaultValue: .boolean(true), propertyDescription:
-                            "Can this assessment be resumed following an interuption?")
+                            "Can this assessment be resumed following an interruption?")
         }
     }
     

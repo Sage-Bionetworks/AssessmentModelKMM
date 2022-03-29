@@ -6,7 +6,7 @@ interface InterruptionHandling {
     /// Once interrupted, can the associated assessment be resumed?
     val canResume: Boolean
 
-    /// Can partial results for this assessment be saved and the assessment resumed at some indeterminant time in the future?
+    /// Can partial results for this assessment be saved and the assessment resumed at some indeterminate time in the future?
     val canSaveForLater: Boolean
 
     /// Can this assessment be skipped or is it required for subsequent assessments that rely upon this one?

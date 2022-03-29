@@ -257,7 +257,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
                             "The URI for the json schema for this assessment.")
         case .interruptionHandling:
             return .init(propertyType: .reference(InterruptionHandlingObject.documentableType()), propertyDescription:
-                            "The interuption handling for this assessment.")
+                            "The interruption handling for this assessment.")
         }
     }
 }
