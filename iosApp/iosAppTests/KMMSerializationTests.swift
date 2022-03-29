@@ -32,14 +32,29 @@
 //
 
 import XCTest
-import AssessmentModel
+@testable import AssessmentModel
 import JsonModel
 import KotlinModel
 
 class KMMSerializationTests: XCTestCase {
     
-    // TODO: syoung 03/21/2022 Support "copyright" in the Kotlin model.
-    
+    func testSurveyACodable() {
+        let factory = AssessmentFactory()
+        let encoder = factory.createJSONEncoder()
+
+        do {
+            
+            let json = try encoder.encode(surveyA)
+            let jsonString = String(data: json, encoding: .utf8)!
+            let loader = AssessmentJsonStringLoader(jsonString: jsonString, bundle: Bundle.main)
+            let kmmAssessment = try loader.decodeObject() as? KotlinModel.AssessmentObject
+            XCTAssertNotNil(kmmAssessment)
+            
+        } catch {
+            XCTFail("Failed to encode or decode the assessment: \(error)")
+        }
+    }
+        
     func testAssessmentCodable() {
         let factory = AssessmentFactory()
         let encoder = factory.createJSONEncoder()
