@@ -144,6 +144,9 @@ public protocol BranchNode : Node {
 
 public protocol Assessment : BranchNode, ContentNode, AssessmentInfo {
     
+    /// The interruption handling rules for this assessment.
+    var interruptionHandling: InterruptionHandling { get }
+    
     /// The instantiated result should be an assessment result.
     func instantiateAssessmentResult() -> AssessmentResult
 }

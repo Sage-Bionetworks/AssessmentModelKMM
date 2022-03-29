@@ -209,6 +209,7 @@ data class AssessmentObject(
     override val copyright: String? = null,
     @SerialName("\$schema")
     override val schema: String? = null,
+    override val interruptionHandling: InterruptionHandlingObject = InterruptionHandlingObject(),
 ) : NodeContainerObject(), Assessment, AsyncActionContainer {
     override fun createResult(): AssessmentResult = super<Assessment>.createResult()
     override fun unpack(originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider): AssessmentObject {

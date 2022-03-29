@@ -74,6 +74,10 @@ interface AssessmentInfo {
  */
 interface Assessment : BranchNode, ContentNode, AssessmentInfo {
 
+    /// The interruption handling parameters for this assessment.
+    val interruptionHandling: InterruptionHandling
+        get() = InterruptionHandlingObject()
+
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult = AssessmentResultObject(
         identifier = resultId(),

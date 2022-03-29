@@ -158,7 +158,7 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
 
 open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case jsonSchema = "$schema", versionString, estimatedMinutes, copyright
+        case jsonSchema = "$schema", versionString, estimatedMinutes, copyright, interruptionHandling
         var relativeIndex: Int { 3 }
     }
     
@@ -166,19 +166,23 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public let estimatedMinutes: Int
     public let copyright: String?
     
+    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject() }
+    private let _interruptionHandling: InterruptionHandlingObject?
+    
     open var jsonSchema: URL {
         _jsonSchema ?? URL(string: "\(type(of: self)).json", relativeTo: kSageJsonSchemaBaseURL)!
     }
     private let _jsonSchema: URL?
     
     public init(identifier: String, children: [Node],
-                version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil,
+                version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil, interruptionHandling: InterruptionHandlingObject? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
         self.versionString = version
         self.estimatedMinutes = estimatedMinutes
         self.copyright = copyright
         self._jsonSchema = nil
+        self._interruptionHandling = interruptionHandling
         super.init(identifier: identifier, children: children,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment)
@@ -189,6 +193,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         self.estimatedMinutes = object.estimatedMinutes
         self.copyright = object.copyright
         self._jsonSchema = object._jsonSchema
+        self._interruptionHandling = object._interruptionHandling
         super.init(identifier: identifier, copyFrom: object)
     }
     
@@ -198,6 +203,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         self.estimatedMinutes = try container.decodeIfPresent(Int.self, forKey: .estimatedMinutes) ?? 0
         self.copyright = try container.decodeIfPresent(String.self, forKey: .copyright)
         self._jsonSchema = try container.decodeIfPresent(URL.self, forKey: .jsonSchema)
+        self._interruptionHandling = try container.decodeIfPresent(InterruptionHandlingObject.self, forKey: .interruptionHandling)
         try super.init(from: decoder)
     }
     
@@ -206,6 +212,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(self.versionString, forKey: .versionString)
         try container.encodeIfPresent(self.copyright, forKey: .copyright)
+        try container.encodeIfPresent(self._interruptionHandling, forKey: .interruptionHandling)
         try container.encode(self.jsonSchema, forKey: .jsonSchema)
         if estimatedMinutes > 0 {
             try container.encode(estimatedMinutes, forKey: .estimatedMinutes)
@@ -248,6 +255,9 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
         case .jsonSchema:
             return .init(propertyType: .format(.uri), propertyDescription:
                             "The URI for the json schema for this assessment.")
+        case .interruptionHandling:
+            return .init(propertyType: .reference(InterruptionHandlingObject.documentableType()), propertyDescription:
+                            "The interruption handling for this assessment.")
         }
     }
 }

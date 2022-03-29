@@ -53,8 +53,8 @@ class ExampleAssessmentTests: XCTestCase {
         do {
             encoder.outputFormatting.formUnion([.withoutEscapingSlashes])
             let json = try encoder.encode(surveyA)
-            let jsonString = String(data: json, encoding: .utf8)!
-            print(jsonString)
+            let _ = String(data: json, encoding: .utf8)!
+            //print(jsonString) // syoung 03/20/2022 Intentionally commented out but left in for building example JSON
         } catch {
             XCTFail("Failed to encode/decode object. \(error)")
         }
