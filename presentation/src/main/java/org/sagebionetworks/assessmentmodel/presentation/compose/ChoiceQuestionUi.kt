@@ -1,12 +1,12 @@
 package org.sagebionetworks.assessmentmodel.presentation.compose
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,7 +110,7 @@ private fun MultipleChoiceQuestion(
             when (inputState) {
                 is ChoiceInputItemStateImpl -> {
                     ChoiceQuestionInput(
-                        title = inputState.inputItem.label,
+                        inputItemState = inputState,
                         choiceSelected = inputState.selectedState.value,
                         singleChoice = question.singleAnswer,
                         onChoiceSelected = { selected ->
@@ -119,7 +119,7 @@ private fun MultipleChoiceQuestion(
                     )
                 }
                 is KeyboardInputItemStateImpl<*> -> {
-                    OtherInput(
+                    ChoiceQuestionInput(
                         inputItemState = inputState,
                         choiceSelected = inputState.selected,
                         singleChoice = question.singleAnswer,
@@ -134,92 +134,8 @@ private fun MultipleChoiceQuestion(
 }
 
 @Composable
-private fun OtherInput(
-    inputItemState: KeyboardInputItemState<*>,
-    choiceSelected: Boolean,
-    singleChoice: Boolean,
-    onChoiceSelected: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    //TODO: Handle otherInputItem -nbrown 03/26/20
-    val answerBorderColor = if (choiceSelected) {
-        MaterialTheme.colors.primary.copy(alpha = 0.5f)
-    } else {
-        MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
-    }
-    val answerBackgroundColor = if (choiceSelected) {
-        MaterialTheme.colors.primary.copy(alpha = 0.12f)
-    } else {
-        MaterialTheme.colors.background
-    }
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        border = BorderStroke(
-            width = 1.dp,
-            color = answerBorderColor
-        ),
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(answerBackgroundColor)
-                .clickable(
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    }
-                )
-                .padding(vertical = 16.dp, horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            val curAnswer = (inputItemState.currentAnswer as? JsonPrimitive)?.content ?: ""
-            var text by remember { mutableStateOf(curAnswer) }
-
-            if (singleChoice) {
-                RadioButton(
-                    selected = choiceSelected,
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colors.primary
-                    )
-                )
-            } else {
-                Checkbox(
-                    checked = choiceSelected,
-                    onCheckedChange = { selected ->
-                        onChoiceSelected(selected)
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colors.primary
-                    ),
-                )
-            }
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                text = "Other:")
-            TextField(
-                value = text,
-                onValueChange = {
-                    text = it
-                    inputItemState.currentAnswer = JsonPrimitive(it)
-                    if (it.isNotEmpty()) {
-                        onChoiceSelected(true)
-                    }
-                },
-                label = { inputItemState.inputItem.fieldLabel?.let { Text(it) } }
-            )
-        }
-    }
-}
-
-
-@Composable
 private fun ChoiceQuestionInput(
-    title: String,
+    inputItemState: InputItemState,
     choiceSelected: Boolean,
     singleChoice: Boolean,
     onChoiceSelected: (Boolean) -> Unit,
@@ -249,7 +165,7 @@ private fun ChoiceQuestionInput(
                         onChoiceSelected(!choiceSelected)
                     }
                 )
-                .padding(vertical = 16.dp, horizontal = 16.dp),
+                .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -274,9 +190,35 @@ private fun ChoiceQuestionInput(
                     ),
                 )
             }
-            Text(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                text = title)
+            when (inputItemState) {
+                is ChoiceInputItemStateImpl -> {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = inputItemState.inputItem.label
+                    )
+                }
+
+                is KeyboardInputItemStateImpl<*> -> {
+                    val curAnswer = (inputItemState.currentAnswer as? JsonPrimitive)?.content ?: ""
+                    var text by remember { mutableStateOf(curAnswer) }
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = "Other:"
+                    )
+                    TextField(
+                        value = text,
+                        onValueChange = {
+                            text = it
+                            inputItemState.currentAnswer = JsonPrimitive(it)
+                            if (it.isNotEmpty()) {
+                                onChoiceSelected(true)
+                            }
+                        },
+                        label = { inputItemState.inputItem.fieldLabel?.let { Text(it) } }
+                    )
+
+                }
+            }
         }
     }
 }
