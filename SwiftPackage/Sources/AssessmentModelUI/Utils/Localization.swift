@@ -1,8 +1,8 @@
 //
-//  KeyboardOptions+SwiftUI.swift
+//  Localization.swift
 //  
 //
-//  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
+//  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -32,56 +32,10 @@
 //
 
 import SwiftUI
-import AssessmentModel
 
-#if os(iOS)
-
-extension TextAutoCapitalizationType {
-
-    /// Return the `UITextAutocapitalizationType` that maps to this enum.
-    public var uiType: UITextAutocapitalizationType {
-        .init(rawValue: self.indexPosition) ?? .none
-    }
-
-    /// Return the `TextInputAutocapitalization` that maps to this enum.
-    @available(iOS 15.0, *)
-    public var textInputType: TextInputAutocapitalization {
-        switch self {
-        case .words:
-            return .words
-        case .sentences:
-            return .sentences
-        case .allCharacters:
-            return .characters
-        default:
-            return .never
-        }
+class Localization {
+    static func localizedString(_ key: String) -> String {
+        // TODO: syoung 03/30/2022 Support localization
+        key
     }
 }
-
-extension TextAutoCorrectionType {
-
-    /// Return the `UITextAutocorrectionType` that maps to this enum.
-    public var uiType: UITextAutocorrectionType {
-        .init(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension TextSpellCheckingType {
-
-    /// Return the `UITextSpellCheckingType` that maps to this enum.
-    public var uiType: UITextSpellCheckingType {
-        .init(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension KeyboardType {
-
-    /// Return the `UIKeyboardType` that maps to this enum.
-    public var uiType: UIKeyboardType {
-        UIKeyboardType(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-#endif
-

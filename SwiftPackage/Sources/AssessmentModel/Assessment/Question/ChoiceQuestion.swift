@@ -77,6 +77,9 @@ public protocol ChoiceQuestion : Question {
     var other: TextInputItem? { get }
 }
 
+public protocol ChoiceQuestionStep : ChoiceQuestion, QuestionStep {
+}
+
 public extension ChoiceQuestion {
     var answerType: AnswerType {
         singleAnswer ? baseType.answerType : AnswerTypeArray(baseType: baseType)
@@ -96,7 +99,7 @@ public extension ChoiceQuestion {
 }
 
 /// An abstract implementation is provided to allow different "type" identifiers with the same encoding.
-open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, ChoiceQuestion, QuestionStep {
+open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, ChoiceQuestionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case baseType, singleAnswer = "singleChoice", choices, other
         var relativeIndex: Int { 6 }
@@ -167,6 +170,9 @@ open class AbstractChoiceQuestionStepObject : AbstractQuestionStepObject, Choice
         }
         if let otherAnswerType = self.other?.answerType, otherAnswerType.baseType != self.baseType {
             return (.other, "The json type for the 'other' text field does not match the `baseType=\(baseType)` for this question.")
+        }
+        if Set(self.choices).count != self.choices.count {
+            return (.choices, "The choices for this question are not unique.")
         }
         return nil
     }
@@ -347,7 +353,7 @@ extension Array where Element == JsonChoice {
         })?.matchingValue?.jsonType ?? .null
     }
     
-    static func booleanChoices() -> [JsonChoice] {
+    public static func booleanChoices() -> [JsonChoice] {
         [.init(value: .boolean(true), text: "Yes"), .init(value: .boolean(false), text: "No")]
     }
 }

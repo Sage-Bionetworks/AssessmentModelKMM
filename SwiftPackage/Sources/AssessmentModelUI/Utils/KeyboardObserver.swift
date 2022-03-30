@@ -1,8 +1,8 @@
 //
-//  KeyboardOptions+SwiftUI.swift
-//  
+//  KeyboardObserver.swift
 //
-//  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
+//
+//  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -32,56 +32,33 @@
 //
 
 import SwiftUI
-import AssessmentModel
 
-#if os(iOS)
-
-extension TextAutoCapitalizationType {
-
-    /// Return the `UITextAutocapitalizationType` that maps to this enum.
-    public var uiType: UITextAutocapitalizationType {
-        .init(rawValue: self.indexPosition) ?? .none
-    }
-
-    /// Return the `TextInputAutocapitalization` that maps to this enum.
-    @available(iOS 15.0, *)
-    public var textInputType: TextInputAutocapitalization {
-        switch self {
-        case .words:
-            return .words
-        case .sentences:
-            return .sentences
-        case .allCharacters:
-            return .characters
-        default:
-            return .never
+class KeyboardObserver : ObservableObject {
+    @Published var keyboardFocused: Bool = false
+    @Published var keyboardHeight: CGFloat = 236
+    @Published var keyboardFocusedId: String = KeyboardObserver.defaultKeyboardFocusedId
+    
+    static let defaultKeyboardFocusedId = "$keyboardFocusedId"
+    
+    init() {
+        #if canImport(UIKit)
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidShowNotification, object: nil, queue: .main) { (notification) in
+            guard let userInfo = notification.userInfo,
+                  let keyboardRect = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+            else {
+                return
+            }
+            self.keyboardHeight = keyboardRect.height
         }
+        #endif
+    }
+    
+    func hideKeyboard() {
+        guard keyboardFocused else { return }
+        keyboardFocused = false
+        #if canImport(UIKit)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        #endif
     }
 }
-
-extension TextAutoCorrectionType {
-
-    /// Return the `UITextAutocorrectionType` that maps to this enum.
-    public var uiType: UITextAutocorrectionType {
-        .init(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension TextSpellCheckingType {
-
-    /// Return the `UITextSpellCheckingType` that maps to this enum.
-    public var uiType: UITextSpellCheckingType {
-        .init(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension KeyboardType {
-
-    /// Return the `UIKeyboardType` that maps to this enum.
-    public var uiType: UIKeyboardType {
-        UIKeyboardType(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-#endif
 
