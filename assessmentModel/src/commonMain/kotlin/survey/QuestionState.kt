@@ -234,11 +234,9 @@ interface KeyboardInputItemState<T> : AnyInputItemState {
     override val inputItem: KeyboardTextInputItem<T>
 }
 
-class KeyboardInputItemStateImpl<T>(override val index: Int,
-                                    override val inputItem: KeyboardTextInputItem<T>,
-                                    override var storedAnswer: JsonElement?) : KeyboardInputItemState<T> {
-    override val textValidator = inputItem.buildTextValidator()
-    override var selected = (storedAnswer != null) //This seems to contradict with AnyInputItemState
+expect class KeyboardInputItemStateImpl<T>(index: Int,
+                                           inputItem: KeyboardTextInputItem<T>,
+                                           storedAnswer: JsonElement?) : KeyboardInputItemState<T> {
 }
 
 expect class ChoiceInputItemStateImpl(index: Int,

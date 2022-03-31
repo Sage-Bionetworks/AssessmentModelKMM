@@ -86,20 +86,10 @@ private fun MultipleChoiceQuestion(
     Column(modifier = modifier) {
         for (inputState in questionState.itemStates) {
             when (inputState) {
-                is ChoiceInputItemStateImpl -> {
+                is InputItemStateAndroid -> {
                     ChoiceQuestionInput(
                         inputItemState = inputState,
                         choiceSelected = inputState.selectedState.value,
-                        singleChoice = question.singleAnswer,
-                        onChoiceSelected = { selected ->
-                            questionState.didChangeSelectionState(selected, inputState)
-                        }
-                    )
-                }
-                is KeyboardInputItemStateImpl<*> -> {
-                    ChoiceQuestionInput(
-                        inputItemState = inputState,
-                        choiceSelected = inputState.selected,
                         singleChoice = question.singleAnswer,
                         onChoiceSelected = { selected ->
                             questionState.didChangeSelectionState(selected, inputState)
