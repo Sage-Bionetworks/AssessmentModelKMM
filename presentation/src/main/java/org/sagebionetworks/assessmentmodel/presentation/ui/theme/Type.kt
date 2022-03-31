@@ -26,3 +26,20 @@ val Typography = Typography(
     )
     */
 )
+val sageH1 = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Bold,
+    fontSize = 24.sp
+)
+
+val sageP1 = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 20.sp
+)
+
+val sageP2 = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Normal,
+    fontSize = 18.sp
+)

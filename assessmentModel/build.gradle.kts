@@ -11,7 +11,7 @@ plugins {
 
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(31)
     defaultConfig {
         minSdkVersion(21)
         multiDexEnabled = true //Required when setting minSdkVersion to 20 or lower

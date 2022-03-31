@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
@@ -38,10 +41,10 @@ internal fun QuestionContent(
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.caption,
+                    style = sageP2,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+                        .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
                 )
             }
         }
@@ -49,20 +52,20 @@ internal fun QuestionContent(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.subtitle1,
+                style = sageH1,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
             )
         }
         question.detail?.let { detail ->
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = detail,
-                style = MaterialTheme.typography.caption,
+                style = sageP2,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 0.dp, start = 30.dp, end = 8.dp)
+                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
             )
         }
         Spacer(modifier = Modifier.height(48.dp))
@@ -71,31 +74,6 @@ internal fun QuestionContent(
             modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.weight(1f))
         BottomNavigation({assessmentViewModel.goBackward()}, {assessmentViewModel.goForward()})
-    }
-}
-
-@Composable
-private fun QuestionTitle(title: String) {
-    val backgroundColor = if (MaterialTheme.colors.isLight) {
-        MaterialTheme.colors.onSurface.copy(alpha = 0.04f)
-    } else {
-        MaterialTheme.colors.onSurface.copy(alpha = 0.06f)
-    }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = backgroundColor,
-                shape = MaterialTheme.shapes.small
-            )
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp, horizontal = 16.dp)
-        )
     }
 }
 
@@ -203,9 +181,10 @@ private fun ChoiceQuestionInput(
                     var text by remember { mutableStateOf(curAnswer) }
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = "Other:"
+                        text = inputItemState.inputItem.fieldLabel?: "Other:"
                     )
                     TextField(
+                        modifier = Modifier.padding(end = 20.dp),
                         value = text,
                         onValueChange = {
                             text = it
@@ -213,8 +192,7 @@ private fun ChoiceQuestionInput(
                             if (it.isNotEmpty()) {
                                 onChoiceSelected(true)
                             }
-                        },
-                        label = { inputItemState.inputItem.fieldLabel?.let { Text(it) } }
+                        }
                     )
 
                 }
