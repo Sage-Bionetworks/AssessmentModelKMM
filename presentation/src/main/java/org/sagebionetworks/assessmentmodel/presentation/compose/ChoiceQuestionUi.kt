@@ -13,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
+import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
@@ -32,52 +34,61 @@ internal fun QuestionContent(
     modifier: Modifier = Modifier
 ) {
     val question = questionState.node as ChoiceQuestion
-
     Column(
-        modifier = modifier.fillMaxHeight()
+        modifier = modifier
+            .fillMaxHeight()
             .background(Color(0xFFF6F6F6))
-            .padding(start = 20.dp, end = 32.dp)
             .verticalScroll(rememberScrollState())
-            ,
+        ,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        question.subtitle?.let { subtitle ->
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        PauseTopBar(onPauseClicked = { /*TODO*/ }, onSkipClicked = { assessmentViewModel.goForward() })
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(start = 20.dp, end = 20.dp),
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            question.subtitle?.let { subtitle ->
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        text = subtitle,
+                        style = sageP2,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
+                    )
+                }
+            }
+            question.title?.let { title ->
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = subtitle,
+                    text = title,
+                    style = sageH1,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
+                )
+            }
+            question.detail?.let { detail ->
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = detail,
                     style = sageP2,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
                 )
             }
-        }
-        question.title?.let { title ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = title,
-                style = sageH1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
+            Spacer(modifier = Modifier.height(48.dp))
+            MultipleChoiceQuestion(
+                questionState = questionState,
+                modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.weight(1f))
+            BottomNavigation(
+                { assessmentViewModel.goBackward() },
+                { assessmentViewModel.goForward() })
         }
-        question.detail?.let { detail ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = detail,
-                style = sageP2,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(48.dp))
-        MultipleChoiceQuestion(
-            questionState = questionState,
-            modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.weight(1f))
-        BottomNavigation({assessmentViewModel.goBackward()}, {assessmentViewModel.goForward()})
     }
 }
 
@@ -175,7 +186,7 @@ private fun ChoiceQuestionInput(
                     var text by remember { mutableStateOf(curAnswer) }
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = inputItemState.inputItem.fieldLabel?: "Other:",
+                        text = inputItemState.inputItem.fieldLabel?: stringResource(R.string.other),
                         style = sageP1
                     )
                     val focusManager = LocalFocusManager.current
