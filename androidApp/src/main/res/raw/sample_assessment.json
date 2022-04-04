@@ -57,8 +57,8 @@
         {"text":"Fabulous!","value":1},
         {"text":"Neutral","value":2},
         {"text":"Sleepy","value":3},
-        {"text":"None of the above", "value": 4, "selectorType":"Exclusive"},
-        {"text":"Prefer not to answer", "value": 5, "selectorType":"Exclusive"}
+        {"text":"None of the above", "value": 4, "selectorType":"exclusive"},
+        {"text":"Prefer not to answer", "value": 5, "selectorType":"exclusive"}
       ]
     },
     {
@@ -93,12 +93,11 @@
         ]
     },
     {
-      "identifier": "colorOther",
+      "identifier": "otherChoice",
       "type": "choiceQuestion",
       "title": "What is your favorite animal?",
       "subtitle": "Select one",
       "detail": "Some text. This is a test.",
-      "footnote": "This is a footnote.",
       "optional": true,
       "singleChoice": true,
       "uiHint": "radio",

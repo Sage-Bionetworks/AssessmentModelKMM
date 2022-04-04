@@ -130,7 +130,6 @@ open class AssessmentFragment : Fragment() {
                 TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
             }
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
-            //is ComboBoxQuestion -> return ChoiceQuestionStepFragment()
             is InstructionStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
             else -> return DebugStepFragment()
