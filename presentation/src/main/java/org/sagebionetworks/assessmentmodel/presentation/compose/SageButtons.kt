@@ -117,22 +117,6 @@ fun BlackNextButton(
 }
 
 @Composable
-fun BottomNavigation(
-    onBackClicked: () -> Unit,
-    onNextClicked: () -> Unit,
-    backEnabled: Boolean = true,
-    nextEnabled: Boolean = true
-) {
-    Row(modifier = Modifier
-        .padding(top = 10.dp, bottom = 10.dp)
-        .fillMaxWidth()) {
-        WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
-        Spacer(modifier = Modifier.weight(1f))
-        BlackNextButton(onClick = onNextClicked, enabled = nextEnabled)
-    }
-}
-
-@Composable
 fun whiteButtonColors(
     backgroundColor: Color = SageWhite,
     contentColor: Color = SageBlack,
@@ -173,16 +157,5 @@ data class DefaultButtonColors(
     @Composable
     override fun contentColor(enabled: Boolean): State<Color> {
         return rememberUpdatedState(if (enabled) contentColor else disabledContentColor)
-    }
-}
-
-@Preview
-@Composable
-private fun BottomNavPreview() {
-    SageSurveyTheme {
-        Column() {
-            BottomNavigation({}, {})
-            BottomNavigation({}, {}, false, false)
-        }
     }
 }

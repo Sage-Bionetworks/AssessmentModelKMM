@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
@@ -109,9 +110,8 @@ private fun ChoiceQuestionInput(
     onChoiceSelected: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    //TODO: Handle otherInputItem -nbrown 03/26/20
     val answerBackgroundColor = if (choiceSelected) {
-        MaterialTheme.colors.primary.copy(alpha = 0.12f)
+        MaterialTheme.colors.primary//.copy(alpha = 0.12f)
     } else {
         MaterialTheme.colors.background
     }
@@ -144,7 +144,7 @@ private fun ChoiceQuestionInput(
                         onChoiceSelected(!choiceSelected)
                     },
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colors.primary
+                        selectedColor = SageBlack
                     )
                 )
             } else {
@@ -154,7 +154,7 @@ private fun ChoiceQuestionInput(
                         onChoiceSelected(selected)
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colors.primary
+                        checkedColor = SageBlack
                     ),
                 )
             }
@@ -162,7 +162,8 @@ private fun ChoiceQuestionInput(
                 is ChoiceInputItemStateImpl -> {
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = inputItemState.inputItem.label
+                        text = inputItemState.inputItem.label,
+                        style = sageP1
                     )
                 }
 
@@ -171,7 +172,8 @@ private fun ChoiceQuestionInput(
                     var text by remember { mutableStateOf(curAnswer) }
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = inputItemState.inputItem.fieldLabel?: "Other:"
+                        text = inputItemState.inputItem.fieldLabel?: "Other:",
+                        style = sageP1
                     )
                     TextField(
                         modifier = Modifier.padding(end = 20.dp),
@@ -182,7 +184,8 @@ private fun ChoiceQuestionInput(
                             if (it.isNotEmpty()) {
                                 onChoiceSelected(true)
                             }
-                        }
+                        },
+                        singleLine = true
                     )
 
                 }
