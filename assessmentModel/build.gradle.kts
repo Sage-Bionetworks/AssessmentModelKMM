@@ -11,7 +11,7 @@ plugins {
 
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(31)
     defaultConfig {
         minSdkVersion(21)
         multiDexEnabled = true //Required when setting minSdkVersion to 20 or lower
@@ -26,6 +26,11 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+    }
+    buildFeatures.viewBinding = true
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
+        kotlinCompilerVersion = "1.5.21"
     }
 }
 dependencies {
@@ -70,6 +75,7 @@ kotlin {
         }
         sourceSets["androidLibMain"].dependencies {
             implementation("androidx.appcompat:appcompat:1.3.0")
+            implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
         }
         sourceSets["iosMain"].dependencies {
         }

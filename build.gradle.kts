@@ -1,4 +1,5 @@
 buildscript {
+    val compose_version by extra("1.1.1")
     repositories {
         google()
         mavenCentral()

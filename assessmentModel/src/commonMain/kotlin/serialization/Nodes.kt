@@ -105,6 +105,11 @@ abstract class StepObject : NodeObject(), ContentNodeStep {
             this.viewTheme = original.viewTheme
         }
     }
+
+    override fun unpack( originalNode: Node?, moduleInfo: ModuleInfo, registryProvider: AssessmentRegistryProvider ): StepObject {
+        super<ContentNodeStep>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
 }
 
 @Serializable
@@ -283,7 +288,17 @@ data class OverviewStepObject(
     override var icons: List<IconInfoObject>? = null,
     override var permissions: List<PermissionInfoObject>? = null,
     override var learnMore: ButtonActionInfo? = null
-) : StepObject(), OverviewStep
+) : StepObject(), OverviewStep {
+
+    override fun unpack(
+        originalNode: Node?,
+        moduleInfo: ModuleInfo,
+        registryProvider: AssessmentRegistryProvider
+    ): StepObject {
+        super<StepObject>.unpack(originalNode, moduleInfo, registryProvider)
+        return this
+    }
+}
 
 @Serializable
 data class PermissionInfoObject(
