@@ -37,6 +37,7 @@ import JsonModel
 import SharedMobileUI
 
 struct MultilineTextField: View {
+    @SwiftUI.Environment(\.characterLimit) var characterLimit: Int
     @EnvironmentObject private var keyboard: KeyboardObserver
     @State private var textEditorHeight : CGFloat = textFieldFontSize
     var isSelected: Binding<Bool>?
@@ -60,44 +61,56 @@ struct MultilineTextField: View {
         ZStack(alignment: .leading) {
             Text("\(fieldLabel)\(text)")
                 .opacity(0)
+                .font(.defaultTextFieldFont)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 5)
-                .background(GeometryReader {
-                    Color.clear.preference(key: ViewHeightKey.self,
-                                           value: $0.frame(in: .local).size.height)
-                })
-                .font(.defaultTextFieldFont)
+                .heightReader(height: $textEditorHeight)
             #if canImport(UIKit)
             MultilineTextFieldContainer(fieldLabel, text: $text,
                                         isEditingText: $isEditingText,
                                         isSelected: isSelected,
-                                        inputItem: inputItem)
+                                        inputItem: inputItem,
+                                        characterLimit: characterLimit)
                 .frame(height: textEditorHeight)
             #endif
         }
-        .onPreferenceChange(ViewHeightKey.self) {
-            textEditorHeight = $0
-        }
+
         .onChange(of: isEditingText) { newValue in
             keyboard.keyboardFocused = newValue
         }
     }
 }
 
-fileprivate struct ViewHeightKey: PreferenceKey {
-    fileprivate static var defaultValue: CGFloat { 0 }
-    fileprivate static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = value + nextValue()
+fileprivate struct CharacterLimitEnvironmentKey: EnvironmentKey {
+    fileprivate static let defaultValue: Int = .max
+}
+
+extension EnvironmentValues {
+    fileprivate var characterLimit: Int {
+        get { self[CharacterLimitEnvironmentKey.self] }
+        set { self[CharacterLimitEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    func characterLimit(_ characterLimit: Int) -> some View {
+        environment(\.characterLimit, characterLimit)
     }
 }
 
 struct PreviewMultilineTextField: View {
-    @State var value = "Initial text"
+    @State var value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
     @State var isSelected = false
     
     var body: some View {
-        MultilineTextField(text: $value, isSelected: $isSelected, fieldLabel: "Other")
-            .border(Color.sageBlack, width: 1)
+        VStack {
+            MultilineTextField(text: $value, isSelected: $isSelected, fieldLabel: "Other")
+                .border(Color.sageBlack, width: 1)
+            
+            MultilineTextField(text: $value)
+                .border(Color.sageBlack, width: 1)
+        }
+        .characterLimit(80)
     }
 }
 
@@ -114,18 +127,20 @@ struct PreviewMultilineTextField_Previews: PreviewProvider {
 #if canImport(UIKit)
 
 fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
+    private let characterLimit: Int
     private let fieldLabel: String
     private let inputItem: TextInputItem
     private var value: Binding<String>
     private var isEditingText: Binding<Bool>
     private var isSelected: Binding<Bool>?
 
-    init(_ fieldLabel: String, text: Binding<String>, isEditingText: Binding<Bool>, isSelected: Binding<Bool>?, inputItem: TextInputItem) {
+    init(_ fieldLabel: String, text: Binding<String>, isEditingText: Binding<Bool>, isSelected: Binding<Bool>?, inputItem: TextInputItem, characterLimit: Int) {
         self.fieldLabel = fieldLabel
         self.inputItem = inputItem
         self.value = text
         self.isEditingText = isEditingText
         self.isSelected = isSelected
+        self.characterLimit = characterLimit
     }
 
     func makeCoordinator() -> MultilineTextFieldContainer.Coordinator {
@@ -223,7 +238,7 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
                 return false
             }
             else {
-                return true
+                return textView.text.count - range.length + text.count <= parent.characterLimit
             }
         }
 

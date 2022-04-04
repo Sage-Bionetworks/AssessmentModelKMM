@@ -32,11 +32,12 @@
 //
 
 import SwiftUI
+import SharedMobileUI
 
 struct ContentView: View {
     var body: some View {
-        ChoiceQuestionStepView(multipleChoiceQuestion)
-            .padding()
+        ChoiceQuestionStepView(questionState: QuestionState(favoriteFoodChoiceQuestion))
+            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
     }
 }
 

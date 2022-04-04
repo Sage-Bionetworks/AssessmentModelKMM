@@ -36,46 +36,32 @@ import AssessmentModel
 import JsonModel
 import SharedMobileUI
 
-public struct ChoiceQuestionStepView: View {
-    @StateObject var keyboard: KeyboardObserver = .init()
+public struct ChoiceQuestionStepView : View {
+    @ObservedObject var questionState: QuestionState
     
-    private let question: ChoiceQuestionStep
-    
-    public init(_ question: ChoiceQuestionStep) {
-        self.question = question
+    public init(questionState: QuestionState) {
+        self.questionState = questionState
     }
     
     public var body: some View {
-        ScrollViewReader { scrollView in
-            ScrollView {
-                ChoiceQuestionView(question)
-                    .onChange(of: keyboard.keyboardFocused) { newValue in
-                        if newValue {
-                            scrollView.scrollTo(keyboard.keyboardFocusedId, anchor: .bottom)
-                        }
-                    }
-                Spacer()
-                    .frame(height: keyboard.keyboardFocused ? keyboard.keyboardHeight + 32 : 0)
-                    .id(KeyboardObserver.defaultKeyboardFocusedId)
+        VStack(spacing: 8) {
+            Spacer().frame(height: 24)
+            QuestionStepScrollView {
+                ChoiceQuestionView()
             }
         }
-        .environmentObject(keyboard)
-        .background(Color.surveyBackgroundColor)
+        .environmentObject(questionState)
+        .fullscreenBackground(.surveyBackgroundColor)
     }
 }
 
-public struct ChoiceQuestionView: View {
+struct ChoiceQuestionView : View {
     @EnvironmentObject var keyboard: KeyboardObserver
+    @EnvironmentObject var questionState: QuestionState
     @StateObject var viewModel: ChoiceQuestionViewModel = .init()
-
-    private let question: ChoiceQuestion
     
-    public init(_ question: ChoiceQuestion) {
-        self.question = question
-    }
-    
-    public var body: some View {
-        LazyVStack(spacing: 16) {
+    var body: some View {
+        LazyVStack(spacing: innerVerticalSpacing) {
             ForEach(viewModel.choices) { choice in
                 ChoiceCell(choice: choice)
             }
@@ -89,12 +75,11 @@ public struct ChoiceQuestionView: View {
                 OtherCell(choice: other)
             }
         }
-        .singleChoice(question.singleAnswer)
-        .padding(.horizontal, 32)
         .onAppear {
-            // TODO: syoung 03/29/2022 Set previous answer
-            viewModel.initialize(question, previousAnswer: nil)
+            viewModel.initialize(questionState)
         }
+        .singleChoice(viewModel.singleAnswer)
+        .padding(.horizontal, 32)
     }
     
     struct ChoiceCell : View {
@@ -107,7 +92,6 @@ public struct ChoiceQuestionView: View {
     
     struct OtherCell : View {
         @ObservedObject var choice: OtherChoiceViewModel
-        
         var body: some View {
             HStack(spacing: 0) {
                 Toggle("", isOn: $choice.selected)
@@ -139,7 +123,7 @@ extension View {
     }
     
     fileprivate func selectionCell(isOn: Binding<Bool>, spacing: CGFloat = 8) -> some View {
-        return modifier(SelectionCell(isOn: isOn, spacing: spacing))
+        modifier(SelectionCell(isOn: isOn, spacing: spacing))
     }
 }
 
@@ -182,22 +166,41 @@ struct SelectionCell : ViewModifier {
     }
 }
 
+fileprivate struct PreviewChoiceQuestionStepView : View {
+    let question: ChoiceQuestionStep
+    var body: some View {
+        ChoiceQuestionStepView(questionState: QuestionState(question))
+            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+    }
+}
 
 struct ChoiceQuestionStepView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ChoiceQuestionStepView(favoriteFoodChoiceQuestion)
-            ChoiceQuestionStepView(multipleChoiceQuestion)
+            PreviewChoiceQuestionStepView(question: happyChoiceQuestion)
+                .environment(\.sizeCategory, .medium)
+            PreviewChoiceQuestionStepView(question: happyChoiceQuestion)
+            PreviewChoiceQuestionStepView(question: favoriteFoodChoiceQuestion)
+            PreviewChoiceQuestionStepView(question: favoriteFoodChoiceQuestion)
+                .environment(\.sizeCategory, .accessibilityExtraLarge)
+            PreviewChoiceQuestionStepView(question: multipleChoiceQuestion)
         }
     }
 }
 
+let happyChoiceQuestion = ChoiceQuestionStepObject(identifier: "followupQ",
+                                                   choices: .booleanChoices(),
+                                                   title: "Are you happy with your choice?",
+                                                   subtitle: "After thinking it over...",
+                                                   detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                                                   surveyRules: [ .init(skipToIdentifier: "choiceQ1", matchingValue: .boolean(false)) ])
+
 let multipleChoiceQuestion = ChoiceQuestionStepObject(identifier: "multipleChoice",
                          choices: [
                             "blue",
-                            "red",
                             "green",
                             "yellow",
+                            "red",
                             .init(text: "All of the above", selectorType: .all),
                             .init(text: "I don't have any", selectorType: .exclusive),
                          ],
@@ -220,7 +223,9 @@ let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(identifier: "favoriteF
                          baseType: .string,
                          singleChoice: true,
                          other: StringTextInputItemObject(),
-                         title: "What are you having for dinner?",
+                         title: "What are you having for dinner next Tuesday after the soccer game?",
+                         subtitle: "After thinking it over...",
+                         detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                          surveyRules: [
                             .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
                          ])
