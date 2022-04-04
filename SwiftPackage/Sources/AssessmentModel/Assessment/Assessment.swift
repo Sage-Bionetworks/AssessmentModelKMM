@@ -271,9 +271,7 @@ public final class AssessmentObject : AbstractAssessmentObject, DocumentableStru
     public static func examples() -> [AssessmentObject] {
         [.init(identifier: "assessment", children: [
             SimpleQuestionStepObject(identifier: "favoriteColor", title: "What is your favorite color")
-        ]),
-         surveyA
-        ]
+        ])]
     }
 }
 

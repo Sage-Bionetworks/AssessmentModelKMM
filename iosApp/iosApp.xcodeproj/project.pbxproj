@@ -73,13 +73,7 @@
 		FF2ECC12265C3F0800831866 /* AssessmentModel+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssessmentModel+Utils.swift"; sourceTree = "<group>"; };
 		FF2ECC14265C55A600831866 /* PreviewBranchNodeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewBranchNodeState.swift; sourceTree = "<group>"; };
 		FF6F6FBB266021B5007C6B92 /* SampleSurvey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleSurvey.swift; sourceTree = "<group>"; };
-		FF6F6FC62661A2F6007C6B92 /* JsonElement+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JsonElement+Utils.swift"; sourceTree = "<group>"; };
-		FF74B05926545A3900C48966 /* BranchNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchNavigationView.swift; sourceTree = "<group>"; };
-		FF8AD1A3265C848F00C33260 /* PermissionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsHandler.swift; sourceTree = "<group>"; };
-		FFA5E6FB264DA1FC0042D694 /* InstructionStepContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionStepContentView.swift; sourceTree = "<group>"; };
 		FFA5E758264DBD7D0042D694 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+module.swift"; sourceTree = "<group>"; };
-		FFA5E810264DC5830042D694 /* BranchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchViewModel.swift; sourceTree = "<group>"; };
-		FFACEDBD2672852300F764E5 /* ResourceInfo+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResourceInfo+Utils.swift"; sourceTree = "<group>"; };
 		FFD3240727EA4D2100823D3B /* KotlinModel.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KotlinModel.xcframework; path = ../assessmentModel/build/XCFrameworks/debug/KotlinModel.xcframework; sourceTree = "<group>"; };
 		FFD3240A27EA4D5600823D3B /* AssessmentModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssessmentModelTests.swift; sourceTree = "<group>"; };
 		FFD3240B27EA4D5600823D3B /* SwiftTestAssessment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftTestAssessment.swift; sourceTree = "<group>"; };
@@ -139,7 +133,6 @@
 			children = (
 				FFA5E758264DBD7D0042D694 /* Bundle+module.swift */,
 				FF2ECC0F265C3E1C00831866 /* Preview Data */,
-				FFA5E6FA264DA18C0042D694 /* AssessmentModelUI */,
 				7555FF7E242A565900829871 /* AppDelegate.swift */,
 				7555FF80242A565900829871 /* SceneDelegate.swift */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -197,44 +190,6 @@
 				FF2ECC14265C55A600831866 /* PreviewBranchNodeState.swift */,
 			);
 			path = "Preview Data";
-			sourceTree = "<group>";
-		};
-		FF6F6FC52661A270007C6B92 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				FF6F6FC62661A2F6007C6B92 /* JsonElement+Utils.swift */,
-				FFACEDBD2672852300F764E5 /* ResourceInfo+Utils.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		FF74AFF9264F3C0100C48966 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				FFA5E810264DC5830042D694 /* BranchViewModel.swift */,
-				FF8AD1A3265C848F00C33260 /* PermissionsHandler.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		FFA5E6FA264DA18C0042D694 /* AssessmentModelUI */ = {
-			isa = PBXGroup;
-			children = (
-				FFA5E80D264DC3470042D694 /* Views */,
-				FF74AFF9264F3C0100C48966 /* ViewModels */,
-				FF6F6FC52661A270007C6B92 /* Utils */,
-			);
-			name = AssessmentModelUI;
-			path = ../../SwiftPackage/Sources/AssessmentModelUI;
-			sourceTree = "<group>";
-		};
-		FFA5E80D264DC3470042D694 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				FFA5E6FB264DA1FC0042D694 /* InstructionStepContentView.swift */,
-				FF74B05926545A3900C48966 /* BranchNavigationView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -451,6 +406,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -512,6 +468,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
