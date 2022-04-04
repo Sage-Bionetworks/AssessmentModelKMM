@@ -185,7 +185,6 @@ private fun ChoiceQuestionInput(
                                 onChoiceSelected(true)
                             }
                         },
-                        singleLine = true
                     )
 
                 }
