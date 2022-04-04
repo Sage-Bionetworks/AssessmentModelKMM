@@ -70,29 +70,28 @@ public final class NodeNavigator : Navigator {
     
     public func nodeAfter(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
         guard let currentNode = currentNode, let idx = self.nodeIndex(currentNode) else {
-            return .init(node: nodes.first, branchResult: branchResult, direction: .forward)
+            return .init(node: nodes.first, direction: .forward)
         }
 
         if let navId = self.nextNodeIdentifier(currentNode: currentNode, branchResult: branchResult, isPeeking: false) {
             switch navId {
             case .reserved(let reservedKey):
-                return .init(node: nil, branchResult: branchResult, direction: reservedKey == .exit ? .exit : .forward)
+                return .init(node: nil, direction: reservedKey == .exit ? .exit : .forward)
             case .node(let identifier):
                 // This implementation does not support switching the direction of navigation so always forward.
-                return .init(node: self.node(identifier: identifier), branchResult: branchResult, direction: .forward)
+                return .init(node: self.node(identifier: identifier), direction: .forward)
             }
         }
         else if idx + 1 >= nodes.count {
-            return .init(node: nil, branchResult: branchResult, direction: .forward)
+            return .init(node: nil, direction: .forward)
         }
         else {
-            return .init(node: nodes[idx + 1], branchResult: branchResult, direction: .forward)
+            return .init(node: nodes[idx + 1], direction: .forward)
         }
     }
     
     public func nodeBefore(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
         return .init(node: self.previousNode(currentNode: currentNode, branchResult: branchResult),
-                     branchResult: branchResult,
                      direction: .backward)
     }
     
