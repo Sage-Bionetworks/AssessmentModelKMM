@@ -5,12 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -175,6 +178,7 @@ private fun ChoiceQuestionInput(
                         text = inputItemState.inputItem.fieldLabel?: "Other:",
                         style = sageP1
                     )
+                    val focusManager = LocalFocusManager.current
                     TextField(
                         modifier = Modifier.padding(end = 20.dp),
                         value = text,
@@ -185,8 +189,12 @@ private fun ChoiceQuestionInput(
                                 onChoiceSelected(true)
                             }
                         },
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            })
                     )
-
                 }
             }
         }
