@@ -12,8 +12,8 @@ actual class ChoiceInputItemStateImpl actual constructor(index: Int,
 
 class KeyboardInputItemStateImpl<T>(override val index: Int,
                                     override val inputItem: KeyboardTextInputItem<T>,
-                                    override var storedAnswer: JsonElement?,
-                                    override var selected: Boolean) : KeyboardInputItemState<T> {
+                                    override var storedAnswer: JsonElement?) : KeyboardInputItemState<T> {
+    override var selected: Boolean = storedAnswer != null
     override val textValidator = inputItem.buildTextValidator()
 
 }
