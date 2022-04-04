@@ -114,6 +114,11 @@ public final class NodeNavigator : Navigator {
         self.previousNode(currentNode: currentNode, branchResult: branchResult) != nil
     }
     
+    public func canPauseAssessment(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
+        guard let idx = nodeIndex(currentNode) else { return false }
+        return idx > 0 && !isCompleted(currentNode: currentNode, branchResult: branchResult)
+    }
+    
     public func progress(currentNode: Node, branchResult: BranchNodeResult) -> Progress? {
         guard let idx = nodeIndex(currentNode) else { return nil }
         

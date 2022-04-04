@@ -40,30 +40,83 @@ import JsonModel
  * SwiftUI  @EnvironmentObject observables have to be castable using NSClassFromString.
  */
 
+public protocol NodeState {
+    var node: Node { get }
+    var result: ResultData { get }
+}
 
-/// State object for a branch node.
-public final class BranchNodeState : ObservableObject {
+public protocol StepState : NodeState {
+    var step: Step { get }
+}
+
+extension StepState {
+    public var node: Node { step }
+}
+
+public protocol BranchState : NodeState {
+    var branchNode: BranchNode { get }
+    var branchNodeResult: BranchNodeResult { get }
+}
+
+extension BranchState {
+    public var node: Node { branchNode }
+    public var result: ResultData { result }
+}
+
+public final class AssessmentState : ObservableObject, BranchState {
+    public var branchNode: BranchNode { assessment }
+    public var branchNodeResult: BranchNodeResult { assessmentResult }
     
-    weak var parent: BranchNodeState?
+    @Published var isFinished: Bool = false
+    @Published var showingPauseActions: Bool = false
     
-    public let branchNode: BranchNode
-    public let branchResult: BranchNodeResult
+    public let assessment: Assessment
+    public let assessmentResult: AssessmentResult
     
-    public init(_ branchNode: BranchNode, parent: BranchNodeState? = nil) {
-        self.branchNode = branchNode
-        self.branchResult = parent?.branchResult.copyResult(with: branchNode.identifier) ?? branchNode.instantiateBranchNodeResult()
+    var navigator: Navigator!
+    
+    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil) {
+        self.assessment = assessment
+        var result = restoredResult ?? assessment.instantiateAssessmentResult()
+        result.startDate = Date()
+        self.assessmentResult = result
     }
 }
 
-public protocol QuestionViewModel : AnyObject {
-    func calculateAnswer() -> JsonElement
+public final class InstructionState : ObservableObject, StepState {
+    
+    @Published public var image: Image?
+    
+    @Published public var title: String?
+    @Published public var subtitle: String?
+    @Published public var detail: String?
+
+    public let step: Step
+    public let result: ResultData
+    
+    public init(_ instruction: Step) {
+        self.step = instruction
+        self.result = instruction.instantiateResult()
+        if let contentNode = instruction as? ContentNode {
+            self.title = contentNode.title
+            self.subtitle = contentNode.subtitle
+            self.detail = contentNode.detail
+            if let imageInfo = contentNode.imageInfo as? FetchableImage {
+                self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
+            }
+        }
+    }
 }
 
 /// State object for a question.
-public final class QuestionState : ObservableObject {
+public final class QuestionState : ObservableObject, StepState {
+    public var step: Step { question }
+    public var result: ResultData { answerResult }
     
-    public let question: Question
+    public let question: QuestionStep
     public let answerResult: AnswerResult
+    public let canPause: Bool
+    public let skipStepText: Text?
     
     @Published public var title: String
     @Published public var subtitle: String?
@@ -71,19 +124,27 @@ public final class QuestionState : ObservableObject {
     
     @Published public var hasSelectedAnswer: Bool = false
     
-    weak public var viewModel: QuestionViewModel?
-    
-    public init(_ question: Question, previousAnswer: AnswerResult? = nil) {
+    public init(_ question: QuestionStep, answerResult: AnswerResult? = nil, canPause: Bool = true, skipStepText: Text? = nil) {
         self.question = question
-        self.answerResult = previousAnswer?.deepCopy() ?? question.instantiateAnswerResult()
+        var result = answerResult ?? question.instantiateAnswerResult()
+        result.startDate = Date()
+        self.answerResult = result
         self.title = question.title ?? question.subtitle ?? question.detail ?? ""
         self.subtitle = question.title == nil ? nil : question.subtitle
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
+        self.canPause = canPause
+        self.skipStepText = skipStepText
     }
 }
 
 extension BranchNodeResult {
     func copyResult<T>(with identifier: String) -> T? {
         stepHistory.last { $0.identifier == identifier }.flatMap { $0.deepCopy() as? T }
+    }
+}
+
+extension ResourceInfo {
+    var bundle: Bundle? {
+        self.factoryBundle as? Bundle ?? self.bundleIdentifier.flatMap { Bundle(identifier: $0) }
     }
 }

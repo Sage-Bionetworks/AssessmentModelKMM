@@ -36,6 +36,7 @@ import SharedMobileUI
 
 public struct QuestionStepScrollView<Content> : View where Content : View {
     @SwiftUI.Environment(\.fullscreenBackgroundColor) var backgroundColor: Color
+    @SwiftUI.Environment(\.sizeCategory) var sizeCategory
     @EnvironmentObject var questionState: QuestionState
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     @StateObject var keyboard: KeyboardObserver = .init()
@@ -183,7 +184,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                 .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
                 .mask(Rectangle().padding(.bottom, -20))
         )
-        .opacity(scrollOffset <= subtitleHeight ? 0 : 1)
+        .opacity(scrollOffset <= subtitleHeight || sizeCategory >= .accessibilityLarge ? 0 : 1)
         .onTapGesture {
             if scrollOffset > subtitleHeight && !keyboard.keyboardFocused {
                 withAnimation {

@@ -68,6 +68,9 @@ public protocol Navigator {
 
     /// Is backward navigation allowed from this ``currentNode`` with the current ``branchResult``?
     func allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult) -> Bool
+    
+    /// Can the assessment be "paused"?
+    func canPauseAssessment(currentNode: Node, branchResult: BranchNodeResult) -> Bool
 
     /// Returns the ``Progress`` of the assessment from the given ``currentNode`` with the given
     /// ``branchResult``. If `null` then progress should not be shown for this ``currentNode`` of assessment.

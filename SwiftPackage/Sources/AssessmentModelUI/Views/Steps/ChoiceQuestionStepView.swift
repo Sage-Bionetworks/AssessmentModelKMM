@@ -45,7 +45,7 @@ public struct ChoiceQuestionStepView : View {
     
     public var body: some View {
         VStack(spacing: 8) {
-            Spacer().frame(height: 24)
+            QuestionHeaderView()
             QuestionStepScrollView {
                 ChoiceQuestionView()
             }
@@ -77,6 +77,12 @@ struct ChoiceQuestionView : View {
         }
         .onAppear {
             viewModel.initialize(questionState)
+        }
+        .onChange(of: keyboard.keyboardFocused) { newValue in
+            if !newValue {
+                // When the keyboard looses focus, update answer.
+                viewModel.updateAnswer()
+            }
         }
         .singleChoice(viewModel.singleAnswer)
         .padding(.horizontal, 32)
@@ -139,7 +145,7 @@ struct SelectionCell : ViewModifier {
 
     func body(content: Content) -> some View {
         wrapContent(content)
-            .font(.latoFont(20, relativeTo: .body, weight: .bold))
+            .font(.defaultTextFieldFont)
             .foregroundColor(.textForeground)
     }
     
@@ -169,8 +175,9 @@ struct SelectionCell : ViewModifier {
 fileprivate struct PreviewChoiceQuestionStepView : View {
     let question: ChoiceQuestionStep
     var body: some View {
-        ChoiceQuestionStepView(questionState: QuestionState(question))
+        ChoiceQuestionStepView(questionState: QuestionState(question, canPause: true, skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+            .environmentObject(AssessmentState(AssessmentObject(previewStep: question)))
     }
 }
 
@@ -188,6 +195,12 @@ struct ChoiceQuestionStepView_Previews: PreviewProvider {
     }
 }
 
+extension AssessmentObject {
+    convenience init(previewStep: Step) {
+        self.init(identifier: previewStep.identifier, children: [previewStep])
+    }
+}
+
 let happyChoiceQuestion = ChoiceQuestionStepObject(identifier: "followupQ",
                                                    choices: .booleanChoices(),
                                                    title: "Are you happy with your choice?",
@@ -197,18 +210,17 @@ let happyChoiceQuestion = ChoiceQuestionStepObject(identifier: "followupQ",
 
 let multipleChoiceQuestion = ChoiceQuestionStepObject(identifier: "multipleChoice",
                          choices: [
-                            "blue",
-                            "green",
-                            "yellow",
-                            "red",
+                            "Blue",
+                            "Green",
+                            "Yellow",
+                            "Red",
                             .init(text: "All of the above", selectorType: .all),
                             .init(text: "I don't have any", selectorType: .exclusive),
                          ],
                          baseType: .string,
                          singleChoice: false,
                          other: StringTextInputItemObject(),
-                         title: "What are your favorite colors?",
-                         detail: "Choose all that apply")
+                         title: "What are your favorite colors?")
 
 let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(identifier: "favoriteFood",
                          choices: [

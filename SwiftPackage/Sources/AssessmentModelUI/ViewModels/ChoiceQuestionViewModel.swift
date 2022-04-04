@@ -38,7 +38,7 @@ import JsonModel
 public final class ChoiceQuestionViewModel : AbstractChoiceQuestionViewModel {
 }
 
-open class AbstractChoiceQuestionViewModel : ObservableObject, QuestionViewModel {
+open class AbstractChoiceQuestionViewModel : ObservableObject {
 
     weak var questionState: QuestionState?
     
@@ -55,8 +55,7 @@ open class AbstractChoiceQuestionViewModel : ObservableObject, QuestionViewModel
             return
         }
         
-        // Set up the circular pointers (both weak)
-        questionState.viewModel = self
+        // Set up the pointer
         self.questionState = questionState
         
         // Pull out whether or not the question has a single answer.
@@ -81,24 +80,37 @@ open class AbstractChoiceQuestionViewModel : ObservableObject, QuestionViewModel
         self.choices = choices
         
         // Update whether or not the question state has an answer selected.
-        questionState.hasSelectedAnswer = choices.contains(where: { $0.selected })
+        questionState.hasSelectedAnswer = choices.contains(where: { $0.selected }) || (self.otherChoice?.selected ?? false)
+    }
+    
+    public func updateAnswer() {
+        questionState?.answerResult.jsonValue = calculateAnswer()
     }
 
-    public func calculateAnswer() -> JsonElement {
+    func calculateAnswer() -> JsonElement? {
         if singleAnswer {
-            if let value = otherChoice?.jsonValue() {
-                return .init(value)
+            if let otherValue = otherChoice?.jsonValue() {
+                return .init(otherValue)
+            }
+            else if let selectedChoice = choices.first(where: { $0.selected }) {
+                return selectedChoice.jsonChoice.matchingValue ?? .null
             }
             else {
-                return choices.first(where: { $0.selected })?.jsonChoice.matchingValue ?? .null
+                return nil
             }
         }
         else {
-            var values = choices.compactMap { $0.jsonChoice.matchingValue?.jsonObject() }
+            var hasSelected: Bool = false
+            var values: [JsonSerializable] = choices.compactMap {
+                guard $0.selected else { return nil }
+                hasSelected = true
+                return $0.jsonChoice.matchingValue?.jsonObject()
+            }
             if let otherValue = otherChoice?.jsonValue()?.jsonObject() {
+                hasSelected = true
                 values.append(otherValue)
             }
-            return .array(values)
+            return hasSelected ? .array(values) : nil
         }
     }
     
@@ -143,6 +155,7 @@ open class AbstractChoiceQuestionViewModel : ObservableObject, QuestionViewModel
         
         // Update state of whether or not this view model has a valid selection.
         questionState?.hasSelectedAnswer = hasSelected || (otherChoice?.selected ?? false)
+        updateAnswer()
         
         updating = false
     }
