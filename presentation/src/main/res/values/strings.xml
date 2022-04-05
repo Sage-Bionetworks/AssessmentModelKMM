@@ -10,5 +10,10 @@
     <string name="pause">Pause</string>
     <string name="close">Close</string>
     <string name="other">Other:</string>
+    <string name="paused">Paused</string>
+    <string name="resume">Resume</string>
+    <string name="review_instructions">Review Instructions</string>
+    <string name="skip_this_survey">Skip this survey</string>
+    <string name="continue_later">Continue later</string>
 
 </resources>
