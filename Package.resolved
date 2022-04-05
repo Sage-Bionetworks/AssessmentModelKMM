@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
         "state": {
           "branch": null,
-          "revision": "39f64b3557b0f08066639c3c1c5dbfaaee7496fc",
-          "version": "0.14.0"
+          "revision": "914adde1a6024c1e8f199a4625013d507f07b3de",
+          "version": "0.14.1"
         }
       }
     ]
