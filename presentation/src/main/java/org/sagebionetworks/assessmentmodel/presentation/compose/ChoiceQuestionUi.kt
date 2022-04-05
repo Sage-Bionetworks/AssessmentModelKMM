@@ -41,7 +41,14 @@ internal fun QuestionContent(
             .verticalScroll(rememberScrollState())
         ,
     ) {
-        PauseTopBar(onPauseClicked = { /*TODO*/ }, onSkipClicked = { assessmentViewModel.skip() })
+        val openDialog = remember { mutableStateOf(false)  }
+        PauseScreenDialog(showDialog = openDialog.value,
+            assessmentViewModel = assessmentViewModel
+        ) {
+            openDialog.value = false
+        }
+        PauseTopBar(
+            onPauseClicked = {openDialog.value = true}, onSkipClicked = { assessmentViewModel.skip() })
         Column(
             modifier = modifier
                 .fillMaxHeight()

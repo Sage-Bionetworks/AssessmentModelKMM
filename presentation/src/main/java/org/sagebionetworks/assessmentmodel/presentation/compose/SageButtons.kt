@@ -16,9 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageWhite
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.*
 
 @Composable
 fun SageButton(
@@ -43,7 +41,10 @@ fun SageButton(
         colors = buttonColors
     ) {
         if (text != null) {
-            Text(text = text)
+            Text(
+                text = text,
+                style = sageButton
+            )
         }
         if (icon != null)
             Icon(

@@ -43,6 +43,10 @@ open class AssessmentViewModel(
         assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
     }
 
+    fun declineAssessment() {
+        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Now, markFinished = false, declined = true))
+    }
+
     override fun canHandle(node: Node): Boolean {
         return (node is Step)
     }
