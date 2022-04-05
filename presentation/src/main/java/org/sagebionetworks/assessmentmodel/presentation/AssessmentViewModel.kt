@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.sagebionetworks.assessmentmodel.AnswerResult
 import org.sagebionetworks.assessmentmodel.Node
 import org.sagebionetworks.assessmentmodel.PermissionInfo
 import org.sagebionetworks.assessmentmodel.Step
@@ -30,6 +31,12 @@ open class AssessmentViewModel(
 
     fun goBackward() {
         assessmentNodeState.goBackward()
+    }
+
+    fun skip() {
+        //Clear current results before going to next node
+        (assessmentNodeState.currentChild?.currentResult as? AnswerResult)?.jsonValue = null
+        goForward()
     }
 
     fun cancel() {

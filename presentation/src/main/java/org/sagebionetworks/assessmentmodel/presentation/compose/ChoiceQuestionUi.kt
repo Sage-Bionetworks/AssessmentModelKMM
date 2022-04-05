@@ -41,7 +41,7 @@ internal fun QuestionContent(
             .verticalScroll(rememberScrollState())
         ,
     ) {
-        PauseTopBar(onPauseClicked = { /*TODO*/ }, onSkipClicked = { assessmentViewModel.goForward() })
+        PauseTopBar(onPauseClicked = { /*TODO*/ }, onSkipClicked = { assessmentViewModel.skip() })
         Column(
             modifier = modifier
                 .fillMaxHeight()
