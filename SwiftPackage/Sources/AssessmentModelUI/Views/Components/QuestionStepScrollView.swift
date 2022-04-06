@@ -78,7 +78,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                             keyboardSpacer(scrollView)
                             Spacer()
                             SurveyNavigationView()
-                                .padding(.vertical, outerVerticalPadding)
+                                .id("bottomNav:\(questionState.id)")
                         }
                         .frame(minHeight: scrollViewGeometry.size.height)
                     }
@@ -92,6 +92,11 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                     .onPreferenceChange(ScrollFramePreferenceKey.self) { value in
                         DispatchQueue.main.async {
                             updateScrollOffset(-floor(value.minY))
+                        }
+                    }
+                    .onAppear {
+                        if questionState.hasSelectedAnswer {
+                            scrollView.scrollTo("bottomNav:\(questionState.id)", anchor: .bottom)
                         }
                     }
                 }

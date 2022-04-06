@@ -39,7 +39,7 @@ import SharedMobileUI
 public struct ChoiceQuestionStepView : View {
     @ObservedObject var questionState: QuestionState
     
-    public init(questionState: QuestionState) {
+    public init(_ questionState: QuestionState) {
         self.questionState = questionState
     }
     
@@ -50,6 +50,7 @@ public struct ChoiceQuestionStepView : View {
                 ChoiceQuestionView()
             }
         }
+        .id("ChoiceQuestionStepView:\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.surveyBackgroundColor)
     }
@@ -175,7 +176,7 @@ struct SelectionCell : ViewModifier {
 fileprivate struct PreviewChoiceQuestionStepView : View {
     let question: ChoiceQuestionStep
     var body: some View {
-        ChoiceQuestionStepView(questionState: QuestionState(question, canPause: true, skipStepText: Text("Skip question")))
+        ChoiceQuestionStepView(QuestionState(question, canPause: true, skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
             .environmentObject(AssessmentState(AssessmentObject(previewStep: question)))
     }
@@ -190,7 +191,7 @@ struct ChoiceQuestionStepView_Previews: PreviewProvider {
             PreviewChoiceQuestionStepView(question: favoriteFoodChoiceQuestion)
             PreviewChoiceQuestionStepView(question: favoriteFoodChoiceQuestion)
                 .environment(\.sizeCategory, .accessibilityExtraLarge)
-            PreviewChoiceQuestionStepView(question: multipleChoiceQuestion)
+            PreviewChoiceQuestionStepView(question: favoriteColorsQuestion)
         }
     }
 }
@@ -208,7 +209,7 @@ let happyChoiceQuestion = ChoiceQuestionStepObject(identifier: "followupQ",
                                                    detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                                                    surveyRules: [ .init(skipToIdentifier: "choiceQ1", matchingValue: .boolean(false)) ])
 
-let multipleChoiceQuestion = ChoiceQuestionStepObject(identifier: "multipleChoice",
+let favoriteColorsQuestion = ChoiceQuestionStepObject(identifier: "multipleChoice",
                          choices: [
                             "Blue",
                             "Green",

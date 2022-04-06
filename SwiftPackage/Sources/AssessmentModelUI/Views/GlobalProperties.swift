@@ -58,4 +58,5 @@ extension UIFont {
 
 extension Color {
     static let surveyBackgroundColor: Color = .hexF6F6F6
+    static let progressBackground: Color = .init(hex: "#A7A19C")!
 }

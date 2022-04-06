@@ -33,7 +33,7 @@
 
 import Foundation
 @testable import AssessmentModelUI
-@testable import AssessmentModel
+import AssessmentModel
 import JsonModel
 import XCTest
 

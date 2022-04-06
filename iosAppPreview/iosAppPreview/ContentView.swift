@@ -37,9 +37,7 @@ import AssessmentModel
 
 struct ContentView: View {
     var body: some View {
-        ChoiceQuestionStepView(questionState: QuestionState(favoriteFoodChoiceQuestion))
-            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
-            .environmentObject(AssessmentState(AssessmentObject(previewStep: favoriteFoodChoiceQuestion)))
+        AssessmentView(.init(surveyA))
     }
 }
 

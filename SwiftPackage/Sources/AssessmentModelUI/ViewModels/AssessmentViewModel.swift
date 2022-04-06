@@ -1,5 +1,5 @@
 //
-//  AssessmentNavigationViewModel.swift
+//  AssessmentViewModel.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -36,19 +36,69 @@ import SharedMobileUI
 import AssessmentModel
 import JsonModel
 
-public final class AssessmentNavigationViewModel : AbstractAssessmentNavigationViewModel {
-}
+//public struct StepViewCategory : RawRepresentable, Identifiable, Hashable, ExpressibleByStringLiteral {
+//    public var id: String { rawValue }
+//    public let rawValue: String
+//    public init(rawValue: String) {
+//        self.rawValue = rawValue
+//    }
+//    public init(stringLiteral value: String) {
+//        self.rawValue = value
+//    }
+//    
+//    public static let loading: StepViewCategory = "loading"
+//    public static let finished: StepViewCategory = "finished"
+//    public static let undefined: StepViewCategory = "undefined"
+//    public static let choiceQuestion: StepViewCategory = "choiceQuestion"
+//}
+//
+//public struct CurrentStepState : Identifiable {
+//    public var id: String { "\(category.id):/\(stepState?.id ?? "")" }
+//    
+//    public let stepState: StepState?
+//    public let category: StepViewCategory
+//    
+//    public init(_ category: StepViewCategory, stepState: StepState? = nil) {
+//        self.stepState = stepState
+//        self.category = category
+//    }
+//}
 
-open class AbstractAssessmentNavigationViewModel : ObservableObject, NavigationState {
+open class AssessmentViewModel : ObservableObject, NavigationState {
     
-    @Published var navigationError: Error?
-    @Published var current: NodeState?
+    @Published var forwardCount: Int = 0
+    @Published var backCount: Int = 0
     
     public let navigationViewModel: PagedNavigationViewModel = .init()
+    weak public var state: AssessmentState!
+    weak public var viewVender: AssessmentStepViewVender!
     
-    public private(set) var state: AssessmentState!
+    public init() {
+        navigationViewModel.goForward = goForward
+        navigationViewModel.goBack = goBack
+    }
+    
+    func initialize(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender) {
+        guard assessmentState.id != self.state?.id else { return }
+        
+        self.state = assessmentState
+        self.viewVender = viewVender
+
+        do {
+            assessmentState.navigator = try assessmentState.assessment.instantiateNavigator(state: self)
+            self.goForward()
+        } catch {
+            assessmentState.navigationError = error
+        }
+    }
+    
+    // MARK: Current branch handling
     
     // TODO: syoung 04/04/2022 Handle branch nodes
+    open var currentBranchState: NodeState {
+        state
+    }
+    
     open var currentBranchNode: BranchNode {
         state.branchNode
     }
@@ -61,63 +111,68 @@ open class AbstractAssessmentNavigationViewModel : ObservableObject, NavigationS
         state.navigator
     }
     
-    public init() {
-        navigationViewModel.goForward = goForward
-        navigationViewModel.goBack = goBack
-    }
-    
-    open func initialize(_ assessmentState: AssessmentState) {
-        self.state = assessmentState
-        do {
-            assessmentState.navigator = try assessmentState.assessment.instantiateNavigator(state: self)
-            self.goForward()
-        } catch {
-            self.navigationError = error
-        }
-    }
+    // MARK: Navigation handling
     
     open func goForward() {
-        // TODO: syoung 04/04/2022 Decide how to manage state where the animation should "go back"
+        self.forwardCount += 1
+        
         // TODO: syoung 04/04/2022 Handle exiting the assessment (rather than the section)
         // TODO: syoung 04/04/2022 Handle branch nodes
         
         // Update the end timestamp for the current result
-        if let current = current {
+        if let current = state.currentStep {
             var result = current.result
             result.endDate = Date()
             currentBranchResult.appendStepHistory(with: result)
         }
         
-        let nextNode = currentNavigator.nodeAfter(currentNode: current?.node, branchResult: currentBranchResult)
+        // Get the next node
+        let nextNode = currentNavigator.nodeAfter(currentNode: state.currentStep?.node, branchResult: currentBranchResult)
         guard let node = nextNode.node,
               let stepState = nodeState(for: node) as? StepState
         else {
-            current = nil
+            state.currentStep = nil
             state.isFinished = true
             return
         }
-        if let progress = currentNavigator.progress(currentNode: node, branchResult: currentBranchResult) {
-            navigationViewModel.progressHidden = false
+        
+        // Move to the node
+        moveTo(nextNode: nextNode, stepState: stepState)
+    }
+    
+    private func moveTo(nextNode: NavigationPoint, stepState: StepState) {
+        // Add the result to the step history
+        currentBranchResult.appendStepHistory(with: stepState.result)
+        
+        // Set the new current state
+        state.currentStep = stepState
+        
+        // Update the navigator
+        navigationViewModel.currentDirection = nextNode.direction == .backward ? .backward : .forward
+        navigationViewModel.backEnabled = canGoBack(step: stepState.step)
+        navigationViewModel.forwardEnabled = stepState.forwardEnabled || !viewVender.isSupported(step: stepState.step)
+        if let progress = currentNavigator.progress(currentNode: stepState.step, branchResult: currentBranchResult) {
+            navigationViewModel.progressHidden = stepState.progressHidden
             navigationViewModel.currentIndex = progress.current
             navigationViewModel.pageCount = progress.total
         }
         else {
+            navigationViewModel.pageCount = .max
+            navigationViewModel.currentIndex += 1
             navigationViewModel.progressHidden = true
         }
-        navigationViewModel.backEnabled = canGoBack(step: stepState.step)
-        currentBranchResult.appendStepHistory(with: stepState.result)
-        current = stepState
     }
     
     open func nodeState(for node: Node) -> NodeState? {
         if let question = node as? QuestionStep {
             return QuestionState(question,
+                                 parentId: currentBranchState.id,
                                  answerResult: state.assessmentResult.copyResult(with: node.identifier),
                                  canPause: canPauseAssessment(step: question),
                                  skipStepText: self.skipButtonText(step: question))
         }
         else if let step = node as? Step {
-            return InstructionState(step)
+            return InstructionState(step, parentId: currentBranchState.id)
         }
         else {
             assertionFailure("Branch node handling is not implemented")
@@ -126,7 +181,19 @@ open class AbstractAssessmentNavigationViewModel : ObservableObject, NavigationS
     }
     
     open func goBack() {
-        // TODO: implement syoung 04/04/2022
+        self.backCount += 1
+        
+        // Get the previous node
+        let nextNode = currentNavigator.nodeBefore(currentNode: state.currentStep?.node, branchResult: currentBranchResult)
+        guard let node = nextNode.node,
+              let stepState = nodeState(for: node) as? StepState
+        else {
+            // TODO: syoung 04/06/2022 Handling going back to a earlier branch
+            return
+        }
+        
+        // Move to the node
+        moveTo(nextNode: nextNode, stepState: stepState)
     }
     
     open func canGoBack(step: Step) -> Bool {
