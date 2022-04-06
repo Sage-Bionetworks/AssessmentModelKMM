@@ -40,18 +40,29 @@ public final class ChoiceQuestionViewModel : AbstractChoiceQuestionViewModel {
 
 open class AbstractChoiceQuestionViewModel : ObservableObject {
 
-    public private(set) var question: ChoiceQuestion!
+    weak var questionState: QuestionState?
     
+    @Published public var singleAnswer: Bool = true
     @Published public var choices: [ChoiceViewModel] = []
     @Published public var otherChoice: OtherChoiceViewModel? = nil
     
     public init() {
     }
     
-    public func initialize(_ question: ChoiceQuestion, previousAnswer: JsonElement?) {
-        self.question = question
+    public func initialize(_ questionState: QuestionState) {
+        guard let question = questionState.question as? ChoiceQuestion else {
+            assertionFailure("Attempting to initialize a choice question with a state object that does not have the correct type.")
+            return
+        }
+        
+        // Set up the pointer
+        self.questionState = questionState
+        
+        // Pull out whether or not the question has a single answer.
+        self.singleAnswer = question.singleAnswer
 
         // Filter out the choices where there is a mapping of choice to value.
+        let previousAnswer = questionState.answerResult.jsonValue
         var answers = previousAnswer?.toArray(of: question.baseType) ?? []
         var choices: [ChoiceViewModel] = question.choices.map {
             .init($0, selected: answers.selected($0, question, previousAnswer), selectionToggler: self)
@@ -67,37 +78,55 @@ open class AbstractChoiceQuestionViewModel : ObservableObject {
             choices.append(.init(.init(value: $0, text: "\($0)"), selected: true, selectionToggler: self))
         }
         self.choices = choices
+        
+        // Update whether or not the question state has an answer selected.
+        questionState.hasSelectedAnswer = choices.contains(where: { $0.selected }) || (self.otherChoice?.selected ?? false)
     }
     
-    private var updating: Bool = false
-    
-    public func calculateAnswer() -> JsonElement {
-        if question.singleAnswer {
-            if let value = otherChoice?.jsonValue() {
-                return .init(value)
+    public func updateAnswer() {
+        questionState?.answerResult.jsonValue = calculateAnswer()
+    }
+
+    func calculateAnswer() -> JsonElement? {
+        if singleAnswer {
+            if let otherValue = otherChoice?.jsonValue() {
+                return .init(otherValue)
+            }
+            else if let selectedChoice = choices.first(where: { $0.selected }) {
+                return selectedChoice.jsonChoice.matchingValue ?? .null
             }
             else {
-                return choices.first(where: { $0.selected })?.jsonChoice.matchingValue ?? .null
+                return nil
             }
         }
         else {
-            var values = choices.compactMap { $0.jsonChoice.matchingValue?.jsonObject() }
+            var hasSelected: Bool = false
+            var values: [JsonSerializable] = choices.compactMap {
+                guard $0.selected else { return nil }
+                hasSelected = true
+                return $0.jsonChoice.matchingValue?.jsonObject()
+            }
             if let otherValue = otherChoice?.jsonValue()?.jsonObject() {
+                hasSelected = true
                 values.append(otherValue)
             }
-            return .array(values)
+            return hasSelected ? .array(values) : nil
         }
     }
+    
+    private var updating: Bool = false
     
     func updateSelected(changed changedChoice: ObservableChoice) {
         guard !updating else { return }
         updating = true
         
+        var hasSelected = changedChoice.selected
+        
         let deselectOthers =
-        (changedChoice.selected && question.singleAnswer) ||
+        (changedChoice.selected && singleAnswer) ||
         (changedChoice.selected && changedChoice.selectorType == .exclusive)
             
-        let selectOthers = !question.singleAnswer && changedChoice.selected && changedChoice.selectorType == .all
+        let selectOthers = !singleAnswer && changedChoice.selected && changedChoice.selectorType == .all
         let deselectAllAbove = !changedChoice.selected && changedChoice.selectorType == .all
         
         let selectedOtherChoice = changedChoice.selected && otherChoice?.id == changedChoice.id
@@ -116,10 +145,17 @@ open class AbstractChoiceQuestionViewModel : ObservableObject {
             else if deselectAllAbove && choice.selectorType == .default {
                 choice.selected = false
             }
+            else {
+                hasSelected = hasSelected || choice.selected
+            }
         }
         if deselectOthers && otherChoice?.id != changedChoice.id {
             otherChoice?.selected = false
         }
+        
+        // Update state of whether or not this view model has a valid selection.
+        questionState?.hasSelectedAnswer = hasSelected || (otherChoice?.selected ?? false)
+        updateAnswer()
         
         updating = false
     }

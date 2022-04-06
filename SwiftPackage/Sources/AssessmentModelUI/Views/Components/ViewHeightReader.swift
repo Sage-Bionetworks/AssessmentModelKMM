@@ -1,5 +1,5 @@
 //
-//  GlobalProperties.swift
+//  ViewHeightReader.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -32,30 +32,35 @@
 //
 
 import SwiftUI
-import SharedMobileUI
 
-let textFieldFontSize: CGFloat = 20
-
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
-extension Font {
-    static let defaultTextFieldFont: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
-    
-    static let defaultQuestionTitleFont: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let defaultQuestionSubtitleFont: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let defaultQuestionDetailFont: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let defaultSkipQuestionButtonFont: Font = .latoFont(fixedSize: 18, weight: .regular)
+extension View {
+    func heightReader(height: Binding<CGFloat>) -> some View {
+        modifier(ViewHeightReader(height: height))
+    }
 }
 
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let defaultTextFieldFont: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
+struct ViewHeightReader : ViewModifier {
+    @Binding var height: CGFloat
+    
+    init(height: Binding<CGFloat>) {
+        self._height = height
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .background(GeometryReader {
+                Color.clear.preference(key: ViewHeightKey.self,
+                                       value: $0.frame(in: .local).size.height)
+            })
+            .onPreferenceChange(ViewHeightKey.self) {
+                height = $0
+            }
+    }
 }
-#endif
 
-extension Color {
-    static let surveyBackgroundColor: Color = .hexF6F6F6
+struct ViewHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value = value + nextValue()
+    }
 }

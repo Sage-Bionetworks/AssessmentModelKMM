@@ -68,6 +68,9 @@ public protocol Navigator {
 
     /// Is backward navigation allowed from this ``currentNode`` with the current ``branchResult``?
     func allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult) -> Bool
+    
+    /// Can the assessment be "paused"?
+    func canPauseAssessment(currentNode: Node, branchResult: BranchNodeResult) -> Bool
 
     /// Returns the ``Progress`` of the assessment from the given ``currentNode`` with the given
     /// ``branchResult``. If `null` then progress should not be shown for this ``currentNode`` of assessment.
@@ -87,18 +90,13 @@ open class NavigationPoint {
     /// The next node to move to in navigating the assessment.
     public let node: Node?
     
-    /// The branch result is the result set at this level of navigation. This allows for explicit mutation or copying of a
-    /// result into the form that is required by the assessment ``Navigator``.
-    public let branchResult: BranchNodeResult
-    
     /// The  direction in which to travel the path where the desired navigation may be to go back up the path rather
     /// than moving forward down the path. This can be important for an assessment where the participant is directed
     /// to redo a step and the animation should move backwards to show the user that this is what is happening.
     public let direction: PathMarker.Direction
     
-    public init(node: Node?, branchResult: BranchNodeResult, direction: PathMarker.Direction) {
+    public init(node: Node?, direction: PathMarker.Direction) {
         self.node = node
-        self.branchResult = branchResult
         self.direction = direction
     }
 }

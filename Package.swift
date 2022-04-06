@@ -25,7 +25,7 @@ let package = Package(
                  from: "1.4.6"),
         .package(name: "SharedMobileUI",
                  url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
-                 from: "0.14.0"),
+                 from: "0.14.1"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -53,6 +53,17 @@ let package = Package(
                     "JsonModel",
                     "SharedMobileUI",
                 ],
-                path: "SwiftPackage/Sources/AssessmentModelUI"),
+                path: "SwiftPackage/Sources/AssessmentModelUI",
+                resources: [
+                    .process("Resources")
+                ]),
+        
+        .testTarget(
+            name: "AssessmentModelUITests",
+            dependencies: [
+                "AssessmentModel",
+                "AssessmentModelUI",
+            ],
+            path: "SwiftPackage/Tests/AssessmentModelUITests"),
     ]
 )

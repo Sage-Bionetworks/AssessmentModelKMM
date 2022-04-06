@@ -99,7 +99,7 @@ class NodeNavigatorTests: XCTestCase {
     
     func navigateForward(_ state: TestNavigationState, to identifier: String) -> NavigationPoint {
         var loopCount = 0
-        var point: NavigationPoint = .init(node: nil, branchResult: state.assessmentResult, direction: .forward)
+        var point: NavigationPoint = .init(node: nil, direction: .forward)
         repeat {
             point = state.nodeNavigator.nodeAfter(currentNode: state.currentNode, branchResult: state.assessmentResult)
             state.currentNode = point.node

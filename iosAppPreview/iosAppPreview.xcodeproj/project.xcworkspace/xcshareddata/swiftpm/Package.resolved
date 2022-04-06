@@ -9,15 +9,6 @@
           "revision": "b828a14b255c849199032b6d7eaec0e6be025115",
           "version": "1.4.6"
         }
-      },
-      {
-        "package": "SharedMobileUI",
-        "repositoryURL": "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
-        "state": {
-          "branch": null,
-          "revision": "914adde1a6024c1e8f199a4625013d507f07b3de",
-          "version": "0.14.1"
-        }
       }
     ]
   },

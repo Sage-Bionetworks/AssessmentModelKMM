@@ -1,5 +1,5 @@
 //
-//  GlobalProperties.swift
+//  SurveyNavigationView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -34,28 +34,35 @@
 import SwiftUI
 import SharedMobileUI
 
-let textFieldFontSize: CGFloat = 20
-
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
-extension Font {
-    static let defaultTextFieldFont: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
+struct SurveyNavigationView: View {
+    @EnvironmentObject private var viewModel: PagedNavigationViewModel
     
-    static let defaultQuestionTitleFont: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let defaultQuestionSubtitleFont: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let defaultQuestionDetailFont: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let defaultSkipQuestionButtonFont: Font = .latoFont(fixedSize: 18, weight: .regular)
+    var body: some View {
+        HStack {
+            Button("Back", action: viewModel.goBack)
+                .buttonStyle(NavigationButtonStyle(.backward))
+                .opacity(viewModel.backEnabled ? 1.0 : 0.0)
+            
+            Spacer()
+                            
+            Button(action: viewModel.goForward, label: {
+                if let buttonText = viewModel.forwardButtonText {
+                    buttonText
+                }
+                else {
+                    Text("Next")
+                }
+            })
+            .buttonStyle(NavigationButtonStyle((viewModel.forwardButtonText == nil) ? .forward : .text))
+            .opacity(viewModel.forwardEnabled ? 1.0 : 0.5)
+        }
+        .padding(.horizontal, 32)
+    }
 }
 
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let defaultTextFieldFont: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackgroundColor: Color = .hexF6F6F6
+struct SurveyNavigationView_Previews: PreviewProvider {
+    static var previews: some View {
+        SurveyNavigationView()
+            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+    }
 }

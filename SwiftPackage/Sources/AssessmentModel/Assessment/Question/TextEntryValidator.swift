@@ -59,10 +59,6 @@ public protocol GenericTextInputValidator : TextEntryValidator {
 }
 
 public extension GenericTextInputValidator {
-    func localizedText(for answer: JsonValue?) -> String? {
-        guard let value = answer as? Value else { return nil }
-        return self.convertToText(from: value)
-    }
     func validateText(_ text: String?) throws -> JsonValue? {
         return try self.convertInput(text: text)
     }
@@ -170,6 +166,10 @@ public enum TextInputValidatorError: Error {
 // MARK : Value == String (string)
 
 public extension GenericTextInputValidator where Value == String {
+    func localizedText(for answer: JsonValue?) -> String? {
+        guard let value = answer?.jsonObject() else { return nil }
+        return self.convertToText(from: "\(value)")
+    }
     func convertToText(from answer: String?) -> String? { answer }
     func convertInput(text: String?) throws -> String? {
         try convertInput(answer: text)
@@ -303,6 +303,14 @@ public extension NumberValidator {
 
     var defaultInvalidMessage : String {
         invalidMessage ?? "The number entered is not valid."
+    }
+    
+    func localizedText(for answer: JsonValue?) -> String? {
+        guard let value = answer?.jsonObject() as? Value
+        else {
+            return nil
+        }
+        return self.convertToText(from: value)
     }
 
     func convertToText(from answer: Value?) -> String? {

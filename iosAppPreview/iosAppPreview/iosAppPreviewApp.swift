@@ -1,6 +1,6 @@
 //
-//  GlobalProperties.swift
-//
+//  iosAppPreviewApp.swift
+//  iosAppPreview
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
@@ -32,30 +32,12 @@
 //
 
 import SwiftUI
-import SharedMobileUI
 
-let textFieldFontSize: CGFloat = 20
-
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
-extension Font {
-    static let defaultTextFieldFont: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
-    
-    static let defaultQuestionTitleFont: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let defaultQuestionSubtitleFont: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let defaultQuestionDetailFont: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let defaultSkipQuestionButtonFont: Font = .latoFont(fixedSize: 18, weight: .regular)
-}
-
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let defaultTextFieldFont: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackgroundColor: Color = .hexF6F6F6
+@main
+struct iosAppPreviewApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
 }
