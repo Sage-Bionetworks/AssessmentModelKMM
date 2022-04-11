@@ -94,7 +94,9 @@ internal fun QuestionContent(
             Spacer(modifier = Modifier.weight(1f))
             BottomNavigation(
                 { assessmentViewModel.goBackward() },
-                { assessmentViewModel.goForward() })
+                { assessmentViewModel.goForward() },
+                nextEnabled = questionState.allAnswersValidFlow.collectAsState().value
+                )
         }
     }
 }

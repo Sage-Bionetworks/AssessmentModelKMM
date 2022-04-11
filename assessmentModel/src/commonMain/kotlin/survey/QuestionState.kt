@@ -1,5 +1,9 @@
 package org.sagebionetworks.assessmentmodel.survey
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
@@ -32,6 +36,12 @@ interface QuestionFieldState : FieldState {
      * provided. This can be used to update the enabled state of a "Next" button.
      */
     fun allAnswersValid(): Boolean
+
+    /**
+     * A StateFlow version of [allAnswersValid] that will emit a new value anytime the
+     * answers have changed.
+     */
+    val allAnswersValidFlow: StateFlow<Boolean>
 
     /**
      * This method should be called by the controller when the view associated with a [ChoiceInputItemState] is
@@ -147,7 +157,11 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             // `JsonNull` is used as a special placeholder for "chose not to answer".
             currentResult.jsonValue == JsonNull ||
             // Otherwise, there should be a non-null result and all the non-optional items should be selected.
-            (currentResult.jsonValue != null && itemStates.none { !it.inputItem.optional && !it.selected })
+            (currentResult.jsonValue != null && ((currentResult.jsonValue as? JsonArray)?.isNotEmpty() ?: true) && itemStates.none { !it.inputItem.optional && !it.selected })
+
+    override val allAnswersValidFlow: StateFlow<Boolean>
+    get() {return _mutableAllAnswersValidFlow}
+    private val _mutableAllAnswersValidFlow : MutableStateFlow<Boolean> by lazy {MutableStateFlow(allAnswersValid())}
 
     override fun didChangeSelectionState(selected: Boolean, forItem: InputItemState): Boolean {
         forItem.selected = selected
@@ -183,6 +197,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
         }.toMap()
         currentResult.jsonValue = jsonValue(map)
+        _mutableAllAnswersValidFlow.update { allAnswersValid()}
         return refresh
     }
 
