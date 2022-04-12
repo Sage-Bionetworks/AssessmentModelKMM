@@ -35,56 +35,22 @@ internal fun QuestionContent(
         modifier = modifier
             .fillMaxHeight()
             .background(Color(0xFFF6F6F6))
-            .verticalScroll(rememberScrollState())
+
         ,
     ) {
-        ProgressBar(progress = assessmentViewModel.assessmentNodeState.progress())
-        val openDialog = remember { mutableStateOf(false)  }
-        PauseScreenDialog(showDialog = openDialog.value,
-            assessmentViewModel = assessmentViewModel
-        ) {
-            openDialog.value = false
-        }
-        PauseTopBar(
-            onPauseClicked = {openDialog.value = true}, onSkipClicked = { assessmentViewModel.skip() })
+        val scrollState = rememberScrollState()
+        QuestionHeader(
+            questionState = questionState,
+            assessmentViewModel = assessmentViewModel,
+            scrollState = scrollState
+            )
         Column(
             modifier = modifier
                 .fillMaxHeight()
-                .padding(start = 20.dp, end = 20.dp),
+                .padding(start = 20.dp, end = 20.dp)
+                .verticalScroll(scrollState),
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            question.subtitle?.let { subtitle ->
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                    Text(
-                        text = subtitle,
-                        style = sageP2,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-                    )
-                }
-            }
-            question.title?.let { title ->
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = title,
-                    style = sageH1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-                )
-            }
-            question.detail?.let { detail ->
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = detail,
-                    style = sageP2,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             MultipleChoiceQuestion(
                 questionState = questionState,
                 modifier = Modifier.fillMaxWidth()
