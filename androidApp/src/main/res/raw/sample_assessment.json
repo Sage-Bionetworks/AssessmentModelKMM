@@ -18,16 +18,6 @@
     {
       "identifier": "step1",
       "type": "instruction",
-      "title": "Instruction Step 1",
-      "detail": "Here are the details for this instruction.",
-      "image"  : {
-        "type":"fetchable",
-        "imageName" : "crf_seated"
-      }
-    },
-    {
-      "identifier": "step2",
-      "type": "instruction",
       "title": "Animating image instruction",
       "detail": "Here are the details for this instruction.",
       "image": {
@@ -40,6 +30,16 @@
           "crf_stair_step_start_3",
           "crf_stair_step_start_4"
         ]
+      }
+    },
+    {
+      "identifier": "step2",
+      "type": "instruction",
+      "title": "Survey Title",
+      "detail": "For the next set of questions please answer truthfully",
+      "image"  : {
+        "type":"fetchable",
+        "imageName" : "ic_survey_default"
       }
     },
     {
@@ -105,7 +105,7 @@
         {"text":"Cat","value":"Cat"},
         {"text":"Dog","value":"Dog"}
       ],
-      "other": {"type" : "string", "fieldLabel" :  "Other"}
+      "other": {"type" : "string", "fieldLabel" :  "Other:"}
     },
     {
       "identifier": "checkboxQuestion",

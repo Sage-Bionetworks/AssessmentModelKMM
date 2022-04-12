@@ -5,14 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.sagebionetworks.assessmentmodel.presentation.compose.QuestionContent
-import org.sagebionetworks.assessmentmodel.presentation.databinding.ChoiceQuestionStepFragmentBinding
+import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 
 class ChoiceQuestionStepFragment: StepFragment() {
 
-    private var _binding: ChoiceQuestionStepFragmentBinding? = null
+    private var _binding: ComposeQuestionStepFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     val binding get() = _binding!!
 
@@ -27,7 +27,7 @@ class ChoiceQuestionStepFragment: StepFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = ChoiceQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             SageSurveyTheme {
