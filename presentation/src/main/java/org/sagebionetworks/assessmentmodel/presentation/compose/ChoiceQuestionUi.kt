@@ -11,6 +11,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -21,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.R
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.*
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
@@ -71,6 +74,7 @@ private fun MultipleChoiceQuestion(
     modifier: Modifier = Modifier
 ) {
     val question = questionState.node as ChoiceQuestion
+    val focusManager = LocalFocusManager.current
     Column(modifier = modifier) {
         for (inputState in questionState.itemStates) {
             when (inputState) {
@@ -111,14 +115,19 @@ private fun ChoiceQuestionInput(
         modifier = Modifier
             .padding(vertical = 8.dp)
     ) {
+        val focusRequester = remember { FocusRequester() }
+        val onClick = { selected:Boolean ->
+            onChoiceSelected(selected)
+            if (selected && inputItemState is KeyboardInputItemState<*>) {
+                focusRequester.requestFocus()
+            }
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(answerBackgroundColor)
                 .clickable(
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    }
+                    onClick = {onClick(!choiceSelected)}
                 )
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -127,9 +136,7 @@ private fun ChoiceQuestionInput(
             if (singleChoice) {
                 RadioButton(
                     selected = choiceSelected,
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    },
+                    onClick = {onClick(!choiceSelected)},
                     colors = RadioButtonDefaults.colors(
                         selectedColor = SageBlack
                     )
@@ -138,7 +145,7 @@ private fun ChoiceQuestionInput(
                 Checkbox(
                     checked = choiceSelected,
                     onCheckedChange = { selected ->
-                        onChoiceSelected(selected)
+                        onClick(selected)
                     },
                     colors = CheckboxDefaults.colors(
                         checkedColor = SageBlack
@@ -163,8 +170,12 @@ private fun ChoiceQuestionInput(
                         style = sageP1
                     )
                     val focusManager = LocalFocusManager.current
+                    if (!choiceSelected) {
+                        focusManager.clearFocus()
+                    }
                     TextField(
-                        modifier = Modifier.padding(end = 20.dp),
+                        modifier = Modifier.padding(end = 20.dp)
+                            .focusRequester(focusRequester),
                         value = text,
                         onValueChange = {
                             text = it
