@@ -21,10 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.R
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.*
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
@@ -41,6 +38,7 @@ internal fun QuestionContent(
             .verticalScroll(rememberScrollState())
         ,
     ) {
+        ProgressBar(progress = assessmentViewModel.assessmentNodeState.progress())
         val openDialog = remember { mutableStateOf(false)  }
         PauseScreenDialog(showDialog = openDialog.value,
             assessmentViewModel = assessmentViewModel

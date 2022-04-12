@@ -13,7 +13,7 @@
     "cancel": { "type": "default", "iconName" : "closeX" }
   },
   "shouldHideActions": ["goBackward"],
-  "progressMarkers": ["step1","step2"],
+  "progressMarkers": ["step1","step2", "feeling", "favoriteColor", "otherChoice", "checkboxQuestion", "stringQuestion", "yearQuestion", "multipleInputQuestion"],
   "steps": [
     {
       "identifier": "step1",

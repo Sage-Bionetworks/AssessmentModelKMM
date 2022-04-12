@@ -1,16 +1,14 @@
 package org.sagebionetworks.assessmentmodel.presentation.compose
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import org.sagebionetworks.assessmentmodel.navigation.Progress
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
@@ -69,6 +67,17 @@ fun CloseButton(
             painter = painterResource(id = org.sagebionetworks.assessmentmodel.presentation.R.drawable.ic_close),
             contentDescription = stringResource(R.string.close)
         )
+    }
+}
+
+@Composable
+fun ProgressBar(
+    progress: Progress?
+) {
+    progress?.let {
+        LinearProgressIndicator(
+            progress = it.current.toFloat().div(it.total.toFloat()),
+            modifier = Modifier.fillMaxWidth())
     }
 }
 
