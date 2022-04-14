@@ -36,42 +36,14 @@ import SharedMobileUI
 import AssessmentModel
 import JsonModel
 
-//public struct StepViewCategory : RawRepresentable, Identifiable, Hashable, ExpressibleByStringLiteral {
-//    public var id: String { rawValue }
-//    public let rawValue: String
-//    public init(rawValue: String) {
-//        self.rawValue = rawValue
-//    }
-//    public init(stringLiteral value: String) {
-//        self.rawValue = value
-//    }
-//    
-//    public static let loading: StepViewCategory = "loading"
-//    public static let finished: StepViewCategory = "finished"
-//    public static let undefined: StepViewCategory = "undefined"
-//    public static let choiceQuestion: StepViewCategory = "choiceQuestion"
-//}
-//
-//public struct CurrentStepState : Identifiable {
-//    public var id: String { "\(category.id):/\(stepState?.id ?? "")" }
-//    
-//    public let stepState: StepState?
-//    public let category: StepViewCategory
-//    
-//    public init(_ category: StepViewCategory, stepState: StepState? = nil) {
-//        self.stepState = stepState
-//        self.category = category
-//    }
-//}
-
 open class AssessmentViewModel : ObservableObject, NavigationState {
     
     @Published var forwardCount: Int = 0
     @Published var backCount: Int = 0
     
     public let navigationViewModel: PagedNavigationViewModel = .init()
-    weak public var state: AssessmentState!
-    weak public var viewVender: AssessmentStepViewVender!
+    public private(set) var viewVender: AssessmentStepViewVender!
+    public private(set) var state: AssessmentState!
     
     public init() {
         navigationViewModel.goForward = goForward
@@ -111,12 +83,49 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         state.navigator
     }
     
+    // MARK: Pause menu handling
+    
+    open func resume() {
+        self.state.showingPauseActions = false
+    }
+    
+    open func reviewInstructions() {
+        guard let node = reviewNode(),
+              let stepState = nodeState(for: node) as? StepState
+        else {
+            return
+        }
+        moveTo(nextNode: .init(node: node, direction: .backward), stepState: stepState)
+        resume()
+    }
+    
+    private func reviewNode() -> Node? {
+        guard let reviewIdentifier = self.state.interuptionHandling.reviewIdentifier
+        else {
+            return nil
+        }
+        switch reviewIdentifier {
+        case .reserved(let reservedKey):
+            // TODO: syoung 04/14/2022 Handle branch nodes
+            return (reservedKey == .beginning) ? state.navigator.firstNode() : nil
+        case .node(let identifier):
+            return currentNavigator.node(identifier: identifier)
+        }
+    }
+    
+    open func skipAssessment() {
+        self.state.status = .declined
+    }
+    
+    open func exitAssessment() {
+        self.state.status = .earlyExit
+    }
+    
     // MARK: Navigation handling
     
     open func goForward() {
         self.forwardCount += 1
         
-        // TODO: syoung 04/04/2022 Handle exiting the assessment (rather than the section)
         // TODO: syoung 04/04/2022 Handle branch nodes
         
         // Update the end timestamp for the current result
@@ -132,7 +141,8 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
               let stepState = nodeState(for: node) as? StepState
         else {
             state.currentStep = nil
-            state.isFinished = true
+            currentBranchState.result.endDate = Date()
+            state.status = .finished
             return
         }
         
@@ -202,6 +212,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     }
     
     open func canPauseAssessment(step: Step) -> Bool {
+        state.interuptionHandling.canPause &&
         currentNavigator.canPauseAssessment(currentNode: step, branchResult: currentBranchResult) &&
         !shouldHide(.navigation(.pause), step: step)
     }

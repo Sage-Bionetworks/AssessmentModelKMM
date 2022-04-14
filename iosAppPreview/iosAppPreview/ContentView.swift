@@ -36,9 +36,56 @@ import SharedMobileUI
 import AssessmentModel
 
 struct ContentView: View {
+    @StateObject var viewModel: ViewModel = .init()
+    let surveys: [AssessmentHolder] = [
+        .init(assessment: surveyA),
+        .init(assessment: surveyB),
+    ]
+
     var body: some View {
-        AssessmentView(.init(surveyA))
+        List(surveys) { holder in
+            Button(holder.assessment.title ?? holder.id) {
+                viewModel.current = .init(holder.assessment)
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.isPresented) {
+            AssessmentListener(viewModel)
+        }
     }
+    
+    class ViewModel : ObservableObject {
+        @Published var isPresented: Bool = false
+        var current: AssessmentState? {
+            didSet {
+                isPresented = (current != nil)
+            }
+        }
+    }
+    
+    struct AssessmentListener : View {
+        @ObservedObject var viewModel: ViewModel
+        @ObservedObject var state: AssessmentState
+        
+        init(_ viewModel: ViewModel) {
+            self.viewModel = viewModel
+            self.state = viewModel.current!
+        }
+        
+        var body: some View {
+            AssessmentView(state)
+                .onChange(of: state.status) { newValue in
+                    guard newValue != .running else { return }
+                    // In a real use-case this is where you might save and upload data
+                    viewModel.isPresented = false
+                    viewModel.current = nil
+                }
+        }
+    }
+}
+
+struct AssessmentHolder : Identifiable {
+    var id: String { assessment.identifier }
+    let assessment: Assessment
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -46,3 +93,11 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+let surveyB = AssessmentObject(identifier: "surveyB",
+                               children: surveyBChildren,
+                               title: "Example Survey B")
+fileprivate let surveyBChildren: [Node] = [
+    OverviewStepObject(identifier: "overview", title: "Example Survey B", detail: "This survey has no questions"),
+    CompletionStepObject(identifier: "completion", title: "You're done!")
+]

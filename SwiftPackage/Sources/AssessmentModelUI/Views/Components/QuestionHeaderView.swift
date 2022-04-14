@@ -42,28 +42,14 @@ struct QuestionHeaderView : View {
     
     public var body: some View {
         HStack {
-            exitButton()
+            ExitButton(canPause: questionState.canPause)
             Spacer()
             skipButton()
-                .font(.defaultSkipQuestionButtonFont)
+                .font(.skipQuestionButton)
                 .padding(.trailing, 15)
         }
         .accentColor(.sageBlack)
         .fixedSize(horizontal: false, vertical: true)
-    }
-    
-    @ViewBuilder
-    func exitButton() -> some View {
-        if questionState.canPause {
-            Button(action: { assessmentState.showingPauseActions = true }) {
-                Image("pause", bundle: .module)
-            }
-        }
-        else {
-            Button(action: { assessmentState.isFinished = true }) {
-                Image("close", bundle: .module)
-            }
-        }
     }
     
     @ViewBuilder

@@ -50,6 +50,12 @@ public protocol InterruptionHandling {
     var reviewIdentifier: NavigationIdentifier? { get }
 }
 
+public extension InterruptionHandling {
+    var canPause: Bool {
+        canResume || canSkip || (reviewIdentifier != nil)
+    }
+}
+
 public struct InterruptionHandlingObject : InterruptionHandling, Codable, Hashable {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case _canResume = "canResume", reviewIdentifier, _canSkip = "canSkip", _canSaveForLater = "canSaveForLater"

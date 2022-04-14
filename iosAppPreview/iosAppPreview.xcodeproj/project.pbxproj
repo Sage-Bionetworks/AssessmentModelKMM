@@ -13,6 +13,8 @@
 		FF629AAA27FB6D1E0082EDD7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF629AA927FB6D1E0082EDD7 /* Images.xcassets */; };
 		FF629AAC27FBC40A0082EDD7 /* QuestionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AAB27FBC40A0082EDD7 /* QuestionHeaderView.swift */; };
 		FFAEDCFD27FD0ADA0096CC6D /* AssessmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEDCFC27FD0ADA0096CC6D /* AssessmentView.swift */; };
+		FFAF7C542808AC1B004B5670 /* ExitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAF7C532808AC1B004B5670 /* ExitButton.swift */; };
+		FFAF7C562808AE10004B5670 /* PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAF7C552808AE10004B5670 /* PauseMenu.swift */; };
 		FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */; };
 		FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB530C27F6A4F800BED4E2 /* ContentView.swift */; };
 		FFCB530F27F6A4FB00BED4E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFCB530E27F6A4FB00BED4E2 /* Assets.xcassets */; };
@@ -38,6 +40,8 @@
 		FF629AA927FB6D1E0082EDD7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FF629AAB27FBC40A0082EDD7 /* QuestionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionHeaderView.swift; sourceTree = "<group>"; };
 		FFAEDCFC27FD0ADA0096CC6D /* AssessmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentView.swift; sourceTree = "<group>"; };
+		FFAF7C532808AC1B004B5670 /* ExitButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitButton.swift; sourceTree = "<group>"; };
+		FFAF7C552808AE10004B5670 /* PauseMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseMenu.swift; sourceTree = "<group>"; };
 		FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosAppPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppPreviewApp.swift; sourceTree = "<group>"; };
 		FFCB530C27F6A4F800BED4E2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -179,11 +183,13 @@
 		FFCB534527F6A78900BED4E2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				FFAF7C552808AE10004B5670 /* PauseMenu.swift */,
 				FFCB534627F6A78900BED4E2 /* MultilineTextField.swift */,
 				FFCB535B27F6BB9700BED4E2 /* SurveyNavigationView.swift */,
 				FFDDD56727F7A4AE00B40F22 /* ViewHeightReader.swift */,
 				FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */,
 				FF629AAB27FBC40A0082EDD7 /* QuestionHeaderView.swift */,
+				FFAF7C532808AC1B004B5670 /* ExitButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -274,6 +280,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */,
+				FFAF7C562808AE10004B5670 /* PauseMenu.swift in Sources */,
+				FFAF7C542808AC1B004B5670 /* ExitButton.swift in Sources */,
 				FFAEDCFD27FD0ADA0096CC6D /* AssessmentView.swift in Sources */,
 				FFCB534F27F6A78900BED4E2 /* ChoiceQuestionStepView.swift in Sources */,
 				FFCB535C27F6BB9700BED4E2 /* SurveyNavigationView.swift in Sources */,

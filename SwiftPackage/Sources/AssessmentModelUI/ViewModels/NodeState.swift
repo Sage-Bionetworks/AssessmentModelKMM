@@ -42,7 +42,7 @@ open class NodeState : ObservableObject, Identifiable {
     public let id: String
     
     public let node: Node
-    public let result: ResultData
+    public var result: ResultData
     
     init(node: Node, result: ResultData, parentId: String? = nil) {
         self.id = "\(parentId ?? "")/\(node.identifier)"
@@ -53,7 +53,10 @@ open class NodeState : ObservableObject, Identifiable {
 
 open class BranchState : NodeState {
     public final var branchNode: BranchNode { node as! BranchNode }
-    public final var branchNodeResult: BranchNodeResult { result as! BranchNodeResult }
+    public final var branchNodeResult: BranchNodeResult {
+        get { result as! BranchNodeResult }
+        set { result = newValue }
+    }
     
     var navigator: Navigator!
     
@@ -77,16 +80,23 @@ open class StepState : NodeState {
 public final class AssessmentState : BranchState {
     public var assessment: Assessment { node as! Assessment }
     public var assessmentResult: AssessmentResult { result as! AssessmentResult }
+    
+    public let interuptionHandling: InterruptionHandling
 
+    @Published public var status: Status = .running
     @Published public var currentStep: StepState?
-    @Published public var isFinished: Bool = false
     @Published public var showingPauseActions: Bool = false
     @Published public var navigationError: Error?
 
-    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil) {
+    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
         var result = restoredResult ?? assessment.instantiateAssessmentResult()
         result.startDate = Date()
+        self.interuptionHandling = interuptionHandling ?? assessment.interruptionHandling
         super.init(branch: assessment, result: result)
+    }
+    
+    public enum Status : String {
+        case running, finished, declined, earlyExit
     }
 }
 

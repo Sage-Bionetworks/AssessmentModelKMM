@@ -106,6 +106,9 @@ public struct AssessmentView : View {
         ZStack(alignment: .top) {
             viewVender.stepView(state: assessmentState.currentStep)
             TopBarProgressView()
+            PauseMenu(viewModel: viewModel)
+                .opacity(assessmentState.showingPauseActions ? 1 : 0)
+                .animation(.easeInOut, value: assessmentState.showingPauseActions)
         }
         .environmentObject(assessmentState)
         .environmentObject(viewModel.navigationViewModel)

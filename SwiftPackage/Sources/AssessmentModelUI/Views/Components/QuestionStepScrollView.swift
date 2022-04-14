@@ -137,7 +137,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         Text(questionState.title)
             .opacity(0)
             .lineLimit(2)
-            .headerTextStyle(.defaultQuestionTitleFont)
+            .headerTextStyle(.questionTitle)
             .padding(.vertical, innerVerticalSpacing)
             .heightReader(height: $minTitleHeight)
     }
@@ -146,18 +146,18 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
     func inlineHeader() -> some View {
         if let subtitle = questionState.subtitle {
             Text(subtitle)
-                .headerTextStyle(.defaultQuestionSubtitleFont)
+                .headerTextStyle(.questionSubtitle)
                 .padding(.top, innerVerticalSpacing)
                 .heightReader(height: $subtitleHeight)
         }
         Text(questionState.title)
-            .headerTextStyle(.defaultQuestionTitleFont)
+            .headerTextStyle(.questionTitle)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.vertical, innerVerticalSpacing)
             .heightReader(height: $titleHeight)
         if let detail = questionState.detail {
             Text(detail)
-                .headerTextStyle(.defaultQuestionDetailFont)
+                .headerTextStyle(.questionDetail)
                 .padding(.bottom, innerVerticalSpacing)
                 .heightReader(height: $detailHeight)
         }
@@ -169,17 +169,17 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         VStack(spacing: 0) {
             if let subtitle = questionState.subtitle {
                 Text(subtitle)
-                    .headerTextStyle(.defaultQuestionSubtitleFont)
+                    .headerTextStyle(.questionSubtitle)
                     .padding(.top, collapsedHeader ? 0 : innerVerticalSpacing)
                     .frame(height: collapsedHeader ? 0 : subtitleHeight)
             }
             Text(questionState.title)
-                .headerTextStyle(.defaultQuestionTitleFont)
+                .headerTextStyle(.questionTitle)
                 .padding(.vertical, innerVerticalSpacing)
                 .frame(maxHeight: collapsedHeader ? collapsedTitleHeight : titleHeight)
             if let detail = questionState.detail {
                 Text(detail)
-                    .headerTextStyle(.defaultQuestionDetailFont)
+                    .headerTextStyle(.questionDetail)
                     .padding(.bottom, collapsedHeader ? 0 : innerVerticalSpacing)
                     .frame(height: collapsedHeader ? 0 : detailHeight)
             }

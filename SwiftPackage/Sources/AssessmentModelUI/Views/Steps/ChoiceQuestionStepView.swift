@@ -52,7 +52,7 @@ public struct ChoiceQuestionStepView : View {
         }
         .id("ChoiceQuestionStepView:\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackgroundColor)
+        .fullscreenBackground(.surveyBackground)
     }
 }
 
@@ -146,7 +146,7 @@ struct SelectionCell : ViewModifier {
 
     func body(content: Content) -> some View {
         wrapContent(content)
-            .font(.defaultTextFieldFont)
+            .font(.textField)
             .foregroundColor(.textForeground)
     }
     

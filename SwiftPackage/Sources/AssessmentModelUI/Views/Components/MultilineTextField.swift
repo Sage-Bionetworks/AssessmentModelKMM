@@ -61,7 +61,7 @@ struct MultilineTextField: View {
         ZStack(alignment: .leading) {
             Text("\(fieldLabel)\(text)")
                 .opacity(0)
-                .font(.defaultTextFieldFont)
+                .font(.textField)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 5)
                 .heightReader(height: $textEditorHeight)
@@ -153,7 +153,7 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         backingView.text = backingViewText()
         backingView.delegate = context.coordinator
         backingView.backgroundColor = .clear
-        backingView.font = .defaultTextFieldFont
+        backingView.font = .textField
         backingView.adjustsFontForContentSizeCategory = true
         backingView.textColor = .textForeground
         
