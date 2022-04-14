@@ -166,7 +166,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public let estimatedMinutes: Int
     public let copyright: String?
     
-    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject() }
+    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject(reviewIdentifier: .reserved(.beginning)) }
     private let _interruptionHandling: InterruptionHandlingObject?
     
     open var jsonSchema: URL {

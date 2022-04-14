@@ -39,7 +39,12 @@ public enum NavigationIdentifier {
     case reserved(ReservedKey)
     
     public enum ReservedKey : String, StringEnumSet, DocumentableStringEnum {
-        case exit, nextSection
+        /// Exit the assessment
+        case exit
+        /// Go to the next section
+        case nextSection
+        /// Go to the beginning (ie. the first step)
+        case beginning
     }
     
     case node(String)

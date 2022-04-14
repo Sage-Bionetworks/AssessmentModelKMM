@@ -30,6 +30,11 @@ enum class ReservedNavigationIdentifier {
      * Continue to the next section.
      */
     NextSection,
+
+    /**
+     * Go to the beginning of the assessment.
+     */
+    Beginning,
     ;
 
     fun matching(identifier: String?) = (name.compareTo(identifier ?: "", true) == 0)
