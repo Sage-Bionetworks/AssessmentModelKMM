@@ -53,6 +53,9 @@ public protocol Navigator {
     /// Returns the ``Node`` associated with the given ``identifier``, if any. This is the ``identifier`` for the
     /// ``Node`` that is local to this level of the node tree.
     func node(identifier: String) -> Node?
+    
+    /// Returns the first node in the navigator or `nil` if navigating back to the start is not supported.
+    func firstNode() -> Node?
 
     /// Continue to the next node after the current node. If ``currentNode`` is null, then the navigation is moving
     /// forward into this section or assessment.

@@ -68,6 +68,10 @@ public final class NodeNavigator : Navigator {
         self.nodes.first(where: { $0.identifier == identifier })
     }
     
+    public func firstNode() -> Node? {
+        self.nodes.first
+    }
+    
     public func nodeAfter(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
         guard let currentNode = currentNode, let idx = self.nodeIndex(currentNode) else {
             return .init(node: nodes.first, direction: .forward)
