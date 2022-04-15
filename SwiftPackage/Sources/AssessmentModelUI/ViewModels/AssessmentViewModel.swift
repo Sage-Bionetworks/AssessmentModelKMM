@@ -55,32 +55,27 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         
         self.state = assessmentState
         self.viewVender = viewVender
+        self.currentBranchState = assessmentState
 
         do {
             assessmentState.navigator = try assessmentState.assessment.instantiateNavigator(state: self)
             self.goForward()
         } catch {
             assessmentState.navigationError = error
+            assessmentState.status = .error
         }
     }
     
     // MARK: Current branch handling
     
-    // TODO: syoung 04/04/2022 Handle branch nodes
-    open var currentBranchState: NodeState {
-        state
+    open private(set) var currentBranchState: BranchState!
+    
+    public var currentBranchResult: BranchNodeResult {
+        currentBranchState.branchNodeResult
     }
     
-    open var currentBranchNode: BranchNode {
-        state.branchNode
-    }
-    
-    open var currentBranchResult: BranchNodeResult {
-        state.branchNodeResult
-    }
-    
-    open var currentNavigator: Navigator {
-        state.navigator
+    public var currentNavigator: Navigator {
+        currentBranchState.navigator
     }
     
     // MARK: Pause menu handling
@@ -106,8 +101,13 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         }
         switch reviewIdentifier {
         case .reserved(let reservedKey):
-            // TODO: syoung 04/14/2022 Handle branch nodes
-            return (reservedKey == .beginning) ? state.navigator.firstNode() : nil
+            guard reservedKey == .beginning, let node = state.navigator.firstNode()
+            else {
+                return nil
+            }
+            currentBranchState = state
+            return node
+            
         case .node(let identifier):
             return currentNavigator.node(identifier: identifier)
         }
@@ -124,10 +124,13 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     // MARK: Navigation handling
     
     open func goForward() {
+        guard state != nil, currentBranchState != nil, currentBranchState.navigator != nil
+        else {
+            return
+        }
+        
         self.forwardCount += 1
-        
-        // TODO: syoung 04/04/2022 Handle branch nodes
-        
+                
         // Update the end timestamp for the current result
         if let current = state.currentStep {
             var result = current.result
@@ -135,19 +138,55 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             currentBranchResult.appendStepHistory(with: result)
         }
         
+        goForward(from: state.currentStep?.node)
+    }
+    
+    private func goForward(from previousNode: Node?) {
+        
         // Get the next node
-        let nextNode = currentNavigator.nodeAfter(currentNode: state.currentStep?.node, branchResult: currentBranchResult)
+        let nextNode = currentNavigator.nodeAfter(currentNode: previousNode, branchResult: currentBranchResult)
         guard let node = nextNode.node,
-              let stepState = nodeState(for: node) as? StepState
+              let nodeState = nodeState(for: node)
         else {
-            state.currentStep = nil
-            currentBranchState.result.endDate = Date()
-            state.status = .finished
+            moveToNextSection()
             return
         }
         
         // Move to the node
-        moveTo(nextNode: nextNode, stepState: stepState)
+        if let stepState = nodeState as? StepState {
+            if currentBranchState.id == state.id,
+               state.navigator.isCompleted(currentNode: stepState.step, branchResult: state.assessmentResult) {
+                // If this is a completion step, the assessment is the top level object,
+                // and backwards navigation is disabled then mark as "ready to save".
+                state.result.endDate = Date()
+                state.status = .readyToSave
+            }
+            moveTo(nextNode: nextNode, stepState: stepState)
+        }
+        else if let branchState = nodeState as? BranchState {
+            moveInto(branchState: branchState, direction: .forward)
+        }
+        else {
+            assertionFailure("Navigation from this point is undefined for this state machine: \(node)")
+            markAsFinished()
+        }
+    }
+    
+    private func moveToNextSection() {
+        currentBranchState.result.endDate = Date()
+        if currentBranchState.id == state.id {
+            markAsFinished()
+        }
+        else {
+            let branchNode = currentBranchState.node
+            currentBranchState = state
+            goForward(from: branchNode)
+        }
+    }
+    
+    private func markAsFinished() {
+        state.currentStep = nil
+        state.status = .finished
     }
     
     private func moveTo(nextNode: NavigationPoint, stepState: StepState) {
@@ -173,11 +212,39 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         }
     }
     
+    private func moveInto(branchState: BranchState, direction: PathMarker.Direction) {
+        currentBranchResult.appendStepHistory(with: branchState.result)
+        currentBranchState = branchState
+        if direction == .forward {
+            goForward(from: nil)
+        }
+        else {
+            goBack(from: nil)
+        }
+    }
+    
     open func nodeState(for node: Node) -> NodeState? {
-        if let question = node as? QuestionStep {
+        if let branchNode = node as? BranchNode {
+            guard currentBranchState.id == state.id else {
+                assertionFailure("Nested sections within sections is not supported by this state handler.")
+                return nil
+            }
+            let branchState = BranchState(branch: branchNode,
+                                          result: currentBranchResult.copyResult(with: branchNode.identifier),
+                                          parentId: state.id)
+            do {
+                branchState.navigator = try branchState.branchNode.instantiateNavigator(state: self)
+                return branchState
+            } catch {
+                state.navigationError = error
+                state.status = .error
+                return nil
+            }
+        }
+        else if let question = node as? QuestionStep {
             return QuestionState(question,
                                  parentId: currentBranchState.id,
-                                 answerResult: state.assessmentResult.copyResult(with: node.identifier),
+                                 answerResult: currentBranchResult.copyResult(with: node.identifier),
                                  canPause: canPauseAssessment(step: question),
                                  skipStepText: self.skipButtonText(step: question))
         }
@@ -185,7 +252,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             return InstructionState(step, parentId: currentBranchState.id)
         }
         else {
-            assertionFailure("Branch node handling is not implemented")
+            assertionFailure("Cannot create step or branch state for this node: \(node)")
             return nil
         }
     }
@@ -193,30 +260,83 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     open func goBack() {
         self.backCount += 1
         
-        // Get the previous node
-        let nextNode = currentNavigator.nodeBefore(currentNode: state.currentStep?.node, branchResult: currentBranchResult)
-        guard let node = nextNode.node,
-              let stepState = nodeState(for: node) as? StepState
-        else {
-            // TODO: syoung 04/06/2022 Handling going back to a earlier branch
-            return
+        // Update the current result. This will ensure that if the mutable result on
+        // the current state is a struct, that the step history replaces the struct
+        // with the one that has possibily been mutated.
+        if let current = state.currentStep {
+            currentBranchResult.appendStepHistory(with: current.result)
         }
         
+        goBack(from: state.currentStep?.node)
+    }
+    
+    private func goBack(from previousNode: Node?) {
+        
+        // Get the previous node
+        let nextNode = currentNavigator.nodeBefore(currentNode: previousNode, branchResult: currentBranchResult)
+        guard let node = nextNode.node,
+              let nodeState = nodeState(for: node)
+        else {
+            moveToPreviousSection()
+            return
+        }
+
         // Move to the node
-        moveTo(nextNode: nextNode, stepState: stepState)
+        if let stepState = nodeState as? StepState {
+            moveTo(nextNode: nextNode, stepState: stepState)
+        }
+        else if let branchState = nodeState as? BranchState {
+            moveInto(branchState: branchState, direction: .backward)
+        }
+        else {
+            assertionFailure("Navigation from this point is undefined for this state machine: \(node)")
+            markAsFinished()
+        }
+    }
+    
+    private func moveToPreviousSection() {
+        guard currentBranchState.id != state.id
+        else {
+            // If this is the top level then we've moved all the way up and are on the first step.
+            return
+        }
+        let branchNode = currentBranchState.node
+        currentBranchState = state
+        goBack(from: branchNode)
     }
     
     open func canGoBack(step: Step) -> Bool {
-        currentNavigator.allowBackNavigation(currentNode: step, branchResult: currentBranchResult) &&
-        !shouldHide(.navigation(.goBackward), step: step)
+        if shouldHide(.navigation(.goBackward), step: step) {
+            return false
+        }
+        else if currentNavigator.allowBackNavigation(currentNode: step, branchResult: currentBranchResult) {
+            return true
+        }
+        else if state.id != currentBranchState.id, currentNavigator.firstNode()?.identifier == step.identifier {
+            return state.navigator.allowBackNavigation(currentNode: currentBranchState.node, branchResult: state.branchNodeResult)
+        }
+        else {
+            return false
+        }
     }
     
     open func canPauseAssessment(step: Step) -> Bool {
-        state.interuptionHandling.canPause &&
-        currentNavigator.canPauseAssessment(currentNode: step, branchResult: currentBranchResult) &&
-        !shouldHide(.navigation(.pause), step: step)
+        guard state.interuptionHandling.canPause &&
+              !shouldHide(.navigation(.pause), step: step)
+        else {
+            return false
+        }
+        if currentNavigator.canPauseAssessment(currentNode: step, branchResult: currentBranchResult) {
+            return true
+        }
+        else if state.id != currentBranchState.id, currentNavigator.firstNode()?.identifier == step.identifier {
+            return state.navigator.canPauseAssessment(currentNode: currentBranchState.node, branchResult: state.branchNodeResult)
+        }
+        else {
+            return false
+        }
     }
-    
+        
     open func skipButtonText(step: Step) -> Text? {
         if shouldHide(.navigation(.skip), step: step) {
             return nil
@@ -237,7 +357,8 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         if let shouldHide = state.assessment.shouldHideButton(buttonType, node: step), shouldHide {
             return true
         }
-        else if let shouldHide = currentBranchNode.shouldHideButton(buttonType, node: step), shouldHide {
+        else if state.id != currentBranchState.id,
+                let shouldHide = currentBranchState.node.shouldHideButton(buttonType, node: step), shouldHide {
             return true
         }
         else {
@@ -247,7 +368,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     
     private func buttonInfo(_ buttonType: ButtonType, step: Step) -> ButtonActionInfo? {
         step.button(buttonType, node: step) ??
-        currentBranchNode.button(buttonType, node: step) ??
-        state.assessment.button(buttonType, node: step)
+        currentBranchState.node.button(buttonType, node: step) ??
+        (state.id != currentBranchState.id ? state.assessment.button(buttonType, node: step) : nil)
     }
 }

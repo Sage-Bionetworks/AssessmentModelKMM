@@ -38,7 +38,13 @@ import JsonModel
 public protocol CompletionStep : Step, ContentNode {
 }
 
-public final class CompletionStepObject : AbstractStepObject, CompletionStep, Encodable, DocumentableStruct, CopyWithIdentifier {
+open class AbstractCompletionStepObject : AbstractStepObject, CompletionStep {
+    open override func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool? {
+        buttonType == .navigation(.goBackward) ? true : super.shouldHideButton(buttonType, node: node)
+    }
+}
+
+public final class CompletionStepObject : AbstractCompletionStepObject, Encodable, DocumentableStruct, CopyWithIdentifier {
     public override class func defaultType() -> SerializableNodeType {
         .StandardTypes.completion.nodeType
     }

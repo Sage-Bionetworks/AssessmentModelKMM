@@ -60,8 +60,8 @@ open class BranchState : NodeState {
     
     var navigator: Navigator!
     
-    public init(branch: BranchNode, result: BranchNodeResult, parentId: String? = nil) {
-        super.init(node: branch, result: result, parentId: parentId)
+    public init(branch: BranchNode, result: BranchNodeResult?, parentId: String? = nil) {
+        super.init(node: branch, result: result ?? branch.instantiateBranchNodeResult(), parentId: parentId)
     }
 }
 
@@ -89,14 +89,19 @@ public final class AssessmentState : BranchState {
     @Published public var navigationError: Error?
 
     public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
-        var result = restoredResult ?? assessment.instantiateAssessmentResult()
-        result.startDate = Date()
+        let result = restoredResult ?? assessment.instantiateAssessmentResult()
         self.interuptionHandling = interuptionHandling ?? assessment.interruptionHandling
         super.init(branch: assessment, result: result)
     }
     
-    public enum Status : String {
-        case running, finished, declined, earlyExit
+    public enum Status : Int, Hashable, Comparable {
+        case running, readyToSave, finished, declined, earlyExit, error
+    }
+}
+
+extension RawRepresentable where RawValue == Int {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.rawValue < rhs.rawValue
     }
 }
 
@@ -143,8 +148,7 @@ public final class QuestionState : StepState {
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
         self.canPause = canPause
         self.skipStepText = skipStepText
-        var result = answerResult ?? question.instantiateAnswerResult()
-        result.startDate = Date()
+        let result = answerResult ?? question.instantiateAnswerResult()
         self.hasSelectedAnswer = result.jsonValue != nil
         super.init(step: question, result: result, parentId: parentId)
     }
@@ -152,7 +156,22 @@ public final class QuestionState : StepState {
 
 extension BranchNodeResult {
     func copyResult<T>(with identifier: String) -> T? {
-        stepHistory.last { $0.identifier == identifier }.flatMap { $0.deepCopy() as? T }
+        stepHistory.last { $0.identifier == identifier }.flatMap { $0.deepCopyWithNewStartDate() as? T }
+    }
+}
+
+extension ResultData {
+    func deepCopyWithNewStartDate() -> Self {
+        var ret = self.deepCopy()
+        ret.startDate = Date()
+        if var multiplatformResult = ret as? MultiplatformResultData {
+            multiplatformResult.endDateTime = nil
+            return multiplatformResult as! Self
+        }
+        else {
+            ret.endDate = ret.startDate
+            return ret
+        }
     }
 }
 

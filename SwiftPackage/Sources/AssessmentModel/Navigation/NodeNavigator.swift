@@ -115,7 +115,8 @@ public final class NodeNavigator : Navigator {
     }
     
     public func allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
-        self.previousNode(currentNode: currentNode, branchResult: branchResult) != nil
+        (currentNode.shouldHideButton(.navigation(.goBackward), node: currentNode) != true) &&
+        (self.previousNode(currentNode: currentNode, branchResult: branchResult) != nil)
     }
     
     public func canPauseAssessment(currentNode: Node, branchResult: BranchNodeResult) -> Bool {
@@ -125,7 +126,6 @@ public final class NodeNavigator : Navigator {
     
     public func progress(currentNode: Node, branchResult: BranchNodeResult) -> Progress? {
         guard let idx = nodeIndex(currentNode) else { return nil }
-        
         return .init(current: idx, total: nodes.count, isEstimated: true)
     }
     
