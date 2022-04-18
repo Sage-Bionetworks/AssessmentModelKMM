@@ -35,68 +35,87 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
-/**
- * The state objects are all simple objects without any business or navigation logic. This is done because
- * SwiftUI  @EnvironmentObject observables have to be castable using NSClassFromString.
- */
-
-public protocol NodeState {
-    var node: Node { get }
-    var result: ResultData { get }
-}
-
-public protocol StepState : NodeState {
-    var step: Step { get }
-}
-
-extension StepState {
-    public var node: Node { step }
-}
-
-public protocol BranchState : NodeState {
-    var branchNode: BranchNode { get }
-    var branchNodeResult: BranchNodeResult { get }
-}
-
-extension BranchState {
-    public var node: Node { branchNode }
-    public var result: ResultData { result }
-}
-
-public final class AssessmentState : ObservableObject, BranchState {
-    public var branchNode: BranchNode { assessment }
-    public var branchNodeResult: BranchNodeResult { assessmentResult }
+/// The state objects are all simple objects without any business or navigation logic. This is done because
+/// SwiftUI  @EnvironmentObject observables have to be castable using NSClassFromString so the environment
+/// objects have to be final classes.
+open class NodeState : ObservableObject, Identifiable {
+    public let id: String
     
-    @Published var isFinished: Bool = false
-    @Published var showingPauseActions: Bool = false
+    public let node: Node
+    public var result: ResultData
     
-    public let assessment: Assessment
-    public let assessmentResult: AssessmentResult
-    
-    var navigator: Navigator!
-    
-    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil) {
-        self.assessment = assessment
-        var result = restoredResult ?? assessment.instantiateAssessmentResult()
-        result.startDate = Date()
-        self.assessmentResult = result
+    init(node: Node, result: ResultData, parentId: String? = nil) {
+        self.id = "\(parentId ?? "")/\(node.identifier)"
+        self.node = node
+        self.result = result
     }
 }
 
-public final class InstructionState : ObservableObject, StepState {
+open class BranchState : NodeState {
+    public final var branchNode: BranchNode { node as! BranchNode }
+    public final var branchNodeResult: BranchNodeResult {
+        get { result as! BranchNodeResult }
+        set { result = newValue }
+    }
     
+    var navigator: Navigator!
+    
+    public init(branch: BranchNode, result: BranchNodeResult?, parentId: String? = nil) {
+        super.init(node: branch, result: result ?? branch.instantiateBranchNodeResult(), parentId: parentId)
+    }
+}
+
+open class StepState : NodeState {
+    public final var step: Step { node as! Step }
+    
+    open var forwardEnabled: Bool { true }
+    open var progressHidden: Bool { false }
+    
+    public init(step: Step, result: ResultData, parentId: String? = nil) {
+        super.init(node: step, result: result, parentId: parentId)
+    }
+}
+
+/// State object for an assessment.
+public final class AssessmentState : BranchState {
+    public var assessment: Assessment { node as! Assessment }
+    public var assessmentResult: AssessmentResult { result as! AssessmentResult }
+    
+    public let interuptionHandling: InterruptionHandling
+
+    @Published public var status: Status = .running
+    @Published public var currentStep: StepState?
+    @Published public var showingPauseActions: Bool = false
+    @Published public var navigationError: Error?
+
+    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
+        let result = restoredResult ?? assessment.instantiateAssessmentResult()
+        self.interuptionHandling = interuptionHandling ?? assessment.interruptionHandling
+        super.init(branch: assessment, result: result)
+    }
+    
+    public enum Status : Int, Hashable, Comparable {
+        case running, readyToSave, finished, declined, earlyExit, error
+    }
+}
+
+extension RawRepresentable where RawValue == Int {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+}
+
+/// State object for an instruction.
+public final class InstructionState : StepState {
+    
+    override public var progressHidden: Bool { node is OverviewStep || node is CompletionStep }
+
     @Published public var image: Image?
-    
     @Published public var title: String?
     @Published public var subtitle: String?
     @Published public var detail: String?
-
-    public let step: Step
-    public let result: ResultData
     
-    public init(_ instruction: Step) {
-        self.step = instruction
-        self.result = instruction.instantiateResult()
+    public init(_ instruction: Step, parentId: String? = nil) {
         if let contentNode = instruction as? ContentNode {
             self.title = contentNode.title
             self.subtitle = contentNode.subtitle
@@ -105,46 +124,66 @@ public final class InstructionState : ObservableObject, StepState {
                 self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
             }
         }
+        super.init(step: instruction, result: instruction.instantiateResult(), parentId: parentId)
     }
 }
 
 /// State object for a question.
-public final class QuestionState : ObservableObject, StepState {
-    public var step: Step { question }
-    public var result: ResultData { answerResult }
-    
-    public let question: QuestionStep
-    public let answerResult: AnswerResult
+public final class QuestionState : StepState {
+    public var question: QuestionStep { step as! QuestionStep }
+    public var answerResult: AnswerResult { result as! AnswerResult }
+
+    public override var forwardEnabled: Bool { question.optional || hasSelectedAnswer }
     public let canPause: Bool
     public let skipStepText: Text?
     
     @Published public var title: String
     @Published public var subtitle: String?
     @Published public var detail: String?
+    @Published public var hasSelectedAnswer: Bool
     
-    @Published public var hasSelectedAnswer: Bool = false
-    
-    public init(_ question: QuestionStep, answerResult: AnswerResult? = nil, canPause: Bool = true, skipStepText: Text? = nil) {
-        self.question = question
-        var result = answerResult ?? question.instantiateAnswerResult()
-        result.startDate = Date()
-        self.answerResult = result
+    public init(_ question: QuestionStep, parentId: String? = nil, answerResult: AnswerResult? = nil, canPause: Bool = true, skipStepText: Text? = nil) {
         self.title = question.title ?? question.subtitle ?? question.detail ?? ""
         self.subtitle = question.title == nil ? nil : question.subtitle
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
         self.canPause = canPause
         self.skipStepText = skipStepText
+        let result = answerResult ?? question.instantiateAnswerResult()
+        self.hasSelectedAnswer = result.jsonValue != nil
+        super.init(step: question, result: result, parentId: parentId)
     }
 }
 
 extension BranchNodeResult {
     func copyResult<T>(with identifier: String) -> T? {
-        stepHistory.last { $0.identifier == identifier }.flatMap { $0.deepCopy() as? T }
+        stepHistory.last { $0.identifier == identifier }.flatMap { $0.deepCopyWithNewStartDate() as? T }
+    }
+}
+
+extension ResultData {
+    func deepCopyWithNewStartDate() -> Self {
+        var ret = self.deepCopy()
+        ret.startDate = Date()
+        if var multiplatformResult = ret as? MultiplatformResultData {
+            multiplatformResult.endDateTime = nil
+            return multiplatformResult as! Self
+        }
+        else {
+            ret.endDate = ret.startDate
+            return ret
+        }
     }
 }
 
 extension ResourceInfo {
     var bundle: Bundle? {
         self.factoryBundle as? Bundle ?? self.bundleIdentifier.flatMap { Bundle(identifier: $0) }
+    }
+}
+
+extension UUID {
+    func guid(count: Int) -> Substring {
+        let uuidString = self.uuidString
+        return uuidString[..<uuidString.index(uuidString.startIndex, offsetBy: count)]
     }
 }

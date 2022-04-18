@@ -35,10 +35,7 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
-public final class ChoiceQuestionViewModel : AbstractChoiceQuestionViewModel {
-}
-
-open class AbstractChoiceQuestionViewModel : ObservableObject {
+public final class ChoiceQuestionViewModel : ObservableObject {
 
     weak var questionState: QuestionState?
     
@@ -166,7 +163,7 @@ protocol SelectionToggler : AnyObject {
     func updateSelected(changed choice: ObservableChoice)
 }
 
-extension AbstractChoiceQuestionViewModel : SelectionToggler {
+extension ChoiceQuestionViewModel : SelectionToggler {
 }
 
 protocol ObservableChoice : AnyObject {

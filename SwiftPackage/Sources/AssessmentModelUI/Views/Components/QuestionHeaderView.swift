@@ -34,9 +34,6 @@
 import SwiftUI
 import SharedMobileUI
 
-extension Color {
-    fileprivate static let progressBackground: Color = .init(hex: "#A7A19C")!
-}
 
 struct QuestionHeaderView : View {
     @EnvironmentObject var assessmentState: AssessmentState
@@ -44,48 +41,15 @@ struct QuestionHeaderView : View {
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     
     public var body: some View {
-        ZStack(alignment: .top) {
-            progressBar()
-            HStack {
-                exitButton()
-                Spacer()
-                skipButton()
-                    .font(.defaultSkipQuestionButtonFont)
-                    .padding(.trailing, 15)
-            }
-            .accentColor(.sageBlack)
+        HStack {
+            ExitButton(canPause: questionState.canPause)
+            Spacer()
+            skipButton()
+                .font(.skipQuestionButton)
+                .padding(.trailing, 15)
         }
+        .accentColor(.sageBlack)
         .fixedSize(horizontal: false, vertical: true)
-    }
-    
-    @ViewBuilder
-    func progressBar() -> some View {
-        let fraction: CGFloat = CGFloat(pagedNavigation.currentIndex) / CGFloat(pagedNavigation.pageCount > 0 ? pagedNavigation.pageCount : 1)
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(Color.progressBackground)
-                Rectangle()
-                    .fill(Color.accentColor)
-                    .frame(width: geometry.size.width * fraction)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 4)
-        }
-    }
-    
-    @ViewBuilder
-    func exitButton() -> some View {
-        if questionState.canPause {
-            Button(action: { assessmentState.showingPauseActions = true }) {
-                Image("pause", bundle: .module)
-            }
-        }
-        else {
-            Button(action: { assessmentState.isFinished = true }) {
-                Image("close", bundle: .module)
-            }
-        }
     }
     
     @ViewBuilder

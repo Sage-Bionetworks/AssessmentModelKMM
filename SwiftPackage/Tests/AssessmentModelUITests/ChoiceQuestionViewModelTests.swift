@@ -129,12 +129,25 @@ class ChoiceQuestionViewModelTests: XCTestCase {
         XCTAssertTrue(questionState.hasSelectedAnswer)
         XCTAssertEqual(.array(["Yellow","Orange"]), questionState.answerResult.jsonValue)
         
-        // Finally select "none of the above"
+        // select "none of the above"
         viewModel.choices[5].selected = true
         
         // Check new values
         XCTAssertTrue(questionState.hasSelectedAnswer)
         XCTAssertEqual(.array([]), questionState.answerResult.jsonValue)
+        
+        // Select "all of the above" again
+        viewModel.choices[4].selected = true
+        
+        // Check new values
+        XCTAssertTrue(questionState.hasSelectedAnswer)
+        XCTAssertEqual(.array(["Blue","Green","Yellow","Red"]), questionState.answerResult.jsonValue)
+        
+        // Deselect "yellow" which should also deselect "all"
+        viewModel.choices[2].selected = false
+        
+        XCTAssertEqual(.array(["Blue","Green","Red"]), questionState.answerResult.jsonValue)
+        XCTAssertFalse(viewModel.choices[4].selected)
     }
     
     func testMultipleChoiceQuestionSelection_InitialAnswerNone() {

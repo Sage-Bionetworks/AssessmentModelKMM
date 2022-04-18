@@ -15,6 +15,7 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAssetType
 import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.serialization.*
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 interface BranchNode : Node {
 
@@ -76,7 +77,7 @@ interface Assessment : BranchNode, ContentNode, AssessmentInfo {
 
     /// The interruption handling parameters for this assessment.
     val interruptionHandling: InterruptionHandling
-        get() = InterruptionHandlingObject()
+        get() = InterruptionHandlingObject(reviewIdentifier = ReservedNavigationIdentifier.Beginning.name.lowercase())
 
     // Override the default implementation to return an [AssessmentResult]
     override fun createResult(): AssessmentResult = AssessmentResultObject(

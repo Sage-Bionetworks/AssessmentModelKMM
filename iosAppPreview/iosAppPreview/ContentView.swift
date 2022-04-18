@@ -36,11 +36,57 @@ import SharedMobileUI
 import AssessmentModel
 
 struct ContentView: View {
+    @StateObject var viewModel: ViewModel = .init()
+    let surveys: [AssessmentHolder] = [
+        .init(assessment: surveyA),
+        .init(assessment: surveyB),
+    ]
+
     var body: some View {
-        ChoiceQuestionStepView(questionState: QuestionState(favoriteFoodChoiceQuestion))
-            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
-            .environmentObject(AssessmentState(AssessmentObject(previewStep: favoriteFoodChoiceQuestion)))
+        List(surveys) { holder in
+            Button(holder.assessment.title ?? holder.id) {
+                viewModel.current = .init(holder.assessment)
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.isPresented) {
+            AssessmentListener(viewModel)
+        }
     }
+    
+    class ViewModel : ObservableObject {
+        @Published var isPresented: Bool = false
+        var current: AssessmentState? {
+            didSet {
+                isPresented = (current != nil)
+            }
+        }
+    }
+    
+    struct AssessmentListener : View {
+        @ObservedObject var viewModel: ViewModel
+        @ObservedObject var state: AssessmentState
+        
+        init(_ viewModel: ViewModel) {
+            self.viewModel = viewModel
+            self.state = viewModel.current!
+        }
+        
+        var body: some View {
+            AssessmentView(state)
+                .onChange(of: state.status) { newValue in
+                    print("assessment status = \(newValue)")
+                    guard newValue >= .finished else { return }
+                    // In a real use-case this is where you might save and upload data
+                    viewModel.isPresented = false
+                    viewModel.current = nil
+                }
+        }
+    }
+}
+
+struct AssessmentHolder : Identifiable {
+    var id: String { assessment.identifier }
+    let assessment: Assessment
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -48,3 +94,57 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+let surveyB = AssessmentObject(identifier: "surveyB",
+                               children: surveyBChildren,
+                               title: "Example Survey B")
+fileprivate let surveyBChildren: [Node] = [
+    OverviewStepObject(identifier: "overview", title: "Example Survey B", detail: "This survey questions presented in sections"),
+    SectionObject(identifier: "colors", children: sectionB1Children),
+    SectionObject(identifier: "foods", children: sectionB2Children),
+    CompletionStepObject(identifier: "completion", title: "You're done!")
+]
+
+fileprivate let sectionB1Children: [Node] = [
+    ChoiceQuestionStepObject(identifier: "choice1",
+                             choices: [
+                                "Blue",
+                                "Green",
+                                "Yellow",
+                                "Red",
+                             ],
+                             baseType: .string,
+                             title: "Pick a color"),
+    ChoiceQuestionStepObject(identifier: "choice2",
+                             choices: [
+                                "Blue",
+                                "Green",
+                                "Yellow",
+                                "Red",
+                             ],
+                             baseType: .string,
+                             title: "Pick a different color")
+]
+
+fileprivate let sectionB2Children: [Node] = [
+    ChoiceQuestionStepObject(identifier: "choice1",
+                             choices: [
+                                "Pizza",
+                                "Hamburger",
+                                "Ice Cream",
+                                "Tofu Tacos",
+                             ],
+                             baseType: .string,
+                             title: "Pick a food"),
+    ChoiceQuestionStepObject(identifier: "choice2",
+                             choices: [
+                                "Pizza",
+                                "Hamburger",
+                                "Ice Cream",
+                                "Tofu Tacos",
+                             ],
+                             baseType: .string,
+                             title: "Pick a different food")
+]
+
+

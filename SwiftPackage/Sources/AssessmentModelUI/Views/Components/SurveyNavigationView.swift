@@ -38,25 +38,9 @@ struct SurveyNavigationView: View {
     @EnvironmentObject private var viewModel: PagedNavigationViewModel
     
     var body: some View {
-        HStack {
-            Button("Back", action: viewModel.goBack)
-                .buttonStyle(NavigationButtonStyle(.backward))
-                .opacity(viewModel.backEnabled ? 1.0 : 0.0)
-            
-            Spacer()
-                            
-            Button(action: viewModel.goForward, label: {
-                if let buttonText = viewModel.forwardButtonText {
-                    buttonText
-                }
-                else {
-                    Text("Next")
-                }
-            })
-            .buttonStyle(NavigationButtonStyle((viewModel.forwardButtonText == nil) ? .forward : .text))
-            .opacity(viewModel.forwardEnabled ? 1.0 : 0.5)
-        }
-        .padding(.horizontal, 32)
+        PagedNavigationBar(showsDots: false)
+            .padding(.horizontal, 32)
+            .padding(.vertical, outerVerticalPadding)
     }
 }
 

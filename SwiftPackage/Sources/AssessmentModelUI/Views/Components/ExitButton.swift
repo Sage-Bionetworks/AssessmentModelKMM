@@ -1,5 +1,5 @@
 //
-//  GlobalProperties.swift
+//  ExitButton.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -34,38 +34,35 @@
 import SwiftUI
 import SharedMobileUI
 
-let textFieldFontSize: CGFloat = 20
-
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
-extension Font {
-    static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
+struct ExitButton: View {
+    @EnvironmentObject var assessmentState: AssessmentState
+    let canPause: Bool
     
-    static let questionTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let questionSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let questionDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
+    var body: some View {
+        exitButton()
+            .accentColor(.sageBlack)
+    }
     
-    static let skipQuestionButton: Font = .latoFont(fixedSize: 18, weight: .regular)
-    
-    static let roundedButton: Font = .latoFont(fixedSize: 20, weight: .bold)
-    
-    static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+    @ViewBuilder
+    func exitButton() -> some View {
+        if canPause {
+            Button(action: { assessmentState.showingPauseActions = true }) {
+                Image("pause", bundle: .module)
+            }
+        }
+        else {
+            Button(action: { assessmentState.status = .earlyExit }) {
+                Image("close", bundle: .module)
+            }
+        }
+    }
 }
 
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let textField: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackground: Color = .hexF6F6F6
-    
-    static let progressBackground: Color = .init(hex: "#A7A19C")!
-    
-    static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
-    static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
-    static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
+struct ExitButton_Previews: PreviewProvider {
+    static var previews: some View {
+        HStack {
+            ExitButton(canPause: true)
+            ExitButton(canPause: false)
+        }
+    }
 }
