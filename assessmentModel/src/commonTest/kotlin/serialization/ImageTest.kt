@@ -20,6 +20,27 @@ open class ImageTest {
     val jsonCoder = Serialization.JsonCoder.default
 
     @Test
+    fun testSageResourceImageWithDefaults() {
+        val image = SageResourceImage("survey")
+        val inputString = """{"image":{"type":"sageResource","imageName":"survey"}}"""
+
+        val original = TestImageWrapper(image)
+        val jsonString = jsonCoder.encodeToString(TestImageWrapper.serializer(), original)
+        val restored = jsonCoder.decodeFromString(TestImageWrapper.serializer(), jsonString)
+        val decoded = jsonCoder.decodeFromString(TestImageWrapper.serializer(), inputString)
+
+        // Look to see that the restored, decoded, and original all are equal
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+
+        // Check the keys and look to see that they match the expected type
+        val jsonOutput = jsonCoder.parseToJsonElement(jsonString)
+        val jsonWrapper = jsonOutput.jsonObject.getValue("image").jsonObject
+        assertEquals("sageResource", jsonWrapper["type"]?.jsonPrimitive?.content)
+        assertEquals("survey", jsonWrapper["imageName"]?.jsonPrimitive?.content)
+    }
+
+    @Test
     fun testFetchableImageWithDefaults() {
         val image = FetchableImage("before")
         val inputString = """{"image":{"type":"fetchable","imageName":"before"}}"""

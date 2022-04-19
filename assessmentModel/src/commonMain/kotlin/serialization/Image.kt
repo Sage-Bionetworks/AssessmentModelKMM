@@ -14,6 +14,7 @@ val imageSerializersModule = SerializersModule {
     polymorphic(ImageInfo::class) {
         subclass(FetchableImage::class)
         subclass(AnimatedImage::class)
+        subclass(SageResourceImage::class)
     }
 }
 
@@ -31,6 +32,34 @@ data class IconInfoObject(
     override var decoderBundle: Any? = null,
     override val versionString: String? = null
 ) : ImageInfo
+
+@Serializable
+@SerialName("sageResource")
+data class SageResourceImage(
+    override val imageName: String,
+    override val label: String? = null,
+) : ImageInfo {
+    override val versionString: String?
+        get() = null
+    override val rawFileExtension: String?
+        get() = null
+    override var decoderBundle: Any?
+        get() = null
+        set(value) {}
+    override val bundleIdentifier: String?
+        get() = "AssessmentModelUI"
+    override var packageName: String?
+        get() = null
+        set(value) {}
+
+    val name: Name?
+        get() = Name.values().matching(imageName)
+
+    enum class Name : StringEnum {
+        Survey,
+        ;
+    }
+}
 
 @Serializable
 @SerialName("fetchable")
