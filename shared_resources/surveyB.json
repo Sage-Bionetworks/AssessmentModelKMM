@@ -1,0 +1,131 @@
+{
+  "type" : "assessment",
+  "identifier" : "surveyB",
+  "$schema" : "https://sage-bionetworks.github.io/mobile-client-json/schemas/v2/AssessmentObject.json",
+  "title" : "Example Survey B",
+  "steps" : [
+    {
+      "type" : "overview",
+      "identifier" : "overview",
+      "title" : "Example Survey B",
+      "detail" : "This survey questions presented in sections"
+    },
+    {
+      "type" : "section",
+      "identifier" : "colors",
+      "steps" : [
+        {
+          "type" : "choiceQuestion",
+          "identifier" : "choice1",
+          "title" : "Pick a color",
+          "baseType" : "string",
+          "singleChoice" : true,
+          "choices" : [
+            {
+              "value" : "Blue",
+              "text" : "Blue"
+            },
+            {
+              "value" : "Green",
+              "text" : "Green"
+            },
+            {
+              "value" : "Yellow",
+              "text" : "Yellow"
+            },
+            {
+              "value" : "Red",
+              "text" : "Red"
+            }
+          ]
+        },
+        {
+          "type" : "choiceQuestion",
+          "identifier" : "choice2",
+          "title" : "Pick a different color",
+          "baseType" : "string",
+          "singleChoice" : true,
+          "choices" : [
+            {
+              "value" : "Blue",
+              "text" : "Blue"
+            },
+            {
+              "value" : "Green",
+              "text" : "Green"
+            },
+            {
+              "value" : "Yellow",
+              "text" : "Yellow"
+            },
+            {
+              "value" : "Red",
+              "text" : "Red"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type" : "section",
+      "identifier" : "foods",
+      "steps" : [
+        {
+          "type" : "choiceQuestion",
+          "identifier" : "choice1",
+          "title" : "Pick a food",
+          "baseType" : "string",
+          "singleChoice" : true,
+          "choices" : [
+            {
+              "value" : "Pizza",
+              "text" : "Pizza"
+            },
+            {
+              "value" : "Hamburger",
+              "text" : "Hamburger"
+            },
+            {
+              "value" : "Ice Cream",
+              "text" : "Ice Cream"
+            },
+            {
+              "value" : "Tofu Tacos",
+              "text" : "Tofu Tacos"
+            }
+          ]
+        },
+        {
+          "type" : "choiceQuestion",
+          "identifier" : "choice2",
+          "title" : "Pick a different food",
+          "baseType" : "string",
+          "singleChoice" : true,
+          "choices" : [
+            {
+              "value" : "Pizza",
+              "text" : "Pizza"
+            },
+            {
+              "value" : "Hamburger",
+              "text" : "Hamburger"
+            },
+            {
+              "value" : "Ice Cream",
+              "text" : "Ice Cream"
+            },
+            {
+              "value" : "Tofu Tacos",
+              "text" : "Tofu Tacos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type" : "completion",
+      "identifier" : "completion",
+      "title" : "You're done!"
+    }
+  ]
+}
