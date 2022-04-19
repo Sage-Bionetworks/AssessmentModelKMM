@@ -33,7 +33,6 @@ internal fun QuestionContent(
     assessmentViewModel: AssessmentViewModel,
     modifier: Modifier = Modifier
 ) {
-    val question = questionState.node as ChoiceQuestion
     Column(
         modifier = modifier
             .fillMaxHeight()
@@ -74,7 +73,6 @@ private fun MultipleChoiceQuestion(
     modifier: Modifier = Modifier
 ) {
     val question = questionState.node as ChoiceQuestion
-    val focusManager = LocalFocusManager.current
     Column(modifier = modifier) {
         for (inputState in questionState.itemStates) {
             when (inputState) {
@@ -188,7 +186,13 @@ private fun ChoiceQuestionInput(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 focusManager.clearFocus()
-                            })
+                            }),
+                        textStyle = sageP1,
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            cursorColor = SageBlack,
+                            focusedIndicatorColor = SageBlack
+                            )
                     )
                 }
             }
