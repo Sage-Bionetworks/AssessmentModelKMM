@@ -3,6 +3,16 @@
     {
       "filename" : "survey.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "survey-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
