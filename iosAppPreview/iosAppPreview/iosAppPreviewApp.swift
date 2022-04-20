@@ -1,8 +1,8 @@
 //
-//  KeyboardOptions+SwiftUI.swift
-//  
+//  iosAppPreviewApp.swift
+//  iosAppPreview
 //
-//  Copyright © 2017-2022 Sage Bionetworks. All rights reserved.
+//  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -32,43 +32,12 @@
 //
 
 import SwiftUI
-import AssessmentModel
 
-#if os(iOS)
-
-import SwiftUI
-
-extension TextAutoCapitalizationType {
-
-    /// Return the `UITextAutocapitalizationType` that maps to this enum.
-    public var uiType: UITextAutocapitalizationType {
-        UITextAutocapitalizationType(rawValue: self.indexPosition) ?? .none
+@main
+struct iosAppPreviewApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
     }
 }
-
-extension TextAutoCorrectionType {
-
-    /// Return the `UITextAutocorrectionType` that maps to this enum.
-    public var uiType: UITextAutocorrectionType {
-        UITextAutocorrectionType(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension TextSpellCheckingType {
-    
-    /// Return the `UITextSpellCheckingType` that maps to this enum.
-    public var uiType: UITextSpellCheckingType {
-        UITextSpellCheckingType(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-extension KeyboardType {
-
-    /// Return the `UIKeyboardType` that maps to this enum.
-    public var uiType: UIKeyboardType {
-        UIKeyboardType(rawValue: self.indexPosition) ?? .default
-    }
-}
-
-#endif
-

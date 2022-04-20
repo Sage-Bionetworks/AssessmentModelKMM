@@ -53,6 +53,9 @@ public protocol Navigator {
     /// Returns the ``Node`` associated with the given ``identifier``, if any. This is the ``identifier`` for the
     /// ``Node`` that is local to this level of the node tree.
     func node(identifier: String) -> Node?
+    
+    /// Returns the first node in the navigator or `nil` if navigating back to the start is not supported.
+    func firstNode() -> Node?
 
     /// Continue to the next node after the current node. If ``currentNode`` is null, then the navigation is moving
     /// forward into this section or assessment.
@@ -68,6 +71,9 @@ public protocol Navigator {
 
     /// Is backward navigation allowed from this ``currentNode`` with the current ``branchResult``?
     func allowBackNavigation(currentNode: Node, branchResult: BranchNodeResult) -> Bool
+    
+    /// Can the assessment be "paused"?
+    func canPauseAssessment(currentNode: Node, branchResult: BranchNodeResult) -> Bool
 
     /// Returns the ``Progress`` of the assessment from the given ``currentNode`` with the given
     /// ``branchResult``. If `null` then progress should not be shown for this ``currentNode`` of assessment.
@@ -87,18 +93,13 @@ open class NavigationPoint {
     /// The next node to move to in navigating the assessment.
     public let node: Node?
     
-    /// The branch result is the result set at this level of navigation. This allows for explicit mutation or copying of a
-    /// result into the form that is required by the assessment ``Navigator``.
-    public let branchResult: BranchNodeResult
-    
     /// The  direction in which to travel the path where the desired navigation may be to go back up the path rather
     /// than moving forward down the path. This can be important for an assessment where the participant is directed
     /// to redo a step and the animation should move backwards to show the user that this is what is happening.
     public let direction: PathMarker.Direction
     
-    public init(node: Node?, branchResult: BranchNodeResult, direction: PathMarker.Direction) {
+    public init(node: Node?, direction: PathMarker.Direction) {
         self.node = node
-        self.branchResult = branchResult
         self.direction = direction
     }
 }

@@ -1,6 +1,6 @@
 //
-//  ExampleAssessmentTests.swift
-//  
+//  QuestionHeaderView.swift
+//
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
@@ -31,32 +31,38 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import Foundation
-@testable import AssessmentModel
-import JsonModel
-import XCTest
+import SwiftUI
+import SharedMobileUI
 
-class ExampleAssessmentTests: XCTestCase {
+
+struct QuestionHeaderView : View {
+    @EnvironmentObject var assessmentState: AssessmentState
+    @EnvironmentObject var questionState: QuestionState
+    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     
-    let decoder = AssessmentFactory().createJSONDecoder()
-    let encoder = AssessmentFactory().createJSONEncoder()
-
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    public var body: some View {
+        HStack {
+            ExitButton(canPause: questionState.canPause)
+            Spacer()
+            skipButton()
+                .font(.underlinedButton)
+                .padding(.trailing, 15)
+        }
+        .accentColor(.sageBlack)
+        .fixedSize(horizontal: false, vertical: true)
     }
     
-    func testSurveyAEncoding() {
-        do {
-            encoder.outputFormatting.formUnion([.withoutEscapingSlashes])
-            let json = try encoder.encode(surveyA)
-            let _ = String(data: json, encoding: .utf8)!
-            //print(jsonString) // syoung 03/20/2022 Intentionally commented out but left in for building example JSON
-        } catch {
-            XCTFail("Failed to encode/decode object. \(error)")
+    @ViewBuilder
+    func skipButton() -> some View {
+        if let text = questionState.skipStepText {
+            Button(action: {
+                questionState.answerResult.jsonValue = nil
+                pagedNavigation.goForward()
+            }, label: { text.underline() })
+        }
+        else {
+            EmptyView()
         }
     }
 }
+

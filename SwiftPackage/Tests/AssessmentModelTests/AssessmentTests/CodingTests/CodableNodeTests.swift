@@ -247,6 +247,115 @@ class CodableQuestionTests: XCTestCase {
     
     // MARK: Instructions
     
+    func testImage_Animated_Codable() {
+        
+        let json = """
+            {
+                "identifier": "foo",
+                "type": "overview",
+                "image": {
+                    "type": "animated",
+                    "imageNames": ["foo1", "foo2", "foo3", "foo4"],
+                    "animationDuration": 2
+                }
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<OverviewStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            
+            if let image = object.imageInfo {
+                XCTAssertTrue(image is AnimatedImage)
+                XCTAssertEqual("foo1", image.imageName)
+            }
+            else {
+                XCTFail("Failed to decode image.")
+            }
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testImage_Fetchable_Codable() {
+        
+        let json = """
+            {
+                "identifier": "foo",
+                "type": "overview",
+                "image": {
+                    "type": "fetchable",
+                    "imageName": "foo"
+                }
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<OverviewStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            
+            if let image = object.imageInfo {
+                XCTAssertTrue(image is FetchableImage)
+                XCTAssertEqual("foo", image.imageName)
+            }
+            else {
+                XCTFail("Failed to decode image.")
+            }
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testImage_SageResource_Codable() {
+        
+        let json = """
+            {
+                "identifier": "foo",
+                "type": "overview",
+                "image": {
+                    "type": "sageResource",
+                    "imageName": "survey"
+                }
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<OverviewStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            
+            if let image = object.imageInfo {
+                XCTAssertTrue(image is SageResourceImage)
+                XCTAssertEqual("survey", image.imageName)
+            }
+            else {
+                XCTFail("Failed to decode image.")
+            }
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
     func testOverviewStep_Default_Codable() {
         
         let json = """
