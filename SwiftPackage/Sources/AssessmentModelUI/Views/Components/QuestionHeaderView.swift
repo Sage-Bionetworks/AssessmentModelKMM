@@ -45,7 +45,7 @@ struct QuestionHeaderView : View {
             ExitButton(canPause: questionState.canPause)
             Spacer()
             skipButton()
-                .font(.skipQuestionButton)
+                .font(.underlinedButton)
                 .padding(.trailing, 15)
         }
         .accentColor(.sageBlack)

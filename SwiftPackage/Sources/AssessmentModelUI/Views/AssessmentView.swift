@@ -62,6 +62,9 @@ open class AssessmentStepViewVender {
                 debugQuestionStepView(questionState)
             }
         }
+        else if let overview = state?.step as? OverviewStep {
+            TitlePageView(overview)
+        }
         else {
             debugStepView(state!)
         }
@@ -157,7 +160,9 @@ let surveyA = AssessmentObject(identifier: "surveyA",
                                 unless they are explicitly hidden.
                                 """.replacingOccurrences(of: "\n", with: " "))
 fileprivate let surveyAChildren: [Node] = [
-    OverviewStepObject(identifier: "overview", title: "Example Survey A", detail: "You will be shown a series of example questions. This survey has no additional instructions."),
+    OverviewStepObject(identifier: "overview",
+                       title: "Example Survey A",
+                       detail: "You will be shown a series of example questions. This survey has no additional instructions.", imageInfo: SageResourceImage(.survey)),
     
     ChoiceQuestionStepObject(identifier: "choiceQ1",
                              choices: [

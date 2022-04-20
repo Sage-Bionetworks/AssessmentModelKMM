@@ -42,12 +42,11 @@ let innerVerticalSpacing: CGFloat = 16
 extension Font {
     static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
     
-    static let questionTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let questionSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let questionDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
+    static let stepTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
+    static let stepSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
+    static let stepDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
     
-    static let skipQuestionButton: Font = .latoFont(fixedSize: 18, weight: .regular)
-    
+    static let underlinedButton: Font = .latoFont(fixedSize: 18, weight: .regular)
     static let roundedButton: Font = .latoFont(fixedSize: 20, weight: .bold)
     
     static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
