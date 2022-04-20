@@ -13,7 +13,6 @@
     "cancel": { "type": "default", "iconName" : "closeX" }
   },
   "shouldHideActions": ["goBackward"],
-  "progressMarkers": ["step1","step2", "feeling", "favoriteColor", "otherChoice", "checkboxQuestion", "stringQuestion", "yearQuestion", "multipleInputQuestion"],
   "steps": [
     {
       "identifier": "step1",
@@ -39,7 +38,7 @@
       "detail": "For the next set of questions please answer truthfully",
       "image"  : {
         "type":"fetchable",
-        "imageName" : "ic_survey_default"
+        "imageName" : "survey"
       }
     },
     {

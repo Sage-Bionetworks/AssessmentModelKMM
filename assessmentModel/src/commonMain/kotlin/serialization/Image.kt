@@ -55,8 +55,8 @@ data class SageResourceImage(
     val name: Name?
         get() = Name.values().matching(imageName)
 
-    enum class Name : StringEnum {
-        Survey,
+    enum class Name(val tint:Boolean) : StringEnum {
+        Survey(true),
         ;
     }
 }

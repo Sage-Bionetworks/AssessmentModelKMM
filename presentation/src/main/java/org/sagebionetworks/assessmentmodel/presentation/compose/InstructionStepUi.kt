@@ -7,21 +7,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import org.sagebionetworks.assessmentmodel.presentation.R
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.*
 
 @Composable
 internal fun InstructionStepUi(
     modifier: Modifier = Modifier,
     icon: Drawable?,
+    iconTintColor: Color?,
     title: String?,
     detail: String?,
     next:()->Unit,
@@ -31,7 +32,7 @@ internal fun InstructionStepUi(
         modifier = modifier
             .fillMaxHeight()
             .fillMaxWidth()
-            .background(Color(0xFFF6F6F6)),
+            .background(BackgroundGray),
     ) {
         CloseTopBar(onCloseClicked = close)
         Column(
@@ -45,9 +46,17 @@ internal fun InstructionStepUi(
                 painter = if (icon != null) {
                     rememberDrawablePainter(drawable = icon)
                 } else {
-                    painterResource(id = R.drawable.ic_survey_default)
+                    painterResource(id = R.drawable.survey)
                 },
-                contentDescription = null
+                contentDescription = null,
+                colorFilter = if (iconTintColor != null) {
+                    ColorFilter.tint(
+                        color = iconTintColor,
+                        blendMode = BlendMode.Modulate
+                    )
+                } else {
+                    null
+                }
             )
             title?.let { title ->
                 Spacer(modifier = Modifier.height(16.dp))
@@ -81,6 +90,6 @@ internal fun InstructionStepUi(
 @Composable
 private fun InstructionStepPreview() {
     SageSurveyTheme {
-        InstructionStepUi(icon = null, title = "Title", detail = "Details", next = {}, close = {})
+        InstructionStepUi(icon = null, iconTintColor = null, title = "Title", detail = "Details", next = {}, close = {})
     }
 }

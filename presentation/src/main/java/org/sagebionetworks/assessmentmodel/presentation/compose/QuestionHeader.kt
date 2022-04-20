@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
@@ -40,7 +41,7 @@ internal fun QuestionHeader(
 
         Column(
             modifier = modifier
-                .background(Color(0xFFF6F6F6)),
+                .background(BackgroundGray),
         ) {
             ProgressBar(progress = assessmentViewModel.assessmentNodeState.progress())
             val openDialog = remember { mutableStateOf(false) }

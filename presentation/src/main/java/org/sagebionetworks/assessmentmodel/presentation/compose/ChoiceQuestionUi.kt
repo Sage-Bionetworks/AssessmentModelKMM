@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.R
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -36,7 +37,7 @@ internal fun QuestionContent(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .background(Color(0xFFF6F6F6))
+            .background(BackgroundGray)
 
         ,
     ) {

@@ -1,17 +1,16 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.sagebionetworks.assessmentmodel.InstructionStep
+import androidx.compose.material.MaterialTheme
+import org.sagebionetworks.assessmentmodel.ContentNodeStep
 import org.sagebionetworks.assessmentmodel.presentation.compose.InstructionStepUi
-import org.sagebionetworks.assessmentmodel.presentation.compose.QuestionContent
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
-import org.sagebionetworks.assessmentmodel.presentation.databinding.InstructionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
+import org.sagebionetworks.assessmentmodel.serialization.SageResourceImage
 import org.sagebionetworks.assessmentmodel.serialization.loadDrawable
 
 open class InstructionStepFragment: StepFragment() {
@@ -20,7 +19,7 @@ open class InstructionStepFragment: StepFragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var step: InstructionStep
+    private lateinit var step: ContentNodeStep
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -28,18 +27,24 @@ open class InstructionStepFragment: StepFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        step = nodeState.node as InstructionStep
+        step = nodeState.node as ContentNodeStep
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
         val drawable = step.imageInfo?.loadDrawable(requireContext())
+        val tint = (step.imageInfo as? SageResourceImage)?.name?.tint ?: false
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             SageSurveyTheme {
                 InstructionStepUi(
                     icon = drawable,
+                    iconTintColor = if (tint) {
+                        MaterialTheme.colors.primary
+                    } else {
+                        null
+                    },
                     title = step.title,
                     detail = step.detail,
                     next = { assessmentViewModel.goForward() },
