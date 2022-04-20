@@ -51,7 +51,7 @@ struct ExitButton: View {
             }
         }
         else {
-            Button(action: { assessmentState.status = .earlyExit }) {
+            Button(action: { assessmentState.status = .continueLater }) {
                 Image("close", bundle: .module)
             }
         }

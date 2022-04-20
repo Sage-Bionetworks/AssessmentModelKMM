@@ -62,6 +62,9 @@ open class AssessmentStepViewVender {
                 debugQuestionStepView(questionState)
             }
         }
+        else if let overview = state?.step as? OverviewStep {
+            TitlePageView(overview)
+        }
         else {
             debugStepView(state!)
         }
@@ -157,7 +160,9 @@ let surveyA = AssessmentObject(identifier: "surveyA",
                                 unless they are explicitly hidden.
                                 """.replacingOccurrences(of: "\n", with: " "))
 fileprivate let surveyAChildren: [Node] = [
-    OverviewStepObject(identifier: "overview", title: "Example Survey A", detail: "You will be shown a series of example questions. This survey has no additional instructions."),
+    OverviewStepObject(identifier: "overview",
+                       title: "Example Survey A",
+                       detail: "You will be shown a series of example questions. This survey has no additional instructions.", imageInfo: SageResourceImage(.survey)),
     
     ChoiceQuestionStepObject(identifier: "choiceQ1",
                              choices: [
@@ -205,3 +210,57 @@ fileprivate let surveyAChildren: [Node] = [
     
     CompletionStepObject(identifier: "completion", title: "You're done!")
 ]
+
+let surveyB = AssessmentObject(identifier: "surveyB",
+                               children: surveyBChildren,
+                               title: "Example Survey B")
+fileprivate let surveyBChildren: [Node] = [
+    OverviewStepObject(identifier: "overview", title: "Example Survey B", detail: "This survey questions presented in sections"),
+    SectionObject(identifier: "colors", children: sectionB1Children),
+    SectionObject(identifier: "foods", children: sectionB2Children),
+    CompletionStepObject(identifier: "completion", title: "You're done!")
+]
+
+fileprivate let sectionB1Children: [Node] = [
+    ChoiceQuestionStepObject(identifier: "choice1",
+                             choices: [
+                                "Blue",
+                                "Green",
+                                "Yellow",
+                                "Red",
+                             ],
+                             baseType: .string,
+                             title: "Pick a color"),
+    ChoiceQuestionStepObject(identifier: "choice2",
+                             choices: [
+                                "Blue",
+                                "Green",
+                                "Yellow",
+                                "Red",
+                             ],
+                             baseType: .string,
+                             title: "Pick a different color")
+]
+
+fileprivate let sectionB2Children: [Node] = [
+    ChoiceQuestionStepObject(identifier: "choice1",
+                             choices: [
+                                "Pizza",
+                                "Hamburger",
+                                "Ice Cream",
+                                "Tofu Tacos",
+                             ],
+                             baseType: .string,
+                             title: "Pick a food"),
+    ChoiceQuestionStepObject(identifier: "choice2",
+                             choices: [
+                                "Pizza",
+                                "Hamburger",
+                                "Ice Cream",
+                                "Tofu Tacos",
+                             ],
+                             baseType: .string,
+                             title: "Pick a different food")
+]
+
+

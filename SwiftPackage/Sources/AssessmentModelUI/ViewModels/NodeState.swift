@@ -95,7 +95,7 @@ public final class AssessmentState : BranchState {
     }
     
     public enum Status : Int, Hashable, Comparable {
-        case running, readyToSave, finished, declined, earlyExit, error
+        case running, readyToSave, finished, declined, continueLater, error
     }
 }
 

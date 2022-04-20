@@ -46,6 +46,9 @@ public protocol ImageInfo : ResourceInfo {
     /// A unique identifier that can be used to validate that the image shown in a reusable view
     /// is the same image as the one fetched.
     var imageIdentifier: String { get }
+}
+
+public protocol ImagePlacementInfo : ImageInfo {
     
     /// The preferred placement of the image. Default placement is `iconBefore` if undefined.
     var placementHint: String? { get }
@@ -82,14 +85,16 @@ public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
         self.rawValue = rawValue
     }
     
-    /// Defaults to creating a ``FetchableImageInfoObject``.
-    public static let fetchable: ImageInfoType = "fetchable"
-    
-    /// Defaults to creating an ``AnimatedImageInfoObject``.
-    public static let animated: ImageInfoType = "animated"
+    enum Standard : String, CaseIterable {
+        case fetchable, animated, sageResource
+        
+        var imageInfoType : ImageInfoType {
+            .init(rawValue: self.rawValue)
+        }
+    }
     
     public static func allStandardTypes() -> [ImageInfoType] {
-        return [.fetchable, .animated]
+        return Standard.allCases.map { $0.imageInfoType }
     }
 }
 
@@ -120,6 +125,7 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
         examples = [
             FetchableImage.examples().first!,
             AnimatedImage.examples().first!,
+            SageResourceImage.examples().first!,
         ]
     }
     
@@ -138,7 +144,7 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
     }
 }
 
-public protocol SerializableImageInfo : ImageInfo, DecodableBundleInfo, PolymorphicRepresentable, Encodable {
+public protocol SerializableImageInfo : ImageInfo, PolymorphicRepresentable, Encodable {
     var serializableType: ImageInfoType { get }
 }
 
@@ -146,12 +152,91 @@ public extension SerializableImageInfo {
     var typeName: String { return serializableType.rawValue }
 }
 
+/// This allows customized image compositing that is required on iOS only.
+public struct SageResourceImage : SerializableImageInfo {
+
+    
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case serializableType = "type", imageName, label
+    }
+    public private(set) var serializableType: ImageInfoType = .Standard.sageResource.imageInfoType
+    public let imageName: String
+    public let label: String?
+    
+    public init(_ name: Name, label: String? = nil) {
+        self.imageName = name.rawValue
+        self.label = label
+    }
+    
+    public enum Name : String, StringEnumSet, DocumentableStringEnum {
+        case survey
+    }
+    
+    public var name: Name? {
+        .init(rawValue: imageName)
+    }
+
+    public var imageIdentifier: String {
+        imageName
+    }
+    
+    public var bundleIdentifier: String? { "AssessmentModelUI" }
+    public var factoryBundle: ResourceBundle? {
+        get { nil }
+        set {}
+    }
+    public var packageName: String? {
+        get { nil }
+        set {}
+    }
+}
+
+extension SageResourceImage : DocumentableStruct {
+    public static func codingKeys() -> [CodingKey] {
+        return CodingKeys.allCases
+    }
+
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        guard let key = codingKey as? CodingKeys else { return false }
+        switch key {
+        case .serializableType, .imageName:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
+        }
+        switch key {
+        case .serializableType:
+            return .init(constValue: ImageInfoType.Standard.sageResource.imageInfoType)
+        case .imageName:
+            return .init(propertyType: .reference(Name.documentableType()), propertyDescription:
+                            "The image name for the image to draw.")
+        case .label:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "A caption or label to display for the image in a localized string.")
+        }
+    }
+    
+    public static func examples() -> [SageResourceImage] {
+        let imageA = SageResourceImage(.survey)
+        return [imageA]
+    }
+}
+
+public protocol EmbeddedImageInfo : ImagePlacementInfo, DecodableBundleInfo {
+}
+
 /// `FetchableImage` is a `Codable` concrete implementation of `ImageInfo`.
-public struct FetchableImage : SerializableImageInfo {
+public struct FetchableImage : SerializableImageInfo, EmbeddedImageInfo {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size"
     }
-    public private(set) var serializableType: ImageInfoType = .fetchable
+    public private(set) var serializableType: ImageInfoType = .Standard.fetchable.imageInfoType
     
     public let imageName: String
     public let label: String?
@@ -204,7 +289,7 @@ extension FetchableImage : DocumentableStruct {
         }
         switch key {
         case .serializableType:
-            return .init(constValue: ImageInfoType.fetchable)
+            return .init(constValue: ImageInfoType.Standard.fetchable.imageInfoType)
         case .imageName:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "The image name for the image to draw.")
@@ -240,11 +325,11 @@ extension FetchableImage : DocumentableStruct {
 }
 
 /// `AnimatedImage` is a `Codable` concrete implementation of `AnimatedImageInfo`.
-public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo {
+public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo, EmbeddedImageInfo {
     private enum CodingKeys: String, OrderedEnumCodingKey {
         case serializableType = "type", imageNames, animationDuration, animationRepeatCount, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size", _imageIdentifier = "imageIdentifier"
     }
-    public private(set) var serializableType: ImageInfoType = .animated
+    public private(set) var serializableType: ImageInfoType = .Standard.animated.imageInfoType
     
     public let imageNames: [String]
     public let label: String?
@@ -295,7 +380,7 @@ extension AnimatedImage : DocumentableStruct {
         }
         switch key {
         case .serializableType:
-            return .init(constValue: ImageInfoType.animated)
+            return .init(constValue: ImageInfoType.Standard.animated.imageInfoType)
         case .imageNames:
             return .init(propertyType: .primitiveArray(.string), propertyDescription:
                             "The list of the names of the images to animate through in order.")

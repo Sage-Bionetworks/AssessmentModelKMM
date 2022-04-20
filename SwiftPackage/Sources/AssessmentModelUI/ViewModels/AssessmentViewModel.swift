@@ -118,7 +118,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     }
     
     open func exitAssessment() {
-        self.state.status = .earlyExit
+        self.state.status = .continueLater
     }
     
     // MARK: Navigation handling

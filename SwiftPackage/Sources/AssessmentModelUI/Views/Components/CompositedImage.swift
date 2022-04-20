@@ -1,5 +1,5 @@
 //
-//  QuestionHeaderView.swift
+//  CompositedImage.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -32,37 +32,52 @@
 //
 
 import SwiftUI
-import SharedMobileUI
 
-
-struct QuestionHeaderView : View {
-    @EnvironmentObject var assessmentState: AssessmentState
-    @EnvironmentObject var questionState: QuestionState
-    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
+public struct CompositedImage: View {
+    @SwiftUI.Environment(\.templateColor) var tint: Color
+    let imageName: String
+    let layerCount: Int
+    let bundle: Bundle?
     
-    public var body: some View {
-        HStack {
-            ExitButton(canPause: questionState.canPause)
-            Spacer()
-            skipButton()
-                .font(.underlinedButton)
-                .padding(.trailing, 15)
-        }
-        .accentColor(.sageBlack)
-        .fixedSize(horizontal: false, vertical: true)
+    public init(_ imageName: String, bundle: Bundle? = nil, layers: Int = 2) {
+        self.imageName = imageName
+        self.layerCount = layers
+        self.bundle = bundle
     }
     
-    @ViewBuilder
-    func skipButton() -> some View {
-        if let text = questionState.skipStepText {
-            Button(action: {
-                questionState.answerResult.jsonValue = nil
-                pagedNavigation.goForward()
-            }, label: { text.underline() })
+    public var body: some View {
+        ZStack {
+            ForEach(0 ..< layerCount, id:\.self) { layer in
+                Image("\(imageName).\(layer)", bundle: bundle)
+            }
         }
-        else {
-            EmptyView()
-        }
+        .foregroundColor(tint)
     }
 }
 
+struct TemplateColorEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Color = .accentColor
+}
+
+extension EnvironmentValues {
+    public var templateColor: Color {
+        get { self[TemplateColorEnvironmentKey.self] }
+        set { self[TemplateColorEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    public func templateColor(_ templateColor: Color) -> some View {
+        environment(\.templateColor, templateColor)
+    }
+}
+
+struct LayeredImageView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            CompositedImage("survey", bundle: .module, layers: 4)
+            CompositedImage("survey", bundle: .module, layers: 4)
+                .templateColor(.red)
+        }
+    }
+}
