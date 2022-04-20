@@ -7,7 +7,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
+    primary = BluePrimary,
     primaryVariant = Purple700,
     secondary = Teal200
 )
@@ -33,7 +33,8 @@ fun SageSurveyTheme(
     content: @Composable() () -> Unit
 ) {
     val colors = if (darkTheme) {
-        DarkColorPalette
+        LightColorPalette
+        //TODO: Support dark theme -nbrown 04/19/2022 DarkColorPalette
     } else {
         LightColorPalette
     }
