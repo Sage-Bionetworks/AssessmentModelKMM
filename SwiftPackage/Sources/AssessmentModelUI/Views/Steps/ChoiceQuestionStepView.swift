@@ -223,23 +223,26 @@ let favoriteColorsQuestion = ChoiceQuestionStepObject(identifier: "multipleChoic
                          other: StringTextInputItemObject(),
                          title: "What are your favorite colors?")
 
-let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(identifier: "favoriteFood",
-                         choices: [
-                            "Pizza",
-                            "Sushi",
-                            "Ice Cream",
-                            "Beans & Rice",
-                            "Tofu Tacos",
-                            "Bucatini Alla Carbonara",
-                            "Hot Dogs, Kraft Dinner & Potato Salad",
-                         ],
-                         baseType: .string,
-                         singleChoice: true,
-                         other: StringTextInputItemObject(),
-                         title: "What are you having for dinner next Tuesday after the soccer game?",
-                         subtitle: "After thinking it over...",
-                         detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                         surveyRules: [
-                            .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
-                         ])
+let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(
+    identifier: "favoriteFood",
+    choices: [
+        "Pizza",
+        "Sushi",
+        "Ice Cream",
+        "Beans & Rice",
+        "Tofu Tacos",
+        "Bucatini Alla Carbonara",
+        "Hot Dogs, Kraft Dinner & Potato Salad",
+    ],
+    baseType: .string,
+    singleChoice: true,
+    other: StringTextInputItemObject(),
+    title: "What are you having for dinner next Tuesday after the soccer game?",
+    subtitle: "After thinking it over...",
+    detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    surveyRules: [
+    .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
+    ],
+    buttonMap: [.navigation(.goForward) : ButtonActionInfoObject(buttonTitle: "Sumbit")]
+)
 

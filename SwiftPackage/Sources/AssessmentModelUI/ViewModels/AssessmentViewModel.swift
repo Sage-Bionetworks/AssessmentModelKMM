@@ -197,6 +197,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         state.currentStep = stepState
         
         // Update the navigator
+        navigationViewModel.forwardButtonText = goForwardButtonText(step: stepState.step)
         navigationViewModel.currentDirection = nextNode.direction == .backward ? .backward : .forward
         navigationViewModel.backEnabled = canGoBack(step: stepState.step)
         navigationViewModel.forwardEnabled = stepState.forwardEnabled || !viewVender.isSupported(step: stepState.step)
@@ -336,21 +337,36 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             return false
         }
     }
+    
+    open func goForwardButtonText(step: Step) -> Text? {
+        buttonInfo(.navigation(.goForward), step: step).flatMap { info in
+            info.buttonTitle.map {
+                Text(.init(stringLiteral: $0), bundle: info.bundle)
+            }
+        }
+    }
         
     open func skipButtonText(step: Step) -> Text? {
-        if shouldHide(.navigation(.skip), step: step) {
+        guard !shouldHide(.navigation(.skip), step: step),
+              supportsSkipButton(step: step)
+        else {
             return nil
         }
-        else if let buttonInfo = buttonInfo(.navigation(.skip), step: step),
-                let buttonTitle = buttonInfo.buttonTitle {
-            return Text(buttonTitle)
+        
+        if let buttonInfo = buttonInfo(.navigation(.skip), step: step),
+           let buttonTitle = buttonInfo.buttonTitle {
+            return Text(.init(stringLiteral: buttonTitle), bundle: buttonInfo.bundle)
         }
         else if step is QuestionStep {
             return Text("Skip question", bundle: .module)
         }
         else {
-            return nil
+            return Text("Skip step", bundle: .module)
         }
+    }
+    
+    open func supportsSkipButton(step: Step) -> Bool {
+        step is QuestionStep
     }
     
     private func shouldHide(_ buttonType: ButtonType, step: Step) -> Bool {
