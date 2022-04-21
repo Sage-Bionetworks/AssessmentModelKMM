@@ -1,5 +1,5 @@
 //
-//  TitlePageView.swift
+//  ContentNodeView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -35,42 +35,73 @@ import SwiftUI
 import AssessmentModel
 import SharedMobileUI
 
-public struct TitlePageView : View {
-    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-    let contentInfo: OverviewStep
+public struct ContentNodeView : View {
+    let contentInfo: ContentNode
+    let alignment: Alignment
     
-    public init(_ contentInfo: OverviewStep) {
+    public init(_ contentInfo: ContentNode, alignment: Alignment = .center) {
         self.contentInfo = contentInfo
+        self.alignment = alignment
     }
     
     public var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                ExitButton(canPause: false)
-            }
-            
-            ContentNodeView(contentInfo, alignment: .leading)
-            
-            ForwardButton {
-                pagedNavigation.forwardButtonText ??
-                Text("Start", bundle: .module)
+        GeometryReader { scrollViewGeometry in
+            ScrollView {  // Main content for the view includes header, content, and navigation footer
+                VStack(spacing: 24) {
+                    Spacer()
+                    if let imageInfo = contentInfo.imageInfo {
+                        HStack {
+                            ContentImage(imageInfo)
+                            Spacer()
+                        }
+                    }
+                    Text(contentInfo.title ?? "")
+                        .font(.stepTitle)
+                        .foregroundColor(.textForeground)
+                        .frame(maxWidth: .infinity, alignment: alignment)
+                    if let detail = contentInfo.detail {
+                        Text(detail)
+                            .font(.stepDetail)
+                            .foregroundColor(.textForeground)
+                            .frame(maxWidth: .infinity, alignment: alignment)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 32)
+                .frame(minHeight: scrollViewGeometry.size.height)
             }
         }
     }
 }
 
-struct TitlePageView_Previews: PreviewProvider {
+public struct ContentImage : View {
+    let imageInfo: ImageInfo
+    public init(_ imageInfo: ImageInfo) {
+        self.imageInfo = imageInfo
+    }
+    
+    public var body: some View {
+        if let sageImage = (imageInfo as? SageResourceImage)?.name {
+            switch sageImage {
+            case .survey:
+                CompositedImage("survey", bundle: .module, layers: 4)
+            }
+        }
+        else {
+            Image(imageInfo.imageName, bundle: imageInfo.bundle)
+        }
+    }
+}
+
+struct ContentNodeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            TitlePageView(overviewStep)
-                .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
-                .environmentObject(AssessmentState(AssessmentObject(previewStep: overviewStep)))
+            ContentNodeView(exampleStep, alignment: .leading)
         }
     }
 }
 
-fileprivate let overviewStep = OverviewStepObject(
+fileprivate let exampleStep = OverviewStepObject(
     identifier: "overview",
     title: "Example Survey A",
     detail: "You will be shown a series of example questions. This survey has no additional instructions.",
