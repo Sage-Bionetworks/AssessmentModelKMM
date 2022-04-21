@@ -55,6 +55,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     api(project(":assessmentModel"))
 
+    //Workaround for compose previews not working
+    // https://stackoverflow.com/questions/71812710/can-no-longer-view-jetpack-compose-previews-failed-to-instantiate-one-or-more-c
+    debugImplementation("androidx.customview:customview:1.2.0-alpha01")
+    debugImplementation("androidx.customview:customview-poolingcontainer:1.0.0-alpha01")
+
     implementation("androidx.constraintlayout:constraintlayout:2.1.3")
     implementation("com.google.android.material:material:1.5.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
