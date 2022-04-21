@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.sagebionetworks.assessmentmodel.AnswerResult
-import org.sagebionetworks.assessmentmodel.Node
-import org.sagebionetworks.assessmentmodel.PermissionInfo
-import org.sagebionetworks.assessmentmodel.Step
+import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class AssessmentViewModel(
@@ -37,6 +34,13 @@ open class AssessmentViewModel(
         //Clear current results before going to next node
         (assessmentNodeState.currentChild?.currentResult as? AnswerResult)?.jsonValue = null
         goForward()
+    }
+
+    fun goToStart() {
+        val startNode = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull()
+        startNode?.let {
+            (assessmentNodeState as? BranchNodeStateImpl)?.moveTo(NavigationPoint(startNode, assessmentNodeState.currentResult))
+        }
     }
 
     fun cancel() {

@@ -36,8 +36,8 @@
       "type": "instruction",
       "title": "Survey Title",
       "detail": "For the next set of questions please answer truthfully",
-      "image"  : {
-        "type":"fetchable",
+      "image" : {
+        "type" : "sageResource",
         "imageName" : "survey"
       }
     },

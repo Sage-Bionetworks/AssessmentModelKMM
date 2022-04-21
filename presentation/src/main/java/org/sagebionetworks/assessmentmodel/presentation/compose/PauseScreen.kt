@@ -25,6 +25,7 @@ import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageWhite
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -84,7 +85,13 @@ internal fun PauseScreen(
             )
             if (interruptionHandling.reviewIdentifier != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ClearButton(onClick = { /*TODO: Jump to instruction step -nbrown 04/05/22*/ }, stringResource(R.string.review_instructions))
+                ClearButton(onClick = {
+                                      if (ReservedNavigationIdentifier.Beginning.matching(interruptionHandling.reviewIdentifier)) {
+                                          assessmentViewModel.goToStart()
+                                      }
+                                      /*TODO: Jump to instruction step -nbrown 04/05/22*/
+                                      },
+                    stringResource(R.string.review_instructions))
             }
             if (interruptionHandling.canSkip) {
                 Spacer(modifier = Modifier.height(16.dp))
