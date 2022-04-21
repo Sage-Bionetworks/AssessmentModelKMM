@@ -195,6 +195,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         
         // Set the new current state
         state.currentStep = stepState
+        state.canPause = canPauseAssessment(step: stepState.step)
         
         // Update the navigator
         navigationViewModel.forwardButtonText = goForwardButtonText(step: stepState.step)
@@ -246,10 +247,9 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             return QuestionState(question,
                                  parentId: currentBranchState.id,
                                  answerResult: currentBranchResult.copyResult(with: node.identifier),
-                                 canPause: canPauseAssessment(step: question),
                                  skipStepText: self.skipButtonText(step: question))
         }
-        else if let step = node as? Step {
+        else if let step = node as? ContentStep {
             return InstructionState(step, parentId: currentBranchState.id)
         }
         else {

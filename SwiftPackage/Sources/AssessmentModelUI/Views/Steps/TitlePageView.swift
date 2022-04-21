@@ -49,49 +49,53 @@ public struct TitlePageView : View {
                 Spacer()
                 ExitButton(canPause: false)
             }
-            Spacer()
             
-            VStack(spacing: 24) {
-                if let imageInfo = contentInfo.imageInfo {
-                    HStack {
-                        ContentImage(imageInfo)
-                        Spacer()
-                    }
-                }
-                Text(contentInfo.title ?? "")
-                    .font(.stepTitle)
-                    .foregroundColor(.textForeground)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                if let detail = contentInfo.detail {
-                    Text(detail)
-                        .font(.stepDetail)
-                        .foregroundColor(.textForeground)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-            .padding(32)
+            ContentNodeView(contentInfo, alignment: .leading)
             
-            Spacer()
-            Button(action: pagedNavigation.goForward) {
+            ForwardButton {
                 pagedNavigation.forwardButtonText ??
                 Text("Start", bundle: .module)
             }
-            .buttonStyle(NavigationButtonStyle())
-            .padding(.horizontal, 32)
-            .padding(.vertical, 22)
         }
     }
 }
 
-struct NavigationButtonStyle : ButtonStyle {
-    @ViewBuilder public func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-            .font(.roundedButton)
-            .foregroundColor(.sageWhite)
-            .frame(minHeight: 48, idealHeight: 48)
-            .frame(maxWidth: .infinity)
-            .background(Color.sageBlack)
-            .clipShape(Capsule())
+public struct ContentNodeView : View {
+    let contentInfo: ContentNode
+    let alignment: Alignment
+    
+    public init(_ contentInfo: ContentNode, alignment: Alignment = .center) {
+        self.contentInfo = contentInfo
+        self.alignment = alignment
+    }
+    
+    public var body: some View {
+        GeometryReader { scrollViewGeometry in
+            ScrollView {  // Main content for the view includes header, content, and navigation footer
+                VStack(spacing: 24) {
+                    Spacer()
+                    if let imageInfo = contentInfo.imageInfo {
+                        HStack {
+                            ContentImage(imageInfo)
+                            Spacer()
+                        }
+                    }
+                    Text(contentInfo.title ?? "")
+                        .font(.stepTitle)
+                        .foregroundColor(.textForeground)
+                        .frame(maxWidth: .infinity, alignment: alignment)
+                    if let detail = contentInfo.detail {
+                        Text(detail)
+                            .font(.stepDetail)
+                            .foregroundColor(.textForeground)
+                            .frame(maxWidth: .infinity, alignment: alignment)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 32)
+                .frame(minHeight: scrollViewGeometry.size.height)
+            }
+        }
     }
 }
 

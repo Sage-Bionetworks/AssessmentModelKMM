@@ -70,10 +70,19 @@ open class StepState : NodeState {
     
     open var forwardEnabled: Bool { true }
     open var progressHidden: Bool { false }
-    
+    open var skipStepText: Text? { nil }
+
     public init(step: Step, result: ResultData, parentId: String? = nil) {
         super.init(node: step, result: result, parentId: parentId)
     }
+    
+    open func willSkip() {
+        // Do nothing
+    }
+}
+
+open class ContentNodeState : StepState {
+    public final var contentNode: ContentStep { node as! ContentStep }
 }
 
 /// State object for an assessment.
@@ -86,6 +95,7 @@ public final class AssessmentState : BranchState {
     @Published public var status: Status = .running
     @Published public var currentStep: StepState?
     @Published public var showingPauseActions: Bool = false
+    @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
 
     public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
@@ -105,8 +115,11 @@ extension RawRepresentable where RawValue == Int {
     }
 }
 
+public final class UnsupportedNodeState : StepState {
+}
+
 /// State object for an instruction.
-public final class InstructionState : StepState {
+public final class InstructionState : ContentNodeState {
     
     override public var progressHidden: Bool { node is OverviewStep || node is CompletionStep }
 
@@ -115,42 +128,44 @@ public final class InstructionState : StepState {
     @Published public var subtitle: String?
     @Published public var detail: String?
     
-    public init(_ instruction: Step, parentId: String? = nil) {
-        if let contentNode = instruction as? ContentNode {
-            self.title = contentNode.title
-            self.subtitle = contentNode.subtitle
-            self.detail = contentNode.detail
-            if let imageInfo = contentNode.imageInfo as? FetchableImage {
+    public init(_ instruction: ContentStep, parentId: String? = nil) {
+            self.title = instruction.title
+            self.subtitle = instruction.subtitle
+            self.detail = instruction.detail
+            if let imageInfo = instruction.imageInfo as? FetchableImage {
                 self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
             }
-        }
         super.init(step: instruction, result: instruction.instantiateResult(), parentId: parentId)
     }
 }
 
 /// State object for a question.
-public final class QuestionState : StepState {
+public final class QuestionState : ContentNodeState {
     public var question: QuestionStep { step as! QuestionStep }
     public var answerResult: AnswerResult { result as! AnswerResult }
 
     public override var forwardEnabled: Bool { question.optional || hasSelectedAnswer }
-    public let canPause: Bool
-    public let skipStepText: Text?
+    
+    override public var skipStepText: Text? { _skipStepText }
+    private let _skipStepText: Text?
     
     @Published public var title: String
     @Published public var subtitle: String?
     @Published public var detail: String?
     @Published public var hasSelectedAnswer: Bool
     
-    public init(_ question: QuestionStep, parentId: String? = nil, answerResult: AnswerResult? = nil, canPause: Bool = true, skipStepText: Text? = nil) {
+    public init(_ question: QuestionStep, parentId: String? = nil, answerResult: AnswerResult? = nil, skipStepText: Text? = nil) {
         self.title = question.title ?? question.subtitle ?? question.detail ?? ""
         self.subtitle = question.title == nil ? nil : question.subtitle
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
-        self.canPause = canPause
-        self.skipStepText = skipStepText
+        self._skipStepText = skipStepText
         let result = answerResult ?? question.instantiateAnswerResult()
         self.hasSelectedAnswer = result.jsonValue != nil
         super.init(step: question, result: result, parentId: parentId)
+    }
+    
+    override public func willSkip() {
+        answerResult.jsonValue = nil
     }
 }
 

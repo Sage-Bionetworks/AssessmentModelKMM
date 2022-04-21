@@ -1,5 +1,5 @@
 //
-//  QuestionHeaderView.swift
+//  ForwardButton.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -34,35 +34,21 @@
 import SwiftUI
 import SharedMobileUI
 
-
-struct QuestionHeaderView : View {
-    @EnvironmentObject var assessmentState: AssessmentState
-    @EnvironmentObject var questionState: QuestionState
+public struct ForwardButton <Content: View> : View {
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
+    let content: Content
     
-    public var body: some View {
-        HStack {
-            ExitButton(canPause: questionState.canPause)
-            Spacer()
-            skipButton()
-                .font(.underlinedButton)
-                .padding(.trailing, 15)
-        }
-        .accentColor(.sageBlack)
-        .fixedSize(horizontal: false, vertical: true)
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
     }
-    
-    @ViewBuilder
-    func skipButton() -> some View {
-        if let text = questionState.skipStepText {
-            Button(action: {
-                questionState.answerResult.jsonValue = nil
-                pagedNavigation.goForward()
-            }, label: { text.underline() })
+
+    @ViewBuilder public var body: some View {
+        Button(action: pagedNavigation.goForward) {
+            content
+                .frame(minWidth: 209)
         }
-        else {
-            EmptyView()
-        }
+        .buttonStyle(NavigationButtonStyle(.text))
+        .padding(.horizontal, 32)
+        .padding(.vertical, 22)
     }
 }
-
