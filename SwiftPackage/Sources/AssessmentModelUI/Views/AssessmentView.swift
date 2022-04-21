@@ -152,6 +152,11 @@ struct AssessmentView_Previews: PreviewProvider {
     }
 }
 
+public var previewExamples: [AssessmentObject] = [
+    surveyA,
+    surveyB,
+]
+
 let surveyA = AssessmentObject(identifier: "surveyA",
                                children: surveyAChildren,
                                version: "1.0.0",
