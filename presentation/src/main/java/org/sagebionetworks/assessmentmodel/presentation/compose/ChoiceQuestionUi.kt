@@ -165,7 +165,7 @@ private fun ChoiceQuestionInput(
                     var text by remember { mutableStateOf(curAnswer) }
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = inputItemState.inputItem.fieldLabel ?: stringResource(R.string.other),
+                        text = (inputItemState.inputItem.fieldLabel ?: stringResource(R.string.other)) + ":",
                         style = sageP1
                     )
                     val focusManager = LocalFocusManager.current

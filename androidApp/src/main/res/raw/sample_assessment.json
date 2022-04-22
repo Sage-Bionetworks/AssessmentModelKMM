@@ -101,7 +101,7 @@
         {"text":"Cat","value":"Cat"},
         {"text":"Dog","value":"Dog"}
       ],
-      "other": {"type" : "string", "fieldLabel" :  "Other:"}
+      "other": {"type" : "string", "fieldLabel" :  "Other"}
     },
     {
       "identifier": "checkboxQuestion",
