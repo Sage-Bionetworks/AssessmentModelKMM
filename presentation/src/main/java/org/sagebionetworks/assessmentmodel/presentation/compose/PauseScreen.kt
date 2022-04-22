@@ -85,23 +85,23 @@ internal fun PauseScreen(
             )
             if (interruptionHandling.reviewIdentifier != null) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ClearButton(onClick = {
-                                      if (ReservedNavigationIdentifier.Beginning.matching(interruptionHandling.reviewIdentifier)) {
-                                          assessmentViewModel.goToStart()
-                                      }
-                                      /*TODO: Jump to instruction step -nbrown 04/05/22*/
-                                      },
-                    stringResource(R.string.review_instructions))
+                ClearButton(
+                    onClick = { assessmentViewModel.goToNode(interruptionHandling.reviewIdentifier!!) },
+                    stringResource(R.string.review_instructions)
+                )
             }
             if (interruptionHandling.canSkip) {
                 Spacer(modifier = Modifier.height(16.dp))
-                ClearButton(onClick = { assessmentViewModel.declineAssessment() }, stringResource(R.string.skip_this_survey))
+                ClearButton(
+                    onClick = { assessmentViewModel.declineAssessment() },
+                    stringResource(R.string.skip_this_survey)
+                )
             }
-            if (interruptionHandling.canSaveForLater) {
-                Spacer(modifier = Modifier.height(16.dp))
-                ClearButton(onClick = { /*TODO: Save partial progress for surveys -nbrown 04/05/22*/ },
-                    stringResource(R.string.continue_later))
-            }
+            Spacer(modifier = Modifier.height(16.dp))
+            ClearButton(
+                onClick = { assessmentViewModel.continueLater() },
+                stringResource(R.string.continue_later)
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
     }

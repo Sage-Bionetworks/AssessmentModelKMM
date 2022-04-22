@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 open class AssessmentViewModel(
     val assessmentNodeState: BranchNodeState
@@ -36,14 +37,26 @@ open class AssessmentViewModel(
         goForward()
     }
 
-    fun goToStart() {
-        val startNode = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull()
-        startNode?.let {
-            (assessmentNodeState as? BranchNodeStateImpl)?.moveTo(NavigationPoint(startNode, assessmentNodeState.currentResult))
+    fun goToNode(nodeIdentifier: String) {
+        var node: Node? = null
+        if (ReservedNavigationIdentifier.Beginning.matching(nodeIdentifier)) {
+            node = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull()
+        } else {
+            node = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull { it.identifier == nodeIdentifier }
+        }
+        node?.let {
+            (assessmentNodeState as? BranchNodeStateImpl)?.moveTo(NavigationPoint(node, assessmentNodeState.currentResult))
         }
     }
 
     fun cancel() {
+        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
+    }
+
+    fun continueLater() {
+        /* TODO: Need to provide flag to containing app to save partial progress if applicable -nbrown 4/21/2022
+         * Or just have Cancel method and containing app is responsible for saving partial progress if it wants to.
+         */
         assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
     }
 

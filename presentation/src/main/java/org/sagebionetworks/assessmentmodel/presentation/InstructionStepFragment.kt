@@ -1,6 +1,5 @@
 package org.sagebionetworks.assessmentmodel.presentation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +19,6 @@ open class InstructionStepFragment: StepFragment() {
     private val binding get() = _binding!!
 
     private lateinit var step: ContentNodeStep
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,21 +54,5 @@ open class InstructionStepFragment: StepFragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        binding.title.text = step.title
-//        binding.detail.text = step.detail
-//        val drawable = step.imageInfo?.loadDrawable(requireContext())
-//        binding.header.image.setImageDrawable(drawable)
-//        if (drawable is AnimationDrawable) {
-//            drawable.start()
-//        }
-//        binding.navBar.setForwardOnClickListener { assessmentViewModel.goForward() }
-//        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
-//        binding.navBar.setup(step)
-//        binding.header.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-//        binding.navBar.binding.skipButton.visibility = View.INVISIBLE
-//    }
 
 }
