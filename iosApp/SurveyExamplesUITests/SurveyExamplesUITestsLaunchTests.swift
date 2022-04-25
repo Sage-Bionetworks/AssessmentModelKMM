@@ -1,5 +1,6 @@
 //
-//  GlobalProperties.swift
+//  SurveyExamplesUITestsLaunchTests.swift
+//  SurveyExamplesUITests
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -31,41 +32,28 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import SwiftUI
-import SharedMobileUI
+import XCTest
 
-let textFieldFontSize: CGFloat = 20
+class SurveyExamplesUITestsLaunchTests: XCTestCase {
 
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
+    override class var runsForEachTargetApplicationUIConfiguration: Bool {
+        true
+    }
 
-extension Font {
-    static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
-    
-    static let stepTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let stepSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let stepDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let underlinedButton: Font = .latoFont(fixedSize: 18, weight: .regular)
-    static let roundedButton: Font = DesignSystem.fontRules.buttonFont(at: 1, isSelected: false)
-    
-    static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+
+    func testLaunch() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        // Insert steps here to perform after app launch but before taking a screenshot,
+        // such as logging into a test account or navigating somewhere in the app
+
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = "Launch Screen"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
 }
-
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let textField: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackground: Color = .hexF6F6F6
-    
-    static let progressBackground: Color = .init(hex: "#A7A19C")!
-    
-    static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
-    static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
-    static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
-}
-

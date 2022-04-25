@@ -8,11 +8,7 @@
       "type" : "overview",
       "identifier" : "overview",
       "title" : "Example Survey B",
-      "detail" : "This survey questions presented in sections",
-      "image" : {
-          "type" : "sageResource",
-          "imageName" : "survey"
-      }
+      "detail" : "This survey has questions presented in sections."
     },
     {
       "type" : "section",

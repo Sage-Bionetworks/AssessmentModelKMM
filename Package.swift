@@ -25,7 +25,7 @@ let package = Package(
                  from: "1.4.6"),
         .package(name: "SharedMobileUI",
                  url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
-                 from: "0.14.2"),
+                 from: "0.15.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

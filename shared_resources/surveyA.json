@@ -14,8 +14,8 @@
       "title" : "Example Survey A",
       "detail" : "You will be shown a series of example questions. This survey has no additional instructions.",
       "image" : {
-          "type" : "sageResource",
-          "imageName" : "survey"
+        "type" : "sageResource",
+        "imageName" : "survey"
       }
     },
     {
@@ -148,42 +148,6 @@
     },
     {
       "type" : "choiceQuestion",
-      "identifier" : "multipleChoice",
-      "title" : "What are your favorite colors?",
-      "baseType" : "string",
-      "singleChoice" : false,
-      "choices" : [
-        {
-          "value" : "Blue",
-          "text" : "Blue"
-        },
-        {
-          "value" : "Green",
-          "text" : "Green"
-        },
-        {
-          "value" : "Yellow",
-          "text" : "Yellow"
-        },
-        {
-          "value" : "Red",
-          "text" : "Red"
-        },
-        {
-          "text" : "All of the above",
-          "selectorType" : "all"
-        },
-        {
-          "text" : "I don't have any",
-          "selectorType" : "exclusive"
-        }
-      ],
-      "other" : {
-        "type" : "string"
-      }
-    },
-    {
-      "type" : "choiceQuestion",
       "identifier" : "favoriteFood",
       "title" : "What are you having for dinner next Tuesday after the soccer game?",
       "subtitle" : "After thinking it over...",
@@ -235,6 +199,48 @@
       "type" : "instruction",
       "identifier" : "pizza",
       "title" : "Mmmmm, pizza..."
+    },
+    {
+      "type" : "choiceQuestion",
+      "identifier" : "multipleChoice",
+      "actions" : {
+        "goForward" : {
+          "buttonTitle" : "Submit",
+          "type" : "default"
+        }
+      },
+      "title" : "What are your favorite colors?",
+      "baseType" : "string",
+      "singleChoice" : false,
+      "choices" : [
+        {
+          "value" : "Blue",
+          "text" : "Blue"
+        },
+        {
+          "value" : "Green",
+          "text" : "Green"
+        },
+        {
+          "value" : "Yellow",
+          "text" : "Yellow"
+        },
+        {
+          "value" : "Red",
+          "text" : "Red"
+        },
+        {
+          "text" : "All of the above",
+          "selectorType" : "all"
+        },
+        {
+          "text" : "I don't have any",
+          "selectorType" : "exclusive"
+        }
+      ],
+      "other" : {
+        "type" : "string"
+      }
     },
     {
       "type" : "completion",

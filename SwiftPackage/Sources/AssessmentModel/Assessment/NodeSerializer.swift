@@ -376,7 +376,7 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
     }
 }
 
-open class AbstractStepObject : AbstractContentNodeObject, Step, NavigationRule {
+open class AbstractStepObject : AbstractContentNodeObject, ContentStep, NavigationRule {
     /// Default implementation returns `nil`.
     open func spokenInstruction(at timeInterval: TimeInterval) -> String? {
         nil

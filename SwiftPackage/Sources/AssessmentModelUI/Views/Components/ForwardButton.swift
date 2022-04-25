@@ -1,5 +1,5 @@
 //
-//  GlobalProperties.swift
+//  ForwardButton.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -34,38 +34,21 @@
 import SwiftUI
 import SharedMobileUI
 
-let textFieldFontSize: CGFloat = 20
+public struct ForwardButton <Content: View> : View {
+    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
+    let content: Content
+    
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
+    }
 
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
-extension Font {
-    static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
-    
-    static let stepTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let stepSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let stepDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let underlinedButton: Font = .latoFont(fixedSize: 18, weight: .regular)
-    static let roundedButton: Font = DesignSystem.fontRules.buttonFont(at: 1, isSelected: false)
-    
-    static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+    @ViewBuilder public var body: some View {
+        Button(action: pagedNavigation.goForward) {
+            content
+                .frame(minWidth: 209)
+        }
+        .buttonStyle(NavigationButtonStyle(.text))
+        .padding(.horizontal, 32)
+        .padding(.vertical, 22)
+    }
 }
-
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let textField: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackground: Color = .hexF6F6F6
-    
-    static let progressBackground: Color = .init(hex: "#A7A19C")!
-    
-    static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
-    static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
-    static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
-}
-

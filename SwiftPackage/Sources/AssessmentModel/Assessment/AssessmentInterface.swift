@@ -106,6 +106,9 @@ public protocol Step : Node {
     func spokenInstruction(at timeInterval: TimeInterval) -> String?
 }
 
+public protocol ContentStep : Step, ContentNode {
+}
+
 /// This protocol is used to allow an assessment designer to show a more detailed set of instructions only
 /// to users who are not already familiar with the assessment rather than showing a full set of instructions
 /// every time. The state handling for the assessment can use the ``fullInstructionsOnly`` flag to
