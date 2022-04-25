@@ -45,7 +45,7 @@ public struct ChoiceQuestionStepView : View {
     
     public var body: some View {
         VStack(spacing: 8) {
-            QuestionHeaderView()
+            StepHeaderView(questionState)
             QuestionStepScrollView {
                 ChoiceQuestionView()
             }
@@ -176,7 +176,7 @@ struct SelectionCell : ViewModifier {
 fileprivate struct PreviewChoiceQuestionStepView : View {
     let question: ChoiceQuestionStep
     var body: some View {
-        ChoiceQuestionStepView(QuestionState(question, canPause: true, skipStepText: Text("Skip question")))
+        ChoiceQuestionStepView(QuestionState(question, skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
             .environmentObject(AssessmentState(AssessmentObject(previewStep: question)))
     }
@@ -209,37 +209,42 @@ let happyChoiceQuestion = ChoiceQuestionStepObject(identifier: "followupQ",
                                                    detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                                                    surveyRules: [ .init(skipToIdentifier: "choiceQ1", matchingValue: .boolean(false)) ])
 
-let favoriteColorsQuestion = ChoiceQuestionStepObject(identifier: "multipleChoice",
-                         choices: [
-                            "Blue",
-                            "Green",
-                            "Yellow",
-                            "Red",
-                            .init(text: "All of the above", selectorType: .all),
-                            .init(text: "I don't have any", selectorType: .exclusive),
-                         ],
-                         baseType: .string,
-                         singleChoice: false,
-                         other: StringTextInputItemObject(),
-                         title: "What are your favorite colors?")
+let favoriteColorsQuestion = ChoiceQuestionStepObject(
+    identifier: "multipleChoice",
+    choices: [
+        "Blue",
+        "Green",
+        "Yellow",
+        "Red",
+        .init(text: "All of the above", selectorType: .all),
+        .init(text: "I don't have any", selectorType: .exclusive),
+    ],
+    baseType: .string,
+    singleChoice: false,
+    other: StringTextInputItemObject(),
+    title: "What are your favorite colors?",
+    buttonMap: [.navigation(.goForward) : ButtonActionInfoObject(buttonTitle: "Submit")]
+)
 
-let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(identifier: "favoriteFood",
-                         choices: [
-                            "Pizza",
-                            "Sushi",
-                            "Ice Cream",
-                            "Beans & Rice",
-                            "Tofu Tacos",
-                            "Bucatini Alla Carbonara",
-                            "Hot Dogs, Kraft Dinner & Potato Salad",
-                         ],
-                         baseType: .string,
-                         singleChoice: true,
-                         other: StringTextInputItemObject(),
-                         title: "What are you having for dinner next Tuesday after the soccer game?",
-                         subtitle: "After thinking it over...",
-                         detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                         surveyRules: [
-                            .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
-                         ])
+let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(
+    identifier: "favoriteFood",
+    choices: [
+        "Pizza",
+        "Sushi",
+        "Ice Cream",
+        "Beans & Rice",
+        "Tofu Tacos",
+        "Bucatini Alla Carbonara",
+        "Hot Dogs, Kraft Dinner & Potato Salad",
+    ],
+    baseType: .string,
+    singleChoice: true,
+    other: StringTextInputItemObject(),
+    title: "What are you having for dinner next Tuesday after the soccer game?",
+    subtitle: "After thinking it over...",
+    detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    surveyRules: [
+        .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
+    ]
+)
 

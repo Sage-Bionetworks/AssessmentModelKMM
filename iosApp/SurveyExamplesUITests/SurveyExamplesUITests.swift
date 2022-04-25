@@ -1,5 +1,6 @@
 //
-//  GlobalProperties.swift
+//  SurveyExamplesUITests.swift
+//  SurveyExamplesUITests
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -31,41 +32,38 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import SwiftUI
-import SharedMobileUI
+import XCTest
 
-let textFieldFontSize: CGFloat = 20
+class SurveyExamplesUITests: XCTestCase {
 
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
 
-extension Font {
-    static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
-    
-    static let stepTitle: Font = .latoFont(24, relativeTo: .title, weight: .bold)
-    static let stepSubtitle: Font = .latoFont(18, relativeTo: .subheadline, weight: .regular)
-    static let stepDetail: Font = .latoFont(18, relativeTo: .footnote, weight: .regular)
-    
-    static let underlinedButton: Font = .latoFont(fixedSize: 18, weight: .regular)
-    static let roundedButton: Font = DesignSystem.fontRules.buttonFont(at: 1, isSelected: false)
-    
-    static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+        // In UI tests it is usually best to stop immediately when a failure occurs.
+        continueAfterFailure = false
+
+        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    }
+
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+
+    func testExample() throws {
+        // UI tests must launch the application that they test.
+        let app = XCUIApplication()
+        app.launch()
+
+        // Use recording to get started writing UI tests.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    }
+
+    func testLaunchPerformance() throws {
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
+            // This measures how long it takes to launch your application.
+            measure(metrics: [XCTApplicationLaunchMetric()]) {
+                XCUIApplication().launch()
+            }
+        }
+    }
 }
-
-#if canImport(UIKit)
-import UIKit
-extension UIFont {
-    static let textField: UIFont = .latoFont(textFieldFontSize, relativeTo: nil, weight: .bold)
-}
-#endif
-
-extension Color {
-    static let surveyBackground: Color = .hexF6F6F6
-    
-    static let progressBackground: Color = .init(hex: "#A7A19C")!
-    
-    static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
-    static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
-    static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
-}
-

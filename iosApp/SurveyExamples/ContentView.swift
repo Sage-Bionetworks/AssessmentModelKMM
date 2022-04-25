@@ -1,6 +1,6 @@
 //
-//  QuestionHeaderView.swift
-//
+//  ContentView.swift
+//  SurveyExamples
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
@@ -32,37 +32,62 @@
 //
 
 import SwiftUI
-import SharedMobileUI
+import AssessmentModel
+import AssessmentModelUI
 
+struct ContentView: View {
+    @StateObject var viewModel: ViewModel = .init()
+    let surveys: [AssessmentHolder] = previewExamples.map { .init(assessment: $0) }
 
-struct QuestionHeaderView : View {
-    @EnvironmentObject var assessmentState: AssessmentState
-    @EnvironmentObject var questionState: QuestionState
-    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-    
-    public var body: some View {
-        HStack {
-            ExitButton(canPause: questionState.canPause)
-            Spacer()
-            skipButton()
-                .font(.underlinedButton)
-                .padding(.trailing, 15)
+    var body: some View {
+        List(surveys) { holder in
+            Button(holder.assessment.title ?? holder.id) {
+                viewModel.current = .init(holder.assessment)
+            }
         }
-        .accentColor(.sageBlack)
-        .fixedSize(horizontal: false, vertical: true)
+        .fullScreenCover(isPresented: $viewModel.isPresented) {
+            AssessmentListener(viewModel)
+        }
     }
     
-    @ViewBuilder
-    func skipButton() -> some View {
-        if let text = questionState.skipStepText {
-            Button(action: {
-                questionState.answerResult.jsonValue = nil
-                pagedNavigation.goForward()
-            }, label: { text.underline() })
+    class ViewModel : ObservableObject {
+        @Published var isPresented: Bool = false
+        var current: AssessmentState? {
+            didSet {
+                isPresented = (current != nil)
+            }
         }
-        else {
-            EmptyView()
+    }
+    
+    struct AssessmentListener : View {
+        @ObservedObject var viewModel: ViewModel
+        @ObservedObject var state: AssessmentState
+        
+        init(_ viewModel: ViewModel) {
+            self.viewModel = viewModel
+            self.state = viewModel.current!
+        }
+        
+        var body: some View {
+            AssessmentView(state)
+                .onChange(of: state.status) { newValue in
+                    print("assessment status = \(newValue)")
+                    guard newValue >= .finished else { return }
+                    // In a real use-case this is where you might save and upload data
+                    viewModel.isPresented = false
+                    viewModel.current = nil
+                }
         }
     }
 }
 
+struct AssessmentHolder : Identifiable {
+    var id: String { assessment.identifier }
+    let assessment: Assessment
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

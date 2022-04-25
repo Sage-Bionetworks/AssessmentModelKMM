@@ -62,8 +62,14 @@ open class AssessmentStepViewVender {
                 debugQuestionStepView(questionState)
             }
         }
-        else if let overview = state?.step as? OverviewStep {
-            TitlePageView(overview)
+        else if let step = state?.step as? OverviewStep {
+            TitlePageView(step)
+        }
+        else if let step = state?.step as? CompletionStep {
+            CompletionView(step)
+        }
+        else if let nodeState = state as? ContentNodeState {
+            InstructionView(nodeState)
         }
         else {
             debugStepView(state!)
@@ -73,7 +79,7 @@ open class AssessmentStepViewVender {
     @ViewBuilder
     private func debugQuestionStepView(_ state: QuestionState) -> some View {
         VStack(spacing: 8) {
-            QuestionHeaderView()
+            StepHeaderView(state)
             Spacer()
             Text(state.id)
             Spacer()
@@ -146,6 +152,11 @@ struct AssessmentView_Previews: PreviewProvider {
     }
 }
 
+public var previewExamples: [AssessmentObject] = [
+    surveyA,
+    surveyB,
+]
+
 let surveyA = AssessmentObject(identifier: "surveyA",
                                children: surveyAChildren,
                                version: "1.0.0",
@@ -203,10 +214,9 @@ fileprivate let surveyAChildren: [Node] = [
                              nextNode: "followupQ"),
     
     happyChoiceQuestion,
-    favoriteColorsQuestion,
     favoriteFoodChoiceQuestion,
-    
     InstructionStepObject(identifier: "pizza", title: "Mmmmm, pizza..."),
+    favoriteColorsQuestion,
     
     CompletionStepObject(identifier: "completion", title: "You're done!")
 ]
