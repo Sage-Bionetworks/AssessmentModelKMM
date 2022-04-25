@@ -67,5 +67,8 @@ extension Color {
     static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
     static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
     static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
+    
+    static let sliderBackground: Color = .init(hex: "#D3D3DB")!
+    static let likertDotBackground: Color = .init(hex: "#B0B0B6")!
 }
 

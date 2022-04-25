@@ -62,8 +62,11 @@ public extension SimpleQuestion {
     }
 }
 
+public protocol SimpleQuestionStep : SimpleQuestion, QuestionStep {
+}
+
 /// An abstract implementation is provided to allow different "type" identifiers with the same encoding.
-open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, QuestionStep, SimpleQuestion {
+open class AbstractSimpleQuestionStepObject : AbstractQuestionStepObject, SimpleQuestionStep {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case inputItem
         var relativeIndex: Int { 6 }
