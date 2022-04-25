@@ -108,6 +108,13 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
      */
     protected open fun selectedFor(index: Int, choice: ChoiceInputItem) : Boolean {
         val answer = currentResult.jsonValue ?: return false
+        if ((currentResult.jsonValue as? JsonArray)?.isEmpty() == true &&
+            choice.selectorType == ChoiceSelectorType.Exclusive &&
+            choice.jsonValue(true) == JsonNull
+        ) {
+            // Empty array means the exclusive choice with no value specified is selected
+            return true
+        }
         val selectedAnswer = choice.jsonValue(true) ?: return false
         val resultIdentifier = choice.resultIdentifier ?: "$index"
         return when {
@@ -157,7 +164,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             // `JsonNull` is used as a special placeholder for "chose not to answer".
             currentResult.jsonValue == JsonNull ||
             // Otherwise, there should be a non-null result and all the non-optional items should be selected.
-            (currentResult.jsonValue != null && ((currentResult.jsonValue as? JsonArray)?.isNotEmpty() ?: true) && itemStates.none { !it.inputItem.optional && !it.selected })
+            (currentResult.jsonValue != null && itemStates.none { !it.inputItem.optional && !it.selected })
 
     override val allAnswersValidFlow: StateFlow<Boolean>
     get() {return _mutableAllAnswersValidFlow}
@@ -191,12 +198,14 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
         }
 
         // Update the result.
+        var isSelection = false
         val map = itemStates.mapNotNull {
             // Create a mapping of the non-null currentAnswer to the item identifier.
             val itemAnswer = it.currentAnswer
+            isSelection = isSelection || it.selected
             if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
         }.toMap()
-        currentResult.jsonValue = jsonValue(map)
+        currentResult.jsonValue = if (isSelection) { jsonValue(map) } else { null }
         _mutableAllAnswersValidFlow.update { allAnswersValid()}
         return refresh
     }
