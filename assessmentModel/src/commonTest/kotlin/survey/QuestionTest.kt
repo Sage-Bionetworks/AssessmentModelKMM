@@ -392,6 +392,70 @@ class QuestionTest : NavigationTestHelper() {
     }
 
     @Test
+    fun testQuestionStateImpl_ChoiceQuestion_MultipleAnswer_SelectionState() {
+        val item1 = JsonChoiceObject(JsonPrimitive("item1"))
+        val item2 = JsonChoiceObject(JsonPrimitive("item2"))
+        val item3 = JsonChoiceObject(text = "all", selectorType = ChoiceSelectorType.All)
+        val item4 = JsonChoiceObject(text = "none", selectorType = ChoiceSelectorType.Exclusive)
+        val question = ChoiceQuestionObject("foo", listOf(item1, item2, item3, item4), singleAnswer = false, other = StringTextInputItemObject())
+        val previousResult = AnswerResultObject("foo",
+            answerType = AnswerType.Array(BaseType.STRING),
+            jsonValue = JsonArray(listOf(JsonPrimitive("item1"), JsonPrimitive("item2"))))
+        val questionState = buildQuestionState(question, previousResult)
+
+        // Check expectations for the initial item state.
+        assertEquals(5, questionState.itemStates.count())
+        val firstItem = questionState.itemStates.first()
+        assertTrue(firstItem is ChoiceInputItemState, "$firstItem not of expected type")
+        assertTrue(firstItem.selected)
+        val secondItem = questionState.itemStates[1]
+        assertTrue(secondItem is ChoiceInputItemState, "$secondItem not of expected type")
+        assertTrue(secondItem.selected)
+        val allItem = questionState.itemStates[2]
+        assertTrue(allItem is ChoiceInputItemState, "$allItem not of expected type")
+        assertFalse(allItem.selected)
+        val noneItem = questionState.itemStates[3]
+        assertTrue(noneItem is ChoiceInputItemState, "$noneItem not of expected type")
+        assertFalse(noneItem.selected)
+        // Select Other
+        val otherItem = questionState.itemStates.last()
+        assertTrue(otherItem is KeyboardInputItemState<*>, "$noneItem not of expected type")
+        otherItem.storedAnswer = JsonPrimitive("Other")
+        questionState.didChangeSelectionState(true, otherItem)
+        assertTrue(otherItem.selected)
+        // Select none
+        questionState.didChangeSelectionState(true, noneItem)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(allItem.selected)
+        assertTrue(noneItem.selected)
+        assertFalse(otherItem.selected)
+        // Select all
+        questionState.didChangeSelectionState(true, allItem)
+        assertTrue(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertTrue(allItem.selected)
+        assertFalse(noneItem.selected)
+        assertFalse(otherItem.selected)
+        // Deselect all
+        questionState.didChangeSelectionState(false, allItem)
+        assertFalse(firstItem.selected)
+        assertFalse(secondItem.selected)
+        assertFalse(allItem.selected)
+        assertFalse(noneItem.selected)
+        assertFalse(otherItem.selected)
+        // Select all
+        questionState.didChangeSelectionState(true, allItem)
+        assertTrue(firstItem.selected)
+        assertTrue(secondItem.selected)
+        assertTrue(allItem.selected)
+        assertFalse(noneItem.selected)
+
+        // Check expectations for the result and answer type.
+        assertEquals(previousResult, questionState.currentResult)
+    }
+
+    @Test
     fun testQuestionStateImpl_Init_ComboBoxQuestion() {
         val item1 = JsonChoiceObject(JsonPrimitive("item1"))
         val item2 = JsonChoiceObject(JsonPrimitive("item2"))
