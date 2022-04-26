@@ -86,7 +86,7 @@ fileprivate struct CharacterLimitEnvironmentKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    fileprivate var characterLimit: Int {
+    var characterLimit: Int {
         get { self[CharacterLimitEnvironmentKey.self] }
         set { self[CharacterLimitEnvironmentKey.self] = newValue }
     }
@@ -163,9 +163,6 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         backingView.keyboardType = inputItem.keyboardOptions.keyboardType.uiType
         backingView.spellCheckingType = inputItem.keyboardOptions.spellCheckingType.uiType
 
-        // Set up the delegate
-        context.coordinator.setup(backingView)
-
         return backingView
     }
 
@@ -208,9 +205,6 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
 
         init(_ textFieldContainer: MultilineTextFieldContainer) {
             self.parent = textFieldContainer
-        }
-
-        func setup(_ textView: UITextView) {
         }
         
         @objc func textViewDidBeginEditing(_ textView: UITextView) {

@@ -38,18 +38,38 @@ import JsonModel
 open class AbstractIntegerScaleQuestionViewModel : ObservableObject {
 
     weak var questionState: QuestionState?
-    var formatOptions: IntegerFormatOptions?
     
-    @Published var min: Int = 1
-    @Published var max: Int = 5
+    @Published var formatOptions: IntegerFormatOptions?
+    @Published var inputItem: TextInputItem?
+    @Published var minValue: Int = 1
+    @Published var maxValue: Int = 5
     @Published var stepInterval: Int = 1
-    @Published var fraction: Double = 0
+    
+    @Published var fraction: Double = 0 {
+        didSet {
+            guard !updating else { return }
+            updating = true
+            self.value = Int(round(Double(maxValue - minValue) * fraction)) + minValue
+            updateState()
+            updating = false
+        }
+    }
     
     @Published var value: Int? {
         didSet {
+            guard !updating else { return }
+            updating = true
+            let constrainedValue = self.value.map { max(minValue, min(maxValue, $0)) } ?? 0
+            if let current = self.value, current != constrainedValue {
+                self.value = constrainedValue
+            }
+            self.fraction = Double(constrainedValue - minValue) / Double(maxValue - minValue)
             updateState()
+            updating = false
         }
     }
+    
+    private var updating = false
     
     public init() {
     }
@@ -66,10 +86,11 @@ open class AbstractIntegerScaleQuestionViewModel : ObservableObject {
         // Set up the initial state
         self.questionState = questionState
         self.formatOptions = options
+        self.inputItem = question.inputItem
         
         // Set up the scale
-        self.min = min
-        self.max = max
+        self.minValue = min
+        self.maxValue = max
         self.stepInterval = options.stepInterval ?? 1
         
         if questionState.detail == nil,
@@ -86,12 +107,22 @@ open class AbstractIntegerScaleQuestionViewModel : ObservableObject {
             self.value = value
         }
     }
-    
+
     func updateState() {
-        guard min < max else { return }
-        self.fraction = self.value.map { Double($0 - min) / Double(max - min) } ?? 0
+        guard minValue < maxValue else { return }
         questionState?.hasSelectedAnswer = (value != nil)
         questionState?.answerResult.jsonValue = value.map { .integer($0) }
+    }
+}
+
+public final class SlidingScaleViewModel : AbstractIntegerScaleQuestionViewModel {
+    
+    public override func initialize(_ questionState: QuestionState) {
+        if questionState.answerResult.jsonValue == nil {
+            // For a sliding scale, the initial value is 0
+            questionState.answerResult.jsonValue = .integer(0)
+        }
+        super.initialize(questionState)
     }
 }
 
@@ -101,7 +132,7 @@ public final class LikertScaleViewModel : AbstractIntegerScaleQuestionViewModel 
     
     public override func initialize(_ questionState: QuestionState) {
         super.initialize(questionState)
-        dots = Array(min...max).map {
+        dots = Array(minValue...maxValue).map {
             .init($0)
         }
         self.value.map { updateSelected($0) }

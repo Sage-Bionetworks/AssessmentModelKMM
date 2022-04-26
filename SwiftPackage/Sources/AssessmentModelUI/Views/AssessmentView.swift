@@ -61,6 +61,9 @@ open class AssessmentStepViewVender {
             else if questionState.question.uiHint == .NumberField.likert.uiHint {
                 LikertScaleQuestionView(questionState)
             }
+            else if questionState.question.uiHint == .NumberField.slider.uiHint {
+                SlidingScaleQuestionView(questionState)
+            }
             else {
                 debugQuestionStepView(questionState)
             }
@@ -184,7 +187,7 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(value: .integer(1), text: "Enter some text"),
                                 .init(value: .integer(2), text: "Birth year"),
                                 .init(value: .integer(3), text: "Likert Scale"),
-                                .init(value: .integer(4), text: "Decimal Scale"),
+                                .init(value: .integer(4), text: "Sliding Scale"),
                              ],
                              baseType: .integer,
                              singleChoice: true,
@@ -207,11 +210,7 @@ fileprivate let surveyAChildren: [Node] = [
                              title: "Enter a birth year",
                              nextNode: "followupQ"),
     likertExample1,
-    SimpleQuestionStepObject(identifier: "simpleQ4",
-                             inputItem: DoubleTextInputItemObject(formatOptions: .init(minimumValue: 0, maximumValue: 1, minimumLabel: "Not at all", maximumLabel: "Very much")),
-                             title: "How much do you like apples as a number between 0 and 1?",
-                             uiHint: .NumberField.slider.uiHint,
-                             nextNode: "followupQ"),
+    slidingScaleExample1,
     
     happyChoiceQuestion,
     favoriteFoodChoiceQuestion,
