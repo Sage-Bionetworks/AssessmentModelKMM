@@ -186,14 +186,30 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
     protected open fun updateAnswerState(changedItem: InputItemState): Boolean {
         var refresh = false
 
-        // If the changed item is selected, then iterate through the collection and deselect other items as needed.
-        if (changedItem.selected) {
-            val deselectOthers = (changedItem.inputItem.exclusive || node.singleAnswer)
-            itemStates.forEach {
-                if (it != changedItem && it.selected && (deselectOthers || it.inputItem.exclusive))  {
-                    it.selected = false
-                    refresh = true
+        val deselectOthers = (changedItem.selected && node.singleAnswer) ||
+                (changedItem.selected && changedItem.inputItem.exclusive)
+
+        val selectOthers =
+            !node.singleAnswer && changedItem.selected && (changedItem.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All
+        val deselectAllAbove =
+            !changedItem.selected && (changedItem.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All
+
+        itemStates.forEach { choice ->
+            if (choice != changedItem) {
+                val choiceSelected = choice.selected
+                if (changedItem.selected && (choice.inputItem.exclusive || deselectOthers)) {
+                    choice.selected = false
                 }
+                else if (!changedItem.selected && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All) {
+                    choice.selected = false
+                }
+                else if (selectOthers && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.Default) {
+                    choice.selected = true
+                }
+                else if (deselectAllAbove && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.Default) {
+                    choice.selected = false
+                }
+                refresh = refresh || choiceSelected != choice.selected
             }
         }
 
