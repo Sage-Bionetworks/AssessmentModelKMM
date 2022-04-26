@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.Serializable
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 interface InterruptionHandling {
     /// Once interrupted, can the associated assessment be resumed?
@@ -19,7 +20,7 @@ interface InterruptionHandling {
 
 @Serializable
 data class InterruptionHandlingObject(
-    override val reviewIdentifier: String? = null,
+    override val reviewIdentifier: String? = ReservedNavigationIdentifier.Beginning.name.lowercase(),
     override val canResume: Boolean = true,
     override val canSaveForLater: Boolean = true,
     override val canSkip: Boolean = true,

@@ -42,7 +42,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
         val children = node.children
         val isEstimated = false
 
-        val progressMarkers = parentNode.progressMarkers ?: return null
+        val progressMarkers = parentNode.progressMarkers ?: parentNode.children.map { it.identifier }
         val nodeIdx = children.lastIndexOf(currentNode)
         if (nodeIdx == -1) return null
         val nodeList = children.subList(0, nodeIdx+1).map { it.identifier }

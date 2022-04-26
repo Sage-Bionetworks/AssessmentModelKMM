@@ -11,18 +11,21 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
+import org.sagebionetworks.assessmentmodel.presentation.R
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP2
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
@@ -31,53 +34,37 @@ internal fun QuestionContent(
     assessmentViewModel: AssessmentViewModel,
     modifier: Modifier = Modifier
 ) {
-    val question = questionState.node as ChoiceQuestion
-
     Column(
-        modifier = modifier.fillMaxHeight()
-            .background(Color(0xFFF6F6F6))
-            .padding(start = 20.dp, end = 32.dp)
-            .verticalScroll(rememberScrollState())
-            ,
+        modifier = modifier
+            .fillMaxHeight()
+            .background(BackgroundGray)
+
+        ,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        question.subtitle?.let { subtitle ->
-            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(
-                    text = subtitle,
-                    style = sageP2,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-                )
-            }
-        }
-        question.title?.let { title ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = title,
-                style = sageH1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-            )
-        }
-        question.detail?.let { detail ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = detail,
-                style = sageP2,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(48.dp))
-        MultipleChoiceQuestion(
+        val scrollState = rememberScrollState()
+        QuestionHeader(
             questionState = questionState,
-            modifier = Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.weight(1f))
-        BottomNavigation({assessmentViewModel.goBackward()}, {assessmentViewModel.goForward()})
+            assessmentViewModel = assessmentViewModel,
+            scrollState = scrollState
+            )
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(start = 20.dp, end = 20.dp)
+                .verticalScroll(scrollState),
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            MultipleChoiceQuestion(
+                questionState = questionState,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            BottomNavigation(
+                { assessmentViewModel.goBackward() },
+                { assessmentViewModel.goForward() },
+                nextEnabled = questionState.allAnswersValidFlow.collectAsState().value
+                )
+        }
     }
 }
 
@@ -127,14 +114,19 @@ private fun ChoiceQuestionInput(
         modifier = Modifier
             .padding(vertical = 8.dp)
     ) {
+        val focusRequester = remember { FocusRequester() }
+        val onClick = { selected:Boolean ->
+            onChoiceSelected(selected)
+            if (selected && inputItemState is KeyboardInputItemState<*>) {
+                focusRequester.requestFocus()
+            }
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(answerBackgroundColor)
                 .clickable(
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    }
+                    onClick = {onClick(!choiceSelected)}
                 )
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -143,9 +135,7 @@ private fun ChoiceQuestionInput(
             if (singleChoice) {
                 RadioButton(
                     selected = choiceSelected,
-                    onClick = {
-                        onChoiceSelected(!choiceSelected)
-                    },
+                    onClick = {onClick(!choiceSelected)},
                     colors = RadioButtonDefaults.colors(
                         selectedColor = SageBlack
                     )
@@ -154,7 +144,7 @@ private fun ChoiceQuestionInput(
                 Checkbox(
                     checked = choiceSelected,
                     onCheckedChange = { selected ->
-                        onChoiceSelected(selected)
+                        onClick(selected)
                     },
                     colors = CheckboxDefaults.colors(
                         checkedColor = SageBlack
@@ -175,12 +165,16 @@ private fun ChoiceQuestionInput(
                     var text by remember { mutableStateOf(curAnswer) }
                     Text(
                         modifier = Modifier.padding(horizontal = 10.dp),
-                        text = inputItemState.inputItem.fieldLabel?: "Other:",
+                        text = (inputItemState.inputItem.fieldLabel ?: stringResource(R.string.other)) + ":",
                         style = sageP1
                     )
                     val focusManager = LocalFocusManager.current
+                    if (!choiceSelected) {
+                        focusManager.clearFocus()
+                    }
                     TextField(
-                        modifier = Modifier.padding(end = 20.dp),
+                        modifier = Modifier.padding(end = 20.dp)
+                            .focusRequester(focusRequester),
                         value = text,
                         onValueChange = {
                             text = it
@@ -193,7 +187,13 @@ private fun ChoiceQuestionInput(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 focusManager.clearFocus()
-                            })
+                            }),
+                        textStyle = sageP1,
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            cursorColor = SageBlack,
+                            focusedIndicatorColor = SageBlack
+                            )
                     )
                 }
             }

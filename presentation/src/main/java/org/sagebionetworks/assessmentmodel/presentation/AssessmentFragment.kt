@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.sagebionetworks.assessmentmodel.BranchNode
+import org.sagebionetworks.assessmentmodel.ContentNodeStep
 import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
@@ -130,7 +131,7 @@ open class AssessmentFragment : Fragment() {
                 TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
             }
             is ChoiceQuestion -> return ChoiceQuestionStepFragment()
-            is InstructionStep -> return InstructionStepFragment()
+            is ContentNodeStep -> return InstructionStepFragment()
             is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
             else -> return DebugStepFragment()
         }

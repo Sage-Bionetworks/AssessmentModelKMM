@@ -43,3 +43,9 @@ val sageP2 = TextStyle(
     fontWeight = FontWeight.Normal,
     fontSize = 18.sp
 )
+
+val sageButton = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 20.sp
+)

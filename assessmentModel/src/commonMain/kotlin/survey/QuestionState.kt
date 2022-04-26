@@ -1,5 +1,9 @@
 package org.sagebionetworks.assessmentmodel.survey
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
@@ -32,6 +36,12 @@ interface QuestionFieldState : FieldState {
      * provided. This can be used to update the enabled state of a "Next" button.
      */
     fun allAnswersValid(): Boolean
+
+    /**
+     * A StateFlow version of [allAnswersValid] that will emit a new value anytime the
+     * answers have changed.
+     */
+    val allAnswersValidFlow: StateFlow<Boolean>
 
     /**
      * This method should be called by the controller when the view associated with a [ChoiceInputItemState] is
@@ -98,6 +108,13 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
      */
     protected open fun selectedFor(index: Int, choice: ChoiceInputItem) : Boolean {
         val answer = currentResult.jsonValue ?: return false
+        if ((currentResult.jsonValue as? JsonArray)?.isEmpty() == true &&
+            choice.selectorType == ChoiceSelectorType.Exclusive &&
+            choice.jsonValue(true) == JsonNull
+        ) {
+            // Empty array means the exclusive choice with no value specified is selected
+            return true
+        }
         val selectedAnswer = choice.jsonValue(true) ?: return false
         val resultIdentifier = choice.resultIdentifier ?: "$index"
         return when {
@@ -149,6 +166,10 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             // Otherwise, there should be a non-null result and all the non-optional items should be selected.
             (currentResult.jsonValue != null && itemStates.none { !it.inputItem.optional && !it.selected })
 
+    override val allAnswersValidFlow: StateFlow<Boolean>
+    get() {return _mutableAllAnswersValidFlow}
+    private val _mutableAllAnswersValidFlow : MutableStateFlow<Boolean> by lazy {MutableStateFlow(allAnswersValid())}
+
     override fun didChangeSelectionState(selected: Boolean, forItem: InputItemState): Boolean {
         forItem.selected = selected
         return updateAnswerState(forItem)
@@ -165,24 +186,43 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
     protected open fun updateAnswerState(changedItem: InputItemState): Boolean {
         var refresh = false
 
-        // If the changed item is selected, then iterate through the collection and deselect other items as needed.
-        if (changedItem.selected) {
-            val deselectOthers = (changedItem.inputItem.exclusive || node.singleAnswer)
-            itemStates.forEach {
-                if (it != changedItem && it.selected && (deselectOthers || it.inputItem.exclusive))  {
-                    it.selected = false
-                    refresh = true
+        val deselectOthers = (changedItem.selected && node.singleAnswer) ||
+                (changedItem.selected && changedItem.inputItem.exclusive)
+
+        val selectOthers =
+            !node.singleAnswer && changedItem.selected && (changedItem.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All
+        val deselectAllAbove =
+            !changedItem.selected && (changedItem.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All
+
+        itemStates.forEach { choice ->
+            if (choice != changedItem) {
+                val choiceSelected = choice.selected
+                if (changedItem.selected && (choice.inputItem.exclusive || deselectOthers)) {
+                    choice.selected = false
                 }
+                else if (!changedItem.selected && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.All) {
+                    choice.selected = false
+                }
+                else if (selectOthers && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.Default) {
+                    choice.selected = true
+                }
+                else if (deselectAllAbove && (choice.inputItem as? ChoiceInputItem)?.selectorType == ChoiceSelectorType.Default) {
+                    choice.selected = false
+                }
+                refresh = refresh || choiceSelected != choice.selected
             }
         }
 
         // Update the result.
+        var isSelection = false
         val map = itemStates.mapNotNull {
             // Create a mapping of the non-null currentAnswer to the item identifier.
             val itemAnswer = it.currentAnswer
+            isSelection = isSelection || it.selected
             if (itemAnswer != null && itemAnswer != JsonNull) it.itemIdentifier to itemAnswer else null
         }.toMap()
-        currentResult.jsonValue = jsonValue(map)
+        currentResult.jsonValue = if (isSelection) { jsonValue(map) } else { null }
+        _mutableAllAnswersValidFlow.update { allAnswersValid()}
         return refresh
     }
 

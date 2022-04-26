@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     defaultConfig {
         applicationId = "org.sagebionetworks.assessmentmodel.sampleapp"
-        minSdkVersion(21)
-        targetSdkVersion(31)
+        minSdk = 21
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true

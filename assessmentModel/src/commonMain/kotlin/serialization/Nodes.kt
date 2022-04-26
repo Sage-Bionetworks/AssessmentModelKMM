@@ -326,7 +326,7 @@ data class ResultSummaryStepObject(
 abstract class QuestionObject : StepObject(), Question, SurveyNavigationRule {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
-    override var optional: Boolean = true
+    override var optional: Boolean = false
     override var surveyRules: List<ComparableSurveyRuleObject>? = null
 
     override fun copyFrom(original: ContentNode) {

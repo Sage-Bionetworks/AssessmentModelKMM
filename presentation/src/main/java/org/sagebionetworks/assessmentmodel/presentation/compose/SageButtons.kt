@@ -1,24 +1,23 @@
 package org.sagebionetworks.assessmentmodel.presentation.compose
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageWhite
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageButton
 
 @Composable
 fun SageButton(
@@ -28,7 +27,7 @@ fun SageButton(
     drawBorder: Boolean = true,
     enabled: Boolean = true,
     text: String? = null,
-    icon: ImageVector? = null,
+    @DrawableRes iconDrawable: Int? = null,
     iconContentDescription: String? = null,
 ) {
     Button(
@@ -43,11 +42,14 @@ fun SageButton(
         colors = buttonColors
     ) {
         if (text != null) {
-            Text(text = text)
+            Text(
+                text = text,
+                style = sageButton
+            )
         }
-        if (icon != null)
+        if (iconDrawable != null)
             Icon(
-                imageVector = icon,
+                painter = painterResource(id = iconDrawable),
                 contentDescription = iconContentDescription,
             )
 
@@ -60,7 +62,7 @@ fun WhiteButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     text: String? = null,
-    icon: ImageVector? = null,
+    @DrawableRes iconDrawable: Int? = null,
     iconContentDescription: String? = null
 ) {
     SageButton(
@@ -70,7 +72,7 @@ fun WhiteButton(
         drawBorder = true,
         enabled = enabled,
         text = text,
-        icon = icon,
+        iconDrawable = iconDrawable,
         iconContentDescription = iconContentDescription
         )
 }
@@ -81,7 +83,7 @@ fun BlackButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     text: String? = null,
-    icon: ImageVector? = null,
+    @DrawableRes iconDrawable: Int? = null,
     iconContentDescription: String? = null
 ) {
     SageButton(
@@ -91,7 +93,7 @@ fun BlackButton(
         drawBorder = false,
         enabled = enabled,
         text = text,
-        icon = icon,
+        iconDrawable = iconDrawable,
         iconContentDescription = iconContentDescription
     )
 }
@@ -101,7 +103,7 @@ fun WhiteBackButton(
     onClick: () -> Unit,
     enabled: Boolean = true) {
     WhiteButton(onClick = onClick,
-        icon = Icons.Filled.KeyboardArrowLeft,
+        iconDrawable = R.drawable.ic_left_arrow,
         enabled = enabled,
         modifier = Modifier.width(56.dp))
 }
@@ -111,7 +113,7 @@ fun BlackNextButton(
     onClick: () -> Unit,
     enabled: Boolean = true) {
     BlackButton(onClick = onClick,
-        icon = Icons.Filled.KeyboardArrowRight,
+        iconDrawable = R.drawable.ic_right_arrow,
         enabled = enabled,
         modifier = Modifier.width(56.dp))
 }

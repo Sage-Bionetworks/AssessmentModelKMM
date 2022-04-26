@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.sagebionetworks.assessmentmodel.Node
-import org.sagebionetworks.assessmentmodel.PermissionInfo
-import org.sagebionetworks.assessmentmodel.Step
+import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
+import org.sagebionetworks.assessmentmodel.survey.ReservedNavigationIdentifier
 
 open class AssessmentViewModel(
     val assessmentNodeState: BranchNodeState
@@ -32,8 +31,30 @@ open class AssessmentViewModel(
         assessmentNodeState.goBackward()
     }
 
+    fun skip() {
+        //Clear current results before going to next node
+        (assessmentNodeState.currentChild?.currentResult as? AnswerResult)?.jsonValue = null
+        goForward()
+    }
+
+    fun goToNode(nodeIdentifier: String) {
+        var node: Node? = null
+        if (ReservedNavigationIdentifier.Beginning.matching(nodeIdentifier)) {
+            node = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull()
+        } else {
+            node = (assessmentNodeState.node as? NodeContainer)?.children?.firstOrNull { it.identifier == nodeIdentifier }
+        }
+        node?.let {
+            (assessmentNodeState as? BranchNodeStateImpl)?.moveTo(NavigationPoint(node, assessmentNodeState.currentResult))
+        }
+    }
+
     fun cancel() {
         assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
+    }
+
+    fun declineAssessment() {
+        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Now, markFinished = false, declined = true))
     }
 
     override fun canHandle(node: Node): Boolean {
