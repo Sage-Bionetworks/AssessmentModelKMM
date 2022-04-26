@@ -11,3 +11,4 @@ xcschememanagement.plist
 /.build
 Breakpoints_v2.xcbkptlist
 xcuserdata
+/iosApp/iosApp.xcodeproj/xcuserdata/*

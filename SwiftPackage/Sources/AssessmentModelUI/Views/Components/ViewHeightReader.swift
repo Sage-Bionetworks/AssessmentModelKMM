@@ -35,30 +35,36 @@ import SwiftUI
 
 extension View {
     func heightReader(height: Binding<CGFloat>) -> some View {
-        modifier(ViewHeightReader(height: height))
+        modifier(ViewDimensionReader(height))
+    }
+    func widthReader(width: Binding<CGFloat>) -> some View {
+        modifier(ViewDimensionReader(width, isHeight: false))
     }
 }
 
-struct ViewHeightReader : ViewModifier {
-    @Binding var height: CGFloat
+struct ViewDimensionReader : ViewModifier {
+    @Binding var dim: CGFloat
+    let isHeight: Bool
     
-    init(height: Binding<CGFloat>) {
-        self._height = height
+    init(_ dim: Binding<CGFloat>, isHeight: Bool = true) {
+        self._dim = dim
+        self.isHeight = isHeight
     }
     
     func body(content: Content) -> some View {
         content
             .background(GeometryReader {
-                Color.clear.preference(key: ViewHeightKey.self,
-                                       value: $0.frame(in: .local).size.height)
+                Color.clear.preference(key: ViewDimensionKey.self,
+                                       value: self.isHeight ? $0.frame(in: .local).size.height : $0.frame(in: .local).size.width
+                )
             })
-            .onPreferenceChange(ViewHeightKey.self) {
-                height = $0
+            .onPreferenceChange(ViewDimensionKey.self) {
+                dim = $0
             }
     }
 }
 
-struct ViewHeightKey: PreferenceKey {
+struct ViewDimensionKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout Value, nextValue: () -> Value) {
         value = value + nextValue()
