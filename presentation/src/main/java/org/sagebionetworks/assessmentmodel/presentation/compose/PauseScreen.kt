@@ -99,7 +99,7 @@ internal fun PauseScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             ClearButton(
-                onClick = { assessmentViewModel.continueLater() },
+                onClick = { assessmentViewModel.cancel() },
                 stringResource(R.string.continue_later)
             )
         }

@@ -53,13 +53,6 @@ open class AssessmentViewModel(
         assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
     }
 
-    fun continueLater() {
-        /* TODO: Need to provide flag to containing app to save partial progress if applicable -nbrown 4/21/2022
-         * Or just have Cancel method and containing app is responsible for saving partial progress if it wants to.
-         */
-        assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Never, markFinished = false, declined = false))
-    }
-
     fun declineAssessment() {
         assessmentNodeState.exitEarly(FinishedReason.Incomplete(saveResult = SaveResults.Now, markFinished = false, declined = true))
     }
