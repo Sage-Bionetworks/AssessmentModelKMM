@@ -50,7 +50,7 @@ public struct ChoiceQuestionStepView : View {
                 ChoiceQuestionView()
             }
         }
-        .id("ChoiceQuestionStepView:\(questionState.id)")   // Give the view a unique id to force refresh
+        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.surveyBackground)
     }
