@@ -72,3 +72,19 @@ extension Color {
     static let likertDotBackground: Color = .init(hex: "#B0B0B6")!
 }
 
+struct SurveyTintColorEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Color = .accentColor
+}
+
+extension EnvironmentValues {
+    public var surveyTintColor: Color {
+        get { self[SurveyTintColorEnvironmentKey.self] }
+        set { self[SurveyTintColorEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    public func surveyTintColor(_ templateColor: Color) -> some View {
+        environment(\.surveyTintColor, templateColor)
+    }
+}

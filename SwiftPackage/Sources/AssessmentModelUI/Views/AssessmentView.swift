@@ -130,6 +130,7 @@ public struct AssessmentView : View {
     }
     
     struct TopBarProgressView : View {
+        @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
         @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
         public var body: some View {
             GeometryReader { geometry in
@@ -137,7 +138,7 @@ public struct AssessmentView : View {
                     Rectangle()
                         .fill(Color.progressBackground)
                     Rectangle()
-                        .fill(Color.accentColor)
+                        .fill(surveyTint)
                         .frame(width: geometry.size.width * pagedNavigation.fraction)
                         .animation(.easeOut, value: pagedNavigation.fraction)
                 }

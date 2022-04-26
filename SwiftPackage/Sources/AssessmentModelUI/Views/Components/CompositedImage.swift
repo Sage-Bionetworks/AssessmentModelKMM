@@ -34,7 +34,7 @@
 import SwiftUI
 
 public struct CompositedImage: View {
-    @SwiftUI.Environment(\.templateColor) var tint: Color
+    @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     let imageName: String
     let layerCount: Int
     let bundle: Bundle?
@@ -51,24 +51,7 @@ public struct CompositedImage: View {
                 Image("\(imageName).\(layer)", bundle: bundle)
             }
         }
-        .foregroundColor(tint)
-    }
-}
-
-struct TemplateColorEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Color = .accentColor
-}
-
-extension EnvironmentValues {
-    public var templateColor: Color {
-        get { self[TemplateColorEnvironmentKey.self] }
-        set { self[TemplateColorEnvironmentKey.self] = newValue }
-    }
-}
-
-extension View {
-    public func templateColor(_ templateColor: Color) -> some View {
-        environment(\.templateColor, templateColor)
+        .foregroundColor(surveyTint)
     }
 }
 
@@ -77,7 +60,7 @@ struct LayeredImageView_Previews: PreviewProvider {
         VStack {
             CompositedImage("survey", bundle: .module, layers: 4)
             CompositedImage("survey", bundle: .module, layers: 4)
-                .templateColor(.red)
+                .surveyTintColor(.red)
         }
     }
 }
