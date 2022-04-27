@@ -6,6 +6,7 @@
         <activity
             android:name=".AssessmentActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             />
     </application>
 
