@@ -11,6 +11,7 @@ import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 fun BottomNavigation(
     onBackClicked: () -> Unit,
     onNextClicked: () -> Unit,
+    nextText: String? = null,
     backEnabled: Boolean = true,
     nextEnabled: Boolean = true
 ) {
@@ -19,7 +20,11 @@ fun BottomNavigation(
         .fillMaxWidth()) {
         WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
         Spacer(modifier = Modifier.weight(1f))
-        BlackNextButton(onClick = onNextClicked, enabled = nextEnabled)
+        if (nextText != null) {
+            BlackButton(onClick = onNextClicked, text = nextText)
+        } else {
+            BlackNextButton(onClick = onNextClicked, enabled = nextEnabled)
+        }
     }
 }
 
@@ -29,7 +34,7 @@ private fun BottomNavPreview() {
     SageSurveyTheme {
         Column() {
             BottomNavigation({}, {})
-            BottomNavigation({}, {}, false, false)
+            BottomNavigation({}, {}, "Submit",false, false)
         }
     }
 }

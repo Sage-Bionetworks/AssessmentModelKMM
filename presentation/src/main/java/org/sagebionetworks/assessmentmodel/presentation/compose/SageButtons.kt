@@ -3,6 +3,7 @@ package org.sagebionetworks.assessmentmodel.presentation.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
@@ -43,6 +44,7 @@ fun SageButton(
     ) {
         if (text != null) {
             Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
                 text = text,
                 style = sageButton
             )
