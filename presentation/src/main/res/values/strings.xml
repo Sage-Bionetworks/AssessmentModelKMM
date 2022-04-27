@@ -16,5 +16,6 @@
     <string name="skip_this_survey">Skip this survey</string>
     <string name="continue_later">Continue later</string>
     <string name="start">Start</string>
+    <string name="done">Done</string>
 
 </resources>

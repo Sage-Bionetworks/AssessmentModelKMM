@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.res.stringResource
+import org.sagebionetworks.assessmentmodel.CompletionStep
 import org.sagebionetworks.assessmentmodel.ContentNodeStep
+import org.sagebionetworks.assessmentmodel.OverviewStep
 import org.sagebionetworks.assessmentmodel.presentation.compose.InstructionStepUi
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
@@ -30,6 +33,15 @@ open class InstructionStepFragment: StepFragment() {
         _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
         val drawable = step.imageInfo?.loadDrawable(requireContext())
         val tint = (step.imageInfo as? SageResourceImage)?.name?.tint ?: false
+        var hideClose = false
+        val buttonTextResource = if (step is OverviewStep) {
+            R.string.start
+        } else if (step is CompletionStep) {
+            hideClose = true
+            R.string.done
+        } else {
+            R.string.next
+        }
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             SageSurveyTheme {
@@ -42,8 +54,10 @@ open class InstructionStepFragment: StepFragment() {
                     },
                     title = step.title,
                     detail = step.detail,
+                    nextButtonText = stringResource(buttonTextResource),
                     next = { assessmentViewModel.goForward() },
-                    close = { assessmentViewModel.cancel() }
+                    close = { assessmentViewModel.cancel() },
+                    hideClose = hideClose
                 )
             }
         }
