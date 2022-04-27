@@ -58,13 +58,17 @@ open class AssessmentStepViewVender {
             if questionState.step is ChoiceQuestionStep {
                 ChoiceQuestionStepView(questionState)
             }
-            else if questionState.question.uiHint == .NumberField.likert.uiHint,
+            else if questionState.question is SimpleQuestion,
                     questionState.question.answerType.baseType == .integer {
-                LikertScaleQuestionView(questionState)
-            }
-            else if questionState.question.uiHint == .NumberField.slider.uiHint,
-                    questionState.question.answerType.baseType == .integer {
-                SlidingScaleQuestionView(questionState)
+                if questionState.question.uiHint == .NumberField.likert.uiHint {
+                    LikertScaleQuestionView(questionState)
+                }
+                else if questionState.question.uiHint == .NumberField.slider.uiHint {
+                    SlidingScaleQuestionView(questionState)
+                }
+                else {
+                    IntegerQuestionStepView(questionState)
+                }
             }
             else {
                 debugQuestionStepView(questionState)
@@ -207,10 +211,7 @@ fileprivate let surveyAChildren: [Node] = [
                              inputItem: StringTextInputItemObject(placeholder: "I like cake"),
                              title: "Enter some text",
                              nextNode: "followupQ"),
-    SimpleQuestionStepObject(identifier: "simpleQ2",
-                             inputItem: YearTextInputItemObject(placeholder: "1948", formatOptions: .birthYear),
-                             title: "Enter a birth year",
-                             nextNode: "followupQ"),
+    birthYearExample,
     likertExample1,
     slidingScaleExample1,
     

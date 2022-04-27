@@ -351,7 +351,7 @@ public struct YearTextInputItemObject : SerializableTextInputItem {
     public let formatOptions: YearFormatOptions?
     
     public init(fieldLabel: String? = nil,
-                placeholder: String? = nil,
+                placeholder: String? = "YYYY",
                 resultIdentifier: String? = nil,
                 formatOptions: YearFormatOptions? = nil) {
         self.fieldLabel = fieldLabel

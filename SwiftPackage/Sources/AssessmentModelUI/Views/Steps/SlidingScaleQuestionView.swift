@@ -70,9 +70,9 @@ struct SlidingScaleView : View {
     
     var body: some View {
         VStack {
-            NumericTextField(value: $viewModel.value, inputItem: viewModel.inputItem)
-                .frame(width: 150, height: 64)
-                .padding(.bottom, keyboard.keyboardFocused ? 0 : 24)
+            NumericTextField(value: $viewModel.value, isEditing: $viewModel.isEditing, inputItem: questionState.inputItem)
+                .frame(width: 150, height: 56)
+                .padding(.bottom, 24)
             HStack {
                 Text("\(viewModel.minValue)")
                 slider()
@@ -82,7 +82,7 @@ struct SlidingScaleView : View {
         }
         .padding(.horizontal, 32)
         .onAppear {
-            viewModel.initialize(questionState)
+            viewModel.onAppear(questionState)
         }
     }
     

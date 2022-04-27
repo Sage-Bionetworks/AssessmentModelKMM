@@ -35,6 +35,7 @@ import JsonModel
 
 public protocol TextEntryValidator {
     func localizedText(for answer: JsonValue?) -> String?
+    func bindingValue(for text: String?) throws -> JsonValue?
     func validateText(_ text: String?) throws -> JsonValue?
     func validateAnswer(_ answer: JsonValue?) throws -> JsonValue?
 }
@@ -174,6 +175,9 @@ public extension GenericTextInputValidator where Value == String {
     func convertInput(text: String?) throws -> String? {
         try convertInput(answer: text)
     }
+    func bindingValue(for text: String?) throws -> JsonValue? {
+        text
+    }
 }
 
 /// A pass thru validator is used where validation is always successful.
@@ -260,6 +264,21 @@ extension RegExValidator : DocumentableStruct {
 
 // MARK : Value == JsonNumber (integer, double, year)
 
+public protocol ScaleRange {
+    var minimumLabel: String? { get }
+    var maximumLabel: String? { get }
+}
+
+public protocol IntegerRange : ScaleRange {
+    var minimumValue: Int? { get }
+    var maximumValue: Int? { get }
+}
+
+public protocol DoubleRange : ScaleRange {
+    var minimumValue: Double? { get }
+    var maximumValue: Double? { get }
+}
+
 /// `Codable` string enum for the number formatter.
 public enum NumberFormatStyle : String, StringEnumSet, DocumentableStringEnum {
     case none, decimal, currency, percent, scientific, spellOut, ordinal
@@ -313,6 +332,21 @@ public extension NumberValidator {
         return self.convertToText(from: value)
     }
 
+    func bindingValue(for text: String?) throws -> JsonValue? {
+        try text.flatMap { str in
+            try self.formatter.number(from: str).flatMap { num in
+                if let maxNum = self.maximumValue?.jsonNumber(),
+                   let maxStr = self.formatter.string(from: maxNum),
+                   str.count > maxStr.count {
+                    let message = self.maxInvalidMessage ?? defaultInvalidMessage
+                    let context = TextInputValidatorError.Context(identifier: nil, value: num, debugDescription: message)
+                    throw TextInputValidatorError.greaterThanMaximumValue(maxNum.decimalValue, context)
+                }
+                return self.convertToValue(from: num)
+            }
+        }
+    }
+    
     func convertToText(from answer: Value?) -> String? {
         guard let num = answer?.jsonNumber() else { return nil }
         return self.formatter.string(from: num)
@@ -339,18 +373,26 @@ public extension NumberValidator {
         }
         return try validateNumber(num)
     }
-
-    func validateNumber(_ num: NSNumber) throws -> Value? {
-        if let min = self.minimumValue?.jsonNumber(), num.decimalValue < min.decimalValue {
-            let message = self.minInvalidMessage ?? defaultInvalidMessage
-            let context = TextInputValidatorError.Context(identifier: nil, value: num, debugDescription: message)
-            throw TextInputValidatorError.lessThanMinimumValue(min.decimalValue, context)
-        }
+    
+    func validateMax(_ num: NSNumber) throws {
         if let max = self.maximumValue?.jsonNumber(), num.decimalValue > max.decimalValue {
             let message = self.maxInvalidMessage ?? defaultInvalidMessage
             let context = TextInputValidatorError.Context(identifier: nil, value: num, debugDescription: message)
             throw TextInputValidatorError.greaterThanMaximumValue(max.decimalValue, context)
         }
+    }
+
+    func validateMin(_ num: NSNumber) throws {
+        if let min = self.minimumValue?.jsonNumber(), num.decimalValue < min.decimalValue {
+            let message = self.minInvalidMessage ?? defaultInvalidMessage
+            let context = TextInputValidatorError.Context(identifier: nil, value: num, debugDescription: message)
+            throw TextInputValidatorError.lessThanMinimumValue(min.decimalValue, context)
+        }
+    }
+    
+    func validateNumber(_ num: NSNumber) throws -> Value? {
+        try validateMin(num)
+        try validateMax(num)
         return convertToValue(from: num)
     }
 
@@ -362,7 +404,7 @@ public extension NumberValidator {
     }
 }
 
-public struct IntegerFormatOptions : Codable, NumberValidator {
+public struct IntegerFormatOptions : Codable, NumberValidator, IntegerRange {
     public typealias Value = Int
 
     private enum CodingKeys : String, CodingKey, CaseIterable {
@@ -450,7 +492,7 @@ extension IntegerFormatOptions : DocumentableStruct {
     }
 }
 
-public struct YearFormatOptions : Codable, NumberValidator {
+public struct YearFormatOptions : Codable, NumberValidator, IntegerRange {
     public typealias Value = Int
 
     private enum CodingKeys : String, CodingKey, CaseIterable {
@@ -485,6 +527,9 @@ public struct YearFormatOptions : Codable, NumberValidator {
     public var minInvalidMessage: String?
     public var maxInvalidMessage: String?
     public var invalidMessage: String?
+    
+    public var minimumLabel: String? { nil }
+    public var maximumLabel: String? { nil }
 
     public init() {
     }
@@ -545,7 +590,7 @@ extension Date {
     }
 }
 
-public struct DoubleFormatOptions : Codable, NumberValidator {
+public struct DoubleFormatOptions : Codable, NumberValidator, DoubleRange {
     public typealias Value = Double
 
     private enum CodingKeys : String, CodingKey, CaseIterable {

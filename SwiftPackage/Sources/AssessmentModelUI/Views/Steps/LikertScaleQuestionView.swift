@@ -82,7 +82,7 @@ struct LikertScaleView : View {
             .widthReader(width: $width)
         }
         .onAppear {
-            viewModel.initialize(questionState)
+            viewModel.onAppear(questionState)
         }
     }
     

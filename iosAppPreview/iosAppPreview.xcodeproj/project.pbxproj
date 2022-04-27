@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */; };
 		FF629A9F27FA6A6B0082EDD7 /* QuestionStepScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */; };
 		FF629AA527FB63700082EDD7 /* AssessmentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */; };
 		FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */; };
@@ -23,7 +24,7 @@
 		FFC14E292810905000B17551 /* ForwardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E282810905000B17551 /* ForwardButton.swift */; };
 		FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2A2811DD0500B17551 /* InstructionView.swift */; };
 		FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2C2811E31500B17551 /* CompletionView.swift */; };
-		FFC14E612817091E00B17551 /* ScaleQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E602817091E00B17551 /* ScaleQuestionViewModel.swift */; };
+		FFC14E612817091E00B17551 /* SimpleQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */; };
 		FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E622817113600B17551 /* ContentNodeView.swift */; };
 		FFC14E67281717CD00B17551 /* LikertScaleQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */; };
 		FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionStepView.swift; sourceTree = "<group>"; };
 		FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionStepScrollView.swift; sourceTree = "<group>"; };
 		FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentViewModel.swift; sourceTree = "<group>"; };
 		FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Bundle+module.swift"; path = "../../iosApp/iosApp/Bundle+module.swift"; sourceTree = "<group>"; };
@@ -61,7 +63,7 @@
 		FFC14E282810905000B17551 /* ForwardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardButton.swift; sourceTree = "<group>"; };
 		FFC14E2A2811DD0500B17551 /* InstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionView.swift; sourceTree = "<group>"; };
 		FFC14E2C2811E31500B17551 /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
-		FFC14E602817091E00B17551 /* ScaleQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleQuestionViewModel.swift; sourceTree = "<group>"; };
+		FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFC14E622817113600B17551 /* ContentNodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentNodeView.swift; sourceTree = "<group>"; };
 		FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikertScaleQuestionView.swift; sourceTree = "<group>"; };
 		FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosAppPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,7 +179,7 @@
 				FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */,
 				FFCB533F27F6A78900BED4E2 /* ChoiceQuestionViewModel.swift */,
 				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
-				FFC14E602817091E00B17551 /* ScaleQuestionViewModel.swift */,
+				FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -229,6 +231,7 @@
 				FFC14E2C2811E31500B17551 /* CompletionView.swift */,
 				FFC14E2A2811DD0500B17551 /* InstructionView.swift */,
 				FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */,
+				FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */,
 				FF83B63428177BCC007448AD /* SlidingScaleQuestionView.swift */,
 				FFC14E26280F8A9300B17551 /* TitlePageView.swift */,
 			);
@@ -312,7 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFC14E612817091E00B17551 /* ScaleQuestionViewModel.swift in Sources */,
+				FFC14E612817091E00B17551 /* SimpleQuestionViewModel.swift in Sources */,
 				FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */,
 				FF83B6372817A18C007448AD /* TapLocationGesture.swift in Sources */,
 				FFAF7C562808AE10004B5670 /* PauseMenu.swift in Sources */,
@@ -341,6 +344,7 @@
 				FFCB535A27F6B60B00BED4E2 /* NodeState.swift in Sources */,
 				FFC14E67281717CD00B17551 /* LikertScaleQuestionView.swift in Sources */,
 				FF83B63528177BCC007448AD /* SlidingScaleQuestionView.swift in Sources */,
+				FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */,
 				FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

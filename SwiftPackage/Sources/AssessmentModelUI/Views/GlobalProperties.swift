@@ -50,6 +50,8 @@ extension Font {
     static let roundedButton: Font = DesignSystem.fontRules.buttonFont(at: 1, isSelected: false)
     
     static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+    
+    static let fieldLabel: Font = .latoFont(18, relativeTo: .caption, weight: .regular)
 }
 
 #if canImport(UIKit)

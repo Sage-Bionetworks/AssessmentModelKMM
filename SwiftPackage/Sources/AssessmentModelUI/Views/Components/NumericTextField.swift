@@ -39,15 +39,17 @@ import SharedMobileUI
 struct NumericTextField<Value : JsonNumber>: View where Value : JsonValue {
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var keyboard: KeyboardObserver
-    @State var isEditingText: Bool = false
+    @Binding var isEditingText: Bool
     @Binding var value: Value?
     
     private let inputItem: TextInputItem
     
     init(value bindingValue: Binding<Value?>,
+         isEditing: Binding<Bool>,
          inputItem: TextInputItem? = nil) {
         self.inputItem = inputItem ?? ((Value.self == Int.self) ? IntegerTextInputItemObject() : DoubleTextInputItemObject())
         self._value = bindingValue
+        self._isEditingText = isEditing
     }
     
     var body: some View {
@@ -68,12 +70,13 @@ struct NumericTextField<Value : JsonNumber>: View where Value : JsonValue {
 
 struct PreviewNumericTextField: View {
     @State var value: Int?
+    @State var isEditing: Bool = false
     
     var body: some View {
         VStack {
-            NumericTextField(value: $value)
+            NumericTextField(value: $value, isEditing: $isEditing)
                 .border(Color.sageBlack, width: 1)
-            NumericTextField(value: $value,
+            NumericTextField(value: $value, isEditing: $isEditing,
                              inputItem: IntegerTextInputItemObject(formatOptions: .init(minimumValue: 0, maximumValue: 100)))
                 .border(Color.sageBlack, width: 1)
         }
@@ -163,7 +166,7 @@ fileprivate struct NumericTextFieldContainer<Value : JsonNumber>: UIViewRepresen
         @objc func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
             let newString = NSString(string: textField.text!).replacingCharacters(in: range, with: string)
             do {
-                parent.value.wrappedValue = try parent.validator.validateText(newString) as? Value
+                parent.value.wrappedValue = try parent.validator.bindingValue(for: newString) as? Value
                 return true
             }
             catch {
