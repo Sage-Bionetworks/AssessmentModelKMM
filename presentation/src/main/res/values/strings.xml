@@ -13,7 +13,7 @@
     <string name="paused">Paused</string>
     <string name="resume">Resume</string>
     <string name="review_instructions">Review Instructions</string>
-    <string name="skip_this_survey">Skip this survey</string>
+    <string name="skip_this_survey">Skip this activity</string>
     <string name="continue_later">Continue later</string>
     <string name="start">Start</string>
     <string name="done">Done</string>

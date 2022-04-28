@@ -21,7 +21,7 @@ fun BottomNavigation(
         WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
         Spacer(modifier = Modifier.weight(1f))
         if (nextText != null) {
-            BlackButton(onClick = onNextClicked, text = nextText)
+            BlackButton(onClick = onNextClicked, enabled = nextEnabled, text = nextText)
         } else {
             BlackNextButton(onClick = onNextClicked, enabled = nextEnabled)
         }
