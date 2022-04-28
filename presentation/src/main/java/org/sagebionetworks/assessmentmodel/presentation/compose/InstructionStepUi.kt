@@ -25,8 +25,10 @@ internal fun InstructionStepUi(
     iconTintColor: Color?,
     title: String?,
     detail: String?,
+    nextButtonText: String,
     next:()->Unit,
     close:()->Unit,
+    hideClose: Boolean = false,
 ) {
     Column(
         modifier = modifier
@@ -34,7 +36,9 @@ internal fun InstructionStepUi(
             .fillMaxWidth()
             .background(BackgroundGray),
     ) {
-        CloseTopBar(onCloseClicked = close)
+        if (!hideClose) {
+            CloseTopBar(onCloseClicked = close)
+        }
         Column(
             modifier = modifier
                 .fillMaxHeight()
@@ -42,22 +46,20 @@ internal fun InstructionStepUi(
                 .padding(32.dp),
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = if (icon != null) {
-                    rememberDrawablePainter(drawable = icon)
-                } else {
-                    painterResource(id = R.drawable.survey)
-                },
-                contentDescription = null,
-                colorFilter = if (iconTintColor != null) {
-                    ColorFilter.tint(
-                        color = iconTintColor,
-                        blendMode = BlendMode.Modulate
-                    )
-                } else {
-                    null
-                }
-            )
+            if (icon != null) {
+                Image(
+                    painter = rememberDrawablePainter(drawable = icon),
+                    contentDescription = null,
+                    colorFilter = if (iconTintColor != null) {
+                        ColorFilter.tint(
+                            color = iconTintColor,
+                            blendMode = BlendMode.Modulate
+                        )
+                    } else {
+                        null
+                    }
+                )
+            }
             title?.let { title ->
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -79,7 +81,7 @@ internal fun InstructionStepUi(
             Spacer(modifier = Modifier.weight(1f))
             BlackButton(
                 onClick = next,
-                text = stringResource(R.string.start),
+                text = nextButtonText,
                 modifier = modifier.fillMaxWidth()
             )
         }
@@ -90,6 +92,6 @@ internal fun InstructionStepUi(
 @Composable
 private fun InstructionStepPreview() {
     SageSurveyTheme {
-        InstructionStepUi(icon = null, iconTintColor = null, title = "Title", detail = "Details", next = {}, close = {})
+        InstructionStepUi(icon = null, iconTintColor = null, title = "Title", detail = "Details", nextButtonText = stringResource(R.string.start), next = {}, close = {}, hideClose = false)
     }
 }

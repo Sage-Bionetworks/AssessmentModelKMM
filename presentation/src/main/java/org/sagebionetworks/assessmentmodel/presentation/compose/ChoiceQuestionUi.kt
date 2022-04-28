@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
+import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
@@ -59,9 +60,11 @@ internal fun QuestionContent(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.weight(1f))
+            val forwardButtonAction = questionState.node.buttonMap.get(ButtonAction.Navigation.GoForward)
             BottomNavigation(
                 { assessmentViewModel.goBackward() },
                 { assessmentViewModel.goForward() },
+                nextText = forwardButtonAction?.buttonTitle,
                 nextEnabled = questionState.allAnswersValidFlow.collectAsState().value
                 )
         }
