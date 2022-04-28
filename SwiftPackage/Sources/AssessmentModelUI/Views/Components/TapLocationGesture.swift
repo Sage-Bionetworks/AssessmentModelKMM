@@ -1,5 +1,5 @@
 //
-//  CompositedImage.swift
+//  TapLocationGesture.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -33,34 +33,49 @@
 
 import SwiftUI
 
-public struct CompositedImage: View {
-    @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
-    let imageName: String
-    let layerCount: Int
-    let bundle: Bundle?
+// Modified from https://stackoverflow.com/questions/56513942/how-to-detect-a-tap-gesture-location-in-swiftui
+
+struct TapLocationGesture: Gesture {
+    let count: Int
+    let coordinateSpace: CoordinateSpace
     
-    public init(_ imageName: String, bundle: Bundle? = nil, layers: Int = 2) {
-        self.imageName = imageName
-        self.layerCount = layers
-        self.bundle = bundle
+    typealias Value = SimultaneousGesture<TapGesture, DragGesture>.Value
+    
+    init(count: Int = 1, coordinateSpace: CoordinateSpace = .local) {
+        precondition(count > 0, "Count must be greater than or equal to 1.")
+        self.count = count
+        self.coordinateSpace = coordinateSpace
     }
     
-    public var body: some View {
-        ZStack {
-            ForEach(0 ..< layerCount, id:\.self) { layer in
-                Image("\(imageName).\(layer)", bundle: bundle)
+    var body: SimultaneousGesture<TapGesture, DragGesture> {
+        SimultaneousGesture(
+            TapGesture(count: count),
+            DragGesture(minimumDistance: 0, coordinateSpace: coordinateSpace)
+        )
+    }
+    
+    func onEnded(perform action: @escaping (CGPoint) -> Void) -> _EndedGesture<TapLocationGesture> {
+        self.onEnded { (value: Value) -> Void in
+            guard value.first != nil else { return }
+            guard let location = value.second?.startLocation else { return }
+            guard let endLocation = value.second?.location else { return }
+            guard ((location.x-1)...(location.x+1)).contains(endLocation.x),
+                  ((location.y-1)...(location.y+1)).contains(endLocation.y) else {
+                return
             }
+            action(location)
         }
-        .foregroundColor(surveyTint)
     }
 }
 
-struct LayeredImageView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            CompositedImage("survey", bundle: .module, layers: 4)
-            CompositedImage("survey", bundle: .module, layers: 4)
-                .surveyTintColor(.red)
-        }
+extension View {
+    func onTapLocationGesture(
+        count: Int = 1,
+        coordinateSpace: CoordinateSpace = .local,
+        perform action: @escaping (CGPoint) -> Void
+    ) -> some View {
+        gesture(TapLocationGesture(count: count, coordinateSpace: coordinateSpace)
+            .onEnded(perform: action)
+        )
     }
 }

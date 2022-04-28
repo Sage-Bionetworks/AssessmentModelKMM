@@ -59,7 +59,7 @@ public final class ChoiceQuestionViewModel : ObservableObject {
         self.singleAnswer = question.singleAnswer
 
         // Filter out the choices where there is a mapping of choice to value.
-        let previousAnswer = questionState.answerResult.jsonValue
+        let previousAnswer = questionState.answer
         var answers = previousAnswer?.toArray(of: question.baseType) ?? []
         var choices: [ChoiceViewModel] = question.choices.map {
             .init($0, selected: answers.selected($0, question, previousAnswer), selectionToggler: self)
@@ -81,7 +81,7 @@ public final class ChoiceQuestionViewModel : ObservableObject {
     }
     
     public func updateAnswer() {
-        questionState?.answerResult.jsonValue = calculateAnswer()
+        questionState?.answer = calculateAnswer()
     }
 
     func calculateAnswer() -> JsonElement? {

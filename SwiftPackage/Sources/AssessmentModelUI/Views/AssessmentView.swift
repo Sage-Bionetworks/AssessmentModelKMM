@@ -58,8 +58,14 @@ open class AssessmentStepViewVender {
             if questionState.step is ChoiceQuestionStep {
                 ChoiceQuestionStepView(questionState)
             }
-            else if questionState.question.uiHint == .NumberField.likert.uiHint {
-                LikertScaleQuestionView(questionState)
+            else if questionState.question is SimpleQuestion,
+                    questionState.question.answerType.baseType == .integer {
+                if questionState.question.uiHint == .NumberField.likert.uiHint {
+                    LikertScaleQuestionView(questionState)
+                }
+                else {
+                    IntegerQuestionStepView(questionState)
+                }
             }
             else {
                 debugQuestionStepView(questionState)
@@ -130,6 +136,7 @@ public struct AssessmentView : View {
     }
     
     struct TopBarProgressView : View {
+        @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
         @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
         public var body: some View {
             GeometryReader { geometry in
@@ -137,7 +144,7 @@ public struct AssessmentView : View {
                     Rectangle()
                         .fill(Color.progressBackground)
                     Rectangle()
-                        .fill(Color.accentColor)
+                        .fill(surveyTint)
                         .frame(width: geometry.size.width * pagedNavigation.fraction)
                         .animation(.easeOut, value: pagedNavigation.fraction)
                 }
@@ -183,7 +190,7 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(value: .integer(1), text: "Enter some text"),
                                 .init(value: .integer(2), text: "Birth year"),
                                 .init(value: .integer(3), text: "Likert Scale"),
-                                .init(value: .integer(4), text: "Decimal Scale"),
+                                .init(value: .integer(4), text: "Sliding Scale"),
                              ],
                              baseType: .integer,
                              singleChoice: true,
@@ -201,16 +208,9 @@ fileprivate let surveyAChildren: [Node] = [
                              inputItem: StringTextInputItemObject(placeholder: "I like cake"),
                              title: "Enter some text",
                              nextNode: "followupQ"),
-    SimpleQuestionStepObject(identifier: "simpleQ2",
-                             inputItem: YearTextInputItemObject(placeholder: "1948", formatOptions: .birthYear),
-                             title: "Enter a birth year",
-                             nextNode: "followupQ"),
+    birthYearExample,
     likertExample1,
-    SimpleQuestionStepObject(identifier: "simpleQ4",
-                             inputItem: DoubleTextInputItemObject(formatOptions: .init(minimumValue: 0, maximumValue: 1, minimumLabel: "Not at all", maximumLabel: "Very much")),
-                             title: "How much do you like apples as a number between 0 and 1?",
-                             uiHint: .NumberField.slider.uiHint,
-                             nextNode: "followupQ"),
+    slidingScaleExample1,
     
     happyChoiceQuestion,
     favoriteFoodChoiceQuestion,

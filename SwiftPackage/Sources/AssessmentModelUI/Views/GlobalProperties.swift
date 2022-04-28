@@ -50,6 +50,8 @@ extension Font {
     static let roundedButton: Font = DesignSystem.fontRules.buttonFont(at: 1, isSelected: false)
     
     static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
+    
+    static let fieldLabel: Font = .latoFont(18, relativeTo: .caption, weight: .regular)
 }
 
 #if canImport(UIKit)
@@ -72,3 +74,19 @@ extension Color {
     static let likertDotBackground: Color = .init(hex: "#B0B0B6")!
 }
 
+struct SurveyTintColorEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Color = .accentColor
+}
+
+extension EnvironmentValues {
+    public var surveyTintColor: Color {
+        get { self[SurveyTintColorEnvironmentKey.self] }
+        set { self[SurveyTintColorEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    public func surveyTintColor(_ templateColor: Color) -> some View {
+        environment(\.surveyTintColor, templateColor)
+    }
+}

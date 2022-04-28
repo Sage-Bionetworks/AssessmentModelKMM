@@ -50,7 +50,7 @@ public struct ChoiceQuestionStepView : View {
                 ChoiceQuestionView()
             }
         }
-        .id("ChoiceQuestionStepView:\(questionState.id)")   // Give the view a unique id to force refresh
+        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.surveyBackground)
     }
@@ -135,6 +135,7 @@ extension View {
 }
 
 struct SelectionCell : ViewModifier {
+    @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @SwiftUI.Environment(\.singleChoice) var singleChoice: Bool
     @Binding fileprivate var isOn: Bool
     private let spacing: CGFloat
@@ -157,7 +158,7 @@ struct SelectionCell : ViewModifier {
                 .toggleStyle(RadioButtonToggleStyle(spacing: spacing))
                 .padding(.trailing, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isOn ? Color.accentColor : Color.sageWhite)
+                .background(isOn ? surveyTint : Color.sageWhite)
                 .clipShape(Capsule())
                 .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
             
@@ -166,7 +167,7 @@ struct SelectionCell : ViewModifier {
                 .toggleStyle(CheckboxToggleStyle(spacing: spacing))
                 .padding(.trailing, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isOn ? Color.accentColor : Color.sageWhite)
+                .background(isOn ? surveyTint : Color.sageWhite)
                 .clipShape(RoundedRectangle(cornerRadius: 5))
                 .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
         }

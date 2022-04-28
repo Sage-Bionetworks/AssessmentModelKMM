@@ -149,10 +149,17 @@ public final class QuestionState : ContentNodeState {
     override public var skipStepText: Text? { _skipStepText }
     private let _skipStepText: Text?
     
+    public let inputItem: TextInputItem?
+    
     @Published public var title: String
     @Published public var subtitle: String?
     @Published public var detail: String?
     @Published public var hasSelectedAnswer: Bool
+    @Published public var answer: JsonElement? {
+        didSet {
+            answerResult.jsonValue = answer
+        }
+    }
     
     public init(_ question: QuestionStep, parentId: String? = nil, answerResult: AnswerResult? = nil, skipStepText: Text? = nil) {
         self.title = question.title ?? question.subtitle ?? question.detail ?? ""
@@ -161,6 +168,8 @@ public final class QuestionState : ContentNodeState {
         self._skipStepText = skipStepText
         let result = answerResult ?? question.instantiateAnswerResult()
         self.hasSelectedAnswer = result.jsonValue != nil
+        self.answer = result.jsonValue
+        self.inputItem = (question as? SimpleQuestion)?.inputItem
         super.init(step: question, result: result, parentId: parentId)
     }
     
