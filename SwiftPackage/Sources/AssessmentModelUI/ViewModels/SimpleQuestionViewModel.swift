@@ -51,8 +51,6 @@ class SimpleQuestionViewModel<Value : JsonValue> : ObservableObject {
     @Published var placeholder: String?
     @Published var validationError: Error?
     
-    fileprivate var updating = false
-    
     init() {
     }
     
@@ -62,12 +60,15 @@ class SimpleQuestionViewModel<Value : JsonValue> : ObservableObject {
             assertionFailure("Attempting to initialize a question with a state object that does not have the correct type.")
             return
         }
-        
+
         self.questionState = questionState
         self.fieldLabel = question.inputItem.fieldLabel
         self.placeholder = question.inputItem.placeholder
         self.validator = question.inputItem.buildTextValidator()
+        
+        self.isEditing = true
         self.value = questionState.answer?.jsonObject() as? Value
+        self.isEditing = false
     }
     
     func updateState() {
@@ -94,9 +95,11 @@ class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
     @Published var minValue: Int = .min
     @Published var maxValue: Int = .max
     
+    @Published var usesScale: Bool = false
+    
     @Published var fraction: Double = 0 {
         didSet {
-            guard !updating, usesFraction else { return }
+            guard !updating, usesScale else { return }
             updating = true
             constrainedValue = Int(round(Double(maxValue - minValue) * fraction)) + minValue
             updateState()
@@ -108,9 +111,9 @@ class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
         didSet {
             guard !updating else { return }
             updating = true
-            constrainedValue = self.value.map { max(minValue, min(maxValue, $0)) }
-            if usesFraction, let newValue = constrainedValue {
-                self.fraction = Double(newValue - minValue) / Double(maxValue - minValue)
+            constrainedValue = self.value.map { max(minValue, min(maxValue, $0)) } ?? defaultValue
+            if usesScale, let newValue = constrainedValue {
+                self.fraction = max(0, min(1, Double(newValue - minValue) / Double(maxValue - minValue)))
             }
             updateState()
             updating = false
@@ -118,28 +121,62 @@ class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
     }
     
     fileprivate var constrainedValue: Int?
-    fileprivate var usesFraction: Bool { false }
+    fileprivate var updating: Bool = false
+    fileprivate var defaultValue: Int?
     
     override func onAppear(_ questionState: QuestionState) {
         super.onAppear(questionState)
         
-        guard let question = questionState.question as? SimpleQuestion,
-              let range = question.inputItem.buildTextValidator() as? IntegerRange
+        // Set up the ranges.
+        if let question = questionState.question as? SimpleQuestion,
+           let range = question.inputItem.buildTextValidator() as? IntegerRange {
+            range.minimumValue.map { minValue = $0 }
+            range.maximumValue.map { maxValue = $0 }
+            range.minimumLabel.map { minLabel = $0 }
+            range.maximumLabel.map { maxLabel = $0 }
+        }
         else {
             assertionFailure("Attempting to initialize a question with a state object that does not have the correct type.")
             return
         }
         
-        // Set up the scale
-        range.minimumValue.map { self.minValue = $0 }
-        range.maximumValue.map { self.maxValue = $0 }
-        range.minimumLabel.map { self.minLabel = $0 }
-        range.maximumLabel.map { self.maxLabel = $0 }
+        // Set up whether or not the scale is used.
+        if questionState.question.uiHint == .NumberField.slider.uiHint {
+            // A slider is required to have a min and a max.
+            // If valid ranges aren't set, then the slider should be hidden.
+            usesScale = (minValue != .min && maxValue != .max && minValue < maxValue)
+            defaultValue = usesScale ? minValue : nil
+        }
+        else if questionState.question.uiHint == .NumberField.likert.uiHint {
+            // For a Likert scale UI/UX, the view is hard coded to *not* show a text field
+            // so the min and max are required. Adjust them so mistakes in the model don't
+            // result in a crash.
+            usesScale = true
+            if (minValue == .min) {
+                minValue = 1
+            }
+            if (maxValue == .max || maxValue <= minValue) {
+                maxValue = 5
+            }
+        }
+            
+        if usesScale, questionState.detail == nil,
+           let minLabel = minLabel,
+           let maxLabel = maxLabel {
+            questionState.detail = Localization.localizedString("\(minValue) = \(minLabel)\n\(maxValue) = \(maxLabel)")
+        }
+        
+        if usesScale, questionState.subtitle == nil {
+            questionState.subtitle = Localization.localizedString("On a scale of \(minValue) to \(maxValue)")
+        }
+        
+        // Update the fraction by setting value to self
+        self.value = value
     }
 
     override func updateState() {
         guard !isEditing else { return }
-        if usesFraction {
+        if usesScale {
             self.value = constrainedValue
         }
         if let answerValue = self.value, minValue <= answerValue, answerValue <= maxValue {
@@ -153,50 +190,7 @@ class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
     }
 }
 
-class IntegerScaleViewModel : IntegerQuestionViewModel {
-    
-    override var usesFraction: Bool {
-        .min < minValue && maxValue < .max
-    }
-    
-    override func onAppear(_ questionState: QuestionState) {
-        super.onAppear(questionState)
-        
-        guard minValue != .min, maxValue != .max
-        else {
-            assertionFailure("Attempting to initialize a Likert question with a state object that does not have the correct type.")
-            return
-        }
-        
-        if questionState.detail == nil,
-           let minLabel = minLabel,
-           let maxLabel = maxLabel {
-            questionState.detail = Localization.localizedString("\(minValue) = \(minLabel)\n\(maxValue) = \(maxLabel)")
-        }
-        
-        if questionState.subtitle == nil {
-            questionState.subtitle = Localization.localizedString("On a scale of \(minValue) to \(maxValue)")
-        }
-    }
-}
-
-final class SlidingScaleViewModel : IntegerScaleViewModel {
-    
-    override var constrainedValue: Int? {
-        get { super.constrainedValue ?? 0 }
-        set { super.constrainedValue = newValue ?? 0 }
-    }
-    
-    override func onAppear(_ questionState: QuestionState) {
-        if questionState.answer == nil {
-            // For a sliding scale, the initial value is 0
-            questionState.answer = .integer(0)
-        }
-        super.onAppear(questionState)
-    }
-}
-
-final class LikertScaleViewModel : IntegerScaleViewModel {
+final class LikertScaleViewModel : IntegerQuestionViewModel {
     
     @Published var dots: [Dot] = []
     

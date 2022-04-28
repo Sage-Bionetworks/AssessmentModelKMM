@@ -1,5 +1,5 @@
 //
-//  SlidingScaleQuestionView.swift
+//  SlidingScaleView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -36,54 +36,29 @@ import AssessmentModel
 import JsonModel
 import SharedMobileUI
 
-public struct SlidingScaleQuestionView : View {
-    @ObservedObject var questionState: QuestionState
-    
-    public init(_ questionState: QuestionState) {
-        self.questionState = questionState
-    }
-    
-    public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                Spacer()
-                SlidingScaleView()
-            }
-        }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
-        .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
-    }
-}
-
 struct SlidingScaleView : View {
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var keyboard: KeyboardObserver
     @EnvironmentObject var questionState: QuestionState
-    @StateObject var viewModel: SlidingScaleViewModel = .init()
+    @ObservedObject var viewModel: IntegerQuestionViewModel
+    
     @State var sliderWidth: CGFloat = 0
     @State var xOffset: CGFloat = 0
     @State var lastOffset: CGFloat = 0
     @State var gripSize: CGFloat = 0
     let circleSize: CGFloat = 40
     
+    init(viewModel: IntegerQuestionViewModel) {
+        self.viewModel = viewModel
+    }
+    
     var body: some View {
-        VStack {
-            NumericTextField(value: $viewModel.value, isEditing: $viewModel.isEditing, inputItem: questionState.inputItem)
-                .frame(width: 150, height: 56)
-                .padding(.bottom, 24)
-            HStack {
-                Text("\(viewModel.minValue)")
-                slider()
-                    .overlay(grip(), alignment: .leading)
-                Text("\(viewModel.maxValue)")
-            }
-        }
-        .padding(.horizontal, 32)
-        .onAppear {
-            viewModel.onAppear(questionState)
-        }
+        HStack {
+            Text("\(viewModel.minValue)")
+            slider()
+                .overlay(grip(), alignment: .leading)
+            Text("\(viewModel.maxValue)")
+        }.padding(.horizontal, 32)
     }
     
     func updateOffset() {
@@ -157,7 +132,7 @@ fileprivate struct PreviewSlidingScaleQuestionStepView : View {
     let question: SimpleQuestionStep
     let initialValue: Int
     var body: some View {
-        SlidingScaleQuestionView(QuestionState(question,
+        IntegerQuestionStepView(QuestionState(question,
                                                answerResult: AnswerResultObject(identifier: question.identifier,value: .integer(initialValue)),
                                                skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))

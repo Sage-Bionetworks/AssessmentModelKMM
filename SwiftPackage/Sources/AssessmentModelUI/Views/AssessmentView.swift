@@ -63,9 +63,6 @@ open class AssessmentStepViewVender {
                 if questionState.question.uiHint == .NumberField.likert.uiHint {
                     LikertScaleQuestionView(questionState)
                 }
-                else if questionState.question.uiHint == .NumberField.slider.uiHint {
-                    SlidingScaleQuestionView(questionState)
-                }
                 else {
                     IntegerQuestionStepView(questionState)
                 }

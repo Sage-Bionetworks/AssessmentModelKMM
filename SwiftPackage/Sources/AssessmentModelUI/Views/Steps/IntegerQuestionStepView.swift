@@ -58,6 +58,10 @@ public struct IntegerQuestionStepView : View {
                     NumericTextField(value: $viewModel.value, isEditing: $viewModel.isEditing, inputItem: questionState.inputItem)
                         .frame(width: 150, height: 56)
                 }
+                if viewModel.usesScale {
+                    SlidingScaleView(viewModel: viewModel)
+                        .padding(.top, 24)
+                }
             }
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
@@ -92,7 +96,7 @@ let integerExample1 = SimpleQuestionStepObject(
                                           placeholder: "52",
                                           formatOptions: .init(minimumValue: 0, maximumValue: 100)),
     title: "How much do you like apples?",
-    uiHint: .NumberField.slider.uiHint,
+    uiHint: .NumberField.textfield.uiHint,
     nextNode: "followupQ"
 )
 
