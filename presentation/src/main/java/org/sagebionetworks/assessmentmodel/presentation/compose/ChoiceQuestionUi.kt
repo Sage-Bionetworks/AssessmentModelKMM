@@ -44,7 +44,9 @@ internal fun QuestionContent(
     ) {
         val scrollState = rememberScrollState()
         QuestionHeader(
-            questionState = questionState,
+            subtitle = questionState.node.subtitle,
+            title = questionState.node.title,
+            detail = questionState.node.detail,
             assessmentViewModel = assessmentViewModel,
             scrollState = scrollState
             )

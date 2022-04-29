@@ -26,12 +26,13 @@ import org.sagebionetworks.assessmentmodel.survey.QuestionState
 
 @Composable
 internal fun QuestionHeader(
-    questionState: QuestionState,
+    subtitle: String?,
+    title: String?,
+    detail: String?,
     assessmentViewModel: AssessmentViewModel,
     scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-    val question = questionState.node as ChoiceQuestion
     val elevationValue = if (scrollState.value > 5) { 5.dp} else {0.dp}
     val headerElevation = animateDpAsState(targetValue = elevationValue)
     Card(
@@ -59,7 +60,7 @@ internal fun QuestionHeader(
                     .padding(start = 20.dp, end = 20.dp)
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
-                question.subtitle?.let { subtitle ->
+                subtitle?.let { subtitle ->
                     Text(
                         text = subtitle,
                         style = sageP2,
@@ -68,7 +69,7 @@ internal fun QuestionHeader(
                             .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
                     )
                 }
-                question.title?.let { title ->
+                title?.let { title ->
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = title,
@@ -78,7 +79,7 @@ internal fun QuestionHeader(
                             .padding(top = 0.dp, bottom = 0.dp, start = 24.dp, end = 8.dp)
                     )
                 }
-                question.detail?.let { detail ->
+                detail?.let { detail ->
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = detail,

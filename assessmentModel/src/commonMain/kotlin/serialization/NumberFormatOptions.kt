@@ -96,7 +96,7 @@ data class IntFormatOptions(override val numberStyle: Style = Style.None,
                             override val usesGroupingSeparator: Boolean = true,
                             override var minimumValue: Int? = null,
                             override var maximumValue: Int? = null,
-                            override var stepInterval: Int? = 1) : NumberFormatOptions<Int>() {
+                            override var stepInterval: Int = 1) : NumberFormatOptions<Int>() {
     // For an Int, this value is always 0.
     override val maximumFractionDigits: Int
         get() = 0
@@ -119,7 +119,7 @@ data class YearFormatOptions(var allowFuture: Boolean = true,
 
     private val _currentYear =  Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
 
-    override val stepInterval: Int?
+    override val stepInterval: Int
         get() = 1
     override val usesGroupingSeparator: Boolean
         get() = false
