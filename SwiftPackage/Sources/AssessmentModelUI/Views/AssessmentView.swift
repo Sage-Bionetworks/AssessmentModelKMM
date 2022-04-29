@@ -224,7 +224,7 @@ let surveyB = AssessmentObject(identifier: "surveyB",
                                children: surveyBChildren,
                                title: "Example Survey B")
 fileprivate let surveyBChildren: [Node] = [
-    OverviewStepObject(identifier: "overview", title: "Example Survey B", detail: "This survey questions presented in sections"),
+    OverviewStepObject(identifier: "overview", title: "Example Survey B", detail: "This survey has questions presented in sections."),
     SectionObject(identifier: "colors", children: sectionB1Children),
     SectionObject(identifier: "foods", children: sectionB2Children),
     CompletionStepObject(identifier: "completion", title: "You're done!")
