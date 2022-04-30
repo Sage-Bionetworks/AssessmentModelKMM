@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -18,7 +17,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonPrimitive
@@ -30,7 +28,6 @@ import org.sagebionetworks.assessmentmodel.serialization.IntFormatter
 import org.sagebionetworks.assessmentmodel.serialization.IntegerTextInputItemObject
 import org.sagebionetworks.assessmentmodel.serialization.YearTextInputItemObject
 import org.sagebionetworks.assessmentmodel.survey.*
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Composable
@@ -43,8 +40,6 @@ internal fun NumericQuestion(
         modifier = modifier
             .fillMaxHeight()
             .background(BackgroundGray)
-
-        ,
     ) {
         val question = questionState.node as SimpleQuestion
         val inputItem = question.inputItem as KeyboardTextInputItem<*>
@@ -75,6 +70,14 @@ internal fun NumericQuestion(
         if (question.uiHint == UIHint.NumberField.Slider) {
             showScale = minVal != null && maxVal != null && minVal < maxVal
             startValue = startValue ?: minVal
+        } else if (question.uiHint == UIHint.NumberField.Likert) {
+            showScale = true
+            if (minVal == null) {
+                minVal = 1
+            }
+            if (maxVal == null) {
+                maxVal = 5
+            }
         }
         val sliderMin = minVal ?: 0
         val sliderStartValue = startValue ?: sliderMin
@@ -128,22 +131,36 @@ internal fun NumericQuestion(
                 .verticalScroll(scrollState),
         ) {
             Spacer(modifier = Modifier.weight(1f))
-            IntegerTextField(
-                modifier = Modifier
-                    .width(100.dp)
-                    .align(Alignment.CenterHorizontally),
-                numberTextValue = numberTextValue,
-                placeHolder = inputItem.placeholder,
-                updateAnswer = { value -> updateAnswer(value) },
-                isError = isError
-            )
-            if (showScale) {
-                Spacer(modifier = Modifier.height(16.dp))
-                IntegerSlider(
-                    sliderPosition = sliderPosition,
-                    minVal = minVal!!, maxVal = maxVal!!,
-                    updateAnswer = { value -> updateAnswer(value) }
+            if (question.uiHint == UIHint.NumberField.Likert) {
+                var likertValue by remember{ mutableStateOf(startValue)}
+                LikertScale(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                    minValue = minVal!!,
+                    maxValue = maxVal!!,
+                    numSelected = likertValue,
+                    onCircleTap = { num ->
+                        likertValue = num
+                        questionState.saveAnswer(JsonPrimitive(num), itemState)
+                    })
+            } else {
+                IntegerTextField(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .align(Alignment.CenterHorizontally),
+                    numberTextValue = numberTextValue,
+                    placeHolder = inputItem.placeholder,
+                    updateAnswer = { value -> updateAnswer(value) },
+                    isError = isError
                 )
+                if (showScale) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    IntegerSlider(
+                        sliderPosition = sliderPosition,
+                        minVal = minVal!!, maxVal = maxVal!!,
+                        updateAnswer = { value -> updateAnswer(value) }
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
             val forwardButtonAction = questionState.node.buttonMap.get(ButtonAction.Navigation.GoForward)
@@ -235,6 +252,5 @@ private fun IntegerTextField(
 private fun NumberQuestionPreview() {
 
     SageSurveyTheme {
-        SliderContent()
     }
 }
