@@ -42,85 +42,14 @@ internal fun NumericQuestion(
             .background(BackgroundGray)
     ) {
         val question = questionState.node as SimpleQuestion
-        val inputItem = question.inputItem as KeyboardTextInputItem<*>
         val itemState = questionState.itemStates[0] as KeyboardInputItemState<*>
-        val textValidator = itemState.textValidator as IntFormatter
-
-        var minVal: Int? = null
-        var maxVal: Int? = null
-        var minLabel: String? = null
-        var maxLabel: String? = null
-        when (inputItem) {
-            is IntegerTextInputItemObject -> {
-                minVal = inputItem.formatOptions.minimumValue
-                maxVal = inputItem.formatOptions.maximumValue
-                minLabel = inputItem.formatOptions.minimumLabel
-                maxLabel = inputItem.formatOptions.maximumLabel
-            }
-            is YearTextInputItemObject -> {
-                minVal = inputItem.formatOptions.minimumValue
-                maxVal = inputItem.formatOptions.maximumValue
-                minLabel = inputItem.formatOptions.minimumLabel
-                maxLabel = inputItem.formatOptions.maximumLabel
-            }
-        }
-
-        var showScale = false
-        var startValue: Int? = itemState.currentAnswer?.jsonPrimitive?.intOrNull
-        if (question.uiHint == UIHint.NumberField.Slider) {
-            showScale = minVal != null && maxVal != null && minVal < maxVal
-            startValue = startValue ?: minVal
-        } else if (question.uiHint == UIHint.NumberField.Likert) {
-            showScale = true
-            if (minVal == null) {
-                minVal = 1
-            }
-            if (maxVal == null) {
-                maxVal = 5
-            }
-        }
-        val sliderMin = minVal ?: 0
-        val sliderStartValue = startValue ?: sliderMin
-
-        var numberTextValue by remember { mutableStateOf(startValue?.toString() ?: "") }
-        var sliderPosition by remember { mutableStateOf(sliderStartValue.toFloat()) }
-        var isError by remember { mutableStateOf(false)}
-        var label by remember { mutableStateOf("") }
-        fun updateAnswer(value: String) {
-            numberTextValue = value
-            val formattedVal = textValidator.valueFor(numberTextValue)
-            if (formattedVal.invalidMessage != null) {
-                isError = true
-                label = formattedVal.invalidMessage.toString()
-                questionState.saveAnswer(
-                    textValidator.jsonValueFor(formattedVal.result),
-                    itemState
-                )
-            } else {
-                isError = false
-                label = ""
-                sliderPosition = numberTextValue.toFloatOrNull() ?: sliderMin.toFloat()
-                questionState.saveAnswer(
-                    textValidator.jsonValueFor(formattedVal.result),
-                    itemState
-                )
-            }
-        }
-
-        var subTitle = questionState.node.subtitle
-        if (subTitle == null && showScale && minVal != null && maxVal != null) {
-            subTitle = stringResource(id = R.string.on_a_scale, minVal, maxVal)
-        }
-        var detail = questionState.node.detail
-        if (detail == null && showScale) {
-            detail = "$minVal = $minLabel\n$maxVal = $maxLabel"
-        }
+        val uiFormatOptions = extractFormatOptions(questionState)
 
         val scrollState = rememberScrollState()
         QuestionHeader(
-            subtitle = subTitle,
+            subtitle = uiFormatOptions.getSubTitle(question = question),
             title = questionState.node.title,
-            detail = detail,
+            detail = uiFormatOptions.getDetail(question = question),
             assessmentViewModel = assessmentViewModel,
             scrollState = scrollState
         )
@@ -132,32 +61,60 @@ internal fun NumericQuestion(
         ) {
             Spacer(modifier = Modifier.weight(1f))
             if (question.uiHint == UIHint.NumberField.Likert) {
-                var likertValue by remember{ mutableStateOf(startValue)}
+                var likertValue by remember{ mutableStateOf(uiFormatOptions.startValue)}
                 LikertScale(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),
-                    minValue = minVal!!,
-                    maxValue = maxVal!!,
+                    minValue = uiFormatOptions.minVal!!,
+                    maxValue = uiFormatOptions.maxVal!!,
                     numSelected = likertValue,
                     onCircleTap = { num ->
                         likertValue = num
                         questionState.saveAnswer(JsonPrimitive(num), itemState)
                     })
             } else {
+                val textValidator = itemState.textValidator as IntFormatter
+                val sliderMin = uiFormatOptions.minVal ?: 0
+                val sliderStartValue = uiFormatOptions.startValue ?: sliderMin
+
+                var numberTextValue by remember { mutableStateOf(uiFormatOptions.startValue?.toString() ?: "") }
+                var sliderPosition by remember { mutableStateOf(sliderStartValue.toFloat()) }
+                var isError by remember { mutableStateOf(false)}
+                var errorText by remember { mutableStateOf("") }
+                fun updateAnswer(value: String) {
+                    numberTextValue = value
+                    val formattedVal = textValidator.valueFor(numberTextValue)
+                    if (formattedVal.invalidMessage != null) {
+                        isError = true
+                        errorText = formattedVal.invalidMessage.toString()
+                        questionState.saveAnswer(
+                            textValidator.jsonValueFor(formattedVal.result),
+                            itemState
+                        )
+                    } else {
+                        isError = false
+                        errorText = ""
+                        sliderPosition = numberTextValue.toFloatOrNull() ?: sliderMin.toFloat()
+                        questionState.saveAnswer(
+                            textValidator.jsonValueFor(formattedVal.result),
+                            itemState
+                        )
+                    }
+                }
                 IntegerTextField(
                     modifier = Modifier
                         .width(100.dp)
                         .align(Alignment.CenterHorizontally),
                     numberTextValue = numberTextValue,
-                    placeHolder = inputItem.placeholder,
+                    placeHolder = itemState.inputItem.placeholder,
                     updateAnswer = { value -> updateAnswer(value) },
                     isError = isError
                 )
-                if (showScale) {
+                if (uiFormatOptions.showScale) {
                     Spacer(modifier = Modifier.height(16.dp))
                     IntegerSlider(
                         sliderPosition = sliderPosition,
-                        minVal = minVal!!, maxVal = maxVal!!,
+                        minVal = uiFormatOptions.minVal!!, maxVal = uiFormatOptions.maxVal!!,
                         updateAnswer = { value -> updateAnswer(value) }
                     )
                 }
@@ -245,6 +202,83 @@ private fun IntegerTextField(
              focusedLabelColor = SageBlack
          )
      )
+}
+
+data class UiFormatOptions (
+    val minVal: Int?,
+    val maxVal: Int?,
+    val minLabel: String?,
+    val maxLabel: String?,
+    val showScale: Boolean,
+    val startValue: Int?
+) {
+
+    @Composable
+    fun getSubTitle(question: SimpleQuestion) : String? {
+        var subTitle = question.subtitle
+        if (subTitle == null && showScale && minVal != null && maxVal != null) {
+            subTitle = stringResource(id = R.string.on_a_scale, minVal, maxVal)
+        }
+        return subTitle
+    }
+
+    @Composable
+    fun getDetail(question: SimpleQuestion) : String? {
+        var detail = question.detail
+        if (detail == null && showScale) {
+            detail = "$minVal = $minLabel\n$maxVal = $maxLabel"
+        }
+        return detail
+    }
+
+}
+
+fun extractFormatOptions(questionState: QuestionState) : UiFormatOptions {
+    val question = questionState.node as SimpleQuestion
+    var minVal: Int? = null
+    var maxVal: Int? = null
+    var minLabel: String? = null
+    var maxLabel: String? = null
+    val inputItem = question.inputItem as KeyboardTextInputItem<*>
+    when (inputItem) {
+        is IntegerTextInputItemObject -> {
+            minVal = inputItem.formatOptions.minimumValue
+            maxVal = inputItem.formatOptions.maximumValue
+            minLabel = inputItem.formatOptions.minimumLabel
+            maxLabel = inputItem.formatOptions.maximumLabel
+        }
+        is YearTextInputItemObject -> {
+            minVal = inputItem.formatOptions.minimumValue
+            maxVal = inputItem.formatOptions.maximumValue
+            minLabel = inputItem.formatOptions.minimumLabel
+            maxLabel = inputItem.formatOptions.maximumLabel
+        }
+    }
+    var showScale = false
+    if (question.uiHint == UIHint.NumberField.Slider) {
+        showScale = minVal != null && maxVal != null && minVal < maxVal
+    } else if (question.uiHint == UIHint.NumberField.Likert) {
+        showScale = true
+        if (minVal == null) {
+            minVal = 1
+        }
+        if (maxVal == null) {
+            maxVal = 5
+        }
+    }
+    val itemState = questionState.itemStates[0] as KeyboardInputItemState<*>
+    var startValue: Int? = itemState.currentAnswer?.jsonPrimitive?.intOrNull
+    if (question.uiHint == UIHint.NumberField.Slider) {
+        startValue = startValue ?: minVal
+    }
+    return UiFormatOptions(
+        minVal = minVal,
+        maxVal = maxVal,
+        minLabel = minLabel,
+        maxLabel = maxLabel,
+        showScale = showScale,
+        startValue = startValue
+    )
 }
 
 @Preview
