@@ -4,17 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.res.stringResource
-import org.sagebionetworks.assessmentmodel.CompletionStep
-import org.sagebionetworks.assessmentmodel.ContentNodeStep
-import org.sagebionetworks.assessmentmodel.OverviewStep
-import org.sagebionetworks.assessmentmodel.presentation.compose.InstructionStepUi
-import org.sagebionetworks.assessmentmodel.presentation.compose.NumericQuestion
+import org.sagebionetworks.assessmentmodel.presentation.compose.IntegerQuestion
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
-import org.sagebionetworks.assessmentmodel.serialization.SageResourceImage
-import org.sagebionetworks.assessmentmodel.serialization.loadDrawable
 import org.sagebionetworks.assessmentmodel.survey.QuestionState
 import org.sagebionetworks.assessmentmodel.survey.SimpleQuestion
 
@@ -36,7 +28,7 @@ open class NumericQuestionStepFragment: StepFragment() {
         _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
         binding.questionContent.setContent {
             SageSurveyTheme {
-                NumericQuestion(questionState = nodeState as QuestionState, assessmentViewModel = assessmentViewModel)
+                IntegerQuestion(questionState = nodeState as QuestionState, assessmentViewModel = assessmentViewModel)
             }
         }
         return binding.root

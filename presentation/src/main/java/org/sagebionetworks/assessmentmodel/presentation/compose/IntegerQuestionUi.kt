@@ -31,7 +31,7 @@ import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.math.roundToInt
 
 @Composable
-internal fun NumericQuestion(
+internal fun IntegerQuestion(
     questionState: QuestionState,
     assessmentViewModel: AssessmentViewModel,
     modifier: Modifier = Modifier
