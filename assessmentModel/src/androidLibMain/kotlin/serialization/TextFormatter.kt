@@ -25,7 +25,7 @@ actual abstract class NumberFormatter<T> actual constructor(formatOptions: Numbe
         formatter.maximumFractionDigits = formatOptions.maximumFractionDigits
     }
 
-    override fun valueFor(text: String): FormattedValue<T>?
+    override fun valueFor(text: String): FormattedValue<T>
             = if (text.isEmpty()) FormattedValue() else options.validate(toType(parseText(text)))
 
     override fun jsonValueFor(value: T?): JsonElement? = JsonPrimitive(value)

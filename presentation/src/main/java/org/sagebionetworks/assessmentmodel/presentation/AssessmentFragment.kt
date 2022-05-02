@@ -123,6 +123,10 @@ open class AssessmentFragment : Fragment() {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
         when (step) {
             is SimpleQuestion -> {
+                if (step.inputItem.answerType == AnswerType.INTEGER) {
+                    return NumericQuestionStepFragment()
+                }
+
                 if (step.inputItem is CheckboxInputItem) {
                     return CheckboxFragment()
                 } else if (step.inputItem is KeyboardTextInputItem<*>) {

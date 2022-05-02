@@ -11,3 +11,5 @@ val BluePrimary = Color(0xFF8FD6FF)
 val BackgroundGray = Color(0xFFF6F6F6)
 val SageBlack = Color(0xFF2A2A2A)
 val SageWhite = Color(0xFFFCFCFC)
+
+val SliderGray = Color(0xFFB0B0B6)
