@@ -41,22 +41,32 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     @StateObject var keyboard: KeyboardObserver = .init()
     
-    private let keyboardSpacing: CGFloat
+    private let keyboardAnchor: KeyboardAnchor
     private let content: Content
     
-    public init(keyboardSpacing: CGFloat = 32, @ViewBuilder content: @escaping () -> Content) {
-        self.keyboardSpacing = keyboardSpacing
+    public init(keyboardAnchor: KeyboardAnchor = .bottom, @ViewBuilder content: @escaping () -> Content) {
+        self.keyboardAnchor = keyboardAnchor
         self.content = content()
+    }
+    
+    public enum KeyboardAnchor : Int {
+        case none, top, bottom
+        var anchor: UnitPoint {
+            self == .top ? .top : .bottom
+        }
     }
     
     @State var minTitleHeight: CGFloat = 0
     @State var titleHeight: CGFloat = 0
     @State var subtitleHeight: CGFloat = 0
     @State var detailHeight: CGFloat = 0
+    
     @State var scrollOffset: CGFloat = 0
 
     @State var collapsedTitleHeight: CGFloat = 0
     @State var collapsedHeader: Bool = true
+    @State var overlayHeaderHidden: Bool = true
+    @State var dividerHidden: Bool = true
         
     public var body: some View {
         ZStack(alignment: .top) {
@@ -75,9 +85,12 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                             }.frame(height: 0)
                             inlineHeader()
                             content
-                            keyboardSpacer(scrollView)
-                            Spacer()
+                            Spacer(minLength: 0)
+                            Color.clear
+                                .frame(height: keyboard.keyboardState.focused ? 32 : 0)
+                                .id("$ScrollView.bottomSpacer")
                             SurveyNavigationView()
+                                .frame(minHeight: 0, maxHeight: keyboard.keyboardState.focused ? 0 : .none)
                                 .id("bottomNav:\(questionState.id)")
                         }
                         .frame(minHeight: scrollViewGeometry.size.height)
@@ -99,11 +112,18 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                             scrollView.scrollTo("bottomNav:\(questionState.id)", anchor: .bottom)
                         }
                     }
+                    .onChange(of: keyboard.keyboardState) { _ in
+                        keyboardDidChange(scrollView)
+                    }
                 }
             }
             
             // The overlay header is displayed on top of the scrollview
             overlayHeader()
+            
+            Divider()
+                .background(Color.hexB8B8B8)
+                .opacity(dividerHidden ? 0 : 1)
         }
         .environmentObject(keyboard)
         .onAppear {
@@ -111,6 +131,23 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         }
         .onChange(of: questionState.hasSelectedAnswer) { _ in
             updateNavigationState()
+        }
+    }
+    
+    func keyboardDidChange(_ scrollView: ScrollViewProxy) {
+        if keyboardAnchor == .bottom {
+            if keyboard.keyboardState.focused {
+                scrollView.scrollTo("$ScrollView.bottomSpacer", anchor: .bottom)
+            }
+            else if questionState.hasSelectedAnswer {
+                scrollView.scrollTo("bottomNav:\(questionState.id)", anchor: .bottom)
+            }
+        }
+        else if keyboardAnchor == .top {
+            scrollView.scrollTo(keyboard.keyboardFocusedId, anchor: .top)
+        }
+        else {
+            scrollView.scrollTo(keyboard.keyboardFocusedId, anchor: nil)
         }
     }
      
@@ -130,6 +167,10 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         }
         self.collapsedHeader = true
         self.scrollOffset = scrollOffset
+        withAnimation {
+            self.overlayHeaderHidden = scrollOffset <= subtitleHeight || sizeCategory >= .accessibilityLarge || keyboardAnchor != .bottom
+            self.dividerHidden = scrollOffset <= 0 || !overlayHeaderHidden
+        }
     }
     
     @ViewBuilder
@@ -138,7 +179,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
             .opacity(0)
             .lineLimit(2)
             .headerTextStyle(.stepTitle)
-            .padding(.vertical, innerVerticalSpacing)
+            .padding(.vertical, 6)
             .heightReader(height: $minTitleHeight)
     }
     
@@ -175,8 +216,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
             }
             Text(questionState.title)
                 .headerTextStyle(.stepTitle)
-                .padding(.vertical, innerVerticalSpacing)
-                .frame(maxHeight: collapsedHeader ? collapsedTitleHeight : titleHeight)
+                .frame(height: collapsedHeader ? collapsedTitleHeight : titleHeight, alignment: .leading)
             if let detail = questionState.detail {
                 Text(detail)
                     .headerTextStyle(.stepDetail)
@@ -189,7 +229,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                 .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
                 .mask(Rectangle().padding(.bottom, -20))
         )
-        .opacity(scrollOffset <= subtitleHeight || sizeCategory >= .accessibilityLarge ? 0 : 1)
+        .opacity(overlayHeaderHidden ? 0 : 1)
         .onTapGesture {
             if scrollOffset > subtitleHeight && !keyboard.keyboardFocused {
                 withAnimation {
@@ -198,19 +238,6 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
             }
         }
     }
-    
-    @ViewBuilder
-    func keyboardSpacer(_ scrollView: ScrollViewProxy) -> some View {
-        Spacer()
-            .frame(height: keyboard.keyboardFocused ? keyboard.keyboardHeight + keyboardSpacing : 0)
-            .id(KeyboardObserver.defaultKeyboardFocusedId)
-            .onChange(of: keyboard.keyboardFocused) { newValue in
-                if newValue {
-                    scrollView.scrollTo(keyboard.keyboardFocusedId, anchor: .bottom)
-                }
-            }
-    }
-
 }
 
 extension View {

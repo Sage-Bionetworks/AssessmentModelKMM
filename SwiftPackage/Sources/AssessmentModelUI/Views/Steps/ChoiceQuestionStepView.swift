@@ -44,7 +44,7 @@ public struct ChoiceQuestionStepView : View {
     }
     
     public var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             StepHeaderView(questionState)
             QuestionStepScrollView {
                 ChoiceQuestionView()
@@ -107,6 +107,7 @@ struct ChoiceQuestionView : View {
                                    inputItem: choice.inputItem,
                                    fieldLabel: choice.fieldLabel)
                     .accentColor(Color.sageBlack)
+                    .characterLimit(50)
             }
             .selectionCell(isOn: $choice.selected, spacing: 3)
         }
@@ -214,7 +215,6 @@ let favoriteColorsQuestion = ChoiceQuestionStepObject(
     identifier: "multipleChoice",
     choices: [
         "Blue",
-        "Green",
         "Yellow",
         "Red",
         .init(text: "All of the above", selectorType: .all),
@@ -245,7 +245,7 @@ let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(
     subtitle: "After thinking it over...",
     detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     surveyRules: [
-        .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
+        .init(skipToIdentifier: "multipleChoice", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
     ]
 )
 

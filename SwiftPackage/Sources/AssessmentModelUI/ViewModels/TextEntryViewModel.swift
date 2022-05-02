@@ -1,5 +1,5 @@
 //
-//  SimpleQuestionViewModel.swift
+//  TextEntryViewModel.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -35,10 +35,17 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
-class SimpleQuestionViewModel<Value : JsonValue> : ObservableObject {
+protocol TextInputViewModelDelegate : AnyObject {
+    func didUpdateValue(_ newValue: JsonValue?, with identifier: String)
+}
+
+class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
     
-    weak var questionState: QuestionState?
-    var validator: TextEntryValidator?
+    weak var delegate: TextInputViewModelDelegate?
+    
+    let id: String
+    let inputItem: TextInputItem
+    let validator: TextEntryValidator
 
     @Published var isEditing: Bool = false {
         didSet {
@@ -51,61 +58,37 @@ class SimpleQuestionViewModel<Value : JsonValue> : ObservableObject {
     @Published var placeholder: String?
     @Published var validationError: Error?
     
-    init() {
-    }
-    
-    func onAppear(_ questionState: QuestionState) {
-        guard let question = questionState.question as? SimpleQuestion
-        else {
-            assertionFailure("Attempting to initialize a question with a state object that does not have the correct type.")
-            return
-        }
-
-        self.questionState = questionState
-        self.fieldLabel = question.inputItem.fieldLabel
-        self.placeholder = question.inputItem.placeholder
-        self.validator = question.inputItem.buildTextValidator()
+    init(_ identifier: String, inputItem: TextInputItem, validator: TextEntryValidator? = nil) {
+        self.id = identifier
+        self.inputItem = inputItem
+        self.validator = validator ?? inputItem.buildTextValidator()
         
-        self.isEditing = true
-        self.value = questionState.answer?.jsonObject() as? Value
-        self.isEditing = false
+        self.fieldLabel = inputItem.fieldLabel
+        self.placeholder = inputItem.placeholder
     }
     
     func updateState() {
         guard !isEditing else { return }
         do {
-            let constrainedValue = try validator?.validateAnswer(self.value)
+            let constrainedValue = try validator.validateAnswer(self.value)
             self.value = constrainedValue as? Value
             validationError = nil
-            questionState?.answer = constrainedValue.map { .init($0) }
-            questionState?.hasSelectedAnswer = (questionState?.answer != nil)
+            delegate?.didUpdateValue(self.value, with: self.id)
         }
         catch {
             validationError = error
-            questionState?.hasSelectedAnswer = false
-            questionState?.answer = nil
+            delegate?.didUpdateValue(nil, with: self.id)
         }
     }
 }
 
-class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
+class IntegerInputViewModel : TextInputViewModel<Int> {
     
+    @Published var viewType: QuestionUIHint.NumberField = .textfield
     @Published var minLabel: String?
     @Published var maxLabel: String?
     @Published var minValue: Int = .min
     @Published var maxValue: Int = .max
-    
-    @Published var usesScale: Bool = false
-    
-    @Published var fraction: Double = 0 {
-        didSet {
-            guard !updating, usesScale else { return }
-            updating = true
-            constrainedValue = Int(round(Double(maxValue - minValue) * fraction)) + minValue
-            updateState()
-            updating = false
-        }
-    }
     
     override var value: Int? {
         didSet {
@@ -120,91 +103,67 @@ class IntegerQuestionViewModel : SimpleQuestionViewModel<Int> {
         }
     }
     
+    @Published var usesScale: Bool = false
+    @Published var dots: [Dot] = []
+    @Published var fraction: Double = 0 {
+        didSet {
+            guard !updating, usesScale else { return }
+            updating = true
+            constrainedValue = Int(round(Double(maxValue - minValue) * fraction)) + minValue
+            updateState()
+            updating = false
+        }
+    }
+
     fileprivate var constrainedValue: Int?
     fileprivate var updating: Bool = false
     fileprivate var defaultValue: Int?
     
-    override func onAppear(_ questionState: QuestionState) {
-        super.onAppear(questionState)
+    init(_ identifier: String, inputItem: TextInputItem, uiHint: QuestionUIHint? = nil, range: IntegerRange? = nil) {
+        let range = range ?? inputItem.buildTextValidator() as? IntegerRange ?? IntegerFormatOptions()
         
+        super.init(identifier, inputItem: inputItem, validator: range as? TextEntryValidator)
+
         // Set up the ranges.
-        if let question = questionState.question as? SimpleQuestion,
-           let range = question.inputItem.buildTextValidator() as? IntegerRange {
-            range.minimumValue.map { minValue = $0 }
-            range.maximumValue.map { maxValue = $0 }
-            range.minimumLabel.map { minLabel = $0 }
-            range.maximumLabel.map { maxLabel = $0 }
-        }
-        else {
-            assertionFailure("Attempting to initialize a question with a state object that does not have the correct type.")
-            return
-        }
+        range.minimumValue.map { minValue = $0 }
+        range.maximumValue.map { maxValue = $0 }
+        range.minimumLabel.map { minLabel = $0 }
+        range.maximumLabel.map { maxLabel = $0 }
         
         // Set up whether or not the scale is used.
-        if questionState.question.uiHint == .NumberField.slider.uiHint {
+        if uiHint == .NumberField.slider.uiHint {
             // A slider is required to have a min and a max.
             // If valid ranges aren't set, then the slider should be hidden.
             usesScale = (minValue != .min && maxValue != .max && minValue < maxValue)
             defaultValue = usesScale ? minValue : nil
+            viewType = usesScale ? .slider : .textfield
         }
-        else if questionState.question.uiHint == .NumberField.likert.uiHint {
+        else if uiHint == .NumberField.likert.uiHint {
             // For a Likert scale UI/UX, the view is hard coded to *not* show a text field
             // so the min and max are required. Adjust them so mistakes in the model don't
             // result in a crash.
-            usesScale = true
-            if (minValue == .min) {
-                minValue = 1
+            usesScale = (minValue < maxValue && (maxValue - minValue) <= 7)
+            viewType = usesScale ? .likert : .textfield
+            if usesScale {
+                dots = Array(minValue...maxValue).map {
+                    .init($0)
+                }
             }
-            if (maxValue == .max || maxValue <= minValue) {
-                maxValue = 5
-            }
         }
-            
-        if usesScale, questionState.detail == nil,
-           let minLabel = minLabel,
-           let maxLabel = maxLabel {
-            questionState.detail = Localization.localizedString("\(minValue) = \(minLabel)\n\(maxValue) = \(maxLabel)")
-        }
-        
-        if usesScale, questionState.subtitle == nil {
-            questionState.subtitle = Localization.localizedString("On a scale of \(minValue) to \(maxValue)")
-        }
-        
-        // Update the fraction by setting value to self
-        self.value = value
     }
 
     override func updateState() {
         guard !isEditing else { return }
         if usesScale {
             self.value = constrainedValue
+            self.value.map { updateSelected($0) }
         }
         if let answerValue = self.value, minValue <= answerValue, answerValue <= maxValue {
-            questionState?.hasSelectedAnswer = true
-            questionState?.answer = .integer(answerValue)
+            delegate?.didUpdateValue(answerValue, with: self.id)
         }
         else {
-            questionState?.hasSelectedAnswer = false
-            questionState?.answer = nil
+            delegate?.didUpdateValue(nil, with: self.id)
         }
-    }
-}
-
-final class LikertScaleViewModel : IntegerQuestionViewModel {
-    
-    @Published var dots: [Dot] = []
-    
-    override func onAppear(_ questionState: QuestionState) {
-        super.onAppear(questionState)
-        dots = Array(minValue...maxValue).map {
-            .init($0)
-        }
-        self.value.map { updateSelected($0) }
-    }
-
-    override func updateState() {
-        super.updateState()
-        self.value.map { updateSelected($0) }
     }
     
     func updateSelected(_ newValue: Int) {
@@ -224,4 +183,5 @@ final class LikertScaleViewModel : IntegerQuestionViewModel {
         }
     }
 }
+
 
