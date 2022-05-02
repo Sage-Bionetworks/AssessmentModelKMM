@@ -56,7 +56,7 @@ public struct IntegerQuestionStepView : View {
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
+        .fullscreenBackground(.darkSurveyBackground)
         .onAppear {
             viewModel.onAppear(questionState)
         }
