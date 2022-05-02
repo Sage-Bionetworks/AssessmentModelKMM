@@ -56,8 +56,12 @@ class SlidingScaleViewModelTests: XCTestCase {
         )
         
         let questionState = QuestionState(example, answerResult: nil)
-        let viewModel = IntegerQuestionViewModel()
-        viewModel.onAppear(questionState)
+        let questionViewModel = IntegerQuestionViewModel()
+        questionViewModel.onAppear(questionState)
+        guard let viewModel = questionViewModel.inputViewModel else {
+            XCTFail("Expected the question view model to build the input view model.")
+            return
+        }
         
         XCTAssertEqual(0, viewModel.minValue)
         XCTAssertEqual(4, viewModel.maxValue)
@@ -83,8 +87,12 @@ class SlidingScaleViewModelTests: XCTestCase {
         )
         
         let questionState = QuestionState(example, answerResult: AnswerResultObject(identifier: example.identifier, value: .integer(2)))
-        let viewModel = IntegerQuestionViewModel()
-        viewModel.onAppear(questionState)
+        let questionViewModel = IntegerQuestionViewModel()
+        questionViewModel.onAppear(questionState)
+        guard let viewModel = questionViewModel.inputViewModel else {
+            XCTFail("Expected the question view model to build the input view model.")
+            return
+        }
         
         XCTAssertEqual(0, viewModel.minValue)
         XCTAssertEqual(4, viewModel.maxValue)

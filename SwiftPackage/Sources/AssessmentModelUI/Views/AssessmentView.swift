@@ -60,12 +60,7 @@ open class AssessmentStepViewVender {
             }
             else if questionState.question is SimpleQuestion,
                     questionState.question.answerType.baseType == .integer {
-                if questionState.question.uiHint == .NumberField.likert.uiHint {
-                    LikertScaleQuestionView(questionState)
-                }
-                else {
-                    IntegerQuestionStepView(questionState)
-                }
+                IntegerQuestionStepView(questionState)
             }
             else {
                 debugQuestionStepView(questionState)

@@ -62,20 +62,21 @@ extension UIFont {
 #endif
 
 extension Color {
-    static let surveyBackground: Color = .hexF6F6F6
+    static let lightSurveyBackground: Color = .init("lightSurveyBackground", bundle: .module)
+    static let darkSurveyBackground: Color = .init("darkSurveyBackground", bundle: .module)
     
     static let progressBackground: Color = .init(hex: "#A7A19C")!
     
-    static let pauseMenuBackground: Color = .init(hex: "#575E71")!.opacity(0.95)
-    static let pauseMenuForeground: Color = .init(hex: "#FCFCFC")!
-    static let pauseMenuResumeText: Color = .init(hex: "#2A2A2A")!
+    static let pauseMenuBackground: Color = .init("pauseMenuBackground", bundle: .module)
+    static let pauseMenuForeground: Color = .init("pauseMenuForeground", bundle: .module)
+    static let pauseMenuResumeText: Color = .init("pauseMenuResumeText", bundle: .module)
     
-    static let sliderBackground: Color = .init(hex: "#D3D3DB")!
-    static let likertDotBackground: Color = .init(hex: "#B0B0B6")!
+    static let sliderBackground: Color = .init("sliderBackground", bundle: .module)
+    static let likertDotBackground: Color = .init("likertDotBackground", bundle: .module)
 }
 
 struct SurveyTintColorEnvironmentKey: EnvironmentKey {
-    static let defaultValue: Color = .accentColor
+    static let defaultValue: Color = .init("surveyTint", bundle: .module)
 }
 
 extension EnvironmentValues {

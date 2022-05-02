@@ -40,7 +40,7 @@ struct SlidingScaleView : View {
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var keyboard: KeyboardObserver
     @EnvironmentObject var questionState: QuestionState
-    @ObservedObject var viewModel: IntegerQuestionViewModel
+    @ObservedObject var viewModel: IntegerInputViewModel
     
     @State var sliderWidth: CGFloat = 0
     @State var xOffset: CGFloat = 0
@@ -48,7 +48,7 @@ struct SlidingScaleView : View {
     @State var gripSize: CGFloat = 0
     let circleSize: CGFloat = 40
     
-    init(viewModel: IntegerQuestionViewModel) {
+    init(viewModel: IntegerInputViewModel) {
         self.viewModel = viewModel
     }
     

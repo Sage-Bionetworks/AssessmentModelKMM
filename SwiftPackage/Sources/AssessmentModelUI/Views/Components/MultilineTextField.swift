@@ -74,7 +74,6 @@ struct MultilineTextField: View {
                 .frame(height: textEditorHeight)
             #endif
         }
-
         .onChange(of: isEditingText) { newValue in
             keyboard.keyboardFocused = newValue
         }
@@ -82,7 +81,7 @@ struct MultilineTextField: View {
 }
 
 fileprivate struct CharacterLimitEnvironmentKey: EnvironmentKey {
-    fileprivate static let defaultValue: Int = .max
+    fileprivate static let defaultValue: Int = 250
 }
 
 extension EnvironmentValues {
@@ -156,12 +155,7 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         backingView.font = .textField
         backingView.adjustsFontForContentSizeCategory = true
         backingView.textColor = .textForeground
-        
-        // Set up keyboard options
-        backingView.autocapitalizationType = inputItem.keyboardOptions.autocapitalizationType.uiType
-        backingView.autocorrectionType = inputItem.keyboardOptions.autocorrectionType.uiType
-        backingView.keyboardType = inputItem.keyboardOptions.keyboardType.uiType
-        backingView.spellCheckingType = inputItem.keyboardOptions.spellCheckingType.uiType
+        backingView.returnKeyType = .done
 
         return backingView
     }

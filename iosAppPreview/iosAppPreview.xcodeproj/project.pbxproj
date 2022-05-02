@@ -13,8 +13,10 @@
 		FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */; };
 		FF629AAA27FB6D1E0082EDD7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF629AA927FB6D1E0082EDD7 /* Images.xcassets */; };
 		FF629AAC27FBC40A0082EDD7 /* StepHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AAB27FBC40A0082EDD7 /* StepHeaderView.swift */; };
+		FF6BB10E281C468E005DA166 /* SlidingScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */; };
+		FF6BB110281C4847005DA166 /* TextEntryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */; };
+		FF6BB1122820681C005DA166 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF6BB1112820681A005DA166 /* Colors.xcassets */; };
 		FF81336C281853D900CEFF48 /* NumericTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF81336B281853D900CEFF48 /* NumericTextField.swift */; };
-		FF83B63528177BCC007448AD /* SlidingScaleQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF83B63428177BCC007448AD /* SlidingScaleQuestionView.swift */; };
 		FF83B6372817A18C007448AD /* TapLocationGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF83B6362817A18C007448AD /* TapLocationGesture.swift */; };
 		FFAEDCFD27FD0ADA0096CC6D /* AssessmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAEDCFC27FD0ADA0096CC6D /* AssessmentView.swift */; };
 		FFAF7C542808AC1B004B5670 /* ExitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAF7C532808AC1B004B5670 /* ExitButton.swift */; };
@@ -24,9 +26,9 @@
 		FFC14E292810905000B17551 /* ForwardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E282810905000B17551 /* ForwardButton.swift */; };
 		FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2A2811DD0500B17551 /* InstructionView.swift */; };
 		FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2C2811E31500B17551 /* CompletionView.swift */; };
-		FFC14E612817091E00B17551 /* SimpleQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */; };
+		FFC14E612817091E00B17551 /* IntegerQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */; };
 		FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E622817113600B17551 /* ContentNodeView.swift */; };
-		FFC14E67281717CD00B17551 /* LikertScaleQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */; };
+		FFC14E67281717CD00B17551 /* LikertScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E66281717CD00B17551 /* LikertScaleView.swift */; };
 		FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */; };
 		FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB530C27F6A4F800BED4E2 /* ContentView.swift */; };
 		FFCB530F27F6A4FB00BED4E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFCB530E27F6A4FB00BED4E2 /* Assets.xcassets */; };
@@ -52,8 +54,10 @@
 		FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Bundle+module.swift"; path = "../../iosApp/iosApp/Bundle+module.swift"; sourceTree = "<group>"; };
 		FF629AA927FB6D1E0082EDD7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FF629AAB27FBC40A0082EDD7 /* StepHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepHeaderView.swift; sourceTree = "<group>"; };
+		FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlidingScaleView.swift; sourceTree = "<group>"; };
+		FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryViewModel.swift; sourceTree = "<group>"; };
+		FF6BB1112820681A005DA166 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		FF81336B281853D900CEFF48 /* NumericTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumericTextField.swift; sourceTree = "<group>"; };
-		FF83B63428177BCC007448AD /* SlidingScaleQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingScaleQuestionView.swift; sourceTree = "<group>"; };
 		FF83B6362817A18C007448AD /* TapLocationGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLocationGesture.swift; sourceTree = "<group>"; };
 		FFAEDCFC27FD0ADA0096CC6D /* AssessmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentView.swift; sourceTree = "<group>"; };
 		FFAF7C532808AC1B004B5670 /* ExitButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitButton.swift; sourceTree = "<group>"; };
@@ -63,9 +67,9 @@
 		FFC14E282810905000B17551 /* ForwardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardButton.swift; sourceTree = "<group>"; };
 		FFC14E2A2811DD0500B17551 /* InstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionView.swift; sourceTree = "<group>"; };
 		FFC14E2C2811E31500B17551 /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
-		FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleQuestionViewModel.swift; sourceTree = "<group>"; };
+		FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFC14E622817113600B17551 /* ContentNodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentNodeView.swift; sourceTree = "<group>"; };
-		FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikertScaleQuestionView.swift; sourceTree = "<group>"; };
+		FFC14E66281717CD00B17551 /* LikertScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikertScaleView.swift; sourceTree = "<group>"; };
 		FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosAppPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppPreviewApp.swift; sourceTree = "<group>"; };
 		FFCB530C27F6A4F800BED4E2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				FF629AA927FB6D1E0082EDD7 /* Images.xcassets */,
+				FF6BB1112820681A005DA166 /* Colors.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -179,7 +184,8 @@
 				FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */,
 				FFCB533F27F6A78900BED4E2 /* ChoiceQuestionViewModel.swift */,
 				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
-				FFC14E602817091E00B17551 /* SimpleQuestionViewModel.swift */,
+				FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */,
+				FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -230,9 +236,9 @@
 				FFCB534827F6A78900BED4E2 /* ChoiceQuestionStepView.swift */,
 				FFC14E2C2811E31500B17551 /* CompletionView.swift */,
 				FFC14E2A2811DD0500B17551 /* InstructionView.swift */,
-				FFC14E66281717CD00B17551 /* LikertScaleQuestionView.swift */,
 				FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */,
-				FF83B63428177BCC007448AD /* SlidingScaleQuestionView.swift */,
+				FFC14E66281717CD00B17551 /* LikertScaleView.swift */,
+				FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */,
 				FFC14E26280F8A9300B17551 /* TitlePageView.swift */,
 			);
 			path = Steps;
@@ -303,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FF629AAA27FB6D1E0082EDD7 /* Images.xcassets in Resources */,
+				FF6BB1122820681C005DA166 /* Colors.xcassets in Resources */,
 				FFCB531227F6A4FB00BED4E2 /* Preview Assets.xcassets in Resources */,
 				FFCB530F27F6A4FB00BED4E2 /* Assets.xcassets in Resources */,
 			);
@@ -315,7 +322,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFC14E612817091E00B17551 /* SimpleQuestionViewModel.swift in Sources */,
+				FFC14E612817091E00B17551 /* IntegerQuestionViewModel.swift in Sources */,
 				FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */,
 				FF83B6372817A18C007448AD /* TapLocationGesture.swift in Sources */,
 				FFAF7C562808AE10004B5670 /* PauseMenu.swift in Sources */,
@@ -326,6 +333,7 @@
 				FFCB535C27F6BB9700BED4E2 /* SurveyNavigationView.swift in Sources */,
 				FFCB534C27F6A78900BED4E2 /* Localization.swift in Sources */,
 				FF629AAC27FBC40A0082EDD7 /* StepHeaderView.swift in Sources */,
+				FF6BB10E281C468E005DA166 /* SlidingScaleView.swift in Sources */,
 				FF629A9F27FA6A6B0082EDD7 /* QuestionStepScrollView.swift in Sources */,
 				FFC14E25280B6A4800B17551 /* CompositedImage.swift in Sources */,
 				FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */,
@@ -336,14 +344,14 @@
 				FFC14E27280F8A9300B17551 /* TitlePageView.swift in Sources */,
 				FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */,
 				FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */,
+				FF6BB110281C4847005DA166 /* TextEntryViewModel.swift in Sources */,
 				FFCB535027F6A78900BED4E2 /* GlobalProperties.swift in Sources */,
 				FFCB534D27F6A78900BED4E2 /* KeyboardOptions+SwiftUI.swift in Sources */,
 				FFCB534B27F6A78900BED4E2 /* KeyboardObserver.swift in Sources */,
 				FFCB534A27F6A78900BED4E2 /* ChoiceQuestionViewModel.swift in Sources */,
 				FFDDD56827F7A4AE00B40F22 /* ViewHeightReader.swift in Sources */,
 				FFCB535A27F6B60B00BED4E2 /* NodeState.swift in Sources */,
-				FFC14E67281717CD00B17551 /* LikertScaleQuestionView.swift in Sources */,
-				FF83B63528177BCC007448AD /* SlidingScaleQuestionView.swift in Sources */,
+				FFC14E67281717CD00B17551 /* LikertScaleView.swift in Sources */,
 				FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */,
 				FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */,
 			);

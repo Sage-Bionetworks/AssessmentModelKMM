@@ -1,5 +1,5 @@
 //
-//  LikertScaleQuestionView.swift
+//  LikertScaleView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -36,30 +36,8 @@ import AssessmentModel
 import JsonModel
 import SharedMobileUI
 
-public struct LikertScaleQuestionView : View {
-    @ObservedObject var questionState: QuestionState
-    
-    public init(_ questionState: QuestionState) {
-        self.questionState = questionState
-    }
-    
-    public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                Spacer()
-                LikertScaleView()
-            }
-        }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
-        .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
-    }
-}
-
 struct LikertScaleView : View {
-    @EnvironmentObject var questionState: QuestionState
-    @StateObject var viewModel: LikertScaleViewModel = .init()
+    @ObservedObject var viewModel: IntegerInputViewModel
     @State var width: CGFloat = 0
     
     var body: some View {
@@ -81,9 +59,6 @@ struct LikertScaleView : View {
             }
             .widthReader(width: $width)
         }
-        .onAppear {
-            viewModel.onAppear(questionState)
-        }
     }
     
     struct ScaleBar : View {
@@ -103,7 +78,7 @@ struct LikertScaleView : View {
     }
     
     struct DotView : View {
-        @ObservedObject var dot: LikertScaleViewModel.Dot
+        @ObservedObject var dot: IntegerInputViewModel.Dot
         var body: some View {
             ZStack {
                 Circle()
@@ -134,7 +109,7 @@ extension Shape {
 fileprivate struct PreviewLikertScaleQuestionStepView : View {
     let question: SimpleQuestionStep
     var body: some View {
-        LikertScaleQuestionView(QuestionState(question,
+        IntegerQuestionStepView(QuestionState(question,
                                               answerResult: AnswerResultObject(identifier: question.identifier,value: .integer(2)),
                                               skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
