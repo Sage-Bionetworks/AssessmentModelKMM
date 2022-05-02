@@ -103,9 +103,10 @@ internal fun IntegerQuestion(
                 }
                 IntegerTextField(
                     modifier = Modifier
-                        .width(100.dp)
+                        .width(150.dp)
                         .align(Alignment.CenterHorizontally),
                     numberTextValue = numberTextValue,
+                    inputFieldLabel = uiFormatOptions.inputFieldLabel,
                     placeHolder = itemState.inputItem.placeholder,
                     updateAnswer = { value -> updateAnswer(value) },
                     isError = isError
@@ -167,41 +168,47 @@ private fun IntegerSlider(
 @Composable
 private fun IntegerTextField(
     numberTextValue: String,
+    inputFieldLabel: String?,
     updateAnswer: (String) -> Unit,
     placeHolder: String?,
     isError: Boolean,
     modifier: Modifier = Modifier
     ) {
-     val focusManager = LocalFocusManager.current
-     OutlinedTextField(
-         value = numberTextValue,
-         modifier = modifier,
-         singleLine = true,
-         onValueChange = {
-             updateAnswer(it)
-         },
-         label = {
-             if (placeHolder != null) {
-                 Text(placeHolder)
-             }
-         },
-         isError = isError,
-         keyboardOptions = KeyboardOptions(
-             keyboardType = KeyboardType.NumberPassword,
-             imeAction = ImeAction.Done
-         ),
-         keyboardActions = KeyboardActions(
-             onDone = {
-                 focusManager.clearFocus()
-             }),
-         textStyle = sageP2,
-         colors = TextFieldDefaults.textFieldColors(
-             backgroundColor = SageWhite,
-             cursorColor = SageBlack,
-             focusedIndicatorColor = SageBlack,
-             focusedLabelColor = SageBlack
-         )
-     )
+    val focusManager = LocalFocusManager.current
+    Column(modifier = modifier) {
+        inputFieldLabel?.let {
+            Text(text = it, style = sageP2)
+        }
+        OutlinedTextField(
+            value = numberTextValue,
+            //modifier = Modifier.align(Alignment.Start),
+            singleLine = true,
+            onValueChange = {
+                updateAnswer(it)
+            },
+            label = {
+                if (placeHolder != null) {
+                    Text(placeHolder)
+                }
+            },
+            isError = isError,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.NumberPassword,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }),
+            textStyle = sageP2,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = SageWhite,
+                cursorColor = SageBlack,
+                focusedIndicatorColor = SageBlack,
+                focusedLabelColor = SageBlack
+            )
+        )
+    }
 }
 
 data class UiFormatOptions (
@@ -209,6 +216,7 @@ data class UiFormatOptions (
     val maxVal: Int?,
     val minLabel: String?,
     val maxLabel: String?,
+    val inputFieldLabel: String?,
     val showScale: Boolean,
     val startValue: Int?
 ) {
@@ -276,6 +284,7 @@ fun extractFormatOptions(questionState: QuestionState) : UiFormatOptions {
         maxVal = maxVal,
         minLabel = minLabel,
         maxLabel = maxLabel,
+        inputFieldLabel = inputItem.fieldLabel,
         showScale = showScale,
         startValue = startValue
     )
