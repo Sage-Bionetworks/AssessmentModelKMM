@@ -90,6 +90,14 @@ struct HorizontalPaddingEnvironmentKey: EnvironmentKey {
     static let defaultValue: CGFloat = 32
 }
 
+enum TextFieldStyle : Int {
+    case otherChoice, freeText
+}
+
+struct TextFieldStyleEnvironmentKey: EnvironmentKey {
+    static let defaultValue: TextFieldStyle = .otherChoice
+}
+
 extension EnvironmentValues {
     
     public var surveyTintColor: Color {

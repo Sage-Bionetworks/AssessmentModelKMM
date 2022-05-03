@@ -215,14 +215,14 @@ public final class OtherChoiceViewModel : ObservableObject, Identifiable {
     let validator: TextEntryValidator
     
     /// The value of the choice.
-    @Published public var value: String {
+    @Published public var value: String? {
         didSet {
             // TODO: syoung 03/29/2022 Handle validation and update selection state
         }
     }
     
     func jsonValue() -> JsonValue? {
-        guard selected, !value.isEmpty else { return nil }
+        guard selected, let value = value, !value.isEmpty else { return nil }
         return try? validator.validateText(value)
     }
     

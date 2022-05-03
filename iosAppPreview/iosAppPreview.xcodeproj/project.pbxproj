@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */; };
+		FF5733CC28209786009664EC /* TextEntryQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */; };
+		FF5733CE28209937009664EC /* TextEntryQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */; };
 		FF629A9F27FA6A6B0082EDD7 /* QuestionStepScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */; };
 		FF629AA527FB63700082EDD7 /* AssessmentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */; };
 		FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */; };
@@ -49,6 +51,8 @@
 
 /* Begin PBXFileReference section */
 		FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionStepView.swift; sourceTree = "<group>"; };
+		FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryQuestionStepView.swift; sourceTree = "<group>"; };
+		FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryQuestionViewModel.swift; sourceTree = "<group>"; };
 		FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionStepScrollView.swift; sourceTree = "<group>"; };
 		FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessmentViewModel.swift; sourceTree = "<group>"; };
 		FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Bundle+module.swift"; path = "../../iosApp/iosApp/Bundle+module.swift"; sourceTree = "<group>"; };
@@ -102,6 +106,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FF5733C9282096D8009664EC /* instruction */ = {
+			isa = PBXGroup;
+			children = (
+				FFC14E26280F8A9300B17551 /* TitlePageView.swift */,
+				FFC14E2C2811E31500B17551 /* CompletionView.swift */,
+				FFC14E2A2811DD0500B17551 /* InstructionView.swift */,
+			);
+			path = instruction;
+			sourceTree = "<group>";
+		};
+		FF5733CA2820970A009664EC /* question */ = {
+			isa = PBXGroup;
+			children = (
+				FFCB534827F6A78900BED4E2 /* ChoiceQuestionStepView.swift */,
+				FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */,
+				FFC14E66281717CD00B17551 /* LikertScaleView.swift */,
+				FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */,
+				FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */,
+			);
+			path = question;
+			sourceTree = "<group>";
+		};
 		FF629AA827FB6CF10082EDD7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +212,7 @@
 				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
 				FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */,
 				FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */,
+				FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -233,13 +260,8 @@
 		FFCB534727F6A78900BED4E2 /* Steps */ = {
 			isa = PBXGroup;
 			children = (
-				FFCB534827F6A78900BED4E2 /* ChoiceQuestionStepView.swift */,
-				FFC14E2C2811E31500B17551 /* CompletionView.swift */,
-				FFC14E2A2811DD0500B17551 /* InstructionView.swift */,
-				FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */,
-				FFC14E66281717CD00B17551 /* LikertScaleView.swift */,
-				FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */,
-				FFC14E26280F8A9300B17551 /* TitlePageView.swift */,
+				FF5733C9282096D8009664EC /* instruction */,
+				FF5733CA2820970A009664EC /* question */,
 			);
 			path = Steps;
 			sourceTree = "<group>";
@@ -340,7 +362,9 @@
 				FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */,
 				FFCB534E27F6A78900BED4E2 /* MultilineTextField.swift in Sources */,
 				FF629AA527FB63700082EDD7 /* AssessmentViewModel.swift in Sources */,
+				FF5733CC28209786009664EC /* TextEntryQuestionStepView.swift in Sources */,
 				FF81336C281853D900CEFF48 /* NumericTextField.swift in Sources */,
+				FF5733CE28209937009664EC /* TextEntryQuestionViewModel.swift in Sources */,
 				FFC14E27280F8A9300B17551 /* TitlePageView.swift in Sources */,
 				FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */,
 				FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */,

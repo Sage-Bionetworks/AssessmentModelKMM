@@ -1,5 +1,5 @@
 //
-//  SurveyNavigationView.swift
+//  TextEntryQuestionViewModel.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -32,21 +32,43 @@
 //
 
 import SwiftUI
-import SharedMobileUI
+import AssessmentModel
+import JsonModel
 
-struct SurveyNavigationView: View {
-    @EnvironmentObject private var viewModel: PagedNavigationViewModel
+class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
-    var body: some View {
-        PagedNavigationBar(showsDots: false)
-            .padding(.horizontal, HorizontalPaddingEnvironmentKey.defaultValue)
-            .padding(.vertical, VerticalPaddingEnvironmentKey.defaultValue)
+    weak var questionState: QuestionState?
+    
+    @Published var inputViewModel : StringInputViewModel?
+    @Published var detail: String?
+    
+    func onAppear(_ questionState: QuestionState) {
+        self.questionState = questionState
+        guard let question = questionState.question as? SimpleQuestion
+        else {
+            assertionFailure("Expecting the question to be a SimpleQuestion")
+            questionState.answer = .null
+            questionState.hasSelectedAnswer = true
+            return
+        }
+        
+        let inputItem = (questionState.question as? SimpleQuestion)?.inputItem ?? StringTextInputItemObject()
+        self.inputViewModel = .init(question.identifier, inputItem: inputItem)
+        self.inputViewModel!.delegate = self
+            
+        if questionState.detail == nil {
+            questionState.detail = Localization.localizedString("(Maximum \(self.inputViewModel!.characterLimit) characters)")
+        }
+        
+        // Set the value equal to the current question state answer.
+        self.inputViewModel!.value = questionState.answer.flatMap {
+            $0.jsonObject() as? String
+        }
     }
-}
-
-struct SurveyNavigationView_Previews: PreviewProvider {
-    static var previews: some View {
-        SurveyNavigationView()
-            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
+    
+    func didUpdateValue(_ newValue: JsonValue?, with identifier: String) {
+        let answer: JsonElement? = (newValue as? String).flatMap { $0.isEmpty ? nil : .string($0) }
+        questionState?.hasSelectedAnswer = (answer != nil)
+        questionState?.answer = answer
     }
 }

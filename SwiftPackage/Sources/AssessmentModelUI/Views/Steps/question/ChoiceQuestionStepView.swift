@@ -44,11 +44,8 @@ public struct ChoiceQuestionStepView : View {
     }
     
     public var body: some View {
-        VStack(spacing: 0) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                ChoiceQuestionView()
-            }
+        QuestionStepScrollView {
+            ChoiceQuestionView()
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
@@ -57,12 +54,14 @@ public struct ChoiceQuestionStepView : View {
 }
 
 struct ChoiceQuestionView : View {
+    @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var keyboard: KeyboardObserver
     @EnvironmentObject var questionState: QuestionState
     @StateObject var viewModel: ChoiceQuestionViewModel = .init()
     
     var body: some View {
-        LazyVStack(spacing: innerVerticalSpacing) {
+        LazyVStack(spacing: innerSpacing) {
             ForEach(viewModel.choices) { choice in
                 ChoiceCell(choice: choice)
             }
@@ -86,7 +85,7 @@ struct ChoiceQuestionView : View {
             }
         }
         .singleChoice(viewModel.singleAnswer)
-        .padding(.horizontal, 32)
+        .padding(.horizontal, horizontalPadding)
     }
     
     struct ChoiceCell : View {
