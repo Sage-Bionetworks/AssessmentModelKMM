@@ -36,9 +36,6 @@ import SharedMobileUI
 
 let textFieldFontSize: CGFloat = 20
 
-let outerVerticalPadding: CGFloat = 24
-let innerVerticalSpacing: CGFloat = 16
-
 extension Font {
     static let textField: Font = .latoFont(fixedSize: textFieldFontSize, weight: .bold)
     
@@ -52,6 +49,8 @@ extension Font {
     static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
     
     static let fieldLabel: Font = .latoFont(18, relativeTo: .caption, weight: .regular)
+    
+    static let likertLabel: Font = .latoFont(fixedSize: 20, weight: .bold)
 }
 
 #if canImport(UIKit)
@@ -79,15 +78,55 @@ struct SurveyTintColorEnvironmentKey: EnvironmentKey {
     static let defaultValue: Color = .init("surveyTint", bundle: .module)
 }
 
+struct InnerSpacingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 16
+}
+
+struct VerticalPaddingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 24
+}
+
+struct HorizontalPaddingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 32
+}
+
 extension EnvironmentValues {
+    
     public var surveyTintColor: Color {
         get { self[SurveyTintColorEnvironmentKey.self] }
         set { self[SurveyTintColorEnvironmentKey.self] = newValue }
+    }
+    
+    var verticalPadding: CGFloat {
+        get { self[VerticalPaddingEnvironmentKey.self] }
+        set { self[VerticalPaddingEnvironmentKey.self] = newValue }
+    }
+    
+    var horizontalPadding: CGFloat {
+        get { self[HorizontalPaddingEnvironmentKey.self] }
+        set { self[HorizontalPaddingEnvironmentKey.self] = newValue }
+    }
+    
+    var innerSpacing: CGFloat {
+        get { self[InnerSpacingEnvironmentKey.self] }
+        set { self[InnerSpacingEnvironmentKey.self] = newValue }
     }
 }
 
 extension View {
     public func surveyTintColor(_ templateColor: Color) -> some View {
         environment(\.surveyTintColor, templateColor)
+    }
+    
+    func innerSpacing(_ newValue: CGFloat) -> some View {
+        environment(\.innerSpacing, newValue)
+    }
+    
+    func verticalPadding(_ newValue: CGFloat) -> some View {
+        environment(\.verticalPadding, newValue)
+    }
+    
+    func horizontalPadding(_ newValue: CGFloat) -> some View {
+        environment(\.horizontalPadding, newValue)
     }
 }
