@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.core:core-ktx:1.7.0")
-    implementation("io.insert-koin:koin-android:3.1.1")
+    implementation("io.insert-koin:koin-android:3.1.5")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")

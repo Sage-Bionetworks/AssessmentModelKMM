@@ -145,6 +145,7 @@ data class AssessmentInfoObject(
     override val identifier: String,
     override val versionString: String? = null,
     override val schemaIdentifier: String? = null,
+    override val guid: String? = null,
     override val estimatedMinutes: Int = 0
 ) : AssessmentInfo
 
@@ -201,6 +202,7 @@ data class AssessmentObject(
     override val identifier: String,
     @SerialName("steps")
     override val children: List<Node>,
+    override val guid: String? = null,
     override val versionString: String? = null,
     override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
@@ -218,7 +220,8 @@ data class AssessmentObject(
             it.unpack(null, moduleInfo, registryProvider)
         }
         val identifier = originalNode?.identifier ?: this.identifier
-        val copy = copy(identifier = identifier, children = copyChildren)
+        val guid = originalNode?.identifier ?: this.guid
+        val copy = copy(identifier = identifier, guid = guid, children = copyChildren)
         copy.copyFrom(this)
         return copy
     }

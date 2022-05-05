@@ -158,10 +158,11 @@ public final class SectionObject : AbstractSectionObject, DocumentableStruct, Co
 
 open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case jsonSchema = "$schema", versionString, estimatedMinutes, copyright, interruptionHandling
+        case jsonSchema = "$schema", versionString, estimatedMinutes, copyright, interruptionHandling, guid
         var relativeIndex: Int { 3 }
     }
     
+    public let guid: String?
     public let versionString: String?
     public let estimatedMinutes: Int
     public let copyright: String?
@@ -175,9 +176,10 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     private let _jsonSchema: URL?
     
     public init(identifier: String, children: [Node],
-                version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil, interruptionHandling: InterruptionHandlingObject? = nil,
+                guid: String? = nil, version: String? = nil, estimatedMinutes: Int = 0, copyright: String? = nil, interruptionHandling: InterruptionHandlingObject? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil) {
+        self.guid = guid
         self.versionString = version
         self.estimatedMinutes = estimatedMinutes
         self.copyright = copyright
@@ -189,6 +191,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     }
     
     public init(identifier: String, copyFrom object: AbstractAssessmentObject) {
+        self.guid = object.guid
         self.versionString = object.versionString
         self.estimatedMinutes = object.estimatedMinutes
         self.copyright = object.copyright
@@ -199,6 +202,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.guid = try container.decodeIfPresent(String.self, forKey: .guid)
         self.versionString = try container.decodeIfPresent(String.self, forKey: .versionString)
         self.estimatedMinutes = try container.decodeIfPresent(Int.self, forKey: .estimatedMinutes) ?? 0
         self.copyright = try container.decodeIfPresent(String.self, forKey: .copyright)
@@ -210,6 +214,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(self.guid, forKey: .guid)
         try container.encodeIfPresent(self.versionString, forKey: .versionString)
         try container.encodeIfPresent(self.copyright, forKey: .copyright)
         try container.encodeIfPresent(self._interruptionHandling, forKey: .interruptionHandling)
@@ -243,6 +248,9 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
             return try super.documentProperty(for: codingKey)
         }
         switch key {
+        case .guid:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "For assessments from Bridge this is the unique identifier for a particular revision of an assessment.")
         case .versionString:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "A version for the assessment.")

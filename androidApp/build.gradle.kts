@@ -56,7 +56,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("io.insert-koin:koin-android:3.1.1")
+    implementation("io.insert-koin:koin-android:3.1.5")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
