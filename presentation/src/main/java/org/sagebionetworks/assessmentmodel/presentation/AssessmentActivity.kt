@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
@@ -18,6 +20,7 @@ open class AssessmentActivity: AppCompatActivity() {
     companion object {
         const val ARG_THEME = "arg_theme"
         const val ARG_ASSESSMENT_ID_KEY = "assessment_id_key"
+        const val ARG_ASSESSMENT_INFO_KEY = "assessment_info_key"
     }
 
     lateinit var viewModel: RootAssessmentViewModel
@@ -30,10 +33,17 @@ open class AssessmentActivity: AppCompatActivity() {
         if (intent.hasExtra(ARG_THEME)) {
             setTheme(intent.getIntExtra(ARG_THEME, R.style.BlueberryTheme))
         }
-        val assessmentId = intent.getStringExtra(ARG_ASSESSMENT_ID_KEY)!!
+        
+        val assessmentInfoJson = intent.getStringExtra(ARG_ASSESSMENT_INFO_KEY)
+        val assessmentInfo = if (assessmentInfoJson != null) {
+            val jsonCoder = Json { ignoreUnknownKeys = true }
+            jsonCoder.decodeFromString<AssessmentInfoObject>(assessmentInfoJson)
+        } else {
+            val assessmentId = intent.getStringExtra(ARG_ASSESSMENT_ID_KEY)!!
+            AssessmentInfoObject(assessmentId)
+        }
 
-        val assessmentInfo = AssessmentInfoObject(assessmentId)
-        val assessmentPlaceholder = AssessmentPlaceholderObject(assessmentId, assessmentInfo)
+        val assessmentPlaceholder = AssessmentPlaceholderObject(assessmentInfo.identifier, assessmentInfo)
         viewModel = initViewModel(assessmentPlaceholder, assessmentRegistryProvider, customNodeStateProvider)
         // If we've already loaded the assessment then the activity is being recreated from a configuration
         // change, and the AssessmentFragment will be restored for us.

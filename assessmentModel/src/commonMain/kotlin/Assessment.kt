@@ -32,6 +32,13 @@ interface BranchNode : Node {
 interface AssessmentInfo {
 
     /**
+     * The [guid] for the assessment. For assessments from Bridge this is the unique identifier
+     * for a particular revision of an assessment.
+     */
+    val guid: String?
+        get() = null
+
+    /**
      * The [identifier] for the assessment.
      */
     val identifier: String

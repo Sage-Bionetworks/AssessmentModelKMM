@@ -145,6 +145,7 @@ data class AssessmentInfoObject(
     override val identifier: String,
     override val versionString: String? = null,
     override val schemaIdentifier: String? = null,
+    override val guid: String? = null,
     override val estimatedMinutes: Int = 0
 ) : AssessmentInfo
 

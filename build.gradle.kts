@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.dokka") version "1.4.0"
+    id("org.jetbrains.dokka") version "1.6.21"
     id("maven-publish")
 }
 
