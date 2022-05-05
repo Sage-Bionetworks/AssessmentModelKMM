@@ -262,3 +262,10 @@ object PassThruTextValidator : TextValidator<String> {
     override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
     override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.jsonPrimitive?.content
 }
+
+interface DurationInputItem : InputItem {
+    val displayUnits: List<String>
+
+    override val answerType: AnswerType
+        get() = AnswerType.Duration(displayUnits)
+}

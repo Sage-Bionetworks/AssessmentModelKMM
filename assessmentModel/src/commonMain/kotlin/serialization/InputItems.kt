@@ -14,6 +14,7 @@ val inputItemSerializersModule = SerializersModule {
         subclass(CheckboxInputItemObject::class)
         subclass(DateInputItemObject::class)
         subclass(DoubleTextInputItemObject::class)
+        subclass(DurationInputItemObject::class)
         subclass(IntegerTextInputItemObject::class)
         subclass(StringTextInputItemObject::class)
         subclass(TimeInputItemObject::class)
@@ -143,6 +144,20 @@ data class YearTextInputItemObject(@SerialName("identifier")
 }
 
 /**
+ * Duration
+ */
+
+@Serializable
+@SerialName("duration")
+data class DurationInputItemObject(
+    @SerialName("identifier")
+    override val resultIdentifier: String? = null,
+    override val displayUnits: List<String> = listOf("H","M"),
+    override var optional: Boolean = true,
+    override var exclusive: Boolean = false
+) : DurationInputItem
+
+/**
  * DateTimeInputItem
  */
 
@@ -158,7 +173,10 @@ data class DateInputItemObject(@SerialName("identifier")
 data class TimeInputItemObject(@SerialName("identifier")
                                    override val resultIdentifier: String? = null,
                                    override var formatOptions: TimeFormatOptions = TimeFormatOptions())
-    : InputItemObject<String>(), DateTimeInputItem
+    : InputItemObject<String>(), DateTimeInputItem {
+    override val answerType: AnswerType
+        get() = AnswerType.Time(formatOptions.codingFormat)
+}
 
 @Serializable
 @SerialName("date")
