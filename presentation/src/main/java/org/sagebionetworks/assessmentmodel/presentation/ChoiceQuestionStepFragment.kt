@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import org.sagebionetworks.assessmentmodel.presentation.compose.QuestionContent
+import org.sagebionetworks.assessmentmodel.presentation.compose.ChoiceQuestion
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
@@ -31,7 +31,7 @@ class ChoiceQuestionStepFragment: StepFragment() {
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             SageSurveyTheme {
-                QuestionContent(questionState = questionState, assessmentViewModel = assessmentViewModel)
+                ChoiceQuestion(questionState = questionState, assessmentViewModel = assessmentViewModel)
             }
         }
         return binding.root
