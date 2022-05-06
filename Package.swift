@@ -22,7 +22,7 @@ let package = Package(
     dependencies: [
         .package(name: "JsonModel",
                  url: "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
-                 from: "1.4.6"),
+                 from: "1.4.7"),
         .package(name: "SharedMobileUI",
                  url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
                  from: "0.15.2"),

@@ -19,6 +19,8 @@ import org.sagebionetworks.assessmentmodel.serialization.AnswerResultObject
 val answerTypeSerializersModule = SerializersModule {
     polymorphic(AnswerType::class) {
         subclass(AnswerType.DateTime::class)
+        subclass(AnswerType.Time::class)
+        subclass(AnswerType.Duration::class)
         subclass(AnswerType.Array::class)
         subclass(AnswerType.Measurement::class)
         subclass(AnswerType.OBJECT::class)
@@ -60,10 +62,26 @@ abstract class AnswerType {
     }
 
     @Serializable
-    @SerialName("dateTime")
-    data class DateTime(val codingFormat: String = ISO8601Format.DateOnly.formatString) : AnswerType() {
+    @SerialName("date-time")
+    data class DateTime(val codingFormat: String = ISO8601Format.Timestamp.formatString) : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.STRING
+    }
+
+    @Serializable
+    @SerialName("time")
+    data class Time(val codingFormat: String = ISO8601Format.TimeOnly.formatString) : AnswerType() {
+        override val baseType: BaseType
+            get() = BaseType.STRING
+    }
+
+    @Serializable
+    @SerialName("duration")
+    data class Duration(
+        val displayUnits: List<DurationUnit> = DurationUnit.defaultUnits
+    ) : AnswerType() {
+        override val baseType: BaseType
+            get() = BaseType.NUMBER
     }
 
     @Serializable

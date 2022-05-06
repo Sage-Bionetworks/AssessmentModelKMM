@@ -1,16 +1,12 @@
 package org.sagebionetworks.assessmentmodel.survey
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import org.sagebionetworks.assessmentmodel.StringEnum
@@ -213,25 +209,21 @@ interface KeyboardTextInputItem<T> : InputItem {
      * This can be used to return a class used to format and/or validate the text input.
      */
     fun buildTextValidator(): TextValidator<T>
-
-    // TODO: syoung 01/27/2020 Complete the properties for describing a text field input field.
-//
-//    /// Optional picker source for a picker or multiple selection input field.
-//    var pickerSource: RSDPickerDataSource
 }
 
 /**
  * Dates and times are not directly serializable and should always be serialized as a [String].
  */
-interface DateTimeInputItem : KeyboardTextInputItem<String> {
+interface TimeInputItem : KeyboardTextInputItem<String> {
 
     /**
      * For date and time input entry, the format options will always be constrained for a date or time range and coding.
      */
-    val formatOptions: DateTimeFormatOptions
+    val formatOptions: TimeFormatOptions
+        get() = TimeFormatOptions()
 
     override val answerType: AnswerType
-        get() = AnswerType.DateTime(codingFormat = formatOptions.codingFormat)
+        get() = AnswerType.Time()
 
     override val keyboardOptions: KeyboardOptions
         get() = KeyboardOptionsObject.DateTimeEntryOptions
@@ -240,25 +232,44 @@ interface DateTimeInputItem : KeyboardTextInputItem<String> {
     override fun buildTextValidator(): TextValidator<String> = PassThruTextValidator
 }
 
-/**
- * The [DateTimeFormatOptions] is a serializable representation of the date or time range to allow for a question as
- * well as what parts of the date or time are requested by the question.
- */
-interface DateTimeFormatOptions {
-    val allowFuture: Boolean
-    val allowPast: Boolean
-    val minimumValue: String?
-    val maximumValue: String?
-    val codingFormat: String
-
-    // TODO: syoung 05/08/2020 Decide on how to support dates on Android.
-//    val dateTimeParts: List<DateTimePart>
-//        get() = DateTimePart.partsFor(codingFormat)
-}
+@Serializable
+data class TimeFormatOptions(val allowFuture: Boolean = true,
+                             val allowPast: Boolean = true,
+                             val minimumValue: String? = null,
+                             val maximumValue: String? = null)
 
 object PassThruTextValidator : TextValidator<String> {
     override fun valueFor(text: String): FormattedValue<String>? = FormattedValue(text)
     override fun localizedStringFor(value: String?): FormattedValue<String> = FormattedValue(value)
     override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
     override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.jsonPrimitive?.content
+}
+
+interface DurationInputItem : InputItem {
+    val displayUnits: List<DurationUnit>
+        get() = DurationUnit.defaultUnits
+
+    override val answerType: AnswerType
+        get() = AnswerType.Duration(displayUnits)
+}
+
+@Serializable
+enum class DurationUnit {
+    @SerialName("hour")
+    Hour,
+    @SerialName("minute")
+    Minute,
+    @SerialName("second")
+    Second;
+
+    val secondsMultiplier: Double
+        get() = when (this) {
+            Hour -> 60.0 * 60.0
+            Minute -> 60.0
+            Second -> 1.0
+        }
+
+    companion object {
+        val defaultUnits = listOf(Hour, Minute)
+    }
 }
