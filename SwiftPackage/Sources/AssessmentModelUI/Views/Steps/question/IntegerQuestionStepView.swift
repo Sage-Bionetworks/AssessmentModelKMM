@@ -45,18 +45,15 @@ public struct IntegerQuestionStepView : View {
     }
     
     public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView(keyboardAnchor: .none) {
-                Spacer(minLength: 0)
-                if let model = viewModel.inputViewModel {
-                    IntegerTextField(viewModel: model)
-                }
+        QuestionStepScrollView(keyboardAnchor: .none) {
+            Spacer(minLength: 0)
+            if let model = viewModel.inputViewModel {
+                IntegerTextField(viewModel: model)
             }
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
-        .fullscreenBackground(.darkSurveyBackground)
+        .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)
         .onAppear {
             viewModel.onAppear(questionState)
         }

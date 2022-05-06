@@ -56,6 +56,7 @@ class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
     @Published var value: Value?
     @Published var fieldLabel: String?
     @Published var placeholder: String?
+    @Published var characterLimit: Int = 250    // TODO: syoung 05/02/2022 Add a character limit to the serializable model
     @Published var validationError: Error?
     
     init(_ identifier: String, inputItem: TextInputItem, validator: TextEntryValidator? = nil) {
@@ -80,6 +81,9 @@ class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
             delegate?.didUpdateValue(nil, with: self.id)
         }
     }
+}
+
+class StringInputViewModel : TextInputViewModel<String> {
 }
 
 class IntegerInputViewModel : TextInputViewModel<Int> {

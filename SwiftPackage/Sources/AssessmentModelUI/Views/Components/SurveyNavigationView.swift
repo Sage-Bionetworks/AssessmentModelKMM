@@ -39,8 +39,8 @@ struct SurveyNavigationView: View {
     
     var body: some View {
         PagedNavigationBar(showsDots: false)
-            .padding(.horizontal, 32)
-            .padding(.vertical, outerVerticalPadding)
+            .padding(.horizontal, HorizontalPaddingEnvironmentKey.defaultValue)
+            .padding(.vertical, VerticalPaddingEnvironmentKey.defaultValue)
     }
 }
 

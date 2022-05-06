@@ -62,6 +62,10 @@ open class AssessmentStepViewVender {
                     questionState.question.answerType.baseType == .integer {
                 IntegerQuestionStepView(questionState)
             }
+            else if questionState.question is SimpleQuestion,
+                    questionState.question.answerType.baseType == .string {
+                TextEntryQuestionStepView(questionState)
+            }
             else {
                 debugQuestionStepView(questionState)
             }
@@ -199,13 +203,10 @@ fileprivate let surveyAChildren: [Node] = [
                              ],
                              comment: "Go to the question selected by the participant. If they skip the question then go directly to follow-up."),
     
-    SimpleQuestionStepObject(identifier: "simpleQ1",
-                             inputItem: StringTextInputItemObject(placeholder: "I like cake"),
-                             title: "Enter some text",
-                             nextNode: "followupQ"),
+    textEntryExample,
     birthYearExample,
-    likertExample1,
-    slidingScaleExample1,
+    likertExample,
+    slidingScaleExample,
     
     happyChoiceQuestion,
     favoriteFoodChoiceQuestion,

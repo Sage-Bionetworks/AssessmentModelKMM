@@ -36,6 +36,8 @@ import SharedMobileUI
 import AssessmentModel
 
 struct PauseMenu: View {
+    @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var assessmentState: AssessmentState
     @ObservedObject var viewModel: AssessmentViewModel
     
@@ -53,7 +55,7 @@ struct PauseMenu: View {
             
             Spacer()
             
-            VStack(spacing: 16) {
+            VStack(spacing: innerSpacing) {
                 if assessmentState.interuptionHandling.canResume {
                     Button(action: viewModel.resume) {
                         Text("Resume", bundle: .module)
@@ -77,7 +79,7 @@ struct PauseMenu: View {
                 }
                 .buttonStyle(SecondaryButtonStyle())
             }
-            .padding(.horizontal, 32)
+            .padding(.horizontal, horizontalPadding)
             
             Spacer()
         }

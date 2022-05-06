@@ -38,6 +38,8 @@ class KeyboardObserver : ObservableObject {
     @Published var keyboardHeight: CGFloat = 236
     @Published var keyboardFocusedId: String = KeyboardObserver.defaultKeyboardFocusedId
     @Published var keyboardState: KeyboardState = .didHide
+    @Published var textFieldHeight: CGFloat = textFieldFontSize
+    @Published var cursorAtEnd: Bool = true
     
     static let defaultKeyboardFocusedId = "$keyboardFocusedId"
     

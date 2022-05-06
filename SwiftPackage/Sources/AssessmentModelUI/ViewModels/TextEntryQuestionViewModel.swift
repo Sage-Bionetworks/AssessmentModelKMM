@@ -1,5 +1,5 @@
 //
-//  ForwardButton.swift
+//  TextEntryQuestionViewModel.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -32,25 +32,43 @@
 //
 
 import SwiftUI
-import SharedMobileUI
+import AssessmentModel
+import JsonModel
 
-public struct ForwardButton <Content: View> : View {
-    @SwiftUI.Environment(\.verticalPadding) var verticalPadding: CGFloat
-    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
-    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-    let content: Content
+class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
-    init(@ViewBuilder content: @escaping () -> Content) {
-        self.content = content()
-    }
-
-    @ViewBuilder public var body: some View {
-        Button(action: pagedNavigation.goForward) {
-            content
-                .frame(minWidth: 209)
+    weak var questionState: QuestionState?
+    
+    @Published var inputViewModel : StringInputViewModel?
+    @Published var detail: String?
+    
+    func onAppear(_ questionState: QuestionState) {
+        self.questionState = questionState
+        guard let question = questionState.question as? SimpleQuestion
+        else {
+            assertionFailure("Expecting the question to be a SimpleQuestion")
+            questionState.answer = .null
+            questionState.hasSelectedAnswer = true
+            return
         }
-        .buttonStyle(NavigationButtonStyle(.text))
-        .padding(.horizontal, horizontalPadding)
-        .padding(.vertical, verticalPadding)
+        
+        let inputItem = (questionState.question as? SimpleQuestion)?.inputItem ?? StringTextInputItemObject()
+        self.inputViewModel = .init(question.identifier, inputItem: inputItem)
+        self.inputViewModel!.delegate = self
+            
+        if questionState.detail == nil {
+            questionState.detail = Localization.localizedString("(Maximum \(self.inputViewModel!.characterLimit) characters)")
+        }
+        
+        // Set the value equal to the current question state answer.
+        self.inputViewModel!.value = questionState.answer.flatMap {
+            $0.jsonObject() as? String
+        }
+    }
+    
+    func didUpdateValue(_ newValue: JsonValue?, with identifier: String) {
+        let answer: JsonElement? = (newValue as? String).flatMap { $0.isEmpty ? nil : .string($0) }
+        questionState?.hasSelectedAnswer = (answer != nil)
+        questionState?.answer = answer
     }
 }
