@@ -621,7 +621,7 @@ open class InputItemsTest {
             "placeholder": "Blue, no! Red!",
             "formatOptions" : {
                         "minimumValue" : "06:00",
-                        "allowFuture" : false,
+                        "allowFuture" : false
             }
            }
            """
@@ -677,6 +677,48 @@ open class InputItemsTest {
            }
            """
         val original = TimeInputItemObject()
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+    /**
+     * DurationInputItemObject
+     */
+
+    @Test
+    fun testDurationInputItemObject_Default_Serialization() {
+        val inputString = """
+           {
+            "type": "duration"
+           }
+           """
+        val original = DurationInputItemObject()
+
+        val serializer = PolymorphicSerializer(InputItem::class)
+        val jsonString = jsonCoder.encodeToString(serializer, original)
+        val restored = jsonCoder.decodeFromString(serializer, jsonString)
+        val decoded = jsonCoder.decodeFromString(serializer, inputString)
+
+        assertEquals(original, restored)
+        assertEquals(original, decoded)
+    }
+
+
+    @Test
+    fun testDurationInputItemObject_DisplayUnits_Serialization() {
+        val inputString = """
+           {
+            "type": "duration",
+            "displayUnits": ["minute","second"]
+           }
+           """
+        val original = DurationInputItemObject(displayUnits = listOf(DurationUnit.Minute, DurationUnit.Second))
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)

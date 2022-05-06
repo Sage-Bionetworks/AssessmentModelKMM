@@ -261,7 +261,7 @@ interface DurationInputItem : InputItem {
         get() = DurationUnit.defaultUnits
 
     override val answerType: AnswerType
-        get() = AnswerType.Duration(displayUnits.map { it.name })
+        get() = AnswerType.Duration(displayUnits)
 }
 
 @Serializable
