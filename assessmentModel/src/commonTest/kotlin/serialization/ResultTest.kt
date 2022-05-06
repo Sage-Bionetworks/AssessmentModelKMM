@@ -359,7 +359,7 @@ open class ResultTest {
                         "startDate": "2020-01-21T12:00:00.000-03:00",
                         "endDate": "2020-01-21T12:05:00.000-03:00",
                         "answerType" : {
-                            "type": "dateTime",
+                            "type": "date-time",
                             "codingFormat": "yyyy-MM"
                         },
                         "value" : "2020-02"

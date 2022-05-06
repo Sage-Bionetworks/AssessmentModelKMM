@@ -238,17 +238,6 @@ data class TimeFormatOptions(val allowFuture: Boolean = true,
                              val minimumValue: String? = null,
                              val maximumValue: String? = null)
 
-/**
- * The [DateTimeFormatOptions] is a serializable representation of the date or time range to allow for a question as
- * well as what parts of the date or time are requested by the question.
- */
-interface DateTimeFormatOptions {
-    val allowFuture: Boolean
-    val allowPast: Boolean
-    val minimumValue: String?
-    val maximumValue: String?
-}
-
 object PassThruTextValidator : TextValidator<String> {
     override fun valueFor(text: String): FormattedValue<String>? = FormattedValue(text)
     override fun localizedStringFor(value: String?): FormattedValue<String> = FormattedValue(value)

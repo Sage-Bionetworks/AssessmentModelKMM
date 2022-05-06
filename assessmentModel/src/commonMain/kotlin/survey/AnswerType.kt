@@ -62,7 +62,7 @@ abstract class AnswerType {
     }
 
     @Serializable
-    @SerialName("dateTime")
+    @SerialName("date-time")
     data class DateTime(val codingFormat: String = ISO8601Format.Timestamp.formatString) : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.STRING
