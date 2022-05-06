@@ -12,7 +12,6 @@ import org.sagebionetworks.assessmentmodel.survey.AnswerType
 val inputItemSerializersModule = SerializersModule {
     polymorphic(InputItem::class) {
         subclass(CheckboxInputItemObject::class)
-        subclass(DateInputItemObject::class)
         subclass(DoubleTextInputItemObject::class)
         subclass(DurationInputItemObject::class)
         subclass(IntegerTextInputItemObject::class)
@@ -21,16 +20,11 @@ val inputItemSerializersModule = SerializersModule {
         subclass(YearTextInputItemObject::class)
     }
     polymorphic(KeyboardTextInputItem::class) {
-        subclass(DateInputItemObject::class)
         subclass(DoubleTextInputItemObject::class)
         subclass(IntegerTextInputItemObject::class)
         subclass(StringTextInputItemObject::class)
         subclass(TimeInputItemObject::class)
         subclass(YearTextInputItemObject::class)
-    }
-    polymorphic(DateTimeFormatOptions::class) {
-        subclass(DateFormatOptions::class)
-        subclass(TimeFormatOptions::class)
     }
 }
 
@@ -152,47 +146,22 @@ data class YearTextInputItemObject(@SerialName("identifier")
 data class DurationInputItemObject(
     @SerialName("identifier")
     override val resultIdentifier: String? = null,
-    override val displayUnits: List<String> = listOf("H","M"),
+    override val displayUnits: List<DurationUnit> = DurationUnit.defaultUnits,
     override var optional: Boolean = true,
     override var exclusive: Boolean = false
 ) : DurationInputItem
 
 /**
- * DateTimeInputItem
+ * TimeInputItem
  */
 
 @Serializable
-@SerialName("date")
-data class DateInputItemObject(@SerialName("identifier")
-                                   override val resultIdentifier: String? = null,
-                                   override var formatOptions: DateFormatOptions = DateFormatOptions())
-    : InputItemObject<String>(), DateTimeInputItem
-
-@Serializable
 @SerialName("time")
-data class TimeInputItemObject(@SerialName("identifier")
-                                   override val resultIdentifier: String? = null,
-                                   override var formatOptions: TimeFormatOptions = TimeFormatOptions())
-    : InputItemObject<String>(), DateTimeInputItem {
-    override val answerType: AnswerType
-        get() = AnswerType.Time(formatOptions.codingFormat)
-}
-
-@Serializable
-@SerialName("date")
-data class DateFormatOptions(override val allowFuture: Boolean = true,
-                             override val allowPast: Boolean = true,
-                             override val minimumValue: String? = null,
-                             override val maximumValue: String? = null,
-                             override val codingFormat: String = ISO8601Format.DateOnly.formatString) : DateTimeFormatOptions
-
-@Serializable
-@SerialName("time")
-data class TimeFormatOptions(override val allowFuture: Boolean = true,
-                             override val allowPast: Boolean = true,
-                             override val minimumValue: String? = null,
-                             override val maximumValue: String? = null,
-                             override val codingFormat: String = ISO8601Format.TimeOnly.formatString) : DateTimeFormatOptions
+data class TimeInputItemObject(
+    @SerialName("identifier")
+    override val resultIdentifier: String? = null,
+    override var formatOptions: TimeFormatOptions = TimeFormatOptions()
+) : InputItemObject<String>(), TimeInputItem
 
 /**
  * ChoiceInputItem
