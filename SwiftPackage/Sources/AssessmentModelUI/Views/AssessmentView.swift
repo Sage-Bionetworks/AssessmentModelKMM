@@ -58,13 +58,15 @@ open class AssessmentStepViewVender {
             if questionState.step is ChoiceQuestionStep {
                 ChoiceQuestionStepView(questionState)
             }
-            else if questionState.question is SimpleQuestion,
-                    questionState.question.answerType.baseType == .integer {
-                IntegerQuestionStepView(questionState)
-            }
-            else if questionState.question is SimpleQuestion,
-                    questionState.question.answerType.baseType == .string {
-                TextEntryQuestionStepView(questionState)
+            else if let question = questionState.question as? SimpleQuestion {
+                switch question.inputItem {
+                case is IntegerTextInputItem:
+                    IntegerQuestionStepView(questionState)
+                case is StringTextInputItem:
+                    TextEntryQuestionStepView(questionState)
+                default:
+                    debugQuestionStepView(questionState)
+                }
             }
             else {
                 debugQuestionStepView(questionState)

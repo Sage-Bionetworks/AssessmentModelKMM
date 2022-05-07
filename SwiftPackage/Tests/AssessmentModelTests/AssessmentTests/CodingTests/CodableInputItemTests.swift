@@ -326,6 +326,69 @@ class CodableInputItemTests: XCTestCase {
         }
     }
     
+    func testDurationTextInputItemObject_Codable_Future() {
+        
+        let json = """
+            {
+             "type": "duration",
+             "displayUnits" : ["minute", "second"]
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+                
+        do {
+            
+            let wrapper = try decoder.decode(InputItemWrapper<DurationTextInputItemObject>.self, from: json)
+            let object = wrapper.inputItem
+            
+            XCTAssertEqual(.duration, object.textInputType)
+            XCTAssertEqual([.minute, .second], object.displayUnits)
+            
+            let jsonData = try encoder.encode(object)
+            guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
+                else {
+                    XCTFail("Encoded object is not a dictionary")
+                    return
+            }
+            
+            XCTAssertEqual("duration", dictionary["type"] as? String)
+            XCTAssertEqual(["minute", "second"], dictionary["displayUnits"] as? [String])
+            
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testDurationTextInputItemObject_Codable_Default() {
+        
+        let json = """
+            {
+             "type": "duration"
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+                
+        do {
+            
+            let original = DurationTextInputItemObject()
+            let wrapper = try decoder.decode(InputItemWrapper<DurationTextInputItemObject>.self, from: json)
+            let object = wrapper.inputItem
+            XCTAssertEqual(original.textInputType, object.textInputType)
+            
+            let jsonData = try encoder.encode(original)
+            guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
+                else {
+                    XCTFail("Encoded object is not a dictionary")
+                    return
+            }
+            
+            XCTAssertEqual("duration", dictionary["type"] as? String)
+            
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
     func testYearTextInputItemObject_Codable_Future() {
         
         let json = """

@@ -59,11 +59,11 @@ class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
     @Published var characterLimit: Int = 250    // TODO: syoung 05/02/2022 Add a character limit to the serializable model
     @Published var validationError: Error?
     
-    init(_ identifier: String, inputItem: TextInputItem, validator: TextEntryValidator? = nil) {
+    init(_ identifier: String, inputItem: TextInputItem, validator: TextEntryValidator? = nil, initialValue: Value? = nil) {
         self.id = identifier
         self.inputItem = inputItem
         self.validator = validator ?? inputItem.buildTextValidator()
-        
+        self.value = initialValue
         self.fieldLabel = inputItem.fieldLabel
         self.placeholder = inputItem.placeholder
     }
@@ -123,10 +123,10 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
     fileprivate var updating: Bool = false
     fileprivate var defaultValue: Int?
     
-    init(_ identifier: String, inputItem: TextInputItem, uiHint: QuestionUIHint? = nil, range: IntegerRange? = nil) {
+    init(_ identifier: String, inputItem: TextInputItem, uiHint: QuestionUIHint? = nil, range: IntegerRange? = nil, initialValue: Int? = nil) {
         let range = range ?? inputItem.buildTextValidator() as? IntegerRange ?? IntegerFormatOptions()
         
-        super.init(identifier, inputItem: inputItem, validator: range as? TextEntryValidator)
+        super.init(identifier, inputItem: inputItem, validator: range as? TextEntryValidator, initialValue: initialValue)
 
         // Set up the ranges.
         range.minimumValue.map { minValue = $0 }
