@@ -721,6 +721,22 @@ public struct LocalTime : Codable, Hashable, Comparable, JsonValue {
         self = time
     }
     
+    public init(from date: Date) {
+        let calendar = Calendar(identifier: .iso8601)
+        let dateComponents = calendar.dateComponents([.hour, .minute], from: date)
+        self.hour = dateComponents.hour!
+        self.minute = dateComponents.minute!
+    }
+    
+    public init?(from jsonElement: JsonElement) {
+        guard case .string(let str) = jsonElement,
+              let time = Self.init(from: str)
+        else {
+            return nil
+        }
+        self = time
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let str = try container.decode(String.self)
@@ -734,6 +750,10 @@ public struct LocalTime : Codable, Hashable, Comparable, JsonValue {
         var container = encoder.singleValueContainer()
         let str = stringValue()
         try container.encode(str)
+    }
+    
+    public func jsonElement() -> JsonElement {
+        .string(stringValue())
     }
     
     public func jsonObject() -> JsonSerializable {

@@ -72,7 +72,7 @@ public protocol DurationTextInputItem : TextInputItem {
     var displayUnits: [DurationUnit] { get }
 }
 
-public protocol TimeDateTextInputItem : TextInputItem {
+public protocol TimeTextInputItem : TextInputItem {
     var range: TimeRange  { get }
 }
 
@@ -496,7 +496,7 @@ extension YearTextInputItemObject : DocumentableStruct {
     }
 }
 
-public struct TimeTextInputItemObject : SerializableTextInputItem, TimeDateTextInputItem {
+public struct TimeTextInputItemObject : SerializableTextInputItem, TimeTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }

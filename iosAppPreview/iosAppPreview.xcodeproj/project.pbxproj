@@ -49,6 +49,8 @@
 		FFDDD56827F7A4AE00B40F22 /* ViewHeightReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDDD56727F7A4AE00B40F22 /* ViewHeightReader.swift */; };
 		FFEB55892829B974007C5572 /* DurationQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB55882829B974007C5572 /* DurationQuestionViewModel.swift */; };
 		FFEB558B2829B9AE007C5572 /* DurationQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */; };
+		FFEB558D2829CCC2007C5572 /* TimeQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558C2829CCC2007C5572 /* TimeQuestionStepView.swift */; };
+		FFEB558F2829CD0E007C5572 /* TimeQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +97,8 @@
 		FFDDD56727F7A4AE00B40F22 /* ViewHeightReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHeightReader.swift; sourceTree = "<group>"; };
 		FFEB55882829B974007C5572 /* DurationQuestionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DurationQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationQuestionStepView.swift; sourceTree = "<group>"; };
+		FFEB558C2829CCC2007C5572 /* TimeQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeQuestionStepView.swift; sourceTree = "<group>"; };
+		FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeQuestionViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +133,7 @@
 				FFC14E66281717CD00B17551 /* LikertScaleView.swift */,
 				FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */,
 				FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */,
+				FFEB558C2829CCC2007C5572 /* TimeQuestionStepView.swift */,
 			);
 			path = question;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
 				FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */,
 				FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */,
+				FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -351,9 +357,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				FFC14E612817091E00B17551 /* IntegerQuestionViewModel.swift in Sources */,
+				FFEB558F2829CD0E007C5572 /* TimeQuestionViewModel.swift in Sources */,
 				FFCB530D27F6A4F800BED4E2 /* ContentView.swift in Sources */,
 				FF83B6372817A18C007448AD /* TapLocationGesture.swift in Sources */,
 				FFAF7C562808AE10004B5670 /* PauseMenu.swift in Sources */,
+				FFEB558D2829CCC2007C5572 /* TimeQuestionStepView.swift in Sources */,
 				FFAF7C542808AC1B004B5670 /* ExitButton.swift in Sources */,
 				FFC14E292810905000B17551 /* ForwardButton.swift in Sources */,
 				FFAEDCFD27FD0ADA0096CC6D /* AssessmentView.swift in Sources */,
