@@ -72,6 +72,10 @@ public protocol DurationTextInputItem : TextInputItem {
     var displayUnits: [DurationUnit] { get }
 }
 
+public protocol TimeDateTextInputItem : TextInputItem {
+    var range: TimeRange  { get }
+}
+
 public final class TextInputItemSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
     public var documentDescription: String? {
         """
@@ -92,6 +96,7 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
             DurationTextInputItemObject(),
             IntegerTextInputItemObject(),
             StringTextInputItemObject(),
+            TimeTextInputItemObject(),
             YearTextInputItemObject(),
         ]
         self.examples = examples
@@ -153,7 +158,7 @@ public extension SerializableTextInputItem {
 }
 
 public enum TextInputType : String, StringEnumSet, DocumentableStringEnum {
-    case number, integer, string, year, duration
+    case number, integer, string, year, duration, time
 }
 
 public struct StringTextInputItemObject : SerializableTextInputItem, StringTextInputItem {
@@ -491,3 +496,66 @@ extension YearTextInputItemObject : DocumentableStruct {
     }
 }
 
+public struct TimeTextInputItemObject : SerializableTextInputItem, TimeDateTextInputItem {
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
+    }
+    public private(set) var textInputType: TextInputType = .time
+    public let answerType: AnswerType = AnswerTypeInteger()
+    
+    public let resultIdentifier: String?
+    public let fieldLabel: String?
+    public let placeholder: String?
+
+    public var keyboardOptions: KeyboardOptions {
+        KeyboardOptionsObject.dateTimeEntryOptions
+    }
+
+    public let formatOptions: TimeFormatOptions?
+    
+    public var range: TimeRange { formatOptions ?? TimeFormatOptions() }
+    
+    public init(fieldLabel: String? = nil,
+                placeholder: String? = "YYYY",
+                resultIdentifier: String? = nil,
+                formatOptions: TimeFormatOptions? = nil) {
+        self.fieldLabel = fieldLabel
+        self.placeholder = placeholder
+        self.resultIdentifier = resultIdentifier
+        self.formatOptions = formatOptions
+    }
+    
+    public func buildTextValidator() -> TextEntryValidator {
+        PassThruValidator()
+    }
+}
+
+extension TimeTextInputItemObject : DocumentableStruct {
+
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+    
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        codingKey.stringValue == "type"
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not handled by \(self).")
+        }
+        switch key {
+        case .textInputType:
+            return .init(constValue: TextInputType.year)
+        case .resultIdentifier, .fieldLabel, .placeholder:
+            return .init(propertyType: .primitive(.string))
+        case .formatOptions:
+            return .init(propertyType: .reference(TimeFormatOptions.documentableType()), propertyDescription:
+                            "The formatting and range options to use with input item.")
+        }
+    }
+    
+    public static func examples() -> [TimeTextInputItemObject] {
+        [.init()]
+    }
+}

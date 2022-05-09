@@ -389,6 +389,82 @@ class CodableInputItemTests: XCTestCase {
         }
     }
     
+    func testTimeTextInputItemObject_Codable_Future() {
+        
+        let json = """
+            {
+             "type": "time",
+             "formatOptions" : {
+                    "allowPast": false
+             }
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+                
+        do {
+            
+            let wrapper = try decoder.decode(InputItemWrapper<TimeTextInputItemObject>.self, from: json)
+            let object = wrapper.inputItem
+            
+            XCTAssertEqual(.time, object.textInputType)
+            if let range = object.formatOptions {
+                XCTAssertEqual(false, range.allowPast)
+            }
+            else {
+                XCTFail("Failed to decode formatOptions")
+            }
+            
+            let jsonData = try encoder.encode(object)
+            guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
+                else {
+                    XCTFail("Encoded object is not a dictionary")
+                    return
+            }
+            
+            XCTAssertEqual("time", dictionary["type"] as? String)
+            
+            if let range = dictionary["formatOptions"] as? [String: Any] {
+                XCTAssertEqual(false, range["allowPast"] as? Bool)
+            }
+            else {
+                XCTFail("Failed to encode formatOptions")
+            }
+            
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testTimeTextInputItemObject_Codable_Default() {
+        
+        let json = """
+            {
+             "type": "time"
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+                
+        do {
+            
+            let original = TimeTextInputItemObject()
+            let wrapper = try decoder.decode(InputItemWrapper<TimeTextInputItemObject>.self, from: json)
+            let object = wrapper.inputItem
+            XCTAssertEqual(original.textInputType, object.textInputType)
+            
+            let jsonData = try encoder.encode(original)
+            guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
+                else {
+                    XCTFail("Encoded object is not a dictionary")
+                    return
+            }
+            
+            XCTAssertEqual("time", dictionary["type"] as? String)
+            
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
     func testYearTextInputItemObject_Codable_Future() {
         
         let json = """
