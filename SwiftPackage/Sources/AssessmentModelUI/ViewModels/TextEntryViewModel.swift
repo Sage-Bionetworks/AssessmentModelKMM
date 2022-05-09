@@ -93,7 +93,7 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
     @Published var maxLabel: String?
     @Published var minValue: Int = .min
     @Published var maxValue: Int = .max
-    
+
     override var value: Int? {
         didSet {
             guard !updating else { return }
@@ -101,6 +101,7 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
             constrainedValue = self.value.map { max(minValue, min(maxValue, $0)) } ?? defaultValue
             if usesScale, let newValue = constrainedValue {
                 self.fraction = max(0, min(1, Double(newValue - minValue) / Double(maxValue - minValue)))
+                self.pickerValue = newValue
             }
             updateState()
             updating = false
@@ -114,6 +115,17 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
             guard !updating, usesScale else { return }
             updating = true
             constrainedValue = Int(round(Double(maxValue - minValue) * fraction)) + minValue
+            updateState()
+            updating = false
+        }
+    }
+    
+    @Published var pickerValues: [Int] = []
+    @Published var pickerValue: Int = 0 {
+        didSet {
+            guard !updating else { return }
+            updating = true
+            constrainedValue = pickerValue
             updateState()
             updating = false
         }
@@ -152,6 +164,14 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
                 dots = Array(minValue...maxValue).map {
                     .init($0)
                 }
+            }
+        }
+        else if uiHint == .NumberField.picker.uiHint {
+            usesScale = (minValue != .min && maxValue != .max && minValue < maxValue)
+            if usesScale {
+                defaultValue = minValue
+                pickerValues = Array(minValue...maxValue)
+                pickerValue = initialValue ?? minValue
             }
         }
     }

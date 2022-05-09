@@ -64,6 +64,8 @@ open class AssessmentStepViewVender {
                     IntegerQuestionStepView(questionState)
                 case is StringTextInputItem:
                     TextEntryQuestionStepView(questionState)
+                case is DurationTextInputItem:
+                    DurationQuestionStepView(questionState)
                 default:
                     debugQuestionStepView(questionState)
                 }
@@ -192,6 +194,7 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(value: .integer(2), text: "Birth year"),
                                 .init(value: .integer(3), text: "Likert Scale"),
                                 .init(value: .integer(4), text: "Sliding Scale"),
+                                .init(value: .integer(5), text: "Duration"),
                              ],
                              baseType: .integer,
                              singleChoice: true,
@@ -202,6 +205,7 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(skipToIdentifier: "simpleQ2", matchingValue: .integer(2)),
                                 .init(skipToIdentifier: "simpleQ3", matchingValue: .integer(3)),
                                 .init(skipToIdentifier: "simpleQ4", matchingValue: .integer(4)),
+                                .init(skipToIdentifier: "simpleQ5", matchingValue: .integer(5)),
                              ],
                              comment: "Go to the question selected by the participant. If they skip the question then go directly to follow-up."),
     
@@ -209,6 +213,7 @@ fileprivate let surveyAChildren: [Node] = [
     birthYearExample,
     likertExample,
     slidingScaleExample,
+    durationExample,
     
     happyChoiceQuestion,
     favoriteFoodChoiceQuestion,

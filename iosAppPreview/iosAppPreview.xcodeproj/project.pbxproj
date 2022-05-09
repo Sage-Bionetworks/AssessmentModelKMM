@@ -47,6 +47,8 @@
 		FFCB535A27F6B60B00BED4E2 /* NodeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB535927F6B60B00BED4E2 /* NodeState.swift */; };
 		FFCB535C27F6BB9700BED4E2 /* SurveyNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFCB535B27F6BB9700BED4E2 /* SurveyNavigationView.swift */; };
 		FFDDD56827F7A4AE00B40F22 /* ViewHeightReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDDD56727F7A4AE00B40F22 /* ViewHeightReader.swift */; };
+		FFEB55892829B974007C5572 /* DurationQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB55882829B974007C5572 /* DurationQuestionViewModel.swift */; };
+		FFEB558B2829B9AE007C5572 /* DurationQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +93,8 @@
 		FFCB535927F6B60B00BED4E2 /* NodeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeState.swift; sourceTree = "<group>"; };
 		FFCB535B27F6BB9700BED4E2 /* SurveyNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyNavigationView.swift; sourceTree = "<group>"; };
 		FFDDD56727F7A4AE00B40F22 /* ViewHeightReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewHeightReader.swift; sourceTree = "<group>"; };
+		FFEB55882829B974007C5572 /* DurationQuestionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DurationQuestionViewModel.swift; sourceTree = "<group>"; };
+		FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationQuestionStepView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				FFCB534827F6A78900BED4E2 /* ChoiceQuestionStepView.swift */,
+				FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */,
 				FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */,
 				FFC14E66281717CD00B17551 /* LikertScaleView.swift */,
 				FF6BB10D281C468E005DA166 /* SlidingScaleView.swift */,
@@ -209,8 +214,9 @@
 			children = (
 				FF629AA427FB63700082EDD7 /* AssessmentViewModel.swift */,
 				FFCB533F27F6A78900BED4E2 /* ChoiceQuestionViewModel.swift */,
-				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
+				FFEB55882829B974007C5572 /* DurationQuestionViewModel.swift */,
 				FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */,
+				FFCB535927F6B60B00BED4E2 /* NodeState.swift */,
 				FF6BB10F281C4847005DA166 /* TextEntryViewModel.swift */,
 				FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */,
 			);
@@ -355,12 +361,14 @@
 				FFCB535C27F6BB9700BED4E2 /* SurveyNavigationView.swift in Sources */,
 				FFCB534C27F6A78900BED4E2 /* Localization.swift in Sources */,
 				FF629AAC27FBC40A0082EDD7 /* StepHeaderView.swift in Sources */,
+				FFEB55892829B974007C5572 /* DurationQuestionViewModel.swift in Sources */,
 				FF6BB10E281C468E005DA166 /* SlidingScaleView.swift in Sources */,
 				FF629A9F27FA6A6B0082EDD7 /* QuestionStepScrollView.swift in Sources */,
 				FFC14E25280B6A4800B17551 /* CompositedImage.swift in Sources */,
 				FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */,
 				FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */,
 				FFCB534E27F6A78900BED4E2 /* MultilineTextField.swift in Sources */,
+				FFEB558B2829B9AE007C5572 /* DurationQuestionStepView.swift in Sources */,
 				FF629AA527FB63700082EDD7 /* AssessmentViewModel.swift in Sources */,
 				FF5733CC28209786009664EC /* TextEntryQuestionStepView.swift in Sources */,
 				FF81336C281853D900CEFF48 /* NumericTextField.swift in Sources */,

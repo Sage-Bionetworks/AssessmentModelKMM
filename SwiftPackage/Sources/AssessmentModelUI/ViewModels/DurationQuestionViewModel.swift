@@ -58,7 +58,7 @@ class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
             let amount: Double? = questionState.hasSelectedAnswer ? floor(remaining / unit.secondsMultiplier) : nil
             amount.map { remaining -= $0 * unit.secondsMultiplier }
             let model = IntegerInputViewModel(unit.rawValue,
-                                              inputItem: IntegerTextInputItemObject(),
+                                              inputItem: IntegerTextInputItemObject(fieldLabel: unit.fieldLabel),
                                               uiHint: .NumberField.picker.uiHint,
                                               range: unit.range,
                                               initialValue: amount.map { Int($0) })
@@ -104,6 +104,17 @@ extension DurationUnit {
             return 60.0
         case .second:
             return 1.0
+        }
+    }
+    
+    var fieldLabel: String {
+        switch self {
+        case .hour:
+            return Localization.localizedString("Hours")
+        case .minute:
+            return Localization.localizedString("Mins")
+        case .second:
+            return Localization.localizedString("S")
         }
     }
 }
