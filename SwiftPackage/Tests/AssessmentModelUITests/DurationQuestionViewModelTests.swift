@@ -89,8 +89,8 @@ class DurationQuestionViewModelTests: XCTestCase {
         XCTAssertTrue(questionState.hasSelectedAnswer)
         
         secondField.value = nil
-        XCTAssertNil(questionState.answerResult.jsonValue)
-        XCTAssertFalse(questionState.hasSelectedAnswer)
+        XCTAssertEqual(.number(0), questionState.answerResult.jsonValue)
+        XCTAssertTrue(questionState.hasSelectedAnswer)
     }
     
     func testDurationQuestion_MinSec_WithValue() {
@@ -168,8 +168,8 @@ class DurationQuestionViewModelTests: XCTestCase {
         XCTAssertTrue(questionState.hasSelectedAnswer)
         
         hourField.value = nil
-        XCTAssertNil(questionState.answerResult.jsonValue)
-        XCTAssertFalse(questionState.hasSelectedAnswer)
+        XCTAssertEqual(.number(0), questionState.answerResult.jsonValue)
+        XCTAssertTrue(questionState.hasSelectedAnswer)
     }
     
     func testDurationQuestion_WithValue() {

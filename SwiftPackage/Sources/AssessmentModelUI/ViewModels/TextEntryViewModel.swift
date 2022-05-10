@@ -91,8 +91,8 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
     @Published var viewType: QuestionUIHint.NumberField = .textfield
     @Published var minLabel: String?
     @Published var maxLabel: String?
-    @Published var minValue: Int = .min
-    @Published var maxValue: Int = .max
+    @Published var minValue: Int
+    @Published var maxValue: Int
 
     override var value: Int? {
         didSet {
@@ -108,9 +108,9 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
         }
     }
     
-    @Published var usesScale: Bool = false
-    @Published var dots: [Dot] = []
-    @Published var fraction: Double = 0 {
+    @Published var usesScale: Bool
+    @Published var dots: [Dot]
+    @Published var fraction: Double {
         didSet {
             guard !updating, usesScale else { return }
             updating = true
@@ -120,8 +120,8 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
         }
     }
     
-    @Published var pickerValues: [Int] = []
-    @Published var pickerValue: Int = 0 {
+    @Published var pickerValues: [Int]
+    @Published var pickerValue: Int {
         didSet {
             guard !updating else { return }
             updating = true
@@ -138,42 +138,38 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
     init(_ identifier: String, inputItem: TextInputItem, uiHint: QuestionUIHint? = nil, range: IntegerRange? = nil, initialValue: Int? = nil) {
         let range = range ?? inputItem.buildTextValidator() as? IntegerRange ?? IntegerFormatOptions()
         
-        super.init(identifier, inputItem: inputItem, validator: range as? TextEntryValidator, initialValue: initialValue)
-
-        // Set up the ranges.
-        range.minimumValue.map { minValue = $0 }
-        range.maximumValue.map { maxValue = $0 }
-        range.minimumLabel.map { minLabel = $0 }
-        range.maximumLabel.map { maxLabel = $0 }
+        // Set up the ranges
+        self.minLabel = range.minimumLabel
+        self.maxLabel = range.maximumLabel
+        let minValue = range.minimumValue ?? .min
+        let maxValue = range.maximumValue ?? .max
         
-        // Set up whether or not the scale is used.
-        if uiHint == .NumberField.slider.uiHint {
-            // A slider is required to have a min and a max.
-            // If valid ranges aren't set, then the slider should be hidden.
-            usesScale = (minValue != .min && maxValue != .max && minValue < maxValue)
-            defaultValue = usesScale ? minValue : nil
-            viewType = usesScale ? .slider : .textfield
+        // Validate the ranges and change the type if needed
+        var viewType: QuestionUIHint.NumberField = uiHint.flatMap { .init(rawValue: $0.rawValue) } ?? .textfield
+        let usesScale = viewType.usesScale(minValue: minValue, maxValue: maxValue)
+        if !usesScale {
+            viewType = .textfield
         }
-        else if uiHint == .NumberField.likert.uiHint {
-            // For a Likert scale UI/UX, the view is hard coded to *not* show a text field
-            // so the min and max are required. Adjust them so mistakes in the model don't
-            // result in a crash.
-            usesScale = (minValue < maxValue && (maxValue - minValue) <= 7)
-            viewType = usesScale ? .likert : .textfield
-            if usesScale {
-                dots = Array(minValue...maxValue).map {
-                    .init($0)
-                }
-            }
-        }
-        else if uiHint == .NumberField.picker.uiHint {
-            usesScale = (minValue != .min && maxValue != .max && minValue < maxValue)
-            if usesScale {
-                defaultValue = minValue
-                pickerValues = Array(minValue...maxValue)
-                pickerValue = initialValue ?? minValue
-            }
-        }
+        
+        // Switch the set up based on the view type *after* checking scaling validity
+        let pickerValues = viewType.pickerValues(minValue: minValue, maxValue: maxValue)
+        let defaultValue = viewType.defaultValue(minValue: minValue, maxValue: maxValue)
+        let newValue = initialValue ?? ((viewType == .slider) ? defaultValue : nil)
+        
+        self.minValue = minValue
+        self.maxValue = maxValue
+        self.usesScale = usesScale
+        self.viewType = viewType
+        self.defaultValue = defaultValue
+        self.pickerValue = newValue ?? minValue
+        self.pickerValues = pickerValues
+        self.dots = (viewType == .likert) ? pickerValues.map { .init($0) } : []
+        self.fraction = newValue.map { max(0, min(1, Double($0 - minValue) / Double(maxValue - minValue))) } ?? 0
+
+        super.init(identifier,
+                   inputItem: inputItem,
+                   validator: range as? TextEntryValidator,
+                   initialValue: newValue)
     }
 
     override func updateState() {
@@ -208,4 +204,35 @@ class IntegerInputViewModel : TextInputViewModel<Int> {
     }
 }
 
+extension QuestionUIHint.NumberField {
+    
+    func usesScale(minValue: Int, maxValue: Int) -> Bool {
+        switch self {
+        case .slider, .picker:
+            return (minValue != .min && maxValue != .max && minValue < maxValue)
+        case .likert:
+            return (minValue < maxValue && (maxValue - minValue) <= 7)
+        default:
+            return false
+        }
+    }
+    
+    func pickerValues(minValue: Int, maxValue: Int) -> [Int] {
+        switch self {
+        case .picker, .likert:
+            return Array(minValue...maxValue)
+        default:
+            return []
+        }
+    }
+    
+    func defaultValue(minValue: Int, maxValue: Int) -> Int? {
+        switch self {
+        case .picker, .slider:
+            return minValue
+        default:
+            return nil
+        }
+    }
+}
 
