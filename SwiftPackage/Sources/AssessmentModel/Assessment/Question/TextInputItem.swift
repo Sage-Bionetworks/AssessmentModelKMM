@@ -516,7 +516,7 @@ public struct TimeTextInputItemObject : SerializableTextInputItem, TimeTextInput
     public var range: TimeRange { formatOptions ?? TimeFormatOptions() }
     
     public init(fieldLabel: String? = nil,
-                placeholder: String? = "YYYY",
+                placeholder: String? = nil,
                 resultIdentifier: String? = nil,
                 formatOptions: TimeFormatOptions? = nil) {
         self.fieldLabel = fieldLabel
