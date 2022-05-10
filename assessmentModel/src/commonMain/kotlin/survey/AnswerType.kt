@@ -78,7 +78,8 @@ abstract class AnswerType {
     @Serializable
     @SerialName("duration")
     data class Duration(
-        val displayUnits: List<DurationUnit> = DurationUnit.defaultUnits
+        val displayUnits: List<DurationUnit> = DurationUnit.defaultUnits,
+        val significantDigits: Int = 0
     ) : AnswerType() {
         override val baseType: BaseType
             get() = BaseType.NUMBER
