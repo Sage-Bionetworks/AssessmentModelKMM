@@ -52,8 +52,10 @@ public struct TimeQuestionStepView: View {
             if let range = viewModel.range {
                 DatePicker("", selection: $viewModel.value, in: range, displayedComponents: .hourAndMinute)
                     .labelsHidden()
-                    .datePickerStyle(WheelDatePickerStyle())
                     .padding(.horizontal, horizontalPadding)
+                    #if os(iOS)
+                    .datePickerStyle(WheelDatePickerStyle())
+                    #endif
             }
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh

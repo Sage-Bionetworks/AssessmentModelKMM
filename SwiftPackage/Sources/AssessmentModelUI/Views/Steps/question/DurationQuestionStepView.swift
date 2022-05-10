@@ -98,7 +98,9 @@ public struct DurationQuestionStepView: View {
                     }
                 }
             }
+            #if os(iOS)
             .pickerStyle(WheelPickerStyle())
+            #endif
         }
     }
 }
