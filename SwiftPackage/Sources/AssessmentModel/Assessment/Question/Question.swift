@@ -98,7 +98,7 @@ public struct QuestionUIHint : RawRepresentable, Hashable, Codable {
     }
     
     public enum NumberField : String, Codable, CaseIterable {
-        case textfield, slider, likert
+        case textfield, slider, likert, picker
         public var uiHint: QuestionUIHint { .init(rawValue: rawValue) }
     }
     

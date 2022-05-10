@@ -42,6 +42,14 @@
         {
           "matchingAnswer" : 4,
           "skipToIdentifier" : "simpleQ4"
+        },
+        {
+          "matchingAnswer" : 5,
+          "skipToIdentifier" : "simpleQ5"
+        },
+        {
+          "matchingAnswer" : 6,
+          "skipToIdentifier" : "simpleQ6"
         }
       ],
       "baseType" : "integer",
@@ -62,6 +70,14 @@
         {
           "value" : 4,
           "text" : "Sliding Scale"
+        },
+        {
+          "value" : 5,
+          "text" : "Duration"
+        },
+        {
+          "value" : 6,
+          "text" : "Time"
         }
       ]
     },
@@ -100,7 +116,7 @@
         "type" : "integer",
         "formatOptions" : {
           "maximumLabel" : "Very much",
-          "maximumValue" : 5,
+          "maximumValue" : 7,
           "minimumLabel" : "Not at all",
           "minimumValue" : 1
         }
@@ -120,6 +136,24 @@
           "minimumLabel" : "Not at all",
           "minimumValue" : 0
         }
+      }
+    },
+    {
+      "type" : "simpleQuestion",
+      "identifier" : "simpleQ5",
+      "nextStepIdentifier" : "followupQ",
+      "title" : "How long does it take to travel to the moon?",
+      "inputItem" : {
+        "type" : "duration"
+      }
+    },
+    {
+      "type" : "simpleQuestion",
+      "identifier" : "simpleQ6",
+      "nextStepIdentifier" : "followupQ",
+      "title" : "What time is it on the moon?",
+      "inputItem" : {
+        "type" : "time"
       }
     },
     {
@@ -156,7 +190,7 @@
       "surveyRules" : [
         {
           "matchingAnswer" : "Pizza",
-          "skipToIdentifier" : "completion",
+          "skipToIdentifier" : "multipleChoice",
           "ruleOperator" : "ne"
         }
       ],
@@ -217,10 +251,6 @@
         {
           "value" : "Blue",
           "text" : "Blue"
-        },
-        {
-          "value" : "Green",
-          "text" : "Green"
         },
         {
           "value" : "Yellow",

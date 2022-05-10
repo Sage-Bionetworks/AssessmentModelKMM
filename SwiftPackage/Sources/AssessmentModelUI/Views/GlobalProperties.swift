@@ -49,6 +49,7 @@ extension Font {
     static let pauseMenuTitle: Font = .latoFont(fixedSize: 24, weight: .bold)
     
     static let fieldLabel: Font = .latoFont(18, relativeTo: .caption, weight: .regular)
+    static let durationFieldLabel: Font = .latoFont(fixedSize: 18, weight: .regular)
     
     static let likertLabel: Font = .latoFont(fixedSize: 20, weight: .bold)
 }

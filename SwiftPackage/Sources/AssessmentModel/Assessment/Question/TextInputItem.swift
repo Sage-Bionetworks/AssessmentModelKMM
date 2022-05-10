@@ -56,6 +56,26 @@ public protocol TextInputItem : InputItem {
     func buildTextValidator() -> TextEntryValidator
 }
 
+public protocol StringTextInputItem : TextInputItem {
+    var characterLimit: Int? { get }
+}
+
+public protocol IntegerTextInputItem : TextInputItem {
+    var range: IntegerRange? { get }
+}
+
+public protocol DoubleTextInputItem : TextInputItem {
+    var range: DoubleRange? { get }
+}
+
+public protocol DurationTextInputItem : TextInputItem {
+    var displayUnits: [DurationUnit] { get }
+}
+
+public protocol TimeTextInputItem : TextInputItem {
+    var range: TimeRange  { get }
+}
+
 public final class TextInputItemSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
     public var documentDescription: String? {
         """
@@ -73,8 +93,10 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
     override init() {
         let examples: [SerializableTextInputItem] = [
             DoubleTextInputItemObject(),
+            DurationTextInputItemObject(),
             IntegerTextInputItemObject(),
             StringTextInputItemObject(),
+            TimeTextInputItemObject(),
             YearTextInputItemObject(),
         ]
         self.examples = examples
@@ -136,12 +158,12 @@ public extension SerializableTextInputItem {
 }
 
 public enum TextInputType : String, StringEnumSet, DocumentableStringEnum {
-    case number, integer, string, year
+    case number, integer, string, year, duration, time
 }
 
-public struct StringTextInputItemObject : SerializableTextInputItem {
+public struct StringTextInputItemObject : SerializableTextInputItem, StringTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
-        case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, _keyboardOptions = "keyboardOptions", regExValidator
+        case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, _keyboardOptions = "keyboardOptions", regExValidator, characterLimit
     }
     public private(set) var textInputType: TextInputType = .string
     public let answerType: AnswerType = AnswerTypeString()
@@ -149,6 +171,7 @@ public struct StringTextInputItemObject : SerializableTextInputItem {
     public let resultIdentifier: String?
     public let fieldLabel: String?
     public let placeholder: String?
+    public let characterLimit: Int?
 
     public var keyboardOptions: KeyboardOptions {
         _keyboardOptions ?? KeyboardOptionsObject()
@@ -161,12 +184,14 @@ public struct StringTextInputItemObject : SerializableTextInputItem {
                 placeholder: String? = nil,
                 resultIdentifier: String? = nil,
                 keyboardOptions: KeyboardOptionsObject? = nil,
-                regExValidator: RegExValidator? = nil) {
+                regExValidator: RegExValidator? = nil,
+                characterLimit: Int? = nil) {
         self.fieldLabel = fieldLabel
         self.placeholder = placeholder
         self.resultIdentifier = resultIdentifier
         self._keyboardOptions = keyboardOptions
         self.regExValidator = regExValidator
+        self.characterLimit = characterLimit
     }
     
     public func buildTextValidator() -> TextEntryValidator {
@@ -199,6 +224,9 @@ extension StringTextInputItemObject : DocumentableStruct {
         case .regExValidator:
             return .init(propertyType: .reference(RegExValidator.documentableType()), propertyDescription:
                             "The regex validator to use to validate this text field.")
+        case .characterLimit:
+            return .init(propertyType: .primitive(.integer), propertyDescription:
+                            "The character limit for text entry.")
         }
     }
     
@@ -207,7 +235,7 @@ extension StringTextInputItemObject : DocumentableStruct {
     }
 }
 
-public struct IntegerTextInputItemObject : SerializableTextInputItem {
+public struct IntegerTextInputItemObject : SerializableTextInputItem, IntegerTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
@@ -223,6 +251,8 @@ public struct IntegerTextInputItemObject : SerializableTextInputItem {
     }
 
     public let formatOptions: IntegerFormatOptions?
+    
+    public var range: IntegerRange? { formatOptions }
     
     public init(fieldLabel: String? = nil,
                 placeholder: String? = nil,
@@ -269,7 +299,7 @@ extension IntegerTextInputItemObject : DocumentableStruct {
     }
 }
 
-public struct DoubleTextInputItemObject : SerializableTextInputItem {
+public struct DoubleTextInputItemObject : SerializableTextInputItem, DoubleTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
@@ -287,6 +317,8 @@ public struct DoubleTextInputItemObject : SerializableTextInputItem {
     }
 
     public let formatOptions: DoubleFormatOptions?
+    
+    public var range: DoubleRange? { formatOptions }
     
     public init(fieldLabel: String? = nil,
                 placeholder: String? = nil,
@@ -333,7 +365,74 @@ extension DoubleTextInputItemObject : DocumentableStruct {
     }
 }
 
-public struct YearTextInputItemObject : SerializableTextInputItem {
+public struct DurationTextInputItemObject : SerializableTextInputItem, DurationTextInputItem {
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, _displayUnits = "displayUnits"
+    }
+    public private(set) var textInputType: TextInputType = .duration
+    public var answerType: AnswerType {
+        AnswerTypeDuration(displayUnits: displayUnits)
+    }
+    
+    public let resultIdentifier: String?
+    public let fieldLabel: String?
+    public let placeholder: String?
+
+    public var keyboardOptions: KeyboardOptions {
+        KeyboardOptionsObject.integerEntryOptions
+    }
+
+    public var displayUnits: [DurationUnit] {
+        _displayUnits ?? DurationUnit.defaultDispayUnits
+    }
+    private let _displayUnits: [DurationUnit]?
+    
+    public init(fieldLabel: String? = nil,
+                placeholder: String? = nil,
+                resultIdentifier: String? = nil,
+                displayUnits: [DurationUnit]? = nil) {
+        self.fieldLabel = fieldLabel
+        self.placeholder = placeholder
+        self.resultIdentifier = resultIdentifier
+        self._displayUnits = displayUnits
+    }
+    
+    public func buildTextValidator() -> TextEntryValidator {
+        DoubleFormatOptions()
+    }
+}
+
+extension DurationTextInputItemObject : DocumentableStruct {
+
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+    
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        codingKey.stringValue == "type"
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not handled by \(self).")
+        }
+        switch key {
+        case .textInputType:
+            return .init(constValue: TextInputType.number)
+        case .resultIdentifier, .fieldLabel, .placeholder:
+            return .init(propertyType: .primitive(.string))
+        case ._displayUnits:
+            return .init(propertyType: .referenceArray(DurationUnit.documentableType()), propertyDescription:
+                            "The display units to show for duration.")
+        }
+    }
+    
+    public static func examples() -> [DurationTextInputItemObject] {
+        [.init()]
+    }
+}
+
+public struct YearTextInputItemObject : SerializableTextInputItem, IntegerTextInputItem {
     private enum CodingKeys : String, OrderedEnumCodingKey {
         case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
     }
@@ -349,6 +448,8 @@ public struct YearTextInputItemObject : SerializableTextInputItem {
     }
 
     public let formatOptions: YearFormatOptions?
+    
+    public var range: IntegerRange? { formatOptions }
     
     public init(fieldLabel: String? = nil,
                 placeholder: String? = "YYYY",
@@ -395,3 +496,66 @@ extension YearTextInputItemObject : DocumentableStruct {
     }
 }
 
+public struct TimeTextInputItemObject : SerializableTextInputItem, TimeTextInputItem {
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case textInputType = "type", resultIdentifier = "identifier", fieldLabel, placeholder, formatOptions
+    }
+    public private(set) var textInputType: TextInputType = .time
+    public let answerType: AnswerType = AnswerTypeInteger()
+    
+    public let resultIdentifier: String?
+    public let fieldLabel: String?
+    public let placeholder: String?
+
+    public var keyboardOptions: KeyboardOptions {
+        KeyboardOptionsObject.dateTimeEntryOptions
+    }
+
+    public let formatOptions: TimeFormatOptions?
+    
+    public var range: TimeRange { formatOptions ?? TimeFormatOptions() }
+    
+    public init(fieldLabel: String? = nil,
+                placeholder: String? = nil,
+                resultIdentifier: String? = nil,
+                formatOptions: TimeFormatOptions? = nil) {
+        self.fieldLabel = fieldLabel
+        self.placeholder = placeholder
+        self.resultIdentifier = resultIdentifier
+        self.formatOptions = formatOptions
+    }
+    
+    public func buildTextValidator() -> TextEntryValidator {
+        PassThruValidator()
+    }
+}
+
+extension TimeTextInputItemObject : DocumentableStruct {
+
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+    
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        codingKey.stringValue == "type"
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not handled by \(self).")
+        }
+        switch key {
+        case .textInputType:
+            return .init(constValue: TextInputType.year)
+        case .resultIdentifier, .fieldLabel, .placeholder:
+            return .init(propertyType: .primitive(.string))
+        case .formatOptions:
+            return .init(propertyType: .reference(TimeFormatOptions.documentableType()), propertyDescription:
+                            "The formatting and range options to use with input item.")
+        }
+    }
+    
+    public static func examples() -> [TimeTextInputItemObject] {
+        [.init()]
+    }
+}

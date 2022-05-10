@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
         "state": {
           "branch": null,
-          "revision": "b828a14b255c849199032b6d7eaec0e6be025115",
-          "version": "1.4.6"
+          "revision": "ddde0196c6e85b9adcfc3c5436b31b26f033f386",
+          "version": "1.4.7"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
         "state": {
           "branch": null,
-          "revision": "efbf482463133b76e3e7d54f694ef53d766867bf",
-          "version": "0.15.0"
+          "revision": "c16c754cff58d9eb3ec786aa163350538fc74c3d",
+          "version": "0.15.2"
         }
       }
     ]

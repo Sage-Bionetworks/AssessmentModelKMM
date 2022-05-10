@@ -155,6 +155,16 @@ let swiftChoiceQuestion = ChoiceQuestionStepObject(identifier: "Question 5",
                                               comment: "comment",
                                               nextNode: .node("question2"))
 
+let swiftDurationQuestion = SimpleQuestionStepObject(
+    identifier: "Question 6",
+    inputItem: DurationTextInputItemObject(displayUnits: [.minute, .second])
+)
+
+let swiftTimeQuestion = SimpleQuestionStepObject(
+    identifier: "Question 7",
+    inputItem: TimeTextInputItemObject(formatOptions: .init(from: .init(hour: 6, minute: 30)!, to: .init(hour: 2, minute: 15)!))
+)
+
 let swiftQuestionSection = SectionObject(identifier: "questionSection",
                                          children: [
                                             swiftChoiceQuestion,
@@ -162,6 +172,8 @@ let swiftQuestionSection = SectionObject(identifier: "questionSection",
                                             swiftIntQuestion,
                                             swiftStringQuestion,
                                             swiftYearQuestion,
+                                            swiftDurationQuestion,
+                                            swiftTimeQuestion,
                                          ])
 
 let swiftAssessment = AssessmentObject(identifier: "foo",

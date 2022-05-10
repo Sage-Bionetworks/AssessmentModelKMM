@@ -13,20 +13,9 @@
     "cancel": { "type": "default", "iconName" : "closeX" }
   },
   "shouldHideActions": ["goBackward"],
-  "progressMarkers": ["step1","step2"],
   "steps": [
     {
       "identifier": "step1",
-      "type": "instruction",
-      "title": "Instruction Step 1",
-      "detail": "Here are the details for this instruction.",
-      "image"  : {
-        "type":"fetchable",
-        "imageName" : "crf_seated"
-      }
-    },
-    {
-      "identifier": "step2",
       "type": "instruction",
       "title": "Animating image instruction",
       "detail": "Here are the details for this instruction.",
@@ -43,22 +32,76 @@
       }
     },
     {
-      "identifier": "choice",
+      "identifier": "step2",
+      "type": "instruction",
+      "title": "Survey Title",
+      "detail": "For the next set of questions please answer truthfully",
+      "image" : {
+        "type" : "sageResource",
+        "imageName" : "survey"
+      }
+    },
+    {
+      "identifier": "feeling",
       "type": "choiceQuestion",
       "title": "How are you feeling today?",
       "subtitle": "Select all that apply",
       "detail": "Some text. This is a test.",
       "footnote": "This is a footnote.",
-      "optional": false,
       "singleChoice": false,
       "baseType": "integer",
       "uiHint": "checkmark",
       "choices":[
-        {"text":"Fabulous!","icon":"choice1","value":1},
+        {"text":"Fabulous!","value":1},
         {"text":"Neutral","value":2},
         {"text":"Sleepy","value":3},
-        {"text":"None of the above","exclusive":true}
+        {"text":"None of the above", "value": 4, "selectorType":"exclusive"},
+        {"text":"Prefer not to answer", "value": 5, "selectorType":"exclusive"}
       ]
+    },
+    {
+      "identifier": "favoriteColor",
+      "type": "choiceQuestion",
+      "title": "What is your favorite color?",
+      "subtitle": "Select one",
+      "detail": "Some text. This is a test.",
+      "footnote": "This is a footnote.",
+      "singleChoice": true,
+      "baseType": "integer",
+      "uiHint": "radio",
+      "choices":[
+        {"text":"Red","value":1},
+        {"text":"Orange","value":2},
+        {"text":"Yellow","value":3},
+        {"text":"Green", "value": 4},
+        {"text":"Blue", "value": 5},
+        {"text":"Purple", "value": 6}
+      ],
+      "surveyRules" : [{
+        "matchingAnswer": 1,
+        "ruleOperator": "eq",
+        "skipToIdentifier": "checkboxQuestion"
+      },
+        {
+          "matchingAnswer": 4,
+          "ruleOperator": "ge",
+          "skipToIdentifier": "stringQuestion"
+        }
+        ]
+    },
+    {
+      "identifier": "otherChoice",
+      "type": "choiceQuestion",
+      "title": "What is your favorite animal?",
+      "subtitle": "Select one",
+      "detail": "Some text. This is a test.",
+      "singleChoice": true,
+      "uiHint": "radio",
+      "choices":[
+        {"text":"Cat","value":"Cat"},
+        {"text":"Dog","value":"Dog"}
+      ],
+      "other": {"type" : "string", "fieldLabel" :  "Other"}
     },
     {
       "identifier": "checkboxQuestion",
@@ -72,9 +115,7 @@
         "placementType" : "topBackground",
         "animationDuration" : 2
       },
-      "optional": true,
-      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "fieldLabel": "Check for Yes"},
-      "skipCheckbox":{"type": "skipCheckbox", "fieldLabel": "No answer"}
+      "inputItem":{"type": "checkbox", "identifier": "checkboxQuestionResult", "label": "Check for Yes"}
     },
     {
       "identifier": "stringQuestion",
@@ -88,9 +129,7 @@
         "placementType" : "topBackground",
         "animationDuration" : 2
       },
-      "optional": true,
-      "inputItem":{"type" : "string", "placeholder" :  "Enter text"},
-      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"No answer"}
+      "inputItem":{"type" : "string", "placeholder" :  "Enter text"}
     },
     {
       "identifier": "yearQuestion",
@@ -104,16 +143,13 @@
         "placementType" : "topBackground",
         "animationDuration" : 2
       },
-      "optional": true,
-      "inputItem":{"type" : "year", "placeholder" :  "Enter year"},
-      "skipCheckbox":{"type":"skipCheckbox","fieldLabel":"Skip checkbox"}
+      "inputItem":{"type" : "year", "placeholder" :  "Enter year"}
     },
     {
       "identifier": "multipleInputQuestion",
       "type": "multipleInputQuestion",
       "title": "Multiple Questions",
       "subtitle": "Subtitle goes here",
-      "optional": true,
       "inputItems": [{"type" : "string", "placeholder" :  "What is your full name?"},
         {"type" : "string", "placeholder" :  "Enter your first name"},
         {"type" : "string", "placeholder" :  "Enter your middle name"},
