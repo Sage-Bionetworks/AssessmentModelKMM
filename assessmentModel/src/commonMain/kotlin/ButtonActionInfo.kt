@@ -25,19 +25,18 @@ interface ButtonActionInfo {
     val imageInfo: ImageInfo?
 }
 
-// TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
-///**
-// * The action of this [ButtonActionInfo] is to set up navigation to a different step. That navigation should happen immediately
-// * without waiting for normal completion of any activity associated with this step. The behavior is similar to a "skip"
-// * button where timers and spoken instructions are ignored.
-// */
-//interface NavigationButtonActionInfo : ButtonActionInfo {
-//
-//    /**
-//     * The identifier for the step to skip to if the action is called.
-//     */
-//    val skipToIdentifier: String
-//}
+/**
+ * The action of this [ButtonActionInfo] is to set up navigation to a different step. That navigation should happen immediately
+ * without waiting for normal completion of any activity associated with this step. The behavior is similar to a "skip"
+ * button where timers and spoken instructions are ignored.
+ */
+interface NavigationButtonActionInfo : ButtonActionInfo {
+
+    /**
+     * The identifier for the step to skip to if the action is called.
+     */
+    val skipToIdentifier: String
+}
 
 // TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
 ///**

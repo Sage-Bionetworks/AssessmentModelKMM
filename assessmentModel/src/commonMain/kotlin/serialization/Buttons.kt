@@ -13,8 +13,8 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 val buttonSerializersModule = SerializersModule {
     polymorphic(ButtonActionInfo::class) {
         subclass(ButtonActionInfoObject::class)
+subclass(NavigationButtonActionInfoObject::class)
 // TODO: young 03/15/2022 Remove when/if we figure out whether or not we want to include any of these.
-//        subclass(NavigationButtonActionInfoObject::class)
 //        subclass(ReminderButtonActionInfoObject::class)
 //        subclass(WebViewButtonActionInfoObject::class)
 //        subclass(VideoViewButtonActionInfoObject::class)
@@ -47,14 +47,13 @@ data class ButtonActionInfoObject(override val buttonTitle: String? = null,
                                   override var packageName: String? = null,
                                   override var bundleIdentifier: String? = null) : SerializableButtonActionInfo()
 
-// TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
-//@Serializable
-//@SerialName("navigation")
-//data class NavigationButtonActionInfoObject(override val buttonTitle: String? = null,
-//                                            override val iconName: String? = null,
-//                                            override val skipToIdentifier: String,
-//                                            override var packageName: String? = null,
-//                                            override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), NavigationButtonActionInfo
+@Serializable
+@SerialName("navigation")
+data class NavigationButtonActionInfoObject(override val buttonTitle: String? = null,
+                                            override val iconName: String? = null,
+                                            override val skipToIdentifier: String,
+                                            override var packageName: String? = null,
+                                            override var bundleIdentifier: String? = null) : SerializableButtonActionInfo(), NavigationButtonActionInfo
 
 // TODO: syoung 03/07/2022 Uncomment or delete once we know whether or not this is going to be used in future designs.
 //@Serializable
