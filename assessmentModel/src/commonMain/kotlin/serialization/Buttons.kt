@@ -13,7 +13,7 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 val buttonSerializersModule = SerializersModule {
     polymorphic(ButtonActionInfo::class) {
         subclass(ButtonActionInfoObject::class)
-subclass(NavigationButtonActionInfoObject::class)
+        subclass(NavigationButtonActionInfoObject::class)
 // TODO: young 03/15/2022 Remove when/if we figure out whether or not we want to include any of these.
 //        subclass(ReminderButtonActionInfoObject::class)
 //        subclass(WebViewButtonActionInfoObject::class)
