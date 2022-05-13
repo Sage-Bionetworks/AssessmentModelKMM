@@ -56,19 +56,19 @@ struct PauseMenu: View {
             Spacer()
             
             VStack(spacing: innerSpacing) {
-                if assessmentState.interuptionHandling.canResume {
+                if assessmentState.interruptionHandling.canResume {
                     Button(action: viewModel.resume) {
                         Text("Resume", bundle: .module)
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }
-                if assessmentState.interuptionHandling.reviewIdentifier != nil {
+                if assessmentState.interruptionHandling.reviewIdentifier != nil {
                     Button(action: viewModel.reviewInstructions) {
                         Text("Review instructions", bundle: .module)
                     }
                     .buttonStyle(SecondaryButtonStyle())
                 }
-                if assessmentState.interuptionHandling.canSkip {
+                if assessmentState.interruptionHandling.canSkip {
                     Button(action: viewModel.skipAssessment) {
                         Text("Skip this activity", bundle: .module)
                     }
