@@ -66,6 +66,11 @@ class NodeNavigatorTests: XCTestCase {
         
         let multipleChoiceResult = followupNavigationSurveyA(state, expectedPrevious: "choiceQ1")
         XCTAssertNotNil(multipleChoiceResult)
+        
+        let restoredState = TestNavigationState(surveyA, restoredResult: state.assessmentResult)
+        let restoredNode = restoredState.nodeNavigator.nodeAfter(currentNode: nil, branchResult: restoredState.assessmentResult)
+        XCTAssertEqual("multipleChoice", restoredNode.node?.identifier)
+        XCTAssertEqual(.forward, restoredNode.direction)
     }
     
     func testSurveyANavigation_Q3() {
@@ -94,6 +99,11 @@ class NodeNavigatorTests: XCTestCase {
         
         let multipleChoiceResult = followupNavigationSurveyA(state, expectedPrevious: "simpleQ3")
         XCTAssertNotNil(multipleChoiceResult)
+        
+        let restoredState = TestNavigationState(surveyA, restoredResult: state.assessmentResult)
+        let restoredNode = restoredState.nodeNavigator.nodeAfter(currentNode: nil, branchResult: restoredState.assessmentResult)
+        XCTAssertEqual("multipleChoice", restoredNode.node?.identifier)
+        XCTAssertEqual(.forward, restoredNode.direction)
     }
 
     
@@ -179,9 +189,9 @@ class NodeNavigatorTests: XCTestCase {
         
         var currentNode: Node?
         
-        init(_ assessment: AssessmentObject) {
+        init(_ assessment: AssessmentObject, restoredResult: AssessmentResultObject? = nil) {
             self.assessment = assessment
-            self.assessmentResult = assessment.instantiateAssessmentResult() as! AssessmentResultObject
+            self.assessmentResult = restoredResult?.deepCopy() ?? assessment.instantiateAssessmentResult() as! AssessmentResultObject
             self.nodeNavigator = try! assessment.instantiateNavigator(state: self) as! NodeNavigator
         }
     }

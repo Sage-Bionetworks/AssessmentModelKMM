@@ -106,6 +106,18 @@ class AssessmentNavigationTests: XCTestCase {
                 XCTAssertNil(result.endDateTime)
             }
         }
+        
+        // Check restored state
+        guard let expectedNode = taskController.assessmentState.currentStep?.node
+        else {
+            XCTFail("Expected the current node to be non-nil")
+            return
+        }
+        let restoredController = TestAssessmentController(steps, restoredResult: taskController.assessmentState.assessmentResult)
+        let restoredState = restoredController.assessmentState.currentStep
+        XCTAssertEqual(expectedNode.identifier, restoredState?.node.identifier)
+        XCTAssertEqual(expectedNode.typeName, restoredState?.node.typeName)
+        XCTAssertEqual(.forward, restoredController.viewModel.navigationViewModel.currentDirection)
     }
     
     func testNavigation_BackFrom5X() {
@@ -137,6 +149,18 @@ class AssessmentNavigationTests: XCTestCase {
         
         XCTAssertEqual(.backward, taskController.viewModel.navigationViewModel.currentDirection)
         XCTAssertTrue(taskController.viewModel.navigationViewModel.backEnabled)
+        
+        // Check restored state
+        guard let expectedNode = taskController.assessmentState.currentStep?.node
+        else {
+            XCTFail("Expected the current node to be non-nil")
+            return
+        }
+        let restoredController = TestAssessmentController(steps, restoredResult: taskController.assessmentState.assessmentResult)
+        let restoredState = restoredController.assessmentState.currentStep
+        XCTAssertEqual(expectedNode.identifier, restoredState?.node.identifier)
+        XCTAssertEqual(expectedNode.typeName, restoredState?.node.typeName)
+        XCTAssertEqual(.forward, restoredController.viewModel.navigationViewModel.currentDirection)
     }
 
     func testNavigation_BackFrom5Z() {
@@ -168,6 +192,18 @@ class AssessmentNavigationTests: XCTestCase {
         
         XCTAssertEqual(.backward, taskController.viewModel.navigationViewModel.currentDirection)
         XCTAssertTrue(taskController.viewModel.navigationViewModel.backEnabled)
+        
+        // Check restored state
+        guard let expectedNode = taskController.assessmentState.currentStep?.node
+        else {
+            XCTFail("Expected the current node to be non-nil")
+            return
+        }
+        let restoredController = TestAssessmentController(steps, restoredResult: taskController.assessmentState.assessmentResult)
+        let restoredState = restoredController.assessmentState.currentStep
+        XCTAssertEqual(expectedNode.identifier, restoredState?.node.identifier)
+        XCTAssertEqual(expectedNode.typeName, restoredState?.node.typeName)
+        XCTAssertEqual(.forward, restoredController.viewModel.navigationViewModel.currentDirection)
     }
 }
 
@@ -192,9 +228,9 @@ class TestAssessmentController {
     let assessmentState: AssessmentState
     let viewModel: AssessmentViewModel
     
-    init(_ children: [Node]) {
+    init(_ children: [Node], restoredResult: AssessmentResult? = nil) {
         let assessment = AssessmentObject(identifier: "test", children: children)
-        let assessmentState = AssessmentState(assessment)
+        let assessmentState = AssessmentState(assessment, restoredResult: restoredResult)
         let viewModel = AssessmentViewModel()
         viewModel.initialize(assessmentState, viewVender: TestAssessmentStepViewVender())
         

@@ -95,7 +95,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     }
     
     private func reviewNode() -> Node? {
-        guard let reviewIdentifier = self.state.interuptionHandling.reviewIdentifier
+        guard let reviewIdentifier = self.state.interruptionHandling.reviewIdentifier
         else {
             return nil
         }
@@ -322,7 +322,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     }
     
     open func canPauseAssessment(step: Step) -> Bool {
-        guard state.interuptionHandling.canPause &&
+        guard state.interruptionHandling.canPause &&
               !shouldHide(.navigation(.pause), step: step)
         else {
             return false

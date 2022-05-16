@@ -90,7 +90,7 @@ public final class AssessmentState : BranchState {
     public var assessment: Assessment { node as! Assessment }
     public var assessmentResult: AssessmentResult { result as! AssessmentResult }
     
-    public let interuptionHandling: InterruptionHandling
+    public let interruptionHandling: InterruptionHandling
 
     @Published public var status: Status = .running
     @Published public var currentStep: StepState?
@@ -98,9 +98,10 @@ public final class AssessmentState : BranchState {
     @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
 
-    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
-        let result = restoredResult ?? assessment.instantiateAssessmentResult()
-        self.interuptionHandling = interuptionHandling ?? assessment.interruptionHandling
+    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interruptionHandling: InterruptionHandling? = nil) {
+        let rules = interruptionHandling ?? assessment.interruptionHandling
+        let result = restoredResult.flatMap { rules.canSaveForLater ? $0.deepCopy() : nil } ?? assessment.instantiateAssessmentResult()
+        self.interruptionHandling = rules
         super.init(branch: assessment, result: result)
     }
     
