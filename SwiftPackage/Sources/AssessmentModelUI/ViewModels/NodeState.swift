@@ -98,8 +98,8 @@ public final class AssessmentState : BranchState {
     @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
 
-    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interuptionHandling: InterruptionHandling? = nil) {
-        let rules = interuptionHandling ?? assessment.interruptionHandling
+    public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interruptionHandling: InterruptionHandling? = nil) {
+        let rules = interruptionHandling ?? assessment.interruptionHandling
         let result = restoredResult.flatMap { rules.canSaveForLater ? $0.deepCopy() : nil } ?? assessment.instantiateAssessmentResult()
         self.interruptionHandling = rules
         super.init(branch: assessment, result: result)
