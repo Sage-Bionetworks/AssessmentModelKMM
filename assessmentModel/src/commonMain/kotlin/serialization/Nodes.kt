@@ -64,6 +64,7 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
     override var buttonMap: Map<ButtonAction, ButtonActionInfo> = mapOf()
+    var webConfig: JsonElement? = null
 
     @SerialName("nextStepIdentifier")
     override var nextNodeIdentifier: String? = null
