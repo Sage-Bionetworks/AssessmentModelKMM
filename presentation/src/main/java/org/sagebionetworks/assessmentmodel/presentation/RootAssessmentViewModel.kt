@@ -3,13 +3,17 @@ package org.sagebionetworks.assessmentmodel.presentation
 import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
 
 open class RootAssessmentViewModel(
     val assessmentPlaceholder: AssessmentPlaceholder,
     val registryProvider: AssessmentRegistryProvider,
-    val nodeStateProvider: CustomNodeStateProvider? = null
+    val nodeStateProvider: CustomNodeStateProvider? = null,
+    val assessmentResultCache: AssessmentResultCache? = null,
+    val assessmentInstanceId: String? = null,
+    val sessionExpiration: Instant? = null,
 ) : ViewModel(), RootNodeController {
 
     var hasHandledLoad = false
@@ -23,7 +27,10 @@ open class RootAssessmentViewModel(
     init {
         viewModelScope.launch {
             val assessment = registryProvider.loadAssessment(assessmentPlaceholder)
-            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null)?: BranchNodeStateImpl(assessment!!, null)
+            val previousResult = assessmentInstanceId?.let { id ->
+                assessmentResultCache?.loadAssessmentResult(id, registryProvider.getJsonCoder(assessmentPlaceholder))
+            }
+            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null, previousResult)?: BranchNodeStateImpl(assessment!!, null, previousResult = previousResult)
             assessmentNodeState?.customNodeStateProvider = nodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
@@ -36,6 +43,19 @@ open class RootAssessmentViewModel(
     }
 
     override fun handleFinished(reason: FinishedReason, nodeState: NodeState) {
+        if (!reason.markFinished && !reason.declined) {
+            val assessment = assessmentNodeState?.node as? Assessment
+            if (assessment?.interruptionHandling?.canSaveForLater == true && assessmentInstanceId != null) {
+                // We have an incomplete assessment to be saved for later
+                assessmentResultCache?.storeAssessmentResult(
+                    assessmentInstanceId,
+                    nodeState.currentResult as AssessmentResult,
+                    registryProvider.getJsonCoder(assessmentPlaceholder),
+                    sessionExpiration
+                )
+            }
+        }
+
         val resultString = nodeState.currentResult.toString()
         Log.d("Result", resultString)
 

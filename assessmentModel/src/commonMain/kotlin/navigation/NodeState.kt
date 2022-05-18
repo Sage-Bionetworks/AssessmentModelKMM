@@ -214,12 +214,17 @@ class LeafNodeStateImpl(override val node: Node, override val parent: BranchNode
     override val currentResult: Result = node.createResult()
 }
 
-open class BranchNodeStateImpl(override val node: BranchNode, final override val parent: BranchNodeState? = null) : BranchNodeState {
+open class BranchNodeStateImpl(
+    override val node: BranchNode,
+    final override val parent: BranchNodeState? = null,
+    //Previous result should only be used for top level assessments where the parent is null.
+    private val previousResult: BranchNodeResult? = null
+) : BranchNodeState {
     private val navigator: Navigator by lazy { node.createNavigator(this) }
 
     override val currentResult: BranchNodeResult by lazy {
         // If this node has previously been shown, use that to determine the current state.
-        previousResult() as? BranchNodeResult ?: this.node.createResult()
+        previousResult ?: previousResult() as? BranchNodeResult ?: this.node.createResult()
     }
 
     override var currentChild: NodeState? = null
@@ -438,7 +443,7 @@ open class BranchNodeStateImpl(override val node: BranchNode, final override val
      */
     open fun getBranchNodeState(navigationPoint: NavigationPoint): BranchNodeState? {
         return (navigationPoint.node as? BranchNode)?.let {
-            customNodeStateProvider?.customBranchNodeStateFor(it, this) ?: BranchNodeStateImpl(it, this)
+            customNodeStateProvider?.customBranchNodeStateFor(it, this, null) ?: BranchNodeStateImpl(it, this)
         }
     }
 
