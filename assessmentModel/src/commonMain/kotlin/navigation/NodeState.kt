@@ -217,14 +217,14 @@ class LeafNodeStateImpl(override val node: Node, override val parent: BranchNode
 open class BranchNodeStateImpl(
     override val node: BranchNode,
     final override val parent: BranchNodeState? = null,
-    //Previous result should only be used for top level assessments where the parent is null.
-    private val previousResult: BranchNodeResult? = null
+    //Restored result should only be used for top level assessments where the parent is null.
+    private val restoredResult: BranchNodeResult? = null
 ) : BranchNodeState {
     private val navigator: Navigator by lazy { node.createNavigator(this) }
 
     override val currentResult: BranchNodeResult by lazy {
         // If this node has previously been shown, use that to determine the current state.
-        previousResult ?: previousResult() as? BranchNodeResult ?: this.node.createResult()
+        restoredResult ?: previousResult() as? BranchNodeResult ?: this.node.createResult()
     }
 
     override var currentChild: NodeState? = null

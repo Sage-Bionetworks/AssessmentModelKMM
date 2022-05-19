@@ -27,10 +27,10 @@ open class RootAssessmentViewModel(
     init {
         viewModelScope.launch {
             val assessment = registryProvider.loadAssessment(assessmentPlaceholder)
-            val previousResult = assessmentInstanceId?.let { id ->
+            val restoredResult = assessmentInstanceId?.let { id ->
                 assessmentResultCache?.loadAssessmentResult(id, registryProvider.getJsonCoder(assessmentPlaceholder))
             }
-            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null, previousResult)?: BranchNodeStateImpl(assessment!!, null, previousResult = previousResult)
+            assessmentNodeState = nodeStateProvider?.customBranchNodeStateFor(assessment!!, null, restoredResult)?: BranchNodeStateImpl(assessment!!, null, restoredResult = restoredResult)
             assessmentNodeState?.customNodeStateProvider = nodeStateProvider
             assessmentLoadedMutableLiveData.value = assessmentNodeState
         }
