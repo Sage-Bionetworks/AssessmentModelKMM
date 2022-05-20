@@ -1290,6 +1290,9 @@ open class NodeSerializationTestHelper {
         return object : AssessmentRegistryProvider {
             override val fileLoader = fileLoader
             override val modules = modules
+            override fun getJsonCoder(assessmentPlaceholder: AssessmentPlaceholder): Json {
+                return Serialization.JsonCoder.default
+            }
         }
     }
 }

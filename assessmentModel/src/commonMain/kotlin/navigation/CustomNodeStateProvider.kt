@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.navigation
 
 import org.sagebionetworks.assessmentmodel.BranchNode
+import org.sagebionetworks.assessmentmodel.BranchNodeResult
 import org.sagebionetworks.assessmentmodel.Node
 
 /**
@@ -13,7 +14,7 @@ interface CustomNodeStateProvider {
      * Is there a custom [BranchNodeState] for the given [node]? This can be used to return a custom implementation for
      * an [Assessment].
      */
-    fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState? = null
+    fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?, restoredResult: BranchNodeResult?): BranchNodeState? = null
 
     /**
      * Is there a custom [NodeState] for the given [node]? This can be used to return a custom implementation such as
@@ -30,9 +31,9 @@ interface CustomNodeStateProvider {
 class RootCustomNodeStateProvider(val providers: List<CustomNodeStateProvider>) :
     CustomNodeStateProvider {
 
-    override fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?): BranchNodeState? {
+    override fun customBranchNodeStateFor(node: BranchNode, parent: BranchNodeState?, restoredResult: BranchNodeResult?): BranchNodeState? {
         for (provider in providers) {
-            val state = provider.customBranchNodeStateFor(node, parent)
+            val state = provider.customBranchNodeStateFor(node, parent, restoredResult)
             if (state != null) {
                 return state
             }

@@ -70,8 +70,8 @@ class AssessmentRegistryProviderIOS(modulesResourceName: String? = null, bundle:
 
     private val defaultBundle: NSBundle = bundle ?: NSBundle.mainBundle
 
-    private var _modules: MutableList<ModuleInfo>? = null
-    override val modules: List<ModuleInfo>
+    private var _modules: MutableList<JsonModuleInfo>? = null
+    override val modules: List<JsonModuleInfo>
         get() {
             setupModules()
             return _modules!!
@@ -90,7 +90,7 @@ class AssessmentRegistryProviderIOS(modulesResourceName: String? = null, bundle:
     /**
      * Register a module *after* instantiating the registry provider.
      */
-    fun registerModuleInfo(moduleInfo: ModuleInfo) {
+    fun registerModuleInfo(moduleInfo: JsonModuleInfo) {
         setupModules()
         _modules!!.add(moduleInfo)
     }
