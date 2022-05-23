@@ -36,6 +36,8 @@ import SharedMobileUI
 import AssessmentModel
 
 struct PauseMenu: View {
+    @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var assessmentState: AssessmentState
     @ObservedObject var viewModel: AssessmentViewModel
     
@@ -53,20 +55,20 @@ struct PauseMenu: View {
             
             Spacer()
             
-            VStack(spacing: 16) {
-                if assessmentState.interuptionHandling.canResume {
+            VStack(spacing: innerSpacing) {
+                if assessmentState.interruptionHandling.canResume {
                     Button(action: viewModel.resume) {
                         Text("Resume", bundle: .module)
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }
-                if assessmentState.interuptionHandling.reviewIdentifier != nil {
+                if assessmentState.interruptionHandling.reviewIdentifier != nil {
                     Button(action: viewModel.reviewInstructions) {
                         Text("Review instructions", bundle: .module)
                     }
                     .buttonStyle(SecondaryButtonStyle())
                 }
-                if assessmentState.interuptionHandling.canSkip {
+                if assessmentState.interruptionHandling.canSkip {
                     Button(action: viewModel.skipAssessment) {
                         Text("Skip this activity", bundle: .module)
                     }
@@ -77,7 +79,7 @@ struct PauseMenu: View {
                 }
                 .buttonStyle(SecondaryButtonStyle())
             }
-            .padding(.horizontal, 32)
+            .padding(.horizontal, horizontalPadding)
             
             Spacer()
         }

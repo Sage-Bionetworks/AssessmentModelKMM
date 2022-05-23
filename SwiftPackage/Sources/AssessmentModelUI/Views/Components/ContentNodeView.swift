@@ -36,6 +36,9 @@ import AssessmentModel
 import SharedMobileUI
 
 public struct ContentNodeView : View {
+    @SwiftUI.Environment(\.verticalPadding) var verticalPadding: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
+    
     let contentInfo: ContentNode
     let alignment: Alignment
     
@@ -47,7 +50,7 @@ public struct ContentNodeView : View {
     public var body: some View {
         GeometryReader { scrollViewGeometry in
             ScrollView {  // Main content for the view includes header, content, and navigation footer
-                VStack(spacing: 24) {
+                VStack(spacing: verticalPadding) {
                     Spacer()
                     if let imageInfo = contentInfo.imageInfo {
                         HStack {
@@ -67,7 +70,7 @@ public struct ContentNodeView : View {
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 32)
+                .padding(.horizontal, horizontalPadding)
                 .frame(minHeight: scrollViewGeometry.size.height)
             }
         }

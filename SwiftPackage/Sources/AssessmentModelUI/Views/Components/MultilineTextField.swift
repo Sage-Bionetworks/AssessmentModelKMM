@@ -38,51 +38,90 @@ import SharedMobileUI
 
 struct MultilineTextField: View {
     @SwiftUI.Environment(\.characterLimit) var characterLimit: Int
+    @ScaledMetric private var fontRatio: CGFloat = 1
     @EnvironmentObject private var keyboard: KeyboardObserver
-    @State private var textEditorHeight : CGFloat = textFieldFontSize
     var isSelected: Binding<Bool>?
     @State var isEditingText: Bool = false
-    @Binding var text: String
+    @Binding var text: String?
+    @State var fontSize: CGFloat = textFieldFontSize
+    @State var textWidth: CGFloat = 0
+    @State var fontHeight: CGFloat = 0
     
     private let inputItem: TextInputItem
     private let fieldLabel: String
+    private let style: TextFieldStyle
+    private let isBold: Bool
     
-    init(text bindingText: Binding<String>,
+    init(text bindingText: Binding<String?>,
          isSelected: Binding<Bool>? = nil,
          inputItem: TextInputItem = StringTextInputItemObject(),
-         fieldLabel: String? = nil) {
+         fieldLabel: String? = nil,
+         fontStyle: TextFieldStyle = .otherChoice) {
         self._text = bindingText
         self.isSelected = isSelected
         self.inputItem = inputItem
         self.fieldLabel = fieldLabel.map { $0.hasSuffix(": ") || $0.isEmpty ? $0 : "\($0): " } ?? ""
+        self.style = fontStyle
+        self.isBold = (fontStyle == .otherChoice)
     }
     
     var body: some View {
-        ZStack(alignment: .leading) {
-            Text("\(fieldLabel)\(text)")
+        ZStack(alignment: .bottomTrailing) {
+            // This is used to force a refresh of the font size and width of
+            // the view if the user changes the dynamic font size.
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 .opacity(0)
-                .font(.textField)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 5)
-                .heightReader(height: $textEditorHeight)
+                .lineLimit(1)
+                .widthReader(width: $textWidth)
+                .heightReader(height: $fontHeight)
+            // This is a hint to the user that they've hit the text limit.
+            Text("[\(characterLimit)]")
+                .opacity((text?.count ?? 0 == characterLimit) && isEditingText && style == .freeText ? 1 : 0)
+                .foregroundColor(.hex727272)
+                .font(.italicLatoFont(18, relativeTo: nil, weight: .regular))
+                .offset(x: 0, y: fontSize/2)
             #if canImport(UIKit)
-            MultilineTextFieldContainer(fieldLabel, text: $text,
-                                        isEditingText: $isEditingText,
-                                        isSelected: isSelected,
-                                        inputItem: inputItem,
-                                        characterLimit: characterLimit)
-                .frame(height: textEditorHeight)
+            // This is the actual UITextView used to support the desired UI/UX
+            MultilineTextFieldContainer(
+                fieldLabel,
+                text: $text,
+                isEditingText: $isEditingText,
+                isSelected: isSelected,
+                inputItem: inputItem,
+                characterLimit: characterLimit,
+                textHeight: $keyboard.textFieldHeight,
+                cursorAtEnd: $keyboard.cursorAtEnd,
+                fontSize: $fontSize,
+                isBold: isBold)
+                .frame(height: keyboard.textFieldHeight)
             #endif
         }
-
         .onChange(of: isEditingText) { newValue in
             keyboard.keyboardFocused = newValue
+        }
+        .onChange(of: textWidth) { _ in
+            updateStyle()
+        }
+        .onChange(of: fontHeight) { _ in
+            updateStyle()
+        }
+        .onAppear {
+            updateStyle()
+        }
+    }
+    
+    func updateStyle() {
+        switch style {
+        case .otherChoice:
+            fontSize = textFieldFontSize
+        case .freeText:
+            fontSize = max(1, min(1.5, fontRatio)) * 18
         }
     }
 }
 
 fileprivate struct CharacterLimitEnvironmentKey: EnvironmentKey {
-    fileprivate static let defaultValue: Int = .max
+    fileprivate static let defaultValue: Int = 250
 }
 
 extension EnvironmentValues {
@@ -99,18 +138,27 @@ extension View {
 }
 
 struct PreviewMultilineTextField: View {
-    @State var value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    @State var value: String? = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+    @State var oneLine: String? = "Lorem ipsum dolor"
     @State var isSelected = false
+    @StateObject var keyboard: KeyboardObserver = .init()
     
     var body: some View {
         VStack {
+            Text("Hello, World")
+                .font(.latoFont(18))
+            
             MultilineTextField(text: $value, isSelected: $isSelected, fieldLabel: "Other")
                 .border(Color.sageBlack, width: 1)
             
-            MultilineTextField(text: $value)
+            MultilineTextField(text: $oneLine, isSelected: $isSelected, fieldLabel: "Other")
+                .border(Color.sageBlack, width: 1)
+            
+            MultilineTextField(text: $value, fontStyle: .freeText)
                 .border(Color.sageBlack, width: 1)
         }
         .characterLimit(80)
+        .environmentObject(keyboard)
     }
 }
 
@@ -126,21 +174,32 @@ struct PreviewMultilineTextField_Previews: PreviewProvider {
 
 #if canImport(UIKit)
 
-fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
+fileprivate final class MultilineTextFieldContainer: UIViewRepresentable {
     private let characterLimit: Int
     private let fieldLabel: String
     private let inputItem: TextInputItem
-    private var value: Binding<String>
-    private var isEditingText: Binding<Bool>
-    private var isSelected: Binding<Bool>?
+    private let value: Binding<String?>
+    private let isEditingText: Binding<Bool>
+    private let isSelected: Binding<Bool>?
+    private let textHeight: Binding<CGFloat>
+    private let cursorAtEnd: Binding<Bool>
+    private let isBold: Bool
+    private let fontSize: Binding<CGFloat>
+    
+    private var previousFontSize: CGFloat
 
-    init(_ fieldLabel: String, text: Binding<String>, isEditingText: Binding<Bool>, isSelected: Binding<Bool>?, inputItem: TextInputItem, characterLimit: Int) {
+    init(_ fieldLabel: String, text: Binding<String?>, isEditingText: Binding<Bool>, isSelected: Binding<Bool>?, inputItem: TextInputItem, characterLimit: Int, textHeight: Binding<CGFloat>, cursorAtEnd: Binding<Bool>, fontSize: Binding<CGFloat>, isBold: Bool) {
         self.fieldLabel = fieldLabel
         self.inputItem = inputItem
         self.value = text
         self.isEditingText = isEditingText
         self.isSelected = isSelected
         self.characterLimit = characterLimit
+        self.textHeight = textHeight
+        self.cursorAtEnd = cursorAtEnd
+        self.fontSize = fontSize
+        self.isBold = isBold
+        self.previousFontSize = fontSize.wrappedValue
     }
 
     func makeCoordinator() -> MultilineTextFieldContainer.Coordinator {
@@ -148,31 +207,32 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
     }
 
     func makeUIView(context: UIViewRepresentableContext<MultilineTextFieldContainer>) -> UITextView {
-
+        
         let backingView = UITextView(frame: .zero)
         backingView.text = backingViewText()
         backingView.delegate = context.coordinator
         backingView.backgroundColor = .clear
-        backingView.font = .textField
         backingView.adjustsFontForContentSizeCategory = true
         backingView.textColor = .textForeground
-        
-        // Set up keyboard options
-        backingView.autocapitalizationType = inputItem.keyboardOptions.autocapitalizationType.uiType
-        backingView.autocorrectionType = inputItem.keyboardOptions.autocorrectionType.uiType
-        backingView.keyboardType = inputItem.keyboardOptions.keyboardType.uiType
-        backingView.spellCheckingType = inputItem.keyboardOptions.spellCheckingType.uiType
+        backingView.returnKeyType = .done
+        backingView.isScrollEnabled = false
+        backingView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        backingView.font = .latoFont(fontSize.wrappedValue, relativeTo: nil, weight: isBold ? .bold : .regular)
 
         return backingView
     }
 
     func updateUIView(_ uiView: UITextView, context: UIViewRepresentableContext<MultilineTextFieldContainer>) {
         uiView.text = backingViewText()
-        
-        // Look to see if the selection state has changed and the text view should become the first responder.
+
         DispatchQueue.main.async {
+            
+            // Recalculate the frame height.
+            self.updateTextViewSize(uiView)
+            
+            // Look to see if the selection state has changed and the text view should become the first responder.
             guard !self.isEditingText.wrappedValue,
-                  self.value.wrappedValue.isEmpty,
+                  self.value.wrappedValue?.isEmpty ?? true,
                   let isSelected = self.isSelected?.wrappedValue, isSelected
             else {
                 return
@@ -181,8 +241,20 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         }
     }
     
+    func updateTextViewSize(_ textView: UITextView) {
+        if previousFontSize != fontSize.wrappedValue {
+            previousFontSize = fontSize.wrappedValue
+            textView.font = .latoFont(fontSize.wrappedValue, relativeTo: nil, weight: isBold ? .bold : .regular)
+        }
+        
+        let newHeight = textView.sizeThatFits(textView.frame.size).height
+        if newHeight != textHeight.wrappedValue {
+            textHeight.wrappedValue = newHeight
+        }
+    }
+    
     func backingViewText() -> String {
-        "\(fieldLabel)\(value.wrappedValue)"
+        "\(fieldLabel)\(value.wrappedValue ?? "")"
     }
     
     func updateText(newValue: String?, trim: Bool) {
@@ -218,7 +290,7 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         @objc func textViewDidEndEditing(_ textView: UITextView) {
             parent.isEditingText.wrappedValue = false
             parent.updateText(newValue: textView.text, trim: true)
-            if parent.value.wrappedValue.isEmpty {
+            if parent.value.wrappedValue?.isEmpty ?? true {
                 parent.isSelected?.wrappedValue = false
             }
         }
@@ -232,12 +304,20 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
                 return false
             }
             else {
+                updateCursorAtEnd(textView)
                 return textView.text.count - range.length + text.count <= parent.characterLimit
             }
         }
 
         @objc func textViewDidChangeSelection(_ textView: UITextView) {
             textView.moveCursorIfNeeded(parent.fieldLabel)
+            updateCursorAtEnd(textView)
+        }
+        
+        func updateCursorAtEnd(_ textView: UITextView) {
+            parent.cursorAtEnd.wrappedValue = textView.selectedTextRange.map {
+                $0.end == textView.endOfDocument
+            } ?? false
         }
 
         @objc func textViewDidChange(_ textView: UITextView) {

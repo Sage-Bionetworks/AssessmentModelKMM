@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.json.Json
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
 import org.sagebionetworks.assessmentmodel.serialization.ModuleInfoObject
 import org.sagebionetworks.assessmentmodel.serialization.moduleInfoSerializersModule
@@ -43,6 +44,11 @@ interface AssessmentRegistryProvider {
         return modules.any { it.hasAssessment(assessmentPlaceholder) }
     }
 
+    /**
+     * Get the Json coder for serializing an assessment's results
+     */
+    fun getJsonCoder(assessmentPlaceholder: AssessmentPlaceholder) : Json
+
 }
 
 /**
@@ -60,5 +66,28 @@ class RootAssessmentRegistryProvider(override val fileLoader: FileLoader, val pr
             }
             return result
         }
+
+    /**
+     * Load the [Assessment] from the given [AssessmentPlaceholder].
+     */
+    override fun loadAssessment(assessmentPlaceholder: AssessmentPlaceholder): Assessment {
+        val provider = providers.find { it.canLoadAssessment(assessmentPlaceholder) }
+        return provider?.loadAssessment(assessmentPlaceholder)
+            ?: throw IllegalStateException("This version of the application cannot load " + {assessmentPlaceholder.assessmentInfo.identifier})
+    }
+
+    /**
+     * Does this [AssessmentRegistryProvider] include an [Assessment] that matches the given [AssessmentPlaceholder]?
+     */
+    override fun canLoadAssessment(assessmentPlaceholder: AssessmentPlaceholder): Boolean {
+        return providers.any { it.canLoadAssessment(assessmentPlaceholder) }
+    }
+
+    override fun getJsonCoder(assessmentPlaceholder: AssessmentPlaceholder): Json {
+        val provider = providers.find { it.canLoadAssessment(assessmentPlaceholder) }
+        return provider?.getJsonCoder(assessmentPlaceholder)
+            ?: throw IllegalStateException("This version of the application cannot load " + {assessmentPlaceholder.assessmentInfo.identifier})
+    }
+
 }
 

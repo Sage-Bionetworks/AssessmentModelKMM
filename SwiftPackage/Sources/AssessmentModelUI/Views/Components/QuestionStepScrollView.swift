@@ -37,73 +37,64 @@ import SharedMobileUI
 public struct QuestionStepScrollView<Content> : View where Content : View {
     @SwiftUI.Environment(\.fullscreenBackgroundColor) var backgroundColor: Color
     @SwiftUI.Environment(\.sizeCategory) var sizeCategory
+    @SwiftUI.Environment(\.innerSpacing) var innerVerticalSpacing: CGFloat
+    @SwiftUI.Environment(\.verticalPadding) var outerVerticalPadding: CGFloat
     @EnvironmentObject var questionState: QuestionState
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     @StateObject var keyboard: KeyboardObserver = .init()
     
-    private let keyboardSpacing: CGFloat
     private let content: Content
+    private let keyboardAnchor: KeyboardAnchor
+    private let shouldCollapseHeader: Bool
+    private let shouldScrollOnFocus: Bool
     
-    public init(keyboardSpacing: CGFloat = 32, @ViewBuilder content: @escaping () -> Content) {
-        self.keyboardSpacing = keyboardSpacing
+    public init(keyboardAnchor: KeyboardAnchor = .bottom, shouldScrollOnFocus: Bool = true, @ViewBuilder content: @escaping () -> Content) {
+        self.keyboardAnchor = keyboardAnchor
+        self.shouldCollapseHeader = shouldScrollOnFocus && (keyboardAnchor == .bottom)
+        self.shouldScrollOnFocus = shouldScrollOnFocus
         self.content = content()
+    }
+    
+    public enum KeyboardAnchor : Int {
+        case none, top, bottom
+        var anchor: UnitPoint? {
+            switch self {
+            case .top:
+                return .top
+            case .bottom:
+                return .bottom
+            default:
+                return nil
+            }
+        }
     }
     
     @State var minTitleHeight: CGFloat = 0
     @State var titleHeight: CGFloat = 0
     @State var subtitleHeight: CGFloat = 0
     @State var detailHeight: CGFloat = 0
+    
     @State var scrollOffset: CGFloat = 0
 
     @State var collapsedTitleHeight: CGFloat = 0
     @State var collapsedHeader: Bool = true
+    @State var overlayHeaderHidden: Bool = true
+    @State var dividerHidden: Bool = true
         
     public var body: some View {
-        ZStack(alignment: .top) {
-            
-            // Used to calulate the minimum title height of 2 lines.
-            minTitleCalculator()
-            
-            GeometryReader { scrollViewGeometry in
-                ScrollViewReader { scrollView in
-                    ScrollView {  // Main content for the view includes header, content, and navigation footer
-                        VStack(spacing: 0) {
-                            GeometryReader { proxy in
-                                Color.clear
-                                    .preference(key: ScrollFramePreferenceKey.self,
-                                                value: proxy.frame(in: .named("scroll")))
-                            }.frame(height: 0)
-                            inlineHeader()
-                            content
-                            keyboardSpacer(scrollView)
-                            Spacer()
-                            SurveyNavigationView()
-                                .id("bottomNav:\(questionState.id)")
-                        }
-                        .frame(minHeight: scrollViewGeometry.size.height)
-                    }
-                    .coordinateSpace(name: "scroll")
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                self.collapsedHeader = true
-                            }
-                    )
-                    .onPreferenceChange(ScrollFramePreferenceKey.self) { value in
-                        DispatchQueue.main.async {
-                            updateScrollOffset(-floor(value.minY))
-                        }
-                    }
-                    .onAppear {
-                        if questionState.hasSelectedAnswer {
-                            scrollView.scrollTo("bottomNav:\(questionState.id)", anchor: .bottom)
-                        }
-                    }
-                }
+        VStack(spacing: 0) {
+            StepHeaderView(questionState)
+            ZStack(alignment: .top) {
+                // Used to calulate the minimum title height of 2 lines.
+                minTitleCalculator()
+                // Scrollview is in the middle
+                contentScrollView()
+                // The overlay header is displayed on top of the scrollview
+                overlayHeader()
+                Divider()
+                    .background(Color.hexB8B8B8)
+                    .opacity(dividerHidden ? 0 : 1)
             }
-            
-            // The overlay header is displayed on top of the scrollview
-            overlayHeader()
         }
         .environmentObject(keyboard)
         .onAppear {
@@ -119,6 +110,89 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         pagedNavigation.forwardEnabled = questionState.hasSelectedAnswer || questionState.question.optional
     }
     
+    @ViewBuilder
+    func minTitleCalculator() -> some View {
+        Text(questionState.title)
+            .opacity(0)
+            .lineLimit(2)
+            .headerTextStyle(.stepTitle)
+            .padding(.vertical, 6)
+            .heightReader(height: $minTitleHeight)
+    }
+    
+    @ViewBuilder
+    func contentScrollView() -> some View {
+        GeometryReader { scrollViewGeometry in
+            ScrollViewReader { scrollView in
+                ScrollView {  // Main content for the view includes header, content, and navigation footer
+                    VStack(spacing: 0) {
+                        GeometryReader { proxy in
+                            Color.clear
+                                .preference(key: ScrollFramePreferenceKey.self,
+                                            value: proxy.frame(in: .named("scroll")))
+                        }.frame(height: 0)
+                        inlineHeader()
+                        content
+                        Spacer(minLength: 0)
+                        Color.clear
+                            .frame(height: keyboard.keyboardState.focused ? 32 : 0)
+                            .id("$ScrollView.bottomSpacer")
+                        SurveyNavigationView()
+                            .frame(minHeight: 0, maxHeight: keyboard.keyboardState.focused ? 0 : .none)
+                            .id("bottomNav:\(questionState.id)")
+                    }
+                    .frame(minHeight: scrollViewGeometry.size.height)
+                }
+                .coordinateSpace(name: "scroll")
+                .simultaneousGesture(
+                    TapGesture()
+                        .onEnded { _ in
+                            self.collapsedHeader = true
+                        }
+                )
+                .onPreferenceChange(ScrollFramePreferenceKey.self) { value in
+                    DispatchQueue.main.async {
+                        updateScrollOffset(-floor(value.minY))
+                    }
+                }
+                .onAppear {
+                    scrollToNavButtons(scrollView)
+                }
+                .onChange(of: keyboard.keyboardState) { newValue in
+                    if newValue.focused {
+                        if shouldScrollOnFocus {
+                            scrollToTextEntry(scrollView)
+                        }
+                    }
+                    else {
+                        scrollToNavButtons(scrollView)
+                    }
+                }
+                .onChange(of: keyboard.textFieldHeight) { _ in
+                    if keyboardAnchor == .bottom, keyboard.cursorAtEnd {
+                        if keyboard.keyboardState.focused {
+                            scrollToTextEntry(scrollView)
+                        }
+                        else {
+                            scrollToNavButtons(scrollView)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func scrollToNavButtons(_ scrollView: ScrollViewProxy) {
+        if questionState.hasSelectedAnswer {
+            scrollView.scrollTo("bottomNav:\(questionState.id)", anchor: .bottom)
+        }
+    }
+    
+    func scrollToTextEntry(_ scrollView: ScrollViewProxy) {
+        let scrollId = keyboardAnchor == .bottom ? "$ScrollView.bottomSpacer" : keyboard.keyboardFocusedId
+        scrollView.scrollTo(scrollId, anchor: keyboardAnchor.anchor)
+    }
+    
     func updateScrollOffset(_ scrollOffset: CGFloat) {
         let headerHeight = subtitleHeight + detailHeight - innerVerticalSpacing + 4
         let beyondDetail = scrollOffset - headerHeight
@@ -130,16 +204,10 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
         }
         self.collapsedHeader = true
         self.scrollOffset = scrollOffset
-    }
-    
-    @ViewBuilder
-    func minTitleCalculator() -> some View {
-        Text(questionState.title)
-            .opacity(0)
-            .lineLimit(2)
-            .headerTextStyle(.stepTitle)
-            .padding(.vertical, innerVerticalSpacing)
-            .heightReader(height: $minTitleHeight)
+        withAnimation {
+            self.overlayHeaderHidden = scrollOffset <= subtitleHeight || sizeCategory >= .accessibilityLarge || !shouldCollapseHeader
+            self.dividerHidden = scrollOffset <= 0 || !overlayHeaderHidden
+        }
     }
     
     @ViewBuilder
@@ -175,8 +243,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
             }
             Text(questionState.title)
                 .headerTextStyle(.stepTitle)
-                .padding(.vertical, innerVerticalSpacing)
-                .frame(maxHeight: collapsedHeader ? collapsedTitleHeight : titleHeight)
+                .frame(height: collapsedHeader ? collapsedTitleHeight : titleHeight, alignment: .leading)
             if let detail = questionState.detail {
                 Text(detail)
                     .headerTextStyle(.stepDetail)
@@ -189,7 +256,7 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
                 .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
                 .mask(Rectangle().padding(.bottom, -20))
         )
-        .opacity(scrollOffset <= subtitleHeight || sizeCategory >= .accessibilityLarge ? 0 : 1)
+        .opacity(overlayHeaderHidden ? 0 : 1)
         .onTapGesture {
             if scrollOffset > subtitleHeight && !keyboard.keyboardFocused {
                 withAnimation {
@@ -198,19 +265,6 @@ public struct QuestionStepScrollView<Content> : View where Content : View {
             }
         }
     }
-    
-    @ViewBuilder
-    func keyboardSpacer(_ scrollView: ScrollViewProxy) -> some View {
-        Spacer()
-            .frame(height: keyboard.keyboardFocused ? keyboard.keyboardHeight + keyboardSpacing : 0)
-            .id(KeyboardObserver.defaultKeyboardFocusedId)
-            .onChange(of: keyboard.keyboardFocused) { newValue in
-                if newValue {
-                    scrollView.scrollTo(keyboard.keyboardFocusedId, anchor: .bottom)
-                }
-            }
-    }
-
 }
 
 extension View {

@@ -59,7 +59,7 @@ struct ViewDimensionReader : ViewModifier {
                 )
             })
             .onPreferenceChange(ViewDimensionKey.self) {
-                dim = $0
+                if dim != $0 { dim = $0 }   // Only set if it changed
             }
     }
 }

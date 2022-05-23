@@ -32,6 +32,7 @@
 
 import Foundation
 import JsonModel
+import SwiftUI
 
 public protocol TextEntryValidator {
     func localizedText(for answer: JsonValue?) -> String?
@@ -687,6 +688,158 @@ extension DoubleFormatOptions : DocumentableStruct {
         exB.minInvalidMessage = "Minimum value is zero"
         exB.maxInvalidMessage = "Maximum value is $200"
         return [exA, exB]
+    }
+}
+
+public struct LocalTime : Codable, Hashable, Comparable, JsonValue {
+    public let hour: Int
+    public let minute: Int
+    
+    public static let min: LocalTime = .init(hour: 0, minute: 0)!
+    public static let max: LocalTime = .init(hour: 24, minute: 0)!
+    
+    public init?(hour: Int, minute: Int) {
+        // Allow hour to be both 24 and 0 to indicate start and end of day
+        guard hour >= 0, minute < 60, minute >= 0,
+              (hour < 24 || minute == 0)
+        else {
+            return nil
+        }
+        self.hour = hour
+        self.minute = minute
+    }
+    
+    public init?(from str: String) {
+        let split = str.split(separator: ":")
+        guard split.count >= 2,
+              let hour = Int(split[0]),
+              let minute = Int(split[1]),
+              let time = Self.init(hour: hour, minute: minute)
+        else {
+            return nil
+        }
+        self = time
+    }
+    
+    public init(from date: Date) {
+        let calendar = Calendar(identifier: .iso8601)
+        let dateComponents = calendar.dateComponents([.hour, .minute], from: date)
+        self.hour = dateComponents.hour!
+        self.minute = dateComponents.minute!
+    }
+    
+    public init?(from jsonElement: JsonElement) {
+        guard case .string(let str) = jsonElement,
+              let time = Self.init(from: str)
+        else {
+            return nil
+        }
+        self = time
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let str = try container.decode(String.self)
+        guard let time = Self.init(from: str) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "LocalTime string format not expected: \(str)"))
+        }
+        self = time
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        let str = stringValue()
+        try container.encode(str)
+    }
+    
+    public func jsonElement() -> JsonElement {
+        .string(stringValue())
+    }
+    
+    public func jsonObject() -> JsonSerializable {
+        stringValue()
+    }
+    
+    public func date(from date: Date = Date()) -> Date {
+        Calendar(identifier: .iso8601).startOfDay(for: date).addingTimeInterval(Double(self.hour * 60 * 60 + self.minute * 60))
+    }
+    
+    func stringValue() -> String {
+        String(format: "%02d:%02d:00.000", hour, minute)
+    }
+    
+    public static func < (lhs: LocalTime, rhs: LocalTime) -> Bool {
+        lhs.hour * 60 + lhs.minute < rhs.hour * 60 + rhs.minute
+    }
+}
+
+public protocol TimeRange {
+    var allowFuture: Bool? { get }
+    var allowPast: Bool? { get }
+    var minimumValue: LocalTime? { get }
+    var maximumValue: LocalTime? { get }
+}
+
+public struct TimeFormatOptions : TimeRange, Hashable, Codable {
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case allowFuture, allowPast, minimumValue, maximumValue
+    }
+    
+    public let allowFuture: Bool?
+    public let allowPast: Bool?
+    public let minimumValue: LocalTime?
+    public let maximumValue: LocalTime?
+    
+    public static let pastOnly: TimeFormatOptions = .init(allowFuture: false, allowPast: nil, minimumValue: nil, maximumValue: nil)
+    public static let futureOnly: TimeFormatOptions = .init(allowFuture: nil, allowPast: false, minimumValue: nil, maximumValue: nil)
+    
+    public init() {
+        self.init(allowFuture: nil, allowPast: nil, minimumValue: nil, maximumValue: nil)
+    }
+    
+    public init(from min: LocalTime, to max: LocalTime) {
+        self.init(allowFuture: nil, allowPast: nil, minimumValue: min, maximumValue: max)
+    }
+    
+    private init(allowFuture: Bool?, allowPast: Bool?, minimumValue: LocalTime?, maximumValue: LocalTime?) {
+        self.allowFuture = allowFuture
+        self.allowPast = allowPast
+        self.minimumValue = minimumValue
+        self.maximumValue = maximumValue
+    }
+}
+
+extension TimeFormatOptions : DocumentableStruct {
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        false
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
+        }
+        switch key {
+        case .allowPast:
+            return .init(propertyType: .primitive(.boolean), propertyDescription:
+                            "Should this time range allow times that occured in the past? (ie. earlier today)")
+        case .allowFuture:
+            return .init(propertyType: .primitive(.boolean), propertyDescription:
+                            "Should this time range allow times that occur in the future? (ie. later today)")
+        case .minimumValue:
+            return .init(propertyType: .format(.time), propertyDescription:
+                            "Should this time range be timeboxed to have a minimum time of day?")
+        case .maximumValue:
+            return .init(propertyType: .format(.time), propertyDescription:
+                            "Should this time range be timeboxed to have a maximum time of day?")
+        }
+    }
+    
+    public static func examples() -> [TimeFormatOptions] {
+        [.init(), .pastOnly, .futureOnly, .init(from: .init(hour: 6, minute: 0)!, to: .init(hour: 10, minute: 30)!)]
     }
 }
 

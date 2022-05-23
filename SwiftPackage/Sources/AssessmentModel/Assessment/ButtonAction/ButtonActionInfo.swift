@@ -56,6 +56,9 @@ public struct ButtonActionInfoType : TypeRepresentable, Codable, Hashable {
     /// Defaults to creating a `ButtonActionInfoObject`.
     public static let `default`: ButtonActionInfoType = "default"
     
+    /// Defaults to creating a `NavigationButtonActionInfoObject`.
+    public static let navigation: ButtonActionInfoType = "navigation"
+    
     public static func allStandardTypes() -> [ButtonActionInfoType] {
         return [.default]
     }
@@ -88,6 +91,7 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     override init() {
         examples = [
             ButtonActionInfoObject.examples().first!,
+            NavigationButtonActionInfoObject.examples().first!,
         ]
     }
     

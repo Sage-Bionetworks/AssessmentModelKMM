@@ -64,6 +64,7 @@ abstract class NodeObject : ContentNode, DirectNavigationRule {
     override var hideButtons: List<ButtonAction> = listOf()
     @SerialName("actions")
     override var buttonMap: Map<ButtonAction, ButtonActionInfo> = mapOf()
+    var webConfig: JsonElement? = null
 
     @SerialName("nextStepIdentifier")
     override var nextNodeIdentifier: String? = null
@@ -202,6 +203,7 @@ data class AssessmentObject(
     override val identifier: String,
     @SerialName("steps")
     override val children: List<Node>,
+    override val guid: String? = null,
     override val versionString: String? = null,
     override val schemaIdentifier: String? = null,
     override var estimatedMinutes: Int = 0,
@@ -219,7 +221,8 @@ data class AssessmentObject(
             it.unpack(null, moduleInfo, registryProvider)
         }
         val identifier = originalNode?.identifier ?: this.identifier
-        val copy = copy(identifier = identifier, children = copyChildren)
+        val guid = originalNode?.identifier ?: this.guid
+        val copy = copy(identifier = identifier, guid = guid, children = copyChildren)
         copy.copyFrom(this)
         return copy
     }

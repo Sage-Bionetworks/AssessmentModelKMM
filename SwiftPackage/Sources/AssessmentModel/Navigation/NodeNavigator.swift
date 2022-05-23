@@ -45,8 +45,6 @@ public protocol NavigationRule {
     func nextNodeIdentifier(branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier?
 }
 
-//  TODO: syoung 03/21/2022 refactor navigation tests to move from SageResearch/Kotlin implementations to this framework.
-
 public final class NodeNavigator : Navigator {
     
     public let identifier: String
@@ -74,7 +72,7 @@ public final class NodeNavigator : Navigator {
     
     public func nodeAfter(currentNode: Node?, branchResult: BranchNodeResult) -> NavigationPoint {
         guard let currentNode = currentNode, let idx = self.nodeIndex(currentNode) else {
-            return .init(node: nodes.first, direction: .forward)
+            return restoreNode(from: branchResult) ?? .init(node: nodes.first, direction: .forward)
         }
 
         if let navId = self.nextNodeIdentifier(currentNode: currentNode, branchResult: branchResult, isPeeking: false) {
@@ -135,7 +133,7 @@ public final class NodeNavigator : Navigator {
     
     // MARK: Node navigation
     
-    private func nextNodeIdentifier(currentNode: Node, branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier? {
+    func nextNodeIdentifier(currentNode: Node, branchResult: BranchNodeResult, isPeeking: Bool) -> NavigationIdentifier? {
         (currentNode as? NavigationRule)?.nextNodeIdentifier(branchResult: branchResult, isPeeking: isPeeking)
     }
     
@@ -180,7 +178,7 @@ public final class NodeNavigator : Navigator {
         }
     }
     
-    private func findIndexBefore(_ currentNode: Node, in path: [PathMarker], findLast: Bool) -> Int? {
+    func findIndexBefore(_ currentNode: Node, in path: [PathMarker], findLast: Bool) -> Int? {
         func matching(_ marker: PathMarker) -> Bool {
             marker.identifier == currentNode.identifier && marker.direction == .forward
         }
@@ -191,6 +189,15 @@ public final class NodeNavigator : Navigator {
         }
         let markerBeforeLast = path[index - 1]
         return self.nodes.firstIndex(where: { markerBeforeLast.identifier == $0.identifier })
+    }
+    
+    func restoreNode(from branchResult: BranchNodeResult) -> NavigationPoint? {
+        guard let marker = branchResult.path.last,
+              let node = nodes.first(where: { $0.identifier == marker.identifier })
+        else {
+            return nil
+        }
+        return .init(node: node, direction: .forward)
     }
 }
 

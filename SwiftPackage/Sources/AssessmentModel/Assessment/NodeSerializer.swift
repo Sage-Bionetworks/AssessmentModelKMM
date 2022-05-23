@@ -130,13 +130,14 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
 
 open class AbstractNodeObject : SerializableNode {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions", nextNode = "nextStepIdentifier"
+        case serializableType="type", identifier, comment, shouldHideButtons="shouldHideActions", buttonMap="actions", nextNode = "nextStepIdentifier", webConfig
         var relativeIndex: Int { 2 }
     }
     public private(set) var serializableType: SerializableNodeType = .init(rawValue: "null")
     
     public let identifier: String
     public let comment: String?
+    var webConfig: JsonElement?
     
     /// List of button actions that should be hidden for this node even if the node subtype typically supports displaying
     /// the button on screen. This property can be defined at any level and will default to whichever is the lowest level
@@ -292,6 +293,9 @@ open class AbstractNodeObject : SerializableNode {
         case .nextNode:
             return .init(propertyType: .reference(NavigationIdentifier.documentableType()), propertyDescription:
                             "Used in direct navigation to allow the node to indicate that the navigator should jump to the given node identifier.")
+        case .webConfig:
+            return .init(propertyType: .any, propertyDescription:
+                            "A blob of JSON that can be used by a web-based survey building tool.")
         }
     }
 }

@@ -44,25 +44,24 @@ public struct ChoiceQuestionStepView : View {
     }
     
     public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                ChoiceQuestionView()
-            }
+        QuestionStepScrollView {
+            ChoiceQuestionView()
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
+        .fullscreenBackground(.lightSurveyBackground)
     }
 }
 
 struct ChoiceQuestionView : View {
+    @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var keyboard: KeyboardObserver
     @EnvironmentObject var questionState: QuestionState
     @StateObject var viewModel: ChoiceQuestionViewModel = .init()
     
     var body: some View {
-        LazyVStack(spacing: innerVerticalSpacing) {
+        LazyVStack(spacing: innerSpacing) {
             ForEach(viewModel.choices) { choice in
                 ChoiceCell(choice: choice)
             }
@@ -86,7 +85,7 @@ struct ChoiceQuestionView : View {
             }
         }
         .singleChoice(viewModel.singleAnswer)
-        .padding(.horizontal, 32)
+        .padding(.horizontal, horizontalPadding)
     }
     
     struct ChoiceCell : View {
@@ -107,6 +106,7 @@ struct ChoiceQuestionView : View {
                                    inputItem: choice.inputItem,
                                    fieldLabel: choice.fieldLabel)
                     .accentColor(Color.sageBlack)
+                    .characterLimit(50)
             }
             .selectionCell(isOn: $choice.selected, spacing: 3)
         }
@@ -214,7 +214,6 @@ let favoriteColorsQuestion = ChoiceQuestionStepObject(
     identifier: "multipleChoice",
     choices: [
         "Blue",
-        "Green",
         "Yellow",
         "Red",
         .init(text: "All of the above", selectorType: .all),
@@ -245,7 +244,7 @@ let favoriteFoodChoiceQuestion = ChoiceQuestionStepObject(
     subtitle: "After thinking it over...",
     detail: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     surveyRules: [
-        .init(skipToIdentifier: "completion", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
+        .init(skipToIdentifier: "multipleChoice", matchingValue: .string("Pizza"), ruleOperator: .notEqual)
     ]
 )
 

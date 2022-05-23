@@ -37,10 +37,11 @@ import JsonModel
 import SharedMobileUI
 
 struct SlidingScaleView : View {
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var keyboard: KeyboardObserver
     @EnvironmentObject var questionState: QuestionState
-    @ObservedObject var viewModel: IntegerQuestionViewModel
+    @ObservedObject var viewModel: IntegerInputViewModel
     
     @State var sliderWidth: CGFloat = 0
     @State var xOffset: CGFloat = 0
@@ -48,7 +49,7 @@ struct SlidingScaleView : View {
     @State var gripSize: CGFloat = 0
     let circleSize: CGFloat = 40
     
-    init(viewModel: IntegerQuestionViewModel) {
+    init(viewModel: IntegerInputViewModel) {
         self.viewModel = viewModel
     }
     
@@ -58,7 +59,7 @@ struct SlidingScaleView : View {
             slider()
                 .overlay(grip(), alignment: .leading)
             Text("\(viewModel.maxValue)")
-        }.padding(.horizontal, 32)
+        }.padding(.horizontal, horizontalPadding)
     }
     
     func updateOffset() {
@@ -143,14 +144,14 @@ fileprivate struct PreviewSlidingScaleQuestionStepView : View {
 struct SlidingScaleQuestionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample1, initialValue: 20)
-            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample1, initialValue: 0)
-            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample1, initialValue: 100)
+            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample, initialValue: 20)
+            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample, initialValue: 0)
+            PreviewSlidingScaleQuestionStepView(question: slidingScaleExample, initialValue: 100)
         }
     }
 }
 
-let slidingScaleExample1 = SimpleQuestionStepObject(
+let slidingScaleExample = SimpleQuestionStepObject(
     identifier: "simpleQ4",
     inputItem: IntegerTextInputItemObject(formatOptions: .init(minimumValue: 0, maximumValue: 100, minimumLabel: "Not at all", maximumLabel: "Very much")),
     title: "How much do you like apples?",

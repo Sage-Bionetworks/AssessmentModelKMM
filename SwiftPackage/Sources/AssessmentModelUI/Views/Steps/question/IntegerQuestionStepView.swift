@@ -45,30 +45,49 @@ public struct IntegerQuestionStepView : View {
     }
     
     public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                Spacer()
-                VStack(alignment: .leading, spacing: 6) {
-                    if let label = viewModel.fieldLabel {
-                        Text(label)
-                            .font(.fieldLabel)
-                            .foregroundColor(.textForeground)
-                    }
-                    NumericTextField(value: $viewModel.value, isEditing: $viewModel.isEditing, inputItem: questionState.inputItem)
-                        .frame(width: 150, height: 56)
-                }
-                if viewModel.usesScale {
-                    SlidingScaleView(viewModel: viewModel)
-                        .padding(.top, 24)
-                }
+        QuestionStepScrollView(keyboardAnchor: .none) {
+            Spacer(minLength: 0)
+            if let model = viewModel.inputViewModel {
+                IntegerTextField(viewModel: model)
             }
         }
         .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
+        .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)
         .onAppear {
             viewModel.onAppear(questionState)
+        }
+    }
+    
+    struct IntegerTextField : View {
+        @ObservedObject var viewModel: IntegerInputViewModel
+        
+        public var body: some View {
+            VStack(spacing: 24) {
+                switch viewModel.viewType {
+                case .likert:
+                    LikertScaleView(viewModel: viewModel)
+                case .slider:
+                    textField()
+                    SlidingScaleView(viewModel: viewModel)
+                default:
+                    textField()
+                }
+            }
+        }
+        
+        @ViewBuilder
+        func textField() -> some View {
+            VStack(alignment: .leading, spacing: 6) {
+                if let label = viewModel.fieldLabel {
+                    Text(label)
+                        .font(.fieldLabel)
+                        .foregroundColor(.textForeground)
+                }
+                NumericTextField(value: $viewModel.value, isEditing: $viewModel.isEditing, inputItem: viewModel.inputItem)
+                    .frame(width: 150, height: 56)
+                    .id(KeyboardObserver.defaultKeyboardFocusedId)
+            }
         }
     }
 }

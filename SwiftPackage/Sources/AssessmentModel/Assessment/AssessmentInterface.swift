@@ -123,6 +123,12 @@ public protocol OptionalNode : Node {
 
 /// Information about an assessment.
 public protocol AssessmentInfo {
+    
+    /// For assessments from Bridge this is the unique identifier for a particular revision of an assessment.
+    var guid: String? { get }
+    
+    /// The identifier used by a given library to uniquely identify the assessment within that library.
+    var identifier: String { get }
 
     /// The version of this assessment. This may be a semantic version, timestamp, or sequential revision integer.
     var versionString: String? { get }

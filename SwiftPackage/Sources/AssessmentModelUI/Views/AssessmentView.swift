@@ -58,13 +58,18 @@ open class AssessmentStepViewVender {
             if questionState.step is ChoiceQuestionStep {
                 ChoiceQuestionStepView(questionState)
             }
-            else if questionState.question is SimpleQuestion,
-                    questionState.question.answerType.baseType == .integer {
-                if questionState.question.uiHint == .NumberField.likert.uiHint {
-                    LikertScaleQuestionView(questionState)
-                }
-                else {
+            else if let question = questionState.question as? SimpleQuestion {
+                switch question.inputItem {
+                case is IntegerTextInputItem:
                     IntegerQuestionStepView(questionState)
+                case is StringTextInputItem:
+                    TextEntryQuestionStepView(questionState)
+                case is DurationTextInputItem:
+                    DurationQuestionStepView(questionState)
+                case is TimeTextInputItem:
+                    TimeQuestionStepView(questionState)
+                default:
+                    debugQuestionStepView(questionState)
                 }
             }
             else {
@@ -191,6 +196,8 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(value: .integer(2), text: "Birth year"),
                                 .init(value: .integer(3), text: "Likert Scale"),
                                 .init(value: .integer(4), text: "Sliding Scale"),
+                                .init(value: .integer(5), text: "Duration"),
+                                .init(value: .integer(6), text: "Time"),
                              ],
                              baseType: .integer,
                              singleChoice: true,
@@ -201,16 +208,17 @@ fileprivate let surveyAChildren: [Node] = [
                                 .init(skipToIdentifier: "simpleQ2", matchingValue: .integer(2)),
                                 .init(skipToIdentifier: "simpleQ3", matchingValue: .integer(3)),
                                 .init(skipToIdentifier: "simpleQ4", matchingValue: .integer(4)),
+                                .init(skipToIdentifier: "simpleQ5", matchingValue: .integer(5)),
+                                .init(skipToIdentifier: "simpleQ6", matchingValue: .integer(6)),
                              ],
                              comment: "Go to the question selected by the participant. If they skip the question then go directly to follow-up."),
     
-    SimpleQuestionStepObject(identifier: "simpleQ1",
-                             inputItem: StringTextInputItemObject(placeholder: "I like cake"),
-                             title: "Enter some text",
-                             nextNode: "followupQ"),
+    textEntryExample,
     birthYearExample,
-    likertExample1,
-    slidingScaleExample1,
+    likertExample,
+    slidingScaleExample,
+    durationExample,
+    timeExample,
     
     happyChoiceQuestion,
     favoriteFoodChoiceQuestion,

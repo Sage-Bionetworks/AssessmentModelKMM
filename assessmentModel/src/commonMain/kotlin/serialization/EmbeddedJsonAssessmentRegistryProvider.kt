@@ -4,7 +4,9 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
+import org.sagebionetworks.assessmentmodel.AssessmentPlaceholder
 import org.sagebionetworks.assessmentmodel.AssessmentRegistryProvider
+import org.sagebionetworks.assessmentmodel.JsonModuleInfo
 import org.sagebionetworks.assessmentmodel.ModuleInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.AssetResourceInfo
 import org.sagebionetworks.assessmentmodel.resourcemanagement.FileLoader
@@ -26,8 +28,8 @@ open class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileL
                                                   private val modulesPackageName: String? = null
                                     ): AssessmentRegistryProvider {
 
-    private var _modules: List<ModuleInfo>? = null
-    override val modules: List<ModuleInfo>
+    private var _modules: List<JsonModuleInfo>? = null
+    override val modules: List<JsonModuleInfo>
         get() {
             if (_modules == null) {
                 val modulesFile = object : AssetResourceInfo {
@@ -40,7 +42,7 @@ open class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileL
                     override val resourceName = modulesResourceName
                 }
                 val jsonString = fileLoader.loadFile(assetInfo = modulesFile, resourceInfo = modulesFile)
-                val serializer = ListSerializer(PolymorphicSerializer(ModuleInfo::class))
+                val serializer = ListSerializer(PolymorphicSerializer(JsonModuleInfo::class))
                 val decodedModules = moduleJsonCoder.decodeFromString(serializer, jsonString)
                 decodedModules.forEach {
                     if (it.resourceInfo.bundleIdentifier == null) {
@@ -54,5 +56,11 @@ open class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileL
             }
             return _modules?: throw AssertionError("Set to null by another thread")
         }
+
+    override fun getJsonCoder(assessmentPlaceholder: AssessmentPlaceholder): Json {
+        val moduleInfo = modules.find { it.hasAssessment(assessmentPlaceholder) }
+        return moduleInfo?.jsonCoder
+            ?: throw IllegalStateException("This version of the application cannot load " + {assessmentPlaceholder.assessmentInfo.identifier})
+    }
 
 }

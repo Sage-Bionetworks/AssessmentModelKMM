@@ -1,5 +1,5 @@
 //
-//  LikertScaleQuestionView.swift
+//  LikertScaleView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -36,43 +36,25 @@ import AssessmentModel
 import JsonModel
 import SharedMobileUI
 
-public struct LikertScaleQuestionView : View {
-    @ObservedObject var questionState: QuestionState
-    
-    public init(_ questionState: QuestionState) {
-        self.questionState = questionState
-    }
-    
-    public var body: some View {
-        VStack(spacing: 8) {
-            StepHeaderView(questionState)
-            QuestionStepScrollView {
-                Spacer()
-                LikertScaleView()
-            }
-        }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
-        .environmentObject(questionState)
-        .fullscreenBackground(.surveyBackground)
-    }
-}
+fileprivate let dotSize: CGFloat = 30
+fileprivate let scaleBarHeight: CGFloat = 4
 
 struct LikertScaleView : View {
-    @EnvironmentObject var questionState: QuestionState
-    @StateObject var viewModel: LikertScaleViewModel = .init()
+    @ObservedObject var viewModel: IntegerInputViewModel
     @State var width: CGFloat = 0
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ScaleBar(fraction: $viewModel.fraction)
-                .offset(x: 0, y: 22)
-                .frame(width: max(0, width - 48))
+                .offset(x: 0, y: dotSize - scaleBarHeight/2)
+                .frame(width: max(0, width - dotSize))
                 
-            HStack(spacing: 0) {
+            HStack(spacing: 16) {
                 ForEach(viewModel.dots) { dot in
-                    VStack(spacing: 0) {
+                    VStack(alignment: .center, spacing: 0) {
                         DotView(dot: dot)
                         Text("\(dot.value)")
+                            .font(.likertLabel)
                     }
                     .onTapGesture {
                         viewModel.value = dot.value
@@ -80,9 +62,6 @@ struct LikertScaleView : View {
                 }
             }
             .widthReader(width: $width)
-        }
-        .onAppear {
-            viewModel.onAppear(questionState)
         }
     }
     
@@ -98,12 +77,12 @@ struct LikertScaleView : View {
                         .frame(width: geometry.size.width * fraction)
                 }
             }
-            .frame(height: 4)
+            .frame(height: scaleBarHeight)
         }
     }
     
     struct DotView : View {
-        @ObservedObject var dot: LikertScaleViewModel.Dot
+        @ObservedObject var dot: IntegerInputViewModel.Dot
         var body: some View {
             ZStack {
                 Circle()
@@ -112,8 +91,8 @@ struct LikertScaleView : View {
                     .fill(Color.sageBlack)
                     .opacity(dot.selected ? 1 : 0)
             }
-            .frame(width: 24, height: 24)
-            .padding(.all, 12)
+            .frame(width: dotSize, height: dotSize)
+            .padding(.vertical, dotSize/2)
         }
     }
 }
@@ -134,7 +113,7 @@ extension Shape {
 fileprivate struct PreviewLikertScaleQuestionStepView : View {
     let question: SimpleQuestionStep
     var body: some View {
-        LikertScaleQuestionView(QuestionState(question,
+        IntegerQuestionStepView(QuestionState(question,
                                               answerResult: AnswerResultObject(identifier: question.identifier,value: .integer(2)),
                                               skipStepText: Text("Skip question")))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 2))
@@ -144,13 +123,24 @@ fileprivate struct PreviewLikertScaleQuestionStepView : View {
 
 struct LikertScaleQuestionView_Previews: PreviewProvider {
     static var previews: some View {
-        PreviewLikertScaleQuestionStepView(question: likertExample1)
+        Group {
+            PreviewLikertScaleQuestionStepView(question: likertExample)
+            PreviewLikertScaleQuestionStepView(question: likertExample)
+                .environment(\.sizeCategory, .extraSmall)
+            PreviewLikertScaleQuestionStepView(question: likertExample)
+                .previewDevice("iPhone SE (2nd generation)")
+                .environment(\.sizeCategory, .extraSmall)
+            PreviewLikertScaleQuestionStepView(question: likertExample)
+                .environment(\.sizeCategory, .extraSmall)
+            PreviewLikertScaleQuestionStepView(question: likertExample)
+                .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+        }
     }
 }
 
-let likertExample1 = SimpleQuestionStepObject(
+let likertExample = SimpleQuestionStepObject(
     identifier: "simpleQ3",
-    inputItem: IntegerTextInputItemObject(formatOptions: .init(minimumValue: 1, maximumValue: 5, minimumLabel: "Not at all", maximumLabel: "Very much")),
+    inputItem: IntegerTextInputItemObject(formatOptions: .init(minimumValue: 1, maximumValue: 7, minimumLabel: "Not at all", maximumLabel: "Very much")),
     title: "How much do you like apples?",
     uiHint: .NumberField.likert.uiHint,
     nextNode: "followupQ"
