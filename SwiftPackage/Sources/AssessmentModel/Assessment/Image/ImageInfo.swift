@@ -76,6 +76,10 @@ public extension AnimatedImageInfo {
     }
 }
 
+public protocol CompositeImageInfo : ImageInfo {
+    var layerCount: Int { get }
+}
+
 /// The type of the image theme. This is used to decode an `ImageInfo` using an `AssessmentFactory`. It can also be used
 /// to customize the UI.
 public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
@@ -154,30 +158,54 @@ public extension SerializableImageInfo {
 
 /// This allows customized image compositing that is required on iOS only.
 public struct SageResourceImage : SerializableImageInfo {
-
-    
     private enum CodingKeys : String, OrderedEnumCodingKey {
-        case serializableType = "type", imageName, label
+        case serializableType = "type", _name = "imageName", _label = "label"
     }
     public private(set) var serializableType: ImageInfoType = .Standard.sageResource.imageInfoType
-    public let imageName: String
-    public let label: String?
+    
+    public var imageName: String {
+        self.name?.imageName ?? _name
+    }
+    private let _name: String
+    
+    public var label: String? {
+        _label ?? self.name?.label
+    }
+    private let _label: String?
     
     public init(_ name: Name, label: String? = nil) {
-        self.imageName = name.rawValue
-        self.label = label
+        self._name = name.rawValue
+        self._label = label
     }
     
     public enum Name : String, StringEnumSet, DocumentableStringEnum {
         case survey
+        
+        public var label: String {
+            switch self {
+            case .survey:
+                return "Survey"
+            }
+        }
+        
+        public var imageName: String {
+            self.rawValue
+        }
+        
+        public var layerCount: Int {
+            switch self {
+            case .survey:
+                return 4
+            }
+        }
     }
     
     public var name: Name? {
-        .init(rawValue: imageName)
+        .init(rawValue: _name)
     }
 
     public var imageIdentifier: String {
-        imageName
+        _name
     }
     
     public var bundleIdentifier: String? { "AssessmentModelUI" }
@@ -199,7 +227,7 @@ extension SageResourceImage : DocumentableStruct {
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
         switch key {
-        case .serializableType, .imageName:
+        case .serializableType, ._name:
             return true
         default:
             return false
@@ -213,10 +241,10 @@ extension SageResourceImage : DocumentableStruct {
         switch key {
         case .serializableType:
             return .init(constValue: ImageInfoType.Standard.sageResource.imageInfoType)
-        case .imageName:
+        case ._name:
             return .init(propertyType: .reference(Name.documentableType()), propertyDescription:
                             "The image name for the image to draw.")
-        case .label:
+        case ._label:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "A caption or label to display for the image in a localized string.")
         }
