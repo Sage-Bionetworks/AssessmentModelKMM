@@ -93,7 +93,7 @@ public struct ContentImage : View, Identifiable {
     /// The constructor to use if fetching an image using a URL.
     ///
     /// - Parameters:
-    ///   - url: The URL for the image to fetch asyncronously.
+    ///   - url: The URL for the image to fetch asynchronously.
     ///   - placeholder: The key name for the icon to use as a placeholder.
     ///   - label: The accessibility label.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
