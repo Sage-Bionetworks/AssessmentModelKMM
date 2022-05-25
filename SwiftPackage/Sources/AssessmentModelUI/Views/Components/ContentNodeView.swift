@@ -77,25 +77,6 @@ public struct ContentNodeView : View {
     }
 }
 
-public struct ContentImage : View {
-    let imageInfo: ImageInfo
-    public init(_ imageInfo: ImageInfo) {
-        self.imageInfo = imageInfo
-    }
-    
-    public var body: some View {
-        if let sageImage = (imageInfo as? SageResourceImage)?.name {
-            switch sageImage {
-            case .survey:
-                CompositedImage("survey", bundle: .module, layers: 4)
-            }
-        }
-        else {
-            Image(imageInfo.imageName, bundle: imageInfo.bundle)
-        }
-    }
-}
-
 struct ContentNodeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
