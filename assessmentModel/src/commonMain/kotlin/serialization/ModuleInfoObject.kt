@@ -6,12 +6,16 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.*
 import org.sagebionetworks.assessmentmodel.EmbeddedJsonModuleInfo
+import org.sagebionetworks.assessmentmodel.JsonModuleInfo
 import org.sagebionetworks.assessmentmodel.ModuleInfo
 import org.sagebionetworks.assessmentmodel.TransformableAssessment
 import org.sagebionetworks.assessmentmodel.resourcemanagement.ResourceInfo
 
 val moduleInfoSerializersModule = SerializersModule {
     polymorphic(ModuleInfo::class) {
+        subclass(ModuleInfoObject::class)
+    }
+    polymorphic(JsonModuleInfo::class) {
         subclass(ModuleInfoObject::class)
     }
 }

@@ -21,6 +21,29 @@ internal fun QuestionContainer(
     modifier: Modifier = Modifier,
     content: @Composable @UiComposable () -> Unit
 ) {
+   QuestionContainer(
+       subtitle = questionState.node.subtitle,
+       title = questionState.node.title,
+       detail = questionState.node.detail,
+       nextButtonText = questionState.node.buttonMap.get(ButtonAction.Navigation.GoForward)?.buttonTitle,
+       nextEnabled = questionState.allAnswersValidFlow.collectAsState().value,
+       assessmentViewModel = assessmentViewModel,
+       modifier = modifier,
+       content = content
+   )
+}
+
+@Composable
+internal fun QuestionContainer(
+    subtitle: String? = null,
+    title: String? = null,
+    detail: String? = null,
+    nextButtonText: String? = null,
+    nextEnabled: Boolean,
+    assessmentViewModel: AssessmentViewModel,
+    modifier: Modifier = Modifier,
+    content: @Composable @UiComposable () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxHeight()
@@ -30,9 +53,9 @@ internal fun QuestionContainer(
     ) {
         val scrollState = rememberScrollState()
         QuestionHeader(
-            subtitle = questionState.node.subtitle,
-            title = questionState.node.title,
-            detail = questionState.node.detail,
+            subtitle = subtitle,
+            title = title,
+            detail = detail,
             assessmentViewModel = assessmentViewModel,
             scrollState = scrollState
         )
@@ -45,12 +68,11 @@ internal fun QuestionContainer(
             Spacer(modifier = Modifier.height(32.dp))
             content()
             Spacer(modifier = Modifier.weight(1f))
-            val forwardButtonAction = questionState.node.buttonMap.get(ButtonAction.Navigation.GoForward)
             BottomNavigation(
                 { assessmentViewModel.goBackward() },
                 { assessmentViewModel.goForward() },
-                nextText = forwardButtonAction?.buttonTitle,
-                nextEnabled = questionState.allAnswersValidFlow.collectAsState().value
+                nextText = nextButtonText,
+                nextEnabled = nextEnabled
             )
         }
     }

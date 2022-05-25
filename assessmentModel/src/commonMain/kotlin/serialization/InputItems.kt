@@ -114,12 +114,12 @@ data class StringTextInputItemObject(@SerialName("identifier")
 
 @Serializable
 data class RegExValidator(val pattern: String, val invalidMessage: InvalidMessageObject) : TextValidator<String> {
-    override fun valueFor(text: String): FormattedValue<String>? {
+    override fun valueFor(text: String): FormattedValue<String> {
         val regex = Regex(pattern = pattern)
         return if (regex.matches(text)) FormattedValue(result = text) else FormattedValue(invalidMessage = invalidMessage)
     }
     override fun localizedStringFor(value: String?) = FormattedValue(result = value)
-    override fun jsonValueFor(value: String?): JsonElement? = JsonPrimitive(value)
+    override fun jsonValueFor(value: String?): JsonElement = JsonPrimitive(value)
     override fun valueFor(jsonValue: JsonElement?): String? = jsonValue?.toString()
 }
 

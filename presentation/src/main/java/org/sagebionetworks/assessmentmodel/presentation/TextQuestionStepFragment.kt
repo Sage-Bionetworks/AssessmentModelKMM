@@ -5,51 +5,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.sagebionetworks.assessmentmodel.Step
+import org.sagebionetworks.assessmentmodel.presentation.compose.IntegerQuestion
+import org.sagebionetworks.assessmentmodel.presentation.compose.TextQuestion
+import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.databinding.TextQuestionStepFragmentBinding
+import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 import org.sagebionetworks.assessmentmodel.survey.*
 
 class TextQuestionStepFragment: StepFragment() {
 
-    private var _binding: TextQuestionStepFragmentBinding? = null
+    private var _binding: ComposeQuestionStepFragmentBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
-    lateinit var questionStep: SimpleQuestion
-    lateinit var questionState: QuestionState
-    lateinit var inputState: KeyboardInputItemState<*>
+    private lateinit var step: SimpleQuestion
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        questionState = nodeState as QuestionState
-        questionStep = questionState.node as SimpleQuestion
-        inputState = questionState.itemStates[0] as KeyboardInputItemState<*>
+        step = nodeState.node as SimpleQuestion
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = TextQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
+        binding.questionContent.setContent {
+            SageSurveyTheme {
+                TextQuestion(questionState = nodeState as QuestionState, assessmentViewModel = assessmentViewModel)
+            }
+        }
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        binding.navBar.setForwardOnClickListener {
-            binding.questionInput.updateResult(inputState)
-            questionState.saveAnswer(inputState.currentAnswer, inputState)
-            assessmentViewModel.goForward()
-        }
-        binding.navBar.setBackwardOnClickListener { assessmentViewModel.goBackward() }
-        binding.navBar.setSkipOnClickListener { assessmentViewModel.goForward() }
-        binding.navBar.setup(questionStep as Step)
-        binding.questionHeader.questionTitle.text = questionStep.title
-        binding.questionHeader.questionSubtitle.text = questionStep.subtitle
-        binding.questionHeader.closeBtn.setOnClickListener{ assessmentViewModel.cancel() }
-        binding.questionInput.setup(inputState)
     }
 
 }
