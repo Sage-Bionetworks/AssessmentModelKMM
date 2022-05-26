@@ -35,22 +35,31 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 
-/// Open class object that can be used to vend a view for a given step state.
-open class AssessmentStepViewVender {
-    public init() {
+public struct AssessmentView : View {
+    @StateObject var viewModel: AssessmentViewModel = .init()
+    @ObservedObject var assessmentState: AssessmentState
+    
+    public init(_ assessmentState: AssessmentState) {
+        self.assessmentState = assessmentState
     }
     
-    open func isSupported(step: Step) -> Bool {
-        switch step {
-        case is ChoiceQuestionStep:
-            return true
-        default:
-            return false
+    public var body: some View {
+        ZStack(alignment: .top) {
+            stepView(state: assessmentState.currentStep)
+            TopBarProgressView()
+            PauseMenu(viewModel: viewModel)
+                .opacity(assessmentState.showingPauseActions ? 1 : 0)
+                .animation(.easeInOut, value: assessmentState.showingPauseActions)
+        }
+        .environmentObject(assessmentState)
+        .environmentObject(viewModel.navigationViewModel)
+        .onAppear {
+            viewModel.initialize(assessmentState)
         }
     }
     
     @ViewBuilder
-    open func stepView(state: StepState?) -> some View {
+    private func stepView(state: StepState?) -> some View {
         if state == nil {
             ProgressView()
         }
@@ -102,6 +111,9 @@ open class AssessmentStepViewVender {
         .id("DebugQuestionStepView:\(state.id)")   // Give the view a unique id to force refresh
         .environmentObject(state)
         .fullscreenBackground(.hexE5E5E5)
+        .onAppear {
+            state.hasSelectedAnswer = true
+        }
     }
     
     @ViewBuilder
@@ -115,51 +127,6 @@ open class AssessmentStepViewVender {
     }
 }
 
-public struct AssessmentView : View {
-    @StateObject var viewModel: AssessmentViewModel = .init()
-    @ObservedObject var assessmentState: AssessmentState
-    let viewVender: AssessmentStepViewVender
-    
-    public init(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender = .init()) {
-        self.assessmentState = assessmentState
-        self.viewVender = viewVender
-    }
-    
-    public var body: some View {
-        ZStack(alignment: .top) {
-            viewVender.stepView(state: assessmentState.currentStep)
-            TopBarProgressView()
-            PauseMenu(viewModel: viewModel)
-                .opacity(assessmentState.showingPauseActions ? 1 : 0)
-                .animation(.easeInOut, value: assessmentState.showingPauseActions)
-        }
-        .environmentObject(assessmentState)
-        .environmentObject(viewModel.navigationViewModel)
-        .onAppear {
-            viewModel.initialize(assessmentState, viewVender: viewVender)
-        }
-    }
-    
-    struct TopBarProgressView : View {
-        @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
-        @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-        public var body: some View {
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.progressBackground)
-                    Rectangle()
-                        .fill(surveyTint)
-                        .frame(width: geometry.size.width * pagedNavigation.fraction)
-                        .animation(.easeOut, value: pagedNavigation.fraction)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 4)
-            }
-            .opacity(pagedNavigation.progressHidden ? 0 : 1)
-        }
-    }
-}
 
 struct AssessmentView_Previews: PreviewProvider {
     static var previews: some View {

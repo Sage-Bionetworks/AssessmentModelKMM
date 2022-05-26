@@ -117,18 +117,16 @@ struct PauseMenu: View {
 struct PauseMenuPreview : View {
     @StateObject var viewModel: AssessmentViewModel = .init()
     @ObservedObject var assessmentState: AssessmentState
-    let viewVender: AssessmentStepViewVender
     
-    public init(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender = .init()) {
+    public init(_ assessmentState: AssessmentState) {
         self.assessmentState = assessmentState
-        self.viewVender = viewVender
     }
     
     public var body: some View {
         PauseMenu(viewModel: viewModel)
             .environmentObject(assessmentState)
             .onAppear {
-                viewModel.initialize(assessmentState, viewVender: viewVender)
+                viewModel.initialize(assessmentState)
             }
     }
 }
