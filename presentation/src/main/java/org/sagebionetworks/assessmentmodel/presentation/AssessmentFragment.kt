@@ -127,8 +127,8 @@ open class AssessmentFragment : Fragment() {
                     return NumericQuestionStepFragment()
                 }
 
-                if (step.inputItem is CheckboxInputItem) {
-                    return CheckboxFragment()
+                if (step.inputItem is TimeInputItem) {
+                    return TimeQuestionStepFragment()
                 } else if (step.inputItem is KeyboardTextInputItem<*>) {
                     return TextQuestionStepFragment()
                 }

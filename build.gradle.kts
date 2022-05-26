@@ -28,6 +28,8 @@ allprojects {
         google()
         mavenCentral()
         jcenter() // still used by org.jetbrains.dokka:javadoc-plugin - liujoshua 05-07-2021
+        //TODO: Remove once kotlinx.datatime 0.4.0 release is available -nbrown 05/26/2022
+        maven("https://teamcity.jetbrains.com/guestAuth/repository/download/KotlinTools_KotlinxDatetime_Build_All/3858989:id/maven/")
     }
 }
 
