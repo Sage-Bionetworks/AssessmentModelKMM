@@ -2,6 +2,7 @@ package org.sagebionetworks.assessmentmodel.presentation.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -33,7 +34,7 @@ fun SageButton(
 ) {
     Button(
         modifier = modifier
-            .height(56.dp),
+            .defaultMinSize(minHeight = 56.dp),
         onClick = onClick,
         enabled = enabled,
         shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),

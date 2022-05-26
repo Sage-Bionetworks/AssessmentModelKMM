@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -30,46 +31,14 @@ import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
 import org.sagebionetworks.assessmentmodel.survey.*
 
 @Composable
-internal fun QuestionContent(
-    questionState: QuestionState,
-    assessmentViewModel: AssessmentViewModel,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .background(BackgroundGray)
-
-        ,
-    ) {
-        val scrollState = rememberScrollState()
-        QuestionHeader(
-            subtitle = questionState.node.subtitle,
-            title = questionState.node.title,
-            detail = questionState.node.detail,
-            assessmentViewModel = assessmentViewModel,
-            scrollState = scrollState
-            )
-        Column(
-            modifier = modifier
-                .fillMaxHeight()
-                .padding(start = 20.dp, end = 20.dp)
-                .verticalScroll(scrollState),
-        ) {
-            Spacer(modifier = Modifier.height(32.dp))
-            MultipleChoiceQuestion(
-                questionState = questionState,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            val forwardButtonAction = questionState.node.buttonMap.get(ButtonAction.Navigation.GoForward)
-            BottomNavigation(
-                { assessmentViewModel.goBackward() },
-                { assessmentViewModel.goForward() },
-                nextText = forwardButtonAction?.buttonTitle,
-                nextEnabled = questionState.allAnswersValidFlow.collectAsState().value
-                )
-        }
+internal fun ChoiceQuestion(questionState: QuestionState,
+                            assessmentViewModel: AssessmentViewModel,
+                            modifier: Modifier = Modifier) {
+    QuestionContainer(questionState = questionState, assessmentViewModel = assessmentViewModel) {
+        MultipleChoiceQuestion(
+            questionState = questionState,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -131,7 +100,7 @@ private fun ChoiceQuestionInput(
                 .fillMaxWidth()
                 .background(answerBackgroundColor)
                 .clickable(
-                    onClick = {onClick(!choiceSelected)}
+                    onClick = { onClick(!choiceSelected) }
                 )
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -178,7 +147,8 @@ private fun ChoiceQuestionInput(
                         focusManager.clearFocus()
                     }
                     TextField(
-                        modifier = Modifier.padding(end = 20.dp)
+                        modifier = Modifier
+                            .padding(end = 20.dp)
                             .focusRequester(focusRequester),
                         value = text,
                         onValueChange = {
