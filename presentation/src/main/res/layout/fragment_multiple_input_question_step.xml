@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".TextQuestionStepFragment">
+    tools:context=".MultipleInputQuestionStepFragment">
 
     <include layout="@layout/include_question_header"
         android:id="@+id/question_header"
