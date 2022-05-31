@@ -182,7 +182,7 @@ let swiftAssessment = AssessmentObject(identifier: "foo",
                                        estimatedMinutes: 2,
                                        interruptionHandling: .init(reviewIdentifier: .node(swiftInstructionStep.identifier),
                                                                    canResume: false,
-                                                                   canContinueLater: false,
+                                                                   canSaveForLater: false,
                                                                    canSkip: false)
 )
 

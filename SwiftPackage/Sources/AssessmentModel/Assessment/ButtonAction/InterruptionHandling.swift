@@ -72,11 +72,18 @@ public struct InterruptionHandlingObject : InterruptionHandling, Codable, Hashab
     
     public let reviewIdentifier: NavigationIdentifier?
     
-    public init(reviewIdentifier: NavigationIdentifier? = nil, canResume: Bool? = nil, canContinueLater: Bool? = nil, canSkip: Bool? = nil) {
+    public init(reviewIdentifier: NavigationIdentifier? = nil, canResume: Bool? = nil, canSaveForLater: Bool? = nil, canSkip: Bool? = nil) {
         self.reviewIdentifier = reviewIdentifier
         self._canResume = canResume
-        self._canSaveForLater = canContinueLater
+        self._canSaveForLater = canSaveForLater
         self._canSkip = canSkip
+    }
+    
+    public init(_ overrideHandling: InterruptionHandling, _ defaultHandling: InterruptionHandling) {
+        self.reviewIdentifier = overrideHandling.reviewIdentifier ?? defaultHandling.reviewIdentifier
+        self._canResume = overrideHandling.canResume && defaultHandling.canResume
+        self._canSaveForLater = overrideHandling.canSaveForLater && defaultHandling.canSaveForLater
+        self._canSkip = overrideHandling.canSkip && defaultHandling.canSkip
     }
 }
 
@@ -111,6 +118,6 @@ extension InterruptionHandlingObject : DocumentableStruct {
     }
     
     public static func examples() -> [InterruptionHandlingObject] {
-        [.init(reviewIdentifier: "instruction1", canResume: false, canContinueLater: false, canSkip: true)]
+        [.init(reviewIdentifier: "instruction1", canResume: false, canSaveForLater: false, canSkip: true)]
     }
 }
