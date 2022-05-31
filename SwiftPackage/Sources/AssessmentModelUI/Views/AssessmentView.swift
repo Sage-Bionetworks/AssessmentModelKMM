@@ -34,7 +34,35 @@
 import SwiftUI
 import SharedMobileUI
 import AssessmentModel
+import JsonModel
 
+/// This protocol extends the model and views that are used to display an assessment using views that are not
+/// defined within this library.
+public protocol AssessmentDisplayView : View {
+    init(_ assessmentState: AssessmentState)
+    
+    /// Unpack and load the assessment state from the given config data and restored data.
+    /// - Parameters:
+    ///     - config: The JSON (as Data) that is used to configure this assessment.
+    ///     - restoredResult: The partial result (if any) that is restored for this assessment.
+    ///     - interruptionHandling: The interruption handling to use for this assessment (if defined).
+    /// - Returns: Instantiated assessment state observable object.
+    static func instantiateAssessmentState(_ config: Data, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState
+}
+
+extension AssessmentView : AssessmentDisplayView {
+    
+    public static func instantiateAssessmentState(_ config: Data, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState {
+        let decoder = AssessmentFactory().createJSONDecoder()
+        let assessment = try decoder.decode(AssessmentObject.self, from: config)
+        let restoredResult = try restoredResult.map {
+            try decoder.decode(AssessmentResultObject.self, from: $0)
+        }
+        return .init(assessment, restoredResult: restoredResult, interruptionHandling: interruptionHandling)
+    }
+}
+
+/// Displays an assessment built using the views and model objects defined within this library.
 public struct AssessmentView : View {
     @StateObject var viewModel: AssessmentViewModel = .init()
     @ObservedObject var assessmentState: AssessmentState
