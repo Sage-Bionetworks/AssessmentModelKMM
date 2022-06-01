@@ -41,6 +41,11 @@ class SurveyQuestionStepFragment: StepFragment() {
                                 questionState = questionState,
                                 assessmentViewModel = assessmentViewModel
                             )
+                        } else if (step.inputItem is DurationInputItem) {
+                            DurationQuestion(
+                                questionState = questionState,
+                                assessmentViewModel = assessmentViewModel
+                            )
                         } else if (step.inputItem is StringTextInputItemObject) {
                             TextQuestion(
                                 questionState = questionState,
