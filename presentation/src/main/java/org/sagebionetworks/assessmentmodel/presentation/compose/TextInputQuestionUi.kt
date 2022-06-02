@@ -42,7 +42,7 @@ internal fun TextQuestion(
 ) {
     val itemState = questionState.itemStates[0] as KeyboardInputItemState<*>
     val textValidator: TextValidator<String> = itemState.textValidator as TextValidator<String>
-    var textValue by remember { mutableStateOf(itemState.currentAnswer?.jsonPrimitive?.contentOrNull ?: "") }
+    var textValue by remember { mutableStateOf(textValidator.valueFor(itemState.currentAnswer?.jsonPrimitive) ?: "") }
     fun updateAnswer(value: String) {
         textValue = value
         val jsonVal = if (value.isNotBlank()) {
