@@ -1,5 +1,5 @@
 //
-//  InstructionView.swift
+//  InstructionStepView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -35,7 +35,7 @@ import SwiftUI
 import AssessmentModel
 import SharedMobileUI
 
-struct InstructionView: View {
+public struct InstructionStepView: View {
     @ObservedObject var nodeState: ContentNodeState
     
     public init(_ nodeState: ContentNodeState) {
@@ -53,7 +53,7 @@ struct InstructionView: View {
 
 struct InstructionView_Previews: PreviewProvider {
     static var previews: some View {
-        InstructionView(InstructionState(example, parentId: nil))
+        InstructionStepView(InstructionState(example, parentId: nil))
             .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
             .environmentObject(AssessmentState(AssessmentObject(previewStep: example)))
     }
