@@ -52,6 +52,7 @@ public struct ContentImage : View, Identifiable {
     ///   - imageInfo: The image info to use to get the resource.
     ///   - label: The accessibility label.
     public init(_ imageInfo: ImageInfo, label: Text? = nil) {
+        let label = label ?? imageInfo.label.map { Text($0) }
         if let iconKey = (imageInfo as? SageResourceImage)?.name {
             self.init(icon: iconKey, label: label)
         }

@@ -117,10 +117,10 @@ public struct AssessmentView : View {
             TitlePageView(step)
         }
         else if let step = state?.step as? CompletionStep {
-            CompletionView(step)
+            CompletionStepView(step)
         }
         else if let nodeState = state as? ContentNodeState {
-            InstructionView(nodeState)
+            InstructionStepView(nodeState)
         }
         else {
             debugStepView(state!)
