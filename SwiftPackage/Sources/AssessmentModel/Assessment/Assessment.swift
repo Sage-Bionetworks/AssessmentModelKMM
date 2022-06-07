@@ -170,6 +170,11 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject(reviewIdentifier: .reserved(.beginning)) }
     private let _interruptionHandling: InterruptionHandlingObject?
     
+    open func defaultInterruptionHandling() -> InterruptionHandling {
+        InterruptionHandlingObject(
+            reviewIdentifier: (children.first is OverviewStep) ? .reserved(.beginning) : nil)
+    }
+    
     open var jsonSchema: URL {
         _jsonSchema ?? URL(string: "\(type(of: self)).json", relativeTo: kSageJsonSchemaBaseURL)!
     }
