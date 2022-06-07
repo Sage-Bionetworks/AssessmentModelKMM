@@ -50,7 +50,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         navigationViewModel.goBack = goBack
     }
     
-    func initialize(_ assessmentState: AssessmentState) {
+    public func initialize(_ assessmentState: AssessmentState) {
         guard assessmentState.id != self.state?.id else { return }
         
         self.state = assessmentState

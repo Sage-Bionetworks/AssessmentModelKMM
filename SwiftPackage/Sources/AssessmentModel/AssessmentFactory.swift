@@ -65,4 +65,16 @@ open class AssessmentFactory : ResultDataFactory {
         self.registerRootObject(AssessmentObject())
         self.registerRootObject(AssessmentResultObject())
     }
+    
+    public func decode<Value>(_ config: Data) throws -> Value {
+        let decoder = self.createJSONDecoder()
+        return try decoder.decode(PolymorphicObjectWrapper<Value>.self, from: config).object
+    }
+    
+    struct PolymorphicObjectWrapper<Value> : Decodable {
+        let object : Value
+        init(from decoder: Decoder) throws {
+            self.object = try decoder.serializationFactory.decodePolymorphicObject(Value.self, from: decoder)
+        }
+    }
 }
