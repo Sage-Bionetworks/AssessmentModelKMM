@@ -168,7 +168,7 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public let estimatedMinutes: Int
     public let copyright: String?
     
-    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject(reviewIdentifier: .reserved(.beginning)) }
+    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? defaultInterruptionHandling() }
     private let _interruptionHandling: InterruptionHandlingObject?
     
     open func defaultInterruptionHandling() -> InterruptionHandling {
