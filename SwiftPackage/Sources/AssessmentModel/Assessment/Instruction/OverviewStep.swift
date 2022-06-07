@@ -32,6 +32,7 @@
 
 import Foundation
 import JsonModel
+import MobilePassiveData
 
 /// An overview step is  intended to be used to mark the *beginning* of an assessment.
 public protocol OverviewStep : PermissionStep {
@@ -45,12 +46,12 @@ open class AbstractOverviewStepObject : AbstractStepObject, OverviewStep {
     
     open var permissions: [PermissionInfo] { _permissions ?? [] }
     private let _permissions: [PermissionInfoObject]?
-    
+
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 permissions: [PermissionInfoObject]? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil) {
-        self._permissions = permissions.flatMap { $0.isEmpty ? nil : $0 }
+        self._permissions = permissions
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
                    shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode)

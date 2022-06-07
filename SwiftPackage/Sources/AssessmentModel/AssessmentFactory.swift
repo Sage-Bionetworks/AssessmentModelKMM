@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import MobilePassiveData
 
 /// A lightweight protocol for copying objects with a new identifier.
 public protocol CopyWithIdentifier {
@@ -43,14 +44,13 @@ public protocol CopyWithIdentifier {
     func copy(with identifier: String) -> Self
 }
 
-open class AssessmentFactory : ResultDataFactory {
+open class AssessmentFactory : MobilePassiveDataFactory {
     
     public let buttonActionSerializer = ButtonActionSerializer()
     public let imageInfoSerializer = ImageInfoSerializer()
     public let textInputItemSerializer = TextInputItemSerializer()
     public let nodeSerializer = NodeSerializer()
     public let assessmentSerializer = AssessmentSerializer()
-    public let asyncActionSerializer = AsyncActionConfigurationSerializer()
     
     public required init() {
         super.init()
@@ -59,22 +59,9 @@ open class AssessmentFactory : ResultDataFactory {
         self.registerSerializer(buttonActionSerializer)
         self.registerSerializer(textInputItemSerializer)
         self.registerSerializer(nodeSerializer)
-        self.registerSerializer(asyncActionSerializer)
         self.registerSerializer(assessmentSerializer)
         
         self.registerRootObject(AssessmentObject())
         self.registerRootObject(AssessmentResultObject())
-    }
-    
-    public func decode<Value>(_ config: Data) throws -> Value {
-        let decoder = self.createJSONDecoder()
-        return try decoder.decode(PolymorphicObjectWrapper<Value>.self, from: config).object
-    }
-    
-    struct PolymorphicObjectWrapper<Value> : Decodable {
-        let object : Value
-        init(from decoder: Decoder) throws {
-            self.object = try decoder.serializationFactory.decodePolymorphicObject(Value.self, from: decoder)
-        }
     }
 }

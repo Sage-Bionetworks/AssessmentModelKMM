@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import MobilePassiveData
 
 open class AbstractNodeContainerObject : AbstractContentNodeObject, AsyncActionContainer {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
