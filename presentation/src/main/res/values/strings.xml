@@ -17,8 +17,11 @@
     <string name="continue_later">Continue later</string>
     <string name="start">Start</string>
     <string name="done">Done</string>
+    <string name="exit">Exit</string>
     <string name="on_a_scale">"On a scale of %1$d to %2$d"</string>
     <string name="maximum_characters">"(Maximum %1$d characters)"</string>
     <string name="tap_to_respond">Tap to respond</string>
+    <string name="well_done">Well done!</string>
+    <string name="thank_you_for">Thank you for being part of our study.</string>
 
 </resources>
