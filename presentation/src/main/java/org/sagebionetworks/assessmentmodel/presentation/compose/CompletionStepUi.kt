@@ -101,6 +101,6 @@ internal fun CompletionStepUi(
 @Composable
 private fun CompletionStepPreview() {
     SageSurveyTheme {
-        CompletionStepUi(title = "Well done!", detail = "Thank you for being part of our study.", nextButtonText = stringResource(R.string.exit_survey), next = {})
+        CompletionStepUi(title = "Well done!", detail = "Thank you for being part of our study.", nextButtonText = stringResource(R.string.exit), next = {})
     }
 }

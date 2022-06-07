@@ -39,7 +39,7 @@ open class InstructionStepFragment: StepFragment() {
             R.string.start
         } else if (step is CompletionStep) {
             hideClose = true
-            R.string.exit_survey
+            R.string.exit
         } else {
             R.string.next
         }
@@ -48,8 +48,8 @@ open class InstructionStepFragment: StepFragment() {
             SageSurveyTheme {
                 if (step is CompletionStep) {
                     CompletionStepUi(
-                        title = step.title,
-                        detail = step.detail,
+                        title = step.title ?: getString(R.string.well_done),
+                        detail = step.detail ?: getString(R.string.thank_you_for),
                         nextButtonText = stringResource(buttonTextResource),
                         next = { assessmentViewModel.goForward() }
                     )
