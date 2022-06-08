@@ -26,6 +26,9 @@ let package = Package(
         .package(name: "SharedMobileUI",
                  url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
                  from: "0.15.2"),
+        .package(name: "MobilePassiveData",
+                 url: "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
+                 from: "1.2.4"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -34,6 +37,7 @@ let package = Package(
         .target(name: "AssessmentModel",
                 dependencies: [
                     "JsonModel",
+                    .product(name: "MobilePassiveData", package: "MobilePassiveData"),
                 ],
                 path: "SwiftPackage/Sources/AssessmentModel"),
         

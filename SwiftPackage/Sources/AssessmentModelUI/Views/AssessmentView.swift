@@ -40,21 +40,24 @@ import JsonModel
 /// defined within this library.
 public protocol AssessmentDisplayView : View {
     init(_ assessmentState: AssessmentState)
-    
+
     /// Unpack and load the assessment state from the given config data and restored data.
     /// - Parameters:
     ///     - config: The JSON (as Data) that is used to configure this assessment.
     ///     - restoredResult: The partial result (if any) that is restored for this assessment.
     ///     - interruptionHandling: The interruption handling to use for this assessment (if defined).
     /// - Returns: Instantiated assessment state observable object.
-    static func instantiateAssessmentState(_ config: Data, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState
+    static func instantiateAssessmentState(_ identifier: String, config: Data?, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState
 }
 
 extension AssessmentView : AssessmentDisplayView {
     
-    public static func instantiateAssessmentState(_ config: Data, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState {
+    public static func instantiateAssessmentState(_ identifier: String, config: Data?, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState {
+        guard let data = config else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Cannot decode a survey with NULL config."))
+        }
         let decoder = AssessmentFactory().createJSONDecoder()
-        let assessment = try decoder.decode(AssessmentObject.self, from: config)
+        let assessment = try decoder.decode(AssessmentObject.self, from: data)
         let restoredResult = try restoredResult.map {
             try decoder.decode(AssessmentResultObject.self, from: $0)
         }

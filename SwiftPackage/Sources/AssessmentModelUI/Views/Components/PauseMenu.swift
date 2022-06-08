@@ -35,13 +35,17 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 
-struct PauseMenu: View {
+public struct PauseMenu: View {
     @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
     @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var assessmentState: AssessmentState
     @ObservedObject var viewModel: AssessmentViewModel
     
-    var body: some View {
+    public init(viewModel: AssessmentViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    public var body: some View {
         VStack(spacing: 0) {
             Text("Paused", bundle: .module)
                 .font(.pauseMenuTitle)

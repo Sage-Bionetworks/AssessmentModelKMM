@@ -35,11 +35,11 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 
-struct TopBarProgressView : View {
+public struct TopBarProgressView : View {
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Rectangle()
