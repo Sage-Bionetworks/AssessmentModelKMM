@@ -18,9 +18,7 @@ interface ResourceInfo {
 
     // MARK: Android
 
-    /**
-     * The package within which the resource is embedded on Android platforms.
-     */
+    @Deprecated("Not used. Resources are always loaded using the package name of the containing app.")
     var packageName: String?
 }
 

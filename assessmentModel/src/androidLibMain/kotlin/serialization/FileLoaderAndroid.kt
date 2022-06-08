@@ -12,12 +12,11 @@ import org.sagebionetworks.assessmentmodel.resourcemanagement.StandardResourceAs
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class FileLoaderAndroid(private val resources: Resources, private val defaultPackageName: String): FileLoader {
+class FileLoaderAndroid(private val resources: Resources, private val packageName: String): FileLoader {
 
     constructor(context: Context) : this(context.resources, context.packageName)
 
     override fun loadFile(assetInfo: AssetInfo, resourceInfo: ResourceInfo): String {
-        val packageName = resourceInfo.packageName ?: defaultPackageName
         val resourceId = resources.getIdentifier(assetInfo.resourceName, assetInfo.resourceAssetType, packageName)
         val inputStream = resources.openRawResource(resourceId)
         val r = BufferedReader(InputStreamReader(inputStream))
@@ -32,7 +31,7 @@ class FileLoaderAndroid(private val resources: Resources, private val defaultPac
 }
 
 fun ImageInfo.loadDrawable(context: Context): Drawable? {
-    val packageName = packageName ?: context.packageName
+    val packageName = context.packageName
     val resourceId = context.resources.getIdentifier(imageName, StandardResourceAssetType.DRAWABLE, packageName)
     return AppCompatResources.getDrawable(context, resourceId)
 
