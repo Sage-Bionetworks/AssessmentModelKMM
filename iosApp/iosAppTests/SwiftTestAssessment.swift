@@ -80,7 +80,7 @@ let swiftOverviewStep = OverviewStepObject(identifier: "overview",
                                            nextNode: .reserved(.nextSection))
 
 let swiftPermissionStep = PermissionStepObject(identifier: "permission",
-                                               permissionType: .init(.weather),
+                                               permissionType: .weather,
                                                optional: false,
                                                restrictedMessage: "Resticted",
                                                deniedMessage: "You are denied.")

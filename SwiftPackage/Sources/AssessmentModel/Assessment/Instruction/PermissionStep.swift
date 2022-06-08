@@ -60,7 +60,7 @@ public struct PermissionInfoObject : Codable, Hashable, PermissionInfo {
     public var optional: Bool { _optional ?? true }
     public let _optional: Bool?
     
-    public init(permissionType: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil) {
+    public init(permission permissionType: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil) {
         self.permissionType = permissionType
         self._optional = optional
         self.restrictedMessage = restrictedMessage
@@ -99,7 +99,7 @@ extension PermissionInfoObject : DocumentableStruct {
     }
     
     public static func examples() -> [PermissionInfoObject] {
-        [.init(permissionType: .motion)]
+        [.init(permission: .motion)]
     }
 }
 
