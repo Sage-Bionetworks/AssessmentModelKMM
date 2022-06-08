@@ -168,6 +168,7 @@ struct AssessmentView_Previews: PreviewProvider {
 public var previewExamples: [AssessmentObject] = [
     surveyA,
     surveyB,
+    surveyC,
 ]
 
 let surveyA = AssessmentObject(identifier: "surveyA",
@@ -279,3 +280,102 @@ fileprivate let sectionB2Children: [Node] = [
 ]
 
 
+let surveyCJson = """
+{
+  "identifier": "daily",
+  "type": "assessment",
+  "interruptionHandling": {
+    "reviewIdentifier": null
+  },
+  "steps": [
+    {
+      "type": "simpleQuestion",
+      "identifier": "energy",
+      "title": "Please rate your energy level right now.",
+      "detail": "0 being very low, 5 being your average, and 10 being very high",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very high",
+          "maximumValue": 10,
+          "minimumLabel": "Very low",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "mood",
+      "title": "Please rate your mood right now.",
+      "detail": "0 being very low, 5 being your average, and 10 being very high",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very high",
+          "maximumValue": 10,
+          "minimumLabel": "Very low",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "thoughts",
+      "title": "How fast are your thoughts right now?",
+      "detail": "0 being very slow, 5 being your average, and 10 being very fast",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very fast",
+          "maximumValue": 10,
+          "minimumLabel": "Very slow",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "impulsiveness",
+      "title": "How impulsive are you feeling right now?",
+      "detail": "0 being not at all, 5 being your average, and 10 being very much",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very much",
+          "maximumValue": 10,
+          "minimumLabel": "Not at all",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "attention",
+      "title": "How well are you able to focus right now?",
+      "detail": "0 being not at all, 5 being your average, and 10 being very well",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very well",
+          "maximumValue": 10,
+          "minimumLabel": "Not at all",
+          "minimumValue": 0
+        }
+      },
+      "actions": {
+        "goForward": {
+          "buttonTitle": "Submit",
+          "type": "default"
+        }
+      }
+    }
+  ]
+}
+""".data(using: .utf8)!
+
+let surveyC = try! AssessmentFactory().createJSONDecoder().decode(AssessmentObject.self, from: surveyCJson)
