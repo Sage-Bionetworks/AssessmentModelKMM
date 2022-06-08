@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import MobilePassiveData
 
 open class AbstractNodeContainerObject : AbstractContentNodeObject, AsyncActionContainer {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
@@ -167,8 +168,13 @@ open class AbstractAssessmentObject : AbstractNodeContainerObject, Assessment {
     public let estimatedMinutes: Int
     public let copyright: String?
     
-    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? InterruptionHandlingObject(reviewIdentifier: .reserved(.beginning)) }
+    open var interruptionHandling: InterruptionHandling { _interruptionHandling ?? defaultInterruptionHandling() }
     private let _interruptionHandling: InterruptionHandlingObject?
+    
+    open func defaultInterruptionHandling() -> InterruptionHandling {
+        InterruptionHandlingObject(
+            reviewIdentifier: (children.first is OverviewStep) ? .reserved(.beginning) : nil)
+    }
     
     open var jsonSchema: URL {
         _jsonSchema ?? URL(string: "\(type(of: self)).json", relativeTo: kSageJsonSchemaBaseURL)!

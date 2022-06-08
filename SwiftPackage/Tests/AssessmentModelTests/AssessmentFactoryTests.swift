@@ -55,7 +55,7 @@ class AssessmentModelTests: XCTestCase {
         do {
             let schemas = try doc.buildSchemas()
 
-            XCTAssertEqual(schemas.count, 10)
+            XCTAssertEqual(schemas.count, 14)
             
             checkAnswerTypeSchema(schemas)
             checkButtonActionInfoSchema(schemas)

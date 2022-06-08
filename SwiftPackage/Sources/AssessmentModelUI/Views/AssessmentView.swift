@@ -34,23 +34,63 @@
 import SwiftUI
 import SharedMobileUI
 import AssessmentModel
+import JsonModel
 
-/// Open class object that can be used to vend a view for a given step state.
-open class AssessmentStepViewVender {
-    public init() {
+/// This protocol extends the model and views that are used to display an assessment using views that are not
+/// defined within this library.
+public protocol AssessmentDisplayView : View {
+    init(_ assessmentState: AssessmentState)
+
+    /// Unpack and load the assessment state from the given config data and restored data.
+    /// - Parameters:
+    ///     - config: The JSON (as Data) that is used to configure this assessment.
+    ///     - restoredResult: The partial result (if any) that is restored for this assessment.
+    ///     - interruptionHandling: The interruption handling to use for this assessment (if defined).
+    /// - Returns: Instantiated assessment state observable object.
+    static func instantiateAssessmentState(_ identifier: String, config: Data?, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState
+}
+
+extension AssessmentView : AssessmentDisplayView {
+    
+    public static func instantiateAssessmentState(_ identifier: String, config: Data?, restoredResult: Data?, interruptionHandling: InterruptionHandling?) throws -> AssessmentState {
+        guard let data = config else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Cannot decode a survey with NULL config."))
+        }
+        let decoder = AssessmentFactory().createJSONDecoder()
+        let assessment = try decoder.decode(AssessmentObject.self, from: data)
+        let restoredResult = try restoredResult.map {
+            try decoder.decode(AssessmentResultObject.self, from: $0)
+        }
+        return .init(assessment, restoredResult: restoredResult, interruptionHandling: interruptionHandling)
+    }
+}
+
+/// Displays an assessment built using the views and model objects defined within this library.
+public struct AssessmentView : View {
+    @StateObject var viewModel: AssessmentViewModel = .init()
+    @ObservedObject var assessmentState: AssessmentState
+    
+    public init(_ assessmentState: AssessmentState) {
+        self.assessmentState = assessmentState
     }
     
-    open func isSupported(step: Step) -> Bool {
-        switch step {
-        case is ChoiceQuestionStep:
-            return true
-        default:
-            return false
+    public var body: some View {
+        ZStack(alignment: .top) {
+            stepView(state: assessmentState.currentStep)
+            TopBarProgressView()
+            PauseMenu(viewModel: viewModel)
+                .opacity(assessmentState.showingPauseActions ? 1 : 0)
+                .animation(.easeInOut, value: assessmentState.showingPauseActions)
+        }
+        .environmentObject(assessmentState)
+        .environmentObject(viewModel.navigationViewModel)
+        .onAppear {
+            viewModel.initialize(assessmentState)
         }
     }
     
     @ViewBuilder
-    open func stepView(state: StepState?) -> some View {
+    private func stepView(state: StepState?) -> some View {
         if state == nil {
             ProgressView()
         }
@@ -80,10 +120,10 @@ open class AssessmentStepViewVender {
             TitlePageView(step)
         }
         else if let step = state?.step as? CompletionStep {
-            CompletionView(step)
+            CompletionStepView(step)
         }
         else if let nodeState = state as? ContentNodeState {
-            InstructionView(nodeState)
+            InstructionStepView(nodeState)
         }
         else {
             debugStepView(state!)
@@ -102,6 +142,9 @@ open class AssessmentStepViewVender {
         .id("DebugQuestionStepView:\(state.id)")   // Give the view a unique id to force refresh
         .environmentObject(state)
         .fullscreenBackground(.hexE5E5E5)
+        .onAppear {
+            state.hasSelectedAnswer = true
+        }
     }
     
     @ViewBuilder
@@ -115,51 +158,6 @@ open class AssessmentStepViewVender {
     }
 }
 
-public struct AssessmentView : View {
-    @StateObject var viewModel: AssessmentViewModel = .init()
-    @ObservedObject var assessmentState: AssessmentState
-    let viewVender: AssessmentStepViewVender
-    
-    public init(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender = .init()) {
-        self.assessmentState = assessmentState
-        self.viewVender = viewVender
-    }
-    
-    public var body: some View {
-        ZStack(alignment: .top) {
-            viewVender.stepView(state: assessmentState.currentStep)
-            TopBarProgressView()
-            PauseMenu(viewModel: viewModel)
-                .opacity(assessmentState.showingPauseActions ? 1 : 0)
-                .animation(.easeInOut, value: assessmentState.showingPauseActions)
-        }
-        .environmentObject(assessmentState)
-        .environmentObject(viewModel.navigationViewModel)
-        .onAppear {
-            viewModel.initialize(assessmentState, viewVender: viewVender)
-        }
-    }
-    
-    struct TopBarProgressView : View {
-        @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
-        @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-        public var body: some View {
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.progressBackground)
-                    Rectangle()
-                        .fill(surveyTint)
-                        .frame(width: geometry.size.width * pagedNavigation.fraction)
-                        .animation(.easeOut, value: pagedNavigation.fraction)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 4)
-            }
-            .opacity(pagedNavigation.progressHidden ? 0 : 1)
-        }
-    }
-}
 
 struct AssessmentView_Previews: PreviewProvider {
     static var previews: some View {

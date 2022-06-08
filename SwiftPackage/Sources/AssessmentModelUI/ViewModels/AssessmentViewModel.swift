@@ -36,13 +36,13 @@ import SharedMobileUI
 import AssessmentModel
 import JsonModel
 
+
 open class AssessmentViewModel : ObservableObject, NavigationState {
     
     @Published var forwardCount: Int = 0
     @Published var backCount: Int = 0
     
     public let navigationViewModel: PagedNavigationViewModel = .init()
-    public private(set) var viewVender: AssessmentStepViewVender!
     public private(set) var state: AssessmentState!
     
     public init() {
@@ -50,11 +50,10 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         navigationViewModel.goBack = goBack
     }
     
-    func initialize(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender) {
+    public func initialize(_ assessmentState: AssessmentState) {
         guard assessmentState.id != self.state?.id else { return }
         
         self.state = assessmentState
-        self.viewVender = viewVender
         self.currentBranchState = assessmentState
 
         do {
@@ -201,7 +200,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         navigationViewModel.forwardButtonText = goForwardButtonText(step: stepState.step)
         navigationViewModel.currentDirection = nextNode.direction == .backward ? .backward : .forward
         navigationViewModel.backEnabled = canGoBack(step: stepState.step)
-        navigationViewModel.forwardEnabled = stepState.forwardEnabled || !viewVender.isSupported(step: stepState.step)
+        navigationViewModel.forwardEnabled = isForwardEnabled(for: stepState)
         if let progress = currentNavigator.progress(currentNode: stepState.step, branchResult: currentBranchResult) {
             navigationViewModel.progressHidden = stepState.progressHidden
             navigationViewModel.currentIndex = progress.current
@@ -212,6 +211,10 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             navigationViewModel.currentIndex += 1
             navigationViewModel.progressHidden = true
         }
+    }
+    
+    open func isForwardEnabled(for stepState: StepState) -> Bool {
+        stepState.forwardEnabled
     }
     
     private func moveInto(branchState: BranchState, direction: PathMarker.Direction) {

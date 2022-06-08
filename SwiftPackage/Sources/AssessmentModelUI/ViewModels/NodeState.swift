@@ -97,9 +97,18 @@ public final class AssessmentState : BranchState {
     @Published public var showingPauseActions: Bool = false
     @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
+    
+    /// File URL for the directory in which generated data files that are referenced using `FileResult`
+    /// may be included. Asynchronous actions with recorders (and potentially steps) can save data to
+    /// files during the progress of the task. This property specifies where such data was being written to
+    /// allow the archive to delete the output directory once the results have been archived and encrypted
+    /// for upload.
+    public var outputDirectory: URL?
 
     public init(_ assessment: Assessment, restoredResult: AssessmentResult? = nil, interruptionHandling: InterruptionHandling? = nil) {
-        let rules = interruptionHandling ?? assessment.interruptionHandling
+        let rules = interruptionHandling.map {
+            InterruptionHandlingObject($0, assessment.interruptionHandling)
+        } ?? assessment.interruptionHandling
         let result = restoredResult.flatMap { rules.canSaveForLater ? $0.deepCopy() : nil } ?? assessment.instantiateAssessmentResult()
         self.interruptionHandling = rules
         super.init(branch: assessment, result: result)
