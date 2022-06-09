@@ -58,7 +58,6 @@ public struct TimeQuestionStepView: View {
                     #endif
             }
         }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)
         .onAppear {

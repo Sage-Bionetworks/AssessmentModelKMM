@@ -50,7 +50,6 @@ public struct TextEntryQuestionStepView: View {
                 TextViewWrapper(viewModel: model)
             }
         }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .innerSpacing(6)
         .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)

@@ -67,6 +67,94 @@ extension AssessmentView : AssessmentDisplayView {
 
 /// Displays an assessment built using the views and model objects defined within this library.
 public struct AssessmentView : View {
+    @ObservedObject var assessmentState: AssessmentState
+    
+    public init(_ assessmentState: AssessmentState) {
+        self.assessmentState = assessmentState
+    }
+    
+    public var body: some View {
+        AssessmentWrapperView<StepView>(assessmentState)
+    }
+    
+    struct StepView : View, StepFactoryView {
+        @ObservedObject var state: StepState
+        
+        init(_ state: StepState) {
+            self.state = state
+        }
+        
+        var body: some View {
+            if let questionState = state as? QuestionState {
+                if questionState.step is ChoiceQuestionStep {
+                    ChoiceQuestionStepView(questionState)
+                }
+                else if let question = questionState.question as? SimpleQuestion {
+                    switch question.inputItem {
+                    case is IntegerTextInputItem:
+                        IntegerQuestionStepView(questionState)
+                    case is StringTextInputItem:
+                        TextEntryQuestionStepView(questionState)
+                    case is DurationTextInputItem:
+                        DurationQuestionStepView(questionState)
+                    case is TimeTextInputItem:
+                        TimeQuestionStepView(questionState)
+                    default:
+                        debugQuestionStepView(questionState)
+                    }
+                }
+                else {
+                    debugQuestionStepView(questionState)
+                }
+            }
+            else if let step = state.step as? OverviewStep {
+                TitlePageView(step)
+            }
+            else if let step = state.step as? CompletionStep {
+                CompletionStepView(step)
+            }
+            else if let nodeState = state as? ContentNodeState {
+                InstructionStepView(nodeState)
+            }
+            else {
+                debugStepView()
+            }
+        }
+    
+        @ViewBuilder
+        private func debugQuestionStepView(_ state: QuestionState) -> some View {
+            VStack(spacing: 8) {
+                StepHeaderView(state)
+                Spacer()
+                Text(state.id)
+                Spacer()
+                SurveyNavigationView()
+            }
+            .id("DebugQuestionStepView:\(state.id)")   // Give the view a unique id to force refresh
+            .environmentObject(state)
+            .fullscreenBackground(.hexE5E5E5)
+            .onAppear {
+                state.hasSelectedAnswer = true
+            }
+        }
+        
+        @ViewBuilder
+        private func debugStepView() -> some View {
+            VStack {
+                Spacer()
+                Text(state.id)
+                Spacer()
+                SurveyNavigationView()
+            }
+        }
+    }
+}
+
+public protocol StepFactoryView : View {
+    init(_ state: StepState)
+}
+
+public struct AssessmentWrapperView<StepContent : StepFactoryView> : View {
     @StateObject var viewModel: AssessmentViewModel = .init()
     @ObservedObject var assessmentState: AssessmentState
     
@@ -76,7 +164,13 @@ public struct AssessmentView : View {
     
     public var body: some View {
         ZStack(alignment: .top) {
-            stepView(state: assessmentState.currentStep)
+            if let state = assessmentState.currentStep {
+                StepContent(state)
+                    .id("Step:\(state.id)") // Setting the id will refresh the view.
+            }
+            else {
+                ProgressView()
+            }
             TopBarProgressView()
             PauseMenu(viewModel: viewModel)
                 .opacity(assessmentState.showingPauseActions ? 1 : 0)
@@ -88,76 +182,7 @@ public struct AssessmentView : View {
             viewModel.initialize(assessmentState)
         }
     }
-    
-    @ViewBuilder
-    private func stepView(state: StepState?) -> some View {
-        if state == nil {
-            ProgressView()
-        }
-        else if let questionState = state as? QuestionState {
-            if questionState.step is ChoiceQuestionStep {
-                ChoiceQuestionStepView(questionState)
-            }
-            else if let question = questionState.question as? SimpleQuestion {
-                switch question.inputItem {
-                case is IntegerTextInputItem:
-                    IntegerQuestionStepView(questionState)
-                case is StringTextInputItem:
-                    TextEntryQuestionStepView(questionState)
-                case is DurationTextInputItem:
-                    DurationQuestionStepView(questionState)
-                case is TimeTextInputItem:
-                    TimeQuestionStepView(questionState)
-                default:
-                    debugQuestionStepView(questionState)
-                }
-            }
-            else {
-                debugQuestionStepView(questionState)
-            }
-        }
-        else if let step = state?.step as? OverviewStep {
-            TitlePageView(step)
-        }
-        else if let step = state?.step as? CompletionStep {
-            CompletionStepView(step)
-        }
-        else if let nodeState = state as? ContentNodeState {
-            InstructionStepView(nodeState)
-        }
-        else {
-            debugStepView(state!)
-        }
-    }
-    
-    @ViewBuilder
-    private func debugQuestionStepView(_ state: QuestionState) -> some View {
-        VStack(spacing: 8) {
-            StepHeaderView(state)
-            Spacer()
-            Text(state.id)
-            Spacer()
-            SurveyNavigationView()
-        }
-        .id("DebugQuestionStepView:\(state.id)")   // Give the view a unique id to force refresh
-        .environmentObject(state)
-        .fullscreenBackground(.hexE5E5E5)
-        .onAppear {
-            state.hasSelectedAnswer = true
-        }
-    }
-    
-    @ViewBuilder
-    private func debugStepView(_ state: StepState) -> some View {
-        VStack {
-            Spacer()
-            Text(state.id)
-            Spacer()
-            SurveyNavigationView()
-        }
-    }
 }
-
 
 struct AssessmentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -168,6 +193,7 @@ struct AssessmentView_Previews: PreviewProvider {
 public var previewExamples: [AssessmentObject] = [
     surveyA,
     surveyB,
+    surveyC,
 ]
 
 let surveyA = AssessmentObject(identifier: "surveyA",
@@ -279,3 +305,102 @@ fileprivate let sectionB2Children: [Node] = [
 ]
 
 
+let surveyCJson = """
+{
+  "identifier": "daily",
+  "type": "assessment",
+  "interruptionHandling": {
+    "reviewIdentifier": null
+  },
+  "steps": [
+    {
+      "type": "simpleQuestion",
+      "identifier": "energy",
+      "title": "Please rate your energy level right now.",
+      "detail": "0 being very low, 5 being your average, and 10 being very high",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very high",
+          "maximumValue": 10,
+          "minimumLabel": "Very low",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "mood",
+      "title": "Please rate your mood right now.",
+      "detail": "0 being very low, 5 being your average, and 10 being very high",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very high",
+          "maximumValue": 10,
+          "minimumLabel": "Very low",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "thoughts",
+      "title": "How fast are your thoughts right now?",
+      "detail": "0 being very slow, 5 being your average, and 10 being very fast",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very fast",
+          "maximumValue": 10,
+          "minimumLabel": "Very slow",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "impulsiveness",
+      "title": "How impulsive are you feeling right now?",
+      "detail": "0 being not at all, 5 being your average, and 10 being very much",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very much",
+          "maximumValue": 10,
+          "minimumLabel": "Not at all",
+          "minimumValue": 0
+        }
+      }
+    },
+    {
+      "type": "simpleQuestion",
+      "identifier": "attention",
+      "title": "How well are you able to focus right now?",
+      "detail": "0 being not at all, 5 being your average, and 10 being very well",
+      "uiHint": "slider",
+      "inputItem": {
+        "type": "integer",
+        "formatOptions": {
+          "maximumLabel": "Very well",
+          "maximumValue": 10,
+          "minimumLabel": "Not at all",
+          "minimumValue": 0
+        }
+      },
+      "actions": {
+        "goForward": {
+          "buttonTitle": "Submit",
+          "type": "default"
+        }
+      }
+    }
+  ]
+}
+""".data(using: .utf8)!
+
+let surveyC = try! AssessmentFactory().createJSONDecoder().decode(AssessmentObject.self, from: surveyCJson)
