@@ -21,9 +21,7 @@ import org.sagebionetworks.assessmentmodel.serialization.nodeSerializersModule
  */
 open class EmbeddedJsonAssessmentRegistryProvider(override val fileLoader: FileLoader,
                                                   private val modulesResourceName: String,
-                                                  private val moduleJsonCoder: Json = Json {
-                                                      serializersModule = nodeSerializersModule + moduleInfoSerializersModule
-                                                  },
+                                                  private val moduleJsonCoder: Json = Serialization.JsonCoder.default,
                                                   private val modulesDecoderBundle: Any? = null,
                                                   private val modulesPackageName: String? = null
                                     ): AssessmentRegistryProvider {
