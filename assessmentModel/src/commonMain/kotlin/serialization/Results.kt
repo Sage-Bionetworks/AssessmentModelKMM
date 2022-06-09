@@ -24,6 +24,9 @@ val resultSerializersModule = SerializersModule {
         subclass(CollectionResultObject::class)
         subclass(ResultObject::class)
     }
+    polymorphic(AssessmentResult::class) {
+        subclass(AssessmentResultObject::class)
+    }
 }
 
 @Serializable
