@@ -45,9 +45,12 @@ public struct StepHeaderView : View {
     
     public var body: some View {
         HStack {
+            if nodeState.skipStepText == nil && !assessmentState.canPause {
+                Spacer()
+            }
             ExitButton(canPause: assessmentState.canPause)
-            Spacer()
             if let text = nodeState.skipStepText {
+                Spacer()
                 UnderlinedButton(label: text) {
                     nodeState.willSkip()
                     pagedNavigation.goForward()
