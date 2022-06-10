@@ -50,23 +50,26 @@ public struct ContentNodeView : View {
     public var body: some View {
         GeometryReader { scrollViewGeometry in
             ScrollView {  // Main content for the view includes header, content, and navigation footer
-                VStack(spacing: verticalPadding) {
+                VStack(alignment: alignment.horizontal, spacing: verticalPadding) {
                     Spacer()
-                    if let imageInfo = contentInfo.imageInfo {
-                        HStack {
-                            ContentImage(imageInfo)
-                            Spacer()
-                        }
+                    if let imageInfo = contentInfo.imageInfo, imageInfo.placement == .iconBefore {
+                        ContentImage(imageInfo)
                     }
                     Text(contentInfo.title ?? "")
                         .font(.stepTitle)
                         .foregroundColor(.textForeground)
-                        .frame(maxWidth: .infinity, alignment: alignment)
+                    if let subtitle = contentInfo.subtitle {
+                        Text(subtitle)
+                            .font(.stepSubtitle)
+                            .foregroundColor(.textForeground)
+                    }
                     if let detail = contentInfo.detail {
                         Text(detail)
                             .font(.stepDetail)
                             .foregroundColor(.textForeground)
-                            .frame(maxWidth: .infinity, alignment: alignment)
+                    }
+                    if let imageInfo = contentInfo.imageInfo, imageInfo.placement == .iconAfter {
+                        ContentImage(imageInfo)
                     }
                     Spacer()
                 }
@@ -77,10 +80,21 @@ public struct ContentNodeView : View {
     }
 }
 
+enum ImagePlacement : String, Codable, CaseIterable {
+    case iconBefore, iconAfter
+}
+
+extension ImageInfo {
+    var placement: ImagePlacement {
+        (self as? ImagePlacementInfo)?.placementHint.flatMap { .init(rawValue: $0) } ?? .iconBefore
+    }
+}
+
 struct ContentNodeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ContentNodeView(exampleStep, alignment: .leading)
+            ContentNodeView(exampleStep, alignment: .center)
         }
     }
 }

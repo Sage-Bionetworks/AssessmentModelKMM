@@ -139,12 +139,12 @@ public final class InstructionState : ContentNodeState {
     @Published public var detail: String?
     
     public init(_ instruction: ContentStep, parentId: String? = nil) {
-            self.title = instruction.title
-            self.subtitle = instruction.subtitle
-            self.detail = instruction.detail
-            if let imageInfo = instruction.imageInfo as? FetchableImage {
-                self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
-            }
+        self.title = instruction.title
+        self.subtitle = instruction.subtitle
+        self.detail = instruction.detail
+        if let imageInfo = instruction.imageInfo as? FetchableImage {
+            self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
+        }
         super.init(step: instruction, result: instruction.instantiateResult(), parentId: parentId)
     }
 }

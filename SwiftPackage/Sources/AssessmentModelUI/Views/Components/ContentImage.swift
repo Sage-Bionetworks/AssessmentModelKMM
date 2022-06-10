@@ -137,7 +137,11 @@ public struct ContentImage : View, Identifiable {
 
 struct ContentImage_Previews: PreviewProvider {
     static var previews: some View {
-        ContentImage(icon: .survey)
+        VStack {
+            ContentImage(icon: .survey)
+            ContentImage("survey.1", bundle: .module)
+            ContentImage(FetchableImage(imageName: "survey.1", bundle: Bundle.module))
+        }
     }
 }
 
