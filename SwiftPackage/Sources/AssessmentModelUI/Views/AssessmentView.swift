@@ -67,6 +67,7 @@ extension AssessmentView : AssessmentDisplayView {
 
 /// Displays an assessment built using the views and model objects defined within this library.
 public struct AssessmentView : View {
+    @StateObject var viewModel: AssessmentViewModel = .init()
     @ObservedObject var assessmentState: AssessmentState
     
     public init(_ assessmentState: AssessmentState) {
@@ -74,7 +75,7 @@ public struct AssessmentView : View {
     }
     
     public var body: some View {
-        AssessmentWrapperView<StepView>(assessmentState)
+        AssessmentWrapperView<StepView>(assessmentState, viewModel: viewModel)
     }
     
     struct StepView : View, StepFactoryView {
@@ -155,11 +156,12 @@ public protocol StepFactoryView : View {
 }
 
 public struct AssessmentWrapperView<StepContent : StepFactoryView> : View {
-    @StateObject var viewModel: AssessmentViewModel = .init()
+    @ObservedObject var viewModel: AssessmentViewModel
     @ObservedObject var assessmentState: AssessmentState
     
-    public init(_ assessmentState: AssessmentState) {
+    public init(_ assessmentState: AssessmentState, viewModel: AssessmentViewModel) {
         self.assessmentState = assessmentState
+        self.viewModel = viewModel
     }
     
     public var body: some View {

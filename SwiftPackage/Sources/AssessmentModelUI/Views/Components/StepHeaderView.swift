@@ -57,6 +57,9 @@ public struct StepHeaderView : View {
                 }
                 .padding(.trailing, 15)
             }
+            else if assessmentState.canPause {
+                Spacer()
+            }
         }
         .accentColor(.sageBlack)
         .fixedSize(horizontal: false, vertical: true)
