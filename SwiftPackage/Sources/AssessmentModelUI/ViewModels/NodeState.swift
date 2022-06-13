@@ -177,7 +177,7 @@ public final class QuestionState : ContentNodeState {
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
         self._skipStepText = skipStepText
         let result = answerResult ?? question.instantiateAnswerResult()
-        self.hasSelectedAnswer = result.jsonValue != nil
+        self.hasSelectedAnswer = result.jsonValue != nil || question.optional
         self.answer = result.jsonValue
         self.inputItem = (question as? SimpleQuestion)?.inputItem
         super.init(step: question, result: result, parentId: parentId)
