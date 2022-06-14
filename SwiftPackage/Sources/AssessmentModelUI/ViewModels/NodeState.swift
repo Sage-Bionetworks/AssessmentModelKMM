@@ -97,6 +97,7 @@ public final class AssessmentState : BranchState {
     @Published public var showingPauseActions: Bool = false
     @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
+    @Published public var hasPartialResults: Bool = false
     
     /// File URL for the directory in which generated data files that are referenced using `FileResult`
     /// may be included. Asynchronous actions with recorders (and potentially steps) can save data to
