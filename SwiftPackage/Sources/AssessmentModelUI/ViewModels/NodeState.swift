@@ -72,8 +72,8 @@ open class StepState : NodeState {
     open var progressHidden: Bool { false }
     open var skipStepText: Text? { nil }
 
-    public init(step: Step, result: ResultData, parentId: String? = nil) {
-        super.init(node: step, result: result, parentId: parentId)
+    public init(step: Step, result: ResultData? = nil, parentId: String? = nil) {
+        super.init(node: step, result: result ?? step.instantiateResult(), parentId: parentId)
     }
     
     open func willSkip() {

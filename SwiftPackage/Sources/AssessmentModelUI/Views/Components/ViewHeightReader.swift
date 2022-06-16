@@ -33,7 +33,7 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
     func heightReader(height: Binding<CGFloat>) -> some View {
         modifier(ViewDimensionReader(height))
     }
