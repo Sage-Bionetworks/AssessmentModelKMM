@@ -97,6 +97,7 @@ public final class AssessmentState : BranchState {
     @Published public var showingPauseActions: Bool = false
     @Published public var canPause: Bool = false
     @Published public var navigationError: Error?
+    @Published public var hasPartialResults: Bool = false
     
     /// File URL for the directory in which generated data files that are referenced using `FileResult`
     /// may be included. Asynchronous actions with recorders (and potentially steps) can save data to
@@ -177,7 +178,7 @@ public final class QuestionState : ContentNodeState {
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
         self._skipStepText = skipStepText
         let result = answerResult ?? question.instantiateAnswerResult()
-        self.hasSelectedAnswer = result.jsonValue != nil
+        self.hasSelectedAnswer = result.jsonValue != nil || question.optional
         self.answer = result.jsonValue
         self.inputItem = (question as? SimpleQuestion)?.inputItem
         super.init(step: question, result: result, parentId: parentId)

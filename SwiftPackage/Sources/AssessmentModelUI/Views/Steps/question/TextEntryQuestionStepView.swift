@@ -92,7 +92,7 @@ public struct TextEntryQuestionStepView: View {
             .onChange(of: keyboard.keyboardFocused) { newValue in
                 viewModel.isEditing = newValue
                 withAnimation {
-                    showPlaceholder = !newValue && !questionState.hasSelectedAnswer
+                    showPlaceholder = !newValue && (viewModel.value?.isEmpty ?? true)
                 }
             }
             .onAppear {
