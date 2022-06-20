@@ -35,6 +35,8 @@ import SwiftUI
 import SharedMobileUI
 
 public struct SurveyNavigationView: View {
+    @SwiftUI.Environment(\.verticalPadding) var verticalPadding: CGFloat
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject private var viewModel: PagedNavigationViewModel
     
     public init() {
@@ -42,8 +44,8 @@ public struct SurveyNavigationView: View {
     
     public var body: some View {
         PagedNavigationBar(showsDots: false)
-            .padding(.horizontal, HorizontalPaddingEnvironmentKey.defaultValue)
-            .padding(.vertical, VerticalPaddingEnvironmentKey.defaultValue)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
     }
 }
 
