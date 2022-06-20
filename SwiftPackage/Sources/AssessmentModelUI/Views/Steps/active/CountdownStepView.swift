@@ -35,7 +35,7 @@ import SwiftUI
 import AssessmentModel
 import SharedMobileUI
 
-struct CountdownStepView: View {
+public struct CountdownStepView: View {
     @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var assessmentState: AssessmentState
@@ -51,7 +51,7 @@ struct CountdownStepView: View {
         self.startDuration = (nodeState.step as? CountdownStep)?.duration ?? 5.0
     }
     
-    var body: some View {
+    public var body: some View {
         VStack {
             StepHeaderView(nodeState)
             
