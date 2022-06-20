@@ -37,9 +37,9 @@ import SharedMobileUI
 public struct StepHeaderView : View {
     @EnvironmentObject var assessmentState: AssessmentState
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-    @ObservedObject var nodeState: ContentNodeState
+    @ObservedObject var nodeState: StepState
     
-    public init(_ nodeState: ContentNodeState) {
+    public init(_ nodeState: StepState) {
         self.nodeState = nodeState
     }
     

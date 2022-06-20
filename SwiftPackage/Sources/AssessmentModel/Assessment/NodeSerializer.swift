@@ -56,8 +56,11 @@ public struct SerializableNodeType : TypeRepresentable, Codable, Hashable {
     }
     
     public enum StandardTypes : String, CaseIterable {
-        case assessment, section, overview, instruction, permission, choiceQuestion, simpleQuestion, completion
-        
+        case assessment, section
+        case completion, instruction, overview
+        case choiceQuestion, simpleQuestion
+        case countdown, permission
+
         public var nodeType: SerializableNodeType {
             .init(rawValue: self.rawValue)
         }
@@ -98,6 +101,7 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
             AssessmentObject.examples().first!,
             ChoiceQuestionStepObject.examples().first!,
             CompletionStepObject.examples().first!,
+            CountdownStepObject.examples().first!,
             InstructionStepObject.examples().first!,
             OverviewStepObject.examples().first!,
             PermissionStepObject.examples().first!,

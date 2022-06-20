@@ -261,6 +261,9 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         else if let step = node as? ContentStep {
             return InstructionState(step, parentId: currentBranchState.id)
         }
+        else if let step = node as? Step {
+            return StepState(step: step, parentId: currentBranchState.id)
+        }
         else {
             assertionFailure("Cannot create step or branch state for this node: \(node)")
             return nil

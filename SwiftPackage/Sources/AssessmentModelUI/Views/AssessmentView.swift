@@ -114,6 +114,9 @@ public struct AssessmentView : View {
             else if let step = state.step as? CompletionStep {
                 CompletionStepView(step)
             }
+            else if state.step is CountdownStep {
+                CountdownStepView(state)
+            }
             else if let nodeState = state as? ContentNodeState {
                 InstructionStepView(nodeState)
             }

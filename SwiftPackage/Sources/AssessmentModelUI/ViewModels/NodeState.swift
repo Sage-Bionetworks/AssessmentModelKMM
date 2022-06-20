@@ -69,11 +69,11 @@ open class StepState : NodeState {
     public final var step: Step { node as! Step }
     
     open var forwardEnabled: Bool { true }
-    open var progressHidden: Bool { false }
+    open var progressHidden: Bool { true }
     open var skipStepText: Text? { nil }
 
-    public init(step: Step, result: ResultData, parentId: String? = nil) {
-        super.init(node: step, result: result, parentId: parentId)
+    public init(step: Step, result: ResultData? = nil, parentId: String? = nil) {
+        super.init(node: step, result: result ?? step.instantiateResult(), parentId: parentId)
     }
     
     open func willSkip() {
@@ -155,7 +155,8 @@ public final class QuestionState : ContentNodeState {
     public var question: QuestionStep { step as! QuestionStep }
     public var answerResult: AnswerResult { result as! AnswerResult }
 
-    public override var forwardEnabled: Bool { question.optional || hasSelectedAnswer }
+    override public var forwardEnabled: Bool { question.optional || hasSelectedAnswer }
+    override public var progressHidden: Bool { false }
     
     override public var skipStepText: Text? { _skipStepText }
     private let _skipStepText: Text?
