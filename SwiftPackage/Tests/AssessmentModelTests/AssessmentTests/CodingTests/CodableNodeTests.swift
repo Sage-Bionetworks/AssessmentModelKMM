@@ -529,6 +529,132 @@ class CodableQuestionTests: XCTestCase {
         }
     }
     
+    func testCompletionStep_Default_Codable() {
+        
+        let json = """
+            {
+                 "identifier": "foo",
+                 "type": "completion"
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        XCTAssertEqual(.StandardTypes.completion.nodeType, CompletionStepObject.defaultType())
+        checkDefaultSharedKeys(step: CompletionStepObject(identifier: "foo"))
+        checkResult(step: CompletionStepObject(identifier: "foo"), type: ResultObject.self)
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<CompletionStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            checkDefaultSharedKeys(step: object)
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.completion.nodeType, object.serializableType)
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    // MARK: Active
+    
+    func testCountdownStep_Default_Codable() {
+        
+        let json = """
+            {
+                 "identifier": "foo",
+                 "type": "countdown",
+                 "duration": 5
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        XCTAssertEqual(.StandardTypes.countdown.nodeType, CountdownStepObject.defaultType())
+        checkDefaultSharedKeys(step: CountdownStepObject(identifier: "foo", duration: 5))
+        checkResult(step: CountdownStepObject(identifier: "foo", duration: 5), type: ResultObject.self)
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<CountdownStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            checkDefaultSharedKeys(step: object)
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.countdown.nodeType, object.serializableType)
+            XCTAssertEqual(5, object.duration)
+            XCTAssertFalse(object.fullInstructionsOnly)
+            XCTAssertNil(object.spokenInstructions)
+            
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
+    func testCountdownStep_AllFields_Codable() {
+        
+        let json = """
+        {
+            "type": "countdown",
+            "identifier": "foo",
+            "duration": 5,
+            "comment": "comment",
+            "shouldHideActions": ["skip"],
+            "actions": {
+                "goForward": {
+                    "type": "default",
+                    "buttonTitle": "Go, Dogs! Go!"
+                }
+            },
+            "title": "Hello World!",
+            "subtitle": "Question subtitle",
+            "detail": "Some text. This is a test.",
+            "image": {
+                "type": "animated",
+                "imageNames": ["foo1", "foo2", "foo3", "foo4"],
+                "animationDuration": 2
+            },
+            "fullInstructionsOnly": true,
+            "spokenInstructions": {
+                "start": "Begin now",
+                "end": "You are done!"
+            }
+        }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+            
+            let wrapper = try decoder.decode(NodeWrapper<CountdownStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual(.StandardTypes.countdown.nodeType, object.serializableType)
+            XCTAssertTrue(object.fullInstructionsOnly)
+            XCTAssertEqual([.start : "Begin now", .end : "You are done!"], object.spokenInstructions)
+            
+            checkSharedEncodingKeys(step: object)
+
+            let actualEncoding = try encoder.encode(object)
+            try checkEncodedJson(expected: json, actual: actualEncoding)
+            
+            let copy = object.copy(with: "bar")
+            XCTAssertEqual("bar", copy.identifier)
+            XCTAssertEqual(object.serializableType, copy.serializableType)
+            XCTAssertEqual(object.duration, copy.duration)
+            XCTAssertTrue(copy.fullInstructionsOnly)
+            checkSharedEncodingKeys(step: copy)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
     
     func testPermissionStep_AllFields_Codable() {
         
@@ -584,37 +710,6 @@ class CodableQuestionTests: XCTestCase {
             XCTAssertEqual(object.serializableType, copy.serializableType)
             XCTAssertTrue(copy.fullInstructionsOnly)
             checkSharedEncodingKeys(step: copy)
-
-        } catch let err {
-            XCTFail("Failed to decode/encode object: \(err)")
-            return
-        }
-    }
-    
-    func testCompletionStep_Default_Codable() {
-        
-        let json = """
-            {
-                 "identifier": "foo",
-                 "type": "completion"
-            }
-        """.data(using: .utf8)! // our data in native (JSON) format
-        
-        XCTAssertEqual(.StandardTypes.completion.nodeType, CompletionStepObject.defaultType())
-        checkDefaultSharedKeys(step: CompletionStepObject(identifier: "foo"))
-        checkResult(step: CompletionStepObject(identifier: "foo"), type: ResultObject.self)
-        
-        do {
-            
-            let wrapper = try decoder.decode(NodeWrapper<CompletionStepObject>.self, from: json)
-            let object = wrapper.node
-            
-            checkDefaultSharedKeys(step: object)
-            XCTAssertEqual("foo", object.identifier)
-            XCTAssertEqual(.StandardTypes.completion.nodeType, object.serializableType)
-            
-            let actualEncoding = try encoder.encode(object)
-            try checkEncodedJson(expected: json, actual: actualEncoding)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")

@@ -53,6 +53,7 @@
 		FFEB558F2829CD0E007C5572 /* TimeQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */; };
 		FFF12AE5284A684D00A0CD76 /* ContentImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF12AE3284A684D00A0CD76 /* ContentImage.swift */; };
 		FFF12AE6284A684D00A0CD76 /* TopBarProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */; };
+		FFF429F02860E46F0090A214 /* CountdownStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF429EF2860E46F0090A214 /* CountdownStepView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +104,7 @@
 		FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFF12AE3284A684D00A0CD76 /* ContentImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentImage.swift; sourceTree = "<group>"; };
 		FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopBarProgressView.swift; sourceTree = "<group>"; };
+		FFF429EF2860E46F0090A214 /* CountdownStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownStepView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,10 +280,19 @@
 		FFCB534727F6A78900BED4E2 /* Steps */ = {
 			isa = PBXGroup;
 			children = (
+				FFF429EE2860E44D0090A214 /* active */,
 				FF5733C9282096D8009664EC /* instruction */,
 				FF5733CA2820970A009664EC /* question */,
 			);
 			path = Steps;
+			sourceTree = "<group>";
+		};
+		FFF429EE2860E44D0090A214 /* active */ = {
+			isa = PBXGroup;
+			children = (
+				FFF429EF2860E46F0090A214 /* CountdownStepView.swift */,
+			);
+			path = active;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -388,6 +399,7 @@
 				FF81336C281853D900CEFF48 /* NumericTextField.swift in Sources */,
 				FF5733CE28209937009664EC /* TextEntryQuestionViewModel.swift in Sources */,
 				FFC14E27280F8A9300B17551 /* TitlePageView.swift in Sources */,
+				FFF429F02860E46F0090A214 /* CountdownStepView.swift in Sources */,
 				FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */,
 				FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */,
 				FF6BB110281C4847005DA166 /* TextEntryViewModel.swift in Sources */,
