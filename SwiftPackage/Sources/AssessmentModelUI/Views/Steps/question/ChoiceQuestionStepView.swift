@@ -110,7 +110,9 @@ struct ChoiceQuestionView : View {
                 }
             }
             .selectionCell(isOn: $choice.selected, spacing: 3)
+            #if os(iOS)
             .environment(\.editMode, .constant(keyboard.keyboardFocused ? EditMode.active : EditMode.inactive))
+            #endif
         }
     }
 }
