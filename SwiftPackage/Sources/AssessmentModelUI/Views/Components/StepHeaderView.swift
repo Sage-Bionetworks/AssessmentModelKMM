@@ -66,3 +66,26 @@ public struct StepHeaderView : View {
     }
 }
 
+public struct StepHeaderTitleView <Content : View> : View {
+    @EnvironmentObject var assessmentState: AssessmentState
+    private let content: Content
+    
+    public init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
+    }
+    
+    public var body: some View {
+        HStack {
+            ExitButton(canPause: assessmentState.canPause)
+                .opacity(assessmentState.canPause ? 1 : 0)
+            Spacer()
+            content
+            Spacer()
+            ExitButton(canPause: assessmentState.canPause)
+                .opacity(assessmentState.canPause ? 0 : 1)
+        }
+        .accentColor(.sageBlack)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
