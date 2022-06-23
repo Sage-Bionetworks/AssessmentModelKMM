@@ -48,7 +48,6 @@ public struct TimeQuestionStepView: View {
     
     public var body: some View {
         QuestionStepScrollView(keyboardAnchor: .none) {
-            Spacer(minLength: 0)
             if let range = viewModel.range {
                 DatePicker("", selection: $viewModel.value, in: range, displayedComponents: .hourAndMinute)
                     .labelsHidden()
