@@ -40,6 +40,7 @@ class StepNavigationBar: LinearLayout {
                 ButtonAction.Navigation.GoForward -> binding.navBarNext.visibility = View.GONE
                 ButtonAction.Navigation.GoBackward -> binding.navBarBack.visibility = View.GONE
                 ButtonAction.Navigation.Skip -> binding.skipButton.visibility = View.GONE
+                else -> {}
             }
         }
         for (buttonInfo in step.buttonMap.values) {

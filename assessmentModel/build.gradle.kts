@@ -29,8 +29,7 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.5.21"
+        kotlinCompilerExtensionVersion = "1.2.0-dev-k1.7.0-53370d83bb1"
     }
 }
 dependencies {
