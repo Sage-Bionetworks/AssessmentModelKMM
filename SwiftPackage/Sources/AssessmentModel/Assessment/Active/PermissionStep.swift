@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import MobilePassiveData
 
 /// The permission step protocol is used to allow showing an instruction that also requests one or more permissions.
 public protocol PermissionStep : Step, ContentNode {
@@ -40,13 +41,77 @@ public protocol PermissionStep : Step, ContentNode {
     var permissions: [PermissionInfo] { get }
 }
 
-open class AbstractPermissionStepObject : AbstractInstructionStepObject, PermissionInfo {
+public protocol PermissionInfo {
+    var permissionType: AsyncActionType { get }
+    var restrictedMessage: String? { get }
+    var deniedMessage: String? { get }
+    var optional: Bool { get }
+}
+
+public struct PermissionInfoObject : Codable, Hashable, PermissionInfo {
+    private enum CodingKeys : String, OrderedEnumCodingKey {
+        case permissionType, _optional = "optional", restrictedMessage, deniedMessage
+    }
+    
+    public let permissionType: AsyncActionType
+    public let restrictedMessage: String?
+    public let deniedMessage: String?
+    
+    public var optional: Bool { _optional ?? true }
+    public let _optional: Bool?
+    
+    public init(permission permissionType: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil) {
+        self.permissionType = permissionType
+        self._optional = optional
+        self.restrictedMessage = restrictedMessage
+        self.deniedMessage = deniedMessage
+    }
+}
+
+extension PermissionInfoObject : DocumentableStruct {
+
+    public static func codingKeys() -> [CodingKey] {
+        CodingKeys.allCases
+    }
+    
+    public static func isRequired(_ codingKey: CodingKey) -> Bool {
+        (codingKey as? CodingKeys).map { $0 == .permissionType } ?? false
+    }
+    
+    public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not handled by \(self).")
+        }
+        switch key {
+        case .permissionType:
+            return .init(propertyType: .reference(AsyncActionType.documentableType()), propertyDescription:
+                            "The permission type to request when showing this step.")
+        case ._optional:
+            return .init(defaultValue: .boolean(true), propertyDescription:
+                            "Whether or not the permission is required to continue.")
+        case .deniedMessage:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "The localized message to display when the permission is denied. Typically, this is only shown when the permission is not optional.")
+        case .restrictedMessage:
+            return .init(propertyType: .primitive(.string), propertyDescription:
+                            "The localized message to display when the permission is restricted. Typically, this is only shown when the permission is not optional.")
+        }
+    }
+    
+    public static func examples() -> [PermissionInfoObject] {
+        [.init(permission: .motion)]
+    }
+}
+
+open class AbstractPermissionStepObject : AbstractInstructionStepObject, PermissionStep, PermissionInfo {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
         case permissionType, _optional = "optional", restrictedMessage, deniedMessage
         var relativeIndex: Int { 6 }
     }
     
-    public let permissionType: PermissionType
+    open var permissions: [PermissionInfo] { [self] }
+    
+    public let permissionType: AsyncActionType
     public let restrictedMessage: String?
     public let deniedMessage: String?
     
@@ -54,7 +119,7 @@ open class AbstractPermissionStepObject : AbstractInstructionStepObject, Permiss
     public let _optional: Bool?
     
     public init(identifier: String,
-                permissionType: PermissionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil,
+                permissionType: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil,
                 fullInstructionsOnly: Bool? = nil, spokenInstructions: [AbstractInstructionStepObject.SpokenInstructionKey : String]? = nil) {
@@ -78,7 +143,7 @@ open class AbstractPermissionStepObject : AbstractInstructionStepObject, Permiss
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.permissionType = try container.decode(PermissionType.self, forKey: .permissionType)
+        self.permissionType = try container.decode(AsyncActionType.self, forKey: .permissionType)
         self._optional = try container.decodeIfPresent(Bool.self, forKey: ._optional)
         self.deniedMessage = try container.decodeIfPresent(String.self, forKey: .deniedMessage)
         self.restrictedMessage = try container.decodeIfPresent(String.self, forKey: .restrictedMessage)
@@ -111,7 +176,7 @@ open class AbstractPermissionStepObject : AbstractInstructionStepObject, Permiss
         }
         switch key {
         case .permissionType:
-            return .init(propertyType: .reference(PermissionType.documentableType()), propertyDescription:
+            return .init(propertyType: .reference(AsyncActionType.documentableType()), propertyDescription:
                             "The permission type to request when showing this step.")
         case ._optional:
             return .init(defaultValue: .boolean(true), propertyDescription:
@@ -132,7 +197,7 @@ public final class PermissionStepObject : AbstractPermissionStepObject, Encodabl
     }
     
     public static func examples() -> [PermissionStepObject] {
-        [.init(identifier: "example", permissionType: .Standard.motion.permissionType)]
+        [.init(identifier: "example", permissionType: .motion)]
     }
     
     public func copy(with identifier: String) -> PermissionStepObject {

@@ -50,7 +50,6 @@ public struct TextEntryQuestionStepView: View {
                 TextViewWrapper(viewModel: model)
             }
         }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .innerSpacing(6)
         .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)
@@ -93,7 +92,7 @@ public struct TextEntryQuestionStepView: View {
             .onChange(of: keyboard.keyboardFocused) { newValue in
                 viewModel.isEditing = newValue
                 withAnimation {
-                    showPlaceholder = !newValue && !questionState.hasSelectedAnswer
+                    showPlaceholder = !newValue && (viewModel.value?.isEmpty ?? true)
                 }
             }
             .onAppear {

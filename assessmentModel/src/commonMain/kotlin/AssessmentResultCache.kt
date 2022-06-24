@@ -25,6 +25,12 @@ interface AssessmentResultCache {
     fun storeAssessmentResult(instanceGuid: String, result: AssessmentResult, jsonCoder: Json, expire: Instant?)
 
     /**
+     * Remove an [AssessmentResult] by its [instanceGuid]
+     * @param [instanceGuid] : Key used to store result
+     */
+    fun removeAssessmentResult(instanceGuid: String)
+
+    /**
      * Remove any expired results from the cache.
      */
     fun clearExpiredAssessmentResults()

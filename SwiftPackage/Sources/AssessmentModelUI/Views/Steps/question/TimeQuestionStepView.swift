@@ -48,7 +48,6 @@ public struct TimeQuestionStepView: View {
     
     public var body: some View {
         QuestionStepScrollView(keyboardAnchor: .none) {
-            Spacer(minLength: 0)
             if let range = viewModel.range {
                 DatePicker("", selection: $viewModel.value, in: range, displayedComponents: .hourAndMinute)
                     .labelsHidden()
@@ -58,7 +57,6 @@ public struct TimeQuestionStepView: View {
                     #endif
             }
         }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.darkSurveyBackground, backButtonStyle: .white)
         .onAppear {

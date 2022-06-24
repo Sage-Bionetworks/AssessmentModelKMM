@@ -80,7 +80,7 @@ let swiftOverviewStep = OverviewStepObject(identifier: "overview",
                                            nextNode: .reserved(.nextSection))
 
 let swiftPermissionStep = PermissionStepObject(identifier: "permission",
-                                               permissionType: .init(.weather),
+                                               permissionType: .weather,
                                                optional: false,
                                                restrictedMessage: "Resticted",
                                                deniedMessage: "You are denied.")
@@ -182,7 +182,7 @@ let swiftAssessment = AssessmentObject(identifier: "foo",
                                        estimatedMinutes: 2,
                                        interruptionHandling: .init(reviewIdentifier: .node(swiftInstructionStep.identifier),
                                                                    canResume: false,
-                                                                   canContinueLater: false,
+                                                                   canSaveForLater: false,
                                                                    canSkip: false)
 )
 

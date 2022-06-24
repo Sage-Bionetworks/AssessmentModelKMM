@@ -73,8 +73,9 @@ class IntegerQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     }
     
     func didUpdateValue(_ newValue: JsonValue?, with identifier: String) {
-        questionState?.hasSelectedAnswer = (newValue != nil)
-        questionState?.answer = newValue.map { .init($0) }
+        guard let questionState = questionState else { return }
+        questionState.hasSelectedAnswer = (newValue != nil) || questionState.question.optional
+        questionState.answer = newValue.map { .init($0) }
     }
 }
 

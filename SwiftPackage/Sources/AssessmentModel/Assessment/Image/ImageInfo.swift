@@ -283,16 +283,15 @@ public struct FetchableImage : SerializableImageInfo, EmbeddedImageInfo {
         imageName
     }
     
-    public init(imageName: String, bundle: ResourceBundle? = nil, packageName: String? = nil, bundleIdentifier: String? = nil, label: String? = nil, placementHint: String? = nil, imageSize: ImageSize? = nil) {
-        let splitFile = imageName.splitFilename()
-        self.imageName = splitFile.resourceName
-        self.rawFileExtension = splitFile.fileExtension
+    public init(imageName: String, bundle: ResourceBundle? = nil, packageName: String? = nil, bundleIdentifier: String? = nil, label: String? = nil, placementHint: String? = nil, imageSize: ImageSize? = nil, rawFileExtension: String? = nil) {
+        self.imageName = imageName
         self.factoryBundle = bundle
         self.bundleIdentifier = bundleIdentifier
         self.packageName = packageName
         self.label = label
         self.placementHint = placementHint
         self.imageSize = imageSize
+        self.rawFileExtension = rawFileExtension
     }
 }
 
@@ -446,21 +445,6 @@ extension AnimatedImage : DocumentableStruct {
         let imageA = AnimatedImage(imageNames: ["blueDog1", "blueDog2", "blueDog3"], animationDuration: 2)
         let imageB = AnimatedImage(imageNames: ["redCat1", "redCat2", "redCat3"], animationDuration: 2, bundleIdentifier: "org.example.SharedResources")
         return [imageA, imageB]
-    }
-}
-
-extension String {
-    
-    /// Convenience utility for spliting a string that represents a file into its name and extension.
-    fileprivate func splitFilename(defaultExtension: String? = nil) -> (resourceName: String, fileExtension: String?) {
-        var resource = self
-        var ext = defaultExtension
-        let split = self.components(separatedBy: ".")
-        if split.count == 2 {
-            ext = split.last!
-            resource = split.first!
-        }
-        return (resource, ext)
     }
 }
 

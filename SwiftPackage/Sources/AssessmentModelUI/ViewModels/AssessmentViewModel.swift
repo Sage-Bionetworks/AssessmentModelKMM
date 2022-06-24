@@ -36,13 +36,13 @@ import SharedMobileUI
 import AssessmentModel
 import JsonModel
 
+
 open class AssessmentViewModel : ObservableObject, NavigationState {
     
     @Published var forwardCount: Int = 0
     @Published var backCount: Int = 0
     
     public let navigationViewModel: PagedNavigationViewModel = .init()
-    public private(set) var viewVender: AssessmentStepViewVender!
     public private(set) var state: AssessmentState!
     
     public init() {
@@ -50,11 +50,10 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         navigationViewModel.goBack = goBack
     }
     
-    func initialize(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender) {
+    public func initialize(_ assessmentState: AssessmentState) {
         guard assessmentState.id != self.state?.id else { return }
         
         self.state = assessmentState
-        self.viewVender = viewVender
         self.currentBranchState = assessmentState
 
         do {
@@ -136,6 +135,12 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             var result = current.result
             result.endDate = Date()
             currentBranchResult.appendStepHistory(with: result)
+            
+            // If going forward from a step that is *not* an overview or instruction step
+            // then consider the assessment to have partial results.
+            if !((current is OverviewStep) || (current is InstructionStep)) {
+                state.hasPartialResults = true
+            }
         }
         
         goForward(from: state.currentStep?.node)
@@ -201,7 +206,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         navigationViewModel.forwardButtonText = goForwardButtonText(step: stepState.step)
         navigationViewModel.currentDirection = nextNode.direction == .backward ? .backward : .forward
         navigationViewModel.backEnabled = canGoBack(step: stepState.step)
-        navigationViewModel.forwardEnabled = stepState.forwardEnabled || !viewVender.isSupported(step: stepState.step)
+        navigationViewModel.forwardEnabled = isForwardEnabled(for: stepState)
         if let progress = currentNavigator.progress(currentNode: stepState.step, branchResult: currentBranchResult) {
             navigationViewModel.progressHidden = stepState.progressHidden
             navigationViewModel.currentIndex = progress.current
@@ -212,6 +217,10 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             navigationViewModel.currentIndex += 1
             navigationViewModel.progressHidden = true
         }
+    }
+    
+    open func isForwardEnabled(for stepState: StepState) -> Bool {
+        stepState.forwardEnabled
     }
     
     private func moveInto(branchState: BranchState, direction: PathMarker.Direction) {
@@ -251,6 +260,9 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         }
         else if let step = node as? ContentStep {
             return InstructionState(step, parentId: currentBranchState.id)
+        }
+        else if let step = node as? Step {
+            return StepState(step: step, parentId: currentBranchState.id)
         }
         else {
             assertionFailure("Cannot create step or branch state for this node: \(node)")
