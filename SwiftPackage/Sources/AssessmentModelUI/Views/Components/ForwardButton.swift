@@ -44,7 +44,7 @@ public struct ForwardButton <Content: View> : View {
         self.content = content()
     }
 
-    @ViewBuilder public var body: some View {
+    public var body: some View {
         Button(action: pagedNavigation.goForward) {
             content
                 .frame(minWidth: 209)
