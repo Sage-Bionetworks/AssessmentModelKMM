@@ -43,7 +43,8 @@ public struct CountdownStepView: View {
     @ObservedObject var nodeState: StepState
     @State var countdown: Int = 5
     @State var paused: Bool = false
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var progress: CGFloat = .zero
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let startDuration: TimeInterval
     
     public init(_ nodeState: StepState) {
@@ -63,7 +64,14 @@ public struct CountdownStepView: View {
                     .font(.stepTitle)
                 Text("\(countdown)")
                     .font(.latoFont(96, relativeTo: .title, weight: .bold))
-                
+                    .padding(64)
+                    .background(
+                        Circle()
+                            .trim(from: 0.0, to: min(progress, 1.0))
+                            .stroke(style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .foregroundColor(surveyTint)
+                            .rotationEffect(Angle(degrees: 270.0))
+                    )
             }
             .foregroundColor(.textForeground)
             .padding(.horizontal, horizontalPadding)
@@ -71,15 +79,21 @@ public struct CountdownStepView: View {
             Spacer()
         }
         .onAppear {
-            countdown = Int(startDuration)
+            start()
         }
         .onDisappear {
             timer.upstream.connect().cancel()
         }
         .onChange(of: assessmentState.showingPauseActions) { newValue in
+            guard paused != newValue else { return }
             paused = newValue
-            if paused, countdown > 0 {
-                countdown = Int(startDuration)
+            if paused {
+                timer.upstream.connect().cancel()
+                stop()
+            }
+            else if countdown > 0 {
+                timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                start()
             }
         }
         .onReceive(timer) { time in
@@ -88,6 +102,19 @@ public struct CountdownStepView: View {
             if countdown == 0 {
                 pagedNavigation.goForward()
             }
+        }
+    }
+    
+    func start() {
+        countdown = Int(startDuration)
+        withAnimation(.linear(duration: startDuration)) {
+            progress = 1.0
+        }
+    }
+    
+    func stop() {
+        withAnimation(.linear(duration: 0)) {
+            progress = 0
         }
     }
 }
