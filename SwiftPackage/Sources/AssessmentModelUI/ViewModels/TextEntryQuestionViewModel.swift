@@ -67,8 +67,9 @@ class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate 
     }
     
     func didUpdateValue(_ newValue: JsonValue?, with identifier: String) {
-        let answer: JsonElement? = (newValue as? String).flatMap { $0.isEmpty ? nil : .string($0) }
-        questionState?.hasSelectedAnswer = (answer != nil)
-        questionState?.answer = answer
+        guard let questionState = questionState else { return }
+        let text = (newValue as? String) ?? ""
+        questionState.hasSelectedAnswer = true
+        questionState.answer = .string(text)
     }
 }

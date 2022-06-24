@@ -1,6 +1,6 @@
 //
-//  CompletionView.swift
-//
+//  TopBarProgressView.swift
+//  
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
@@ -32,43 +32,26 @@
 //
 
 import SwiftUI
-import AssessmentModel
 import SharedMobileUI
+import AssessmentModel
 
-struct CompletionView: View {
+public struct TopBarProgressView : View {
+    @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
     @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
-    let step: CompletionStep
-    
-    public init(_ step: CompletionStep) {
-        self.step = step
-    }
     
     public var body: some View {
-        VStack {
-            ContentNodeView(step, alignment: .leading)
-            if pagedNavigation.backEnabled {
-                SurveyNavigationView()
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Rectangle()
+                    .fill(Color.progressBackground)
+                Rectangle()
+                    .fill(surveyTint)
+                    .frame(width: geometry.size.width * pagedNavigation.fraction)
+                    .animation(.easeOut, value: pagedNavigation.fraction)
             }
-            else {
-                ForwardButton {
-                    pagedNavigation.forwardButtonText ??
-                    Text("Done", bundle: .module)
-                }
-            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 4)
         }
+        .opacity(pagedNavigation.progressHidden ? 0 : 1)
     }
 }
-
-struct CompletionView_Previews: PreviewProvider {
-    static var previews: some View {
-        CompletionView(example)
-            .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
-            .environmentObject(AssessmentState(AssessmentObject(previewStep: example)))
-    }
-}
-
-fileprivate let example = CompletionStepObject(
-    identifier: "example",
-    title: "Example Survey A",
-    detail: "You will be shown a series of example questions. This survey has no additional instructions.",
-    imageInfo: SageResourceImage(.survey))

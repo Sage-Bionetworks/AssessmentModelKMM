@@ -40,6 +40,8 @@ struct ContentView: View {
     let surveys: [AssessmentHolder] = [
         .init(assessment: surveyA),
         .init(assessment: surveyB),
+        .init(assessment: surveyC),
+        .init(assessment: countdownAssessment)
     ]
 
     var body: some View {
@@ -57,6 +59,7 @@ struct ContentView: View {
         @Published var isPresented: Bool = false
         var current: AssessmentState? {
             didSet {
+                print("---")
                 isPresented = (current != nil)
             }
         }
@@ -95,3 +98,11 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+fileprivate let countdownAssessment = AssessmentObject(identifier: "Countdown", children: [
+    OverviewStepObject(identifier: "overview",
+                       title: "Countdown Example",
+                       detail: "Example for testing a countdown step",
+                       imageInfo: SageResourceImage(.survey)),
+    CountdownStepObject(identifier: "countdown", duration: 6),
+    CompletionStepObject(identifier: "completion", title: "You're done!")
+])

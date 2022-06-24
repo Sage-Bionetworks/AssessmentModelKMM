@@ -35,13 +35,17 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 
-struct PauseMenu: View {
+public struct PauseMenu: View {
     @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
     @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
     @EnvironmentObject var assessmentState: AssessmentState
     @ObservedObject var viewModel: AssessmentViewModel
     
-    var body: some View {
+    public init(viewModel: AssessmentViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    public var body: some View {
         VStack(spacing: 0) {
             Text("Paused", bundle: .module)
                 .font(.pauseMenuTitle)
@@ -117,18 +121,16 @@ struct PauseMenu: View {
 struct PauseMenuPreview : View {
     @StateObject var viewModel: AssessmentViewModel = .init()
     @ObservedObject var assessmentState: AssessmentState
-    let viewVender: AssessmentStepViewVender
     
-    public init(_ assessmentState: AssessmentState, viewVender: AssessmentStepViewVender = .init()) {
+    public init(_ assessmentState: AssessmentState) {
         self.assessmentState = assessmentState
-        self.viewVender = viewVender
     }
     
     public var body: some View {
         PauseMenu(viewModel: viewModel)
             .environmentObject(assessmentState)
             .onAppear {
-                viewModel.initialize(assessmentState, viewVender: viewVender)
+                viewModel.initialize(assessmentState)
             }
     }
 }

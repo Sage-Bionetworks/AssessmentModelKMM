@@ -26,8 +26,8 @@
 		FFC14E25280B6A4800B17551 /* CompositedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E24280B6A4800B17551 /* CompositedImage.swift */; };
 		FFC14E27280F8A9300B17551 /* TitlePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E26280F8A9300B17551 /* TitlePageView.swift */; };
 		FFC14E292810905000B17551 /* ForwardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E282810905000B17551 /* ForwardButton.swift */; };
-		FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2A2811DD0500B17551 /* InstructionView.swift */; };
-		FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2C2811E31500B17551 /* CompletionView.swift */; };
+		FFC14E2B2811DD0500B17551 /* InstructionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2A2811DD0500B17551 /* InstructionStepView.swift */; };
+		FFC14E2D2811E31500B17551 /* CompletionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E2C2811E31500B17551 /* CompletionStepView.swift */; };
 		FFC14E612817091E00B17551 /* IntegerQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */; };
 		FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E622817113600B17551 /* ContentNodeView.swift */; };
 		FFC14E67281717CD00B17551 /* LikertScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC14E66281717CD00B17551 /* LikertScaleView.swift */; };
@@ -51,10 +51,14 @@
 		FFEB558B2829B9AE007C5572 /* DurationQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */; };
 		FFEB558D2829CCC2007C5572 /* TimeQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558C2829CCC2007C5572 /* TimeQuestionStepView.swift */; };
 		FFEB558F2829CD0E007C5572 /* TimeQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */; };
+		FFF12AE5284A684D00A0CD76 /* ContentImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF12AE3284A684D00A0CD76 /* ContentImage.swift */; };
+		FFF12AE6284A684D00A0CD76 /* TopBarProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */; };
+		FFF429F02860E46F0090A214 /* CountdownStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF429EF2860E46F0090A214 /* CountdownStepView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionStepView.swift; sourceTree = "<group>"; };
+		FF1BA5EE28626BA6008C22FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryQuestionStepView.swift; sourceTree = "<group>"; };
 		FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryQuestionViewModel.swift; sourceTree = "<group>"; };
 		FF629A9E27FA6A6B0082EDD7 /* QuestionStepScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionStepScrollView.swift; sourceTree = "<group>"; };
@@ -73,8 +77,8 @@
 		FFC14E24280B6A4800B17551 /* CompositedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositedImage.swift; sourceTree = "<group>"; };
 		FFC14E26280F8A9300B17551 /* TitlePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitlePageView.swift; sourceTree = "<group>"; };
 		FFC14E282810905000B17551 /* ForwardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardButton.swift; sourceTree = "<group>"; };
-		FFC14E2A2811DD0500B17551 /* InstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionView.swift; sourceTree = "<group>"; };
-		FFC14E2C2811E31500B17551 /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionView.swift; sourceTree = "<group>"; };
+		FFC14E2A2811DD0500B17551 /* InstructionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionStepView.swift; sourceTree = "<group>"; };
+		FFC14E2C2811E31500B17551 /* CompletionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionStepView.swift; sourceTree = "<group>"; };
 		FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFC14E622817113600B17551 /* ContentNodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentNodeView.swift; sourceTree = "<group>"; };
 		FFC14E66281717CD00B17551 /* LikertScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikertScaleView.swift; sourceTree = "<group>"; };
@@ -99,6 +103,9 @@
 		FFEB558A2829B9AD007C5572 /* DurationQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationQuestionStepView.swift; sourceTree = "<group>"; };
 		FFEB558C2829CCC2007C5572 /* TimeQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeQuestionStepView.swift; sourceTree = "<group>"; };
 		FFEB558E2829CD0E007C5572 /* TimeQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeQuestionViewModel.swift; sourceTree = "<group>"; };
+		FFF12AE3284A684D00A0CD76 /* ContentImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentImage.swift; sourceTree = "<group>"; };
+		FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopBarProgressView.swift; sourceTree = "<group>"; };
+		FFF429EF2860E46F0090A214 /* CountdownStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownStepView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,8 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				FFC14E26280F8A9300B17551 /* TitlePageView.swift */,
-				FFC14E2C2811E31500B17551 /* CompletionView.swift */,
-				FFC14E2A2811DD0500B17551 /* InstructionView.swift */,
+				FFC14E2C2811E31500B17551 /* CompletionStepView.swift */,
+				FFC14E2A2811DD0500B17551 /* InstructionStepView.swift */,
 			);
 			path = instruction;
 			sourceTree = "<group>";
@@ -168,6 +175,7 @@
 		FFCB530927F6A4F800BED4E2 /* iosAppPreview */ = {
 			isa = PBXGroup;
 			children = (
+				FF1BA5EE28626BA6008C22FF /* Info.plist */,
 				FF629AA627FB6CD60082EDD7 /* Bundle+module.swift */,
 				FFCB533D27F6A78900BED4E2 /* AssessmentModelUI */,
 				FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */,
@@ -253,6 +261,8 @@
 		FFCB534527F6A78900BED4E2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				FFF12AE3284A684D00A0CD76 /* ContentImage.swift */,
+				FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */,
 				FFC14E24280B6A4800B17551 /* CompositedImage.swift */,
 				FFC14E622817113600B17551 /* ContentNodeView.swift */,
 				FFAF7C532808AC1B004B5670 /* ExitButton.swift */,
@@ -272,10 +282,19 @@
 		FFCB534727F6A78900BED4E2 /* Steps */ = {
 			isa = PBXGroup;
 			children = (
+				FFF429EE2860E44D0090A214 /* active */,
 				FF5733C9282096D8009664EC /* instruction */,
 				FF5733CA2820970A009664EC /* question */,
 			);
 			path = Steps;
+			sourceTree = "<group>";
+		};
+		FFF429EE2860E44D0090A214 /* active */ = {
+			isa = PBXGroup;
+			children = (
+				FFF429EF2860E46F0090A214 /* CountdownStepView.swift */,
+			);
+			path = active;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,6 +343,8 @@
 			knownRegions = (
 				en,
 				Base,
+				"fr-CA",
+				es,
 			);
 			mainGroup = FFCB52FE27F6A4F800BED4E2;
 			packageReferences = (
@@ -374,7 +395,7 @@
 				FF629A9F27FA6A6B0082EDD7 /* QuestionStepScrollView.swift in Sources */,
 				FFC14E25280B6A4800B17551 /* CompositedImage.swift in Sources */,
 				FFCB530B27F6A4F800BED4E2 /* iosAppPreviewApp.swift in Sources */,
-				FFC14E2D2811E31500B17551 /* CompletionView.swift in Sources */,
+				FFC14E2D2811E31500B17551 /* CompletionStepView.swift in Sources */,
 				FFCB534E27F6A78900BED4E2 /* MultilineTextField.swift in Sources */,
 				FFEB558B2829B9AE007C5572 /* DurationQuestionStepView.swift in Sources */,
 				FF629AA527FB63700082EDD7 /* AssessmentViewModel.swift in Sources */,
@@ -382,6 +403,7 @@
 				FF81336C281853D900CEFF48 /* NumericTextField.swift in Sources */,
 				FF5733CE28209937009664EC /* TextEntryQuestionViewModel.swift in Sources */,
 				FFC14E27280F8A9300B17551 /* TitlePageView.swift in Sources */,
+				FFF429F02860E46F0090A214 /* CountdownStepView.swift in Sources */,
 				FF629AA727FB6CD70082EDD7 /* Bundle+module.swift in Sources */,
 				FFC14E632817113600B17551 /* ContentNodeView.swift in Sources */,
 				FF6BB110281C4847005DA166 /* TextEntryViewModel.swift in Sources */,
@@ -389,11 +411,13 @@
 				FFCB534D27F6A78900BED4E2 /* KeyboardOptions+SwiftUI.swift in Sources */,
 				FFCB534B27F6A78900BED4E2 /* KeyboardObserver.swift in Sources */,
 				FFCB534A27F6A78900BED4E2 /* ChoiceQuestionViewModel.swift in Sources */,
+				FFF12AE5284A684D00A0CD76 /* ContentImage.swift in Sources */,
 				FFDDD56827F7A4AE00B40F22 /* ViewHeightReader.swift in Sources */,
+				FFF12AE6284A684D00A0CD76 /* TopBarProgressView.swift in Sources */,
 				FFCB535A27F6B60B00BED4E2 /* NodeState.swift in Sources */,
 				FFC14E67281717CD00B17551 /* LikertScaleView.swift in Sources */,
 				FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */,
-				FFC14E2B2811DD0500B17551 /* InstructionView.swift in Sources */,
+				FFC14E2B2811DD0500B17551 /* InstructionStepView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,6 +551,7 @@
 				DEVELOPMENT_TEAM = KA9Z8R6M6K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosAppPreview/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -558,6 +583,7 @@
 				DEVELOPMENT_TEAM = KA9Z8R6M6K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iosAppPreview/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

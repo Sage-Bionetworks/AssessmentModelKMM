@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import org.sagebionetworks.assessmentmodel.CompletionStep
 import org.sagebionetworks.assessmentmodel.ContentNodeStep
 import org.sagebionetworks.assessmentmodel.OverviewStep
+import org.sagebionetworks.assessmentmodel.presentation.compose.CompletionStepUi
 import org.sagebionetworks.assessmentmodel.presentation.compose.InstructionStepUi
 import org.sagebionetworks.assessmentmodel.presentation.databinding.ComposeQuestionStepFragmentBinding
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
@@ -38,27 +39,36 @@ open class InstructionStepFragment: StepFragment() {
             R.string.start
         } else if (step is CompletionStep) {
             hideClose = true
-            R.string.done
+            R.string.exit
         } else {
             R.string.next
         }
         binding.questionContent.setContent {
             //TODO: Need to figure out theming with compose -nbrown 2/17/22
             SageSurveyTheme {
-                InstructionStepUi(
-                    icon = drawable,
-                    iconTintColor = if (tint) {
-                        MaterialTheme.colors.primary
-                    } else {
-                        null
-                    },
-                    title = step.title,
-                    detail = step.detail,
-                    nextButtonText = stringResource(buttonTextResource),
-                    next = { assessmentViewModel.goForward() },
-                    close = { assessmentViewModel.cancel() },
-                    hideClose = hideClose
-                )
+                if (step is CompletionStep) {
+                    CompletionStepUi(
+                        title = step.title ?: getString(R.string.well_done),
+                        detail = step.detail ?: getString(R.string.thank_you_for),
+                        nextButtonText = stringResource(buttonTextResource),
+                        next = { assessmentViewModel.goForward() }
+                    )
+                } else {
+                    InstructionStepUi(
+                        icon = drawable,
+                        iconTintColor = if (tint) {
+                            MaterialTheme.colors.primary
+                        } else {
+                            null
+                        },
+                        title = step.title,
+                        detail = step.detail,
+                        nextButtonText = stringResource(buttonTextResource),
+                        next = { assessmentViewModel.goForward() },
+                        close = { assessmentViewModel.cancel() },
+                        hideClose = hideClose
+                    )
+                }
             }
         }
         return binding.root

@@ -217,12 +217,6 @@ class TestStep : AbstractInstructionStepObject {
     }
 }
 
-class TestAssessmentStepViewVender : AssessmentStepViewVender {
-    override func isSupported(step: Step) -> Bool {
-        true
-    }
-}
-
 class TestAssessmentController {
     let assessment: AssessmentObject
     let assessmentState: AssessmentState
@@ -232,7 +226,7 @@ class TestAssessmentController {
         let assessment = AssessmentObject(identifier: "test", children: children)
         let assessmentState = AssessmentState(assessment, restoredResult: restoredResult)
         let viewModel = AssessmentViewModel()
-        viewModel.initialize(assessmentState, viewVender: TestAssessmentStepViewVender())
+        viewModel.initialize(assessmentState)
         
         self.assessment = assessment
         self.assessmentState = assessmentState

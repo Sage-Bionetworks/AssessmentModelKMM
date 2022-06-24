@@ -52,6 +52,7 @@ public struct ContentImage : View, Identifiable {
     ///   - imageInfo: The image info to use to get the resource.
     ///   - label: The accessibility label.
     public init(_ imageInfo: ImageInfo, label: Text? = nil) {
+        let label = label ?? imageInfo.label.map { Text($0) }
         if let iconKey = (imageInfo as? SageResourceImage)?.name {
             self.init(icon: iconKey, label: label)
         }
@@ -136,7 +137,11 @@ public struct ContentImage : View, Identifiable {
 
 struct ContentImage_Previews: PreviewProvider {
     static var previews: some View {
-        ContentImage(icon: .survey)
+        VStack {
+            ContentImage(icon: .survey)
+            ContentImage("survey.1", bundle: .module)
+            ContentImage(FetchableImage(imageName: "survey.1", bundle: Bundle.module))
+        }
     }
 }
 

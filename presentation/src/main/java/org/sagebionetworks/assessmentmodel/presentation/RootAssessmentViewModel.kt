@@ -54,6 +54,8 @@ open class RootAssessmentViewModel(
                     sessionExpiration
                 )
             }
+        } else {
+            assessmentInstanceId?.let {assessmentResultCache?.removeAssessmentResult(assessmentInstanceId)}
         }
 
         val resultString = nodeState.currentResult.toString()
