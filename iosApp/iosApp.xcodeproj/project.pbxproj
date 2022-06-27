@@ -78,6 +78,7 @@
 		FF2ECC14265C55A600831866 /* PreviewBranchNodeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewBranchNodeState.swift; sourceTree = "<group>"; };
 		FF6F6FBB266021B5007C6B92 /* SampleSurvey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleSurvey.swift; sourceTree = "<group>"; };
 		FFA5E758264DBD7D0042D694 /* Bundle+module.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+module.swift"; sourceTree = "<group>"; };
+		FFBC9102286A626000029A59 /* AssessmentModelKMM */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AssessmentModelKMM; path = ..; sourceTree = "<group>"; };
 		FFC14E322811F08100B17551 /* Survey Examples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Survey Examples.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFC14E342811F08100B17551 /* SurveyExamplesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyExamplesApp.swift; sourceTree = "<group>"; };
 		FFC14E362811F08100B17551 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -131,6 +132,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				FFBC9102286A626000029A59 /* AssessmentModelKMM */,
 				7555FF7D242A565900829871 /* iosApp */,
 				7555FF94242A565B00829871 /* iosAppTests */,
 				FFC14E332811F08100B17551 /* SurveyExamples */,
