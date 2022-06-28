@@ -29,8 +29,7 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.5.21"
+        kotlinCompilerExtensionVersion = "1.2.0-dev-k1.7.0-53370d83bb1"
     }
 }
 dependencies {
@@ -64,8 +63,7 @@ kotlin {
         commonMain {
             dependencies {
                 api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                //TODO: Remove -SNAPSHOT once 0.4.0 release is available -nbrown 05/26/2022
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0-SNAPSHOT")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
             }
         }

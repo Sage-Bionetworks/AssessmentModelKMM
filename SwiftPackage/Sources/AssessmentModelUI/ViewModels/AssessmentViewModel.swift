@@ -135,6 +135,12 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             var result = current.result
             result.endDate = Date()
             currentBranchResult.appendStepHistory(with: result)
+            
+            // If going forward from a step that is *not* an overview or instruction step
+            // then consider the assessment to have partial results.
+            if !((current is OverviewStep) || (current is InstructionStep)) {
+                state.hasPartialResults = true
+            }
         }
         
         goForward(from: state.currentStep?.node)
@@ -254,6 +260,9 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         }
         else if let step = node as? ContentStep {
             return InstructionState(step, parentId: currentBranchState.id)
+        }
+        else if let step = node as? Step {
+            return StepState(step: step, parentId: currentBranchState.id)
         }
         else {
             assertionFailure("Cannot create step or branch state for this node: \(node)")

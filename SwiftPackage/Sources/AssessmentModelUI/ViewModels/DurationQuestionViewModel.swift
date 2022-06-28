@@ -70,7 +70,7 @@ class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     private var isInitializing: Bool = false
     
     func didUpdateValue(_ newValue: JsonValue?, with identifier: String) {
-        guard !isInitializing else { return }
+        guard !isInitializing, let questionState = questionState else { return }
         let answer: Double? = inputFields.reduce(nil) { partialResult, model in
             guard let value = model.value, let unit = DurationUnit(rawValue: model.id)
             else {
@@ -78,8 +78,8 @@ class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
             }
             return (partialResult ?? 0) + Double(value) * unit.secondsMultiplier
         }
-        questionState?.hasSelectedAnswer = (answer != nil)
-        questionState?.answer = answer.map { .init($0) }
+        questionState.hasSelectedAnswer = (answer != nil) || questionState.question.optional
+        questionState.answer = answer.map { .init($0) }
     }
 }
 

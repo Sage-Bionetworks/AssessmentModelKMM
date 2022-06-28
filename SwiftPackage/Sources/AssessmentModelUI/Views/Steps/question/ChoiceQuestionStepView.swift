@@ -47,7 +47,6 @@ public struct ChoiceQuestionStepView : View {
         QuestionStepScrollView {
             ChoiceQuestionView()
         }
-        .id("\(type(of: self)):\(questionState.id)")   // Give the view a unique id to force refresh
         .environmentObject(questionState)
         .fullscreenBackground(.lightSurveyBackground)
     }
@@ -97,18 +96,23 @@ struct ChoiceQuestionView : View {
     }
     
     struct OtherCell : View {
+        @EnvironmentObject private var keyboard: KeyboardObserver
         @ObservedObject var choice: OtherChoiceViewModel
         var body: some View {
             HStack(spacing: 0) {
-                Toggle("", isOn: $choice.selected)
-                MultilineTextField(text: $choice.value,
-                                   isSelected: $choice.selected,
-                                   inputItem: choice.inputItem,
-                                   fieldLabel: choice.fieldLabel)
-                    .accentColor(Color.sageBlack)
-                    .characterLimit(50)
+                Toggle(isOn: $choice.selected) {
+                    MultilineTextField(text: $choice.value,
+                                       isSelected: $choice.selected,
+                                       inputItem: choice.inputItem,
+                                       fieldLabel: choice.fieldLabel)
+                        .accentColor(Color.sageBlack)
+                        .characterLimit(50)
+                }
             }
             .selectionCell(isOn: $choice.selected, spacing: 3)
+            #if os(iOS)
+            .environment(\.editMode, .constant(keyboard.keyboardFocused ? EditMode.active : EditMode.inactive))
+            #endif
         }
     }
 }
@@ -146,31 +150,10 @@ struct SelectionCell : ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        wrapContent(content)
+        content
+            .toggleStyle(SelectionToggleStyle(spacing: spacing, selectedColor: surveyTint, isSingleSelect: singleChoice))
             .font(.textField)
             .foregroundColor(.textForeground)
-    }
-    
-    @ViewBuilder
-    private func wrapContent(_ content: Content) -> some View {
-        if singleChoice {
-            content
-                .toggleStyle(RadioButtonToggleStyle(spacing: spacing))
-                .padding(.trailing, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isOn ? surveyTint : Color.sageWhite)
-                .clipShape(Capsule())
-                .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
-            
-        } else {
-            content
-                .toggleStyle(CheckboxToggleStyle(spacing: spacing))
-                .padding(.trailing, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isOn ? surveyTint : Color.sageWhite)
-                .clipShape(RoundedRectangle(cornerRadius: 5))
-                .shadow(color: .hex2A2A2A.opacity(0.1), radius: 3, x: 1, y: 2)
-        }
     }
 }
 

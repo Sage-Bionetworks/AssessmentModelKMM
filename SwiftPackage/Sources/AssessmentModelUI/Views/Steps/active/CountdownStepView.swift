@@ -1,5 +1,5 @@
 //
-//  InstructionStepView.swift
+//  CountdownStepView.swift
 //
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
@@ -35,45 +35,75 @@ import SwiftUI
 import AssessmentModel
 import SharedMobileUI
 
-public struct InstructionStepView: View {
-    @ObservedObject var nodeState: ContentNodeState
-    let alignment: Alignment
+public struct CountdownStepView: View {
+    @SwiftUI.Environment(\.surveyTintColor) var surveyTint: Color
+    @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
+    @EnvironmentObject var assessmentState: AssessmentState
+    @EnvironmentObject var pagedNavigation: PagedNavigationViewModel
+    @ObservedObject var nodeState: StepState
+    @State var countdown: Int = 5
+    @State var paused: Bool = false
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let startDuration: TimeInterval
     
-    public init(_ nodeState: ContentNodeState, alignment: Alignment = .leading) {
+    public init(_ nodeState: StepState) {
         self.nodeState = nodeState
-        self.alignment = alignment
+        self.startDuration = (nodeState.step as? CountdownStep)?.duration ?? 5.0
     }
     
     public var body: some View {
         VStack {
             StepHeaderView(nodeState)
-            ContentNodeView(nodeState.contentNode, alignment: alignment)
-            SurveyNavigationView()
+            
+            Spacer()
+            
+            // Countdown
+            VStack(spacing: 16) {
+                Text("Begin in...", bundle: .module)
+                    .font(.stepTitle)
+                Text("\(countdown)")
+                    .font(.latoFont(96, relativeTo: .title, weight: .bold))
+                
+            }
+            .foregroundColor(.textForeground)
+            .padding(.horizontal, horizontalPadding)
+            
+            Spacer()
+        }
+        .onAppear {
+            countdown = Int(startDuration)
+        }
+        .onDisappear {
+            timer.upstream.connect().cancel()
+        }
+        .onChange(of: assessmentState.showingPauseActions) { newValue in
+            paused = newValue
+            if paused, countdown > 0 {
+                countdown = Int(startDuration)
+            }
+        }
+        .onReceive(timer) { time in
+            guard !paused, countdown > 0 else { return }
+            countdown = max(countdown - 1, 0)
+            if countdown == 0 {
+                pagedNavigation.goForward()
+            }
         }
     }
 }
 
-struct InstructionView_Previews: PreviewProvider {
+struct CountdownStepView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            InstructionStepView(InstructionState(example2, parentId: nil))
+            CountdownStepView(StepState(step: example1, parentId: nil))
                 .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
-            .environmentObject(AssessmentState(AssessmentObject(previewStep: example2)))
-            InstructionStepView(InstructionState(example1, parentId: nil), alignment: .center)
+                .environmentObject(AssessmentState(AssessmentObject(previewStep: example1)))
+            CountdownStepView(StepState(step: example1, parentId: nil))
+                .environment(\.sizeCategory, .accessibilityExtraExtraLarge)
                 .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 0))
                 .environmentObject(AssessmentState(AssessmentObject(previewStep: example1)))
         }
     }
 }
 
-fileprivate let example1 = InstructionStepObject(
-    identifier: "example",
-    title: "Example Survey A",
-    detail: "You will be shown a series of example questions. This survey has no additional instructions.",
-    imageInfo: SageResourceImage(.survey))
-
-fileprivate let example2 = InstructionStepObject(
-    identifier: "example",
-    title: "Example Survey A",
-    detail: "You will be shown a series of example questions. This survey has no additional instructions.",
-    imageInfo: FetchableImage(imageName: "survey.1", bundle: Bundle.module, placementHint: "iconAfter"))
+fileprivate let example1 = CountdownStepObject(identifier: "example1", duration: 5)

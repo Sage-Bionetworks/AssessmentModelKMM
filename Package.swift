@@ -25,7 +25,7 @@ let package = Package(
                  from: "1.4.7"),
         .package(name: "SharedMobileUI",
                  url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
-                 from: "0.15.2"),
+                 from: "0.17.0"),
         .package(name: "MobilePassiveData",
                  url: "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
                  from: "1.2.4"),
