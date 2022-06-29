@@ -28,7 +28,6 @@ allprojects {
         google()
         mavenCentral()
         jcenter() // still used by org.jetbrains.dokka:javadoc-plugin - liujoshua 05-07-2021
-        maven(url = "https://androidx.dev/storage/compose-compiler/repository/")
    }
 }
 
