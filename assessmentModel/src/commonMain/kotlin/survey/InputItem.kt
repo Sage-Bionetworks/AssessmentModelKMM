@@ -1,14 +1,16 @@
 package org.sagebionetworks.assessmentmodel.survey
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 import org.sagebionetworks.assessmentmodel.StringEnum
 import org.sagebionetworks.assessmentmodel.matching
 import org.sagebionetworks.assessmentmodel.serialization.*
@@ -235,8 +237,34 @@ interface TimeInputItem : KeyboardTextInputItem<String> {
 @Serializable
 data class TimeFormatOptions(val allowFuture: Boolean = true,
                              val allowPast: Boolean = true,
-                             val minimumValue: String? = null,
-                             val maximumValue: String? = null)
+                             val minimumValue: LocalTime? = null,
+                             val maximumValue: LocalTime? = null) {
+
+    /**
+     * Get the minimum value a user is currently allowed to enter
+     */
+    val min
+        get() = if (allowPast) {
+            minimumValue ?: LocalTime(0, 0)
+        } else {
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+        }
+
+    /**
+     * Get the maximum value a user is currently allowed to enter
+     */
+    val max
+        get() = if (allowFuture) {
+            maximumValue ?: LocalTime(23, 59, 59)
+        } else {
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+        }
+
+    fun isInRange(time: LocalTime) : Boolean {
+        return time in min..max
+    }
+
+}
 
 object PassThruTextValidator : TextValidator<String> {
     override fun valueFor(text: String): FormattedValue<String> = FormattedValue(text)

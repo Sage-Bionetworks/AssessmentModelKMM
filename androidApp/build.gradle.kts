@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
     defaultConfig {
         applicationId = "org.sagebionetworks.assessmentmodel.sampleapp"
         minSdk = 21

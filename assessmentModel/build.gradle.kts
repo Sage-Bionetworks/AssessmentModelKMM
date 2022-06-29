@@ -29,8 +29,7 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.5.21"
+        kotlinCompilerExtensionVersion = "1.2.0"
     }
 }
 dependencies {
@@ -63,8 +62,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-             api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-             api("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
+                api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
             }
         }

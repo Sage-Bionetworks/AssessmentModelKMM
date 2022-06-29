@@ -1,6 +1,7 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
 import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.survey.*
 import kotlin.test.*
@@ -628,7 +629,7 @@ open class InputItemsTest {
         val original = TimeInputItemObject(
                 resultIdentifier = "foo",
                 formatOptions = TimeFormatOptions(
-                        minimumValue = "06:00",
+                        minimumValue = Json.decodeFromString("\"06:00\""),
                         allowFuture = false))
 
         val serializer = PolymorphicSerializer(InputItem::class)
@@ -658,7 +659,7 @@ open class InputItemsTest {
                 resultIdentifier = "foo",
                 formatOptions = TimeFormatOptions(
                         allowPast = false,
-                        maximumValue = "22:00"))
+                        maximumValue = Json.decodeFromString("\"22:00\"")))
 
         val serializer = PolymorphicSerializer(InputItem::class)
         val jsonString = jsonCoder.encodeToString(serializer, original)
