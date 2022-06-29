@@ -22,13 +22,12 @@ tasks.dokkaHtmlMultiModule {
 
 allprojects {
     group = "org.sagebionetworks.assessmentmodel"
-    version = "0.7.4"
+    version = "0.7.5"
 
     repositories {
         google()
         mavenCentral()
         jcenter() // still used by org.jetbrains.dokka:javadoc-plugin - liujoshua 05-07-2021
-        maven(url = "https://androidx.dev/storage/compose-compiler/repository/")
    }
 }
 

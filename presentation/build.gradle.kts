@@ -40,7 +40,7 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-dev-k1.7.0-53370d83bb1"
+        kotlinCompilerExtensionVersion = "1.2.0"
     }
     packagingOptions {
         resources {
