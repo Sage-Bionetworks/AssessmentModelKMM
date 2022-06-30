@@ -121,23 +121,10 @@ open class AssessmentFragment : Fragment() {
 
     open fun getFragmentForStep(step: Step): Fragment {
         //TODO: need factory for loading step fragments -nbrown 02/13/2020
-        when (step) {
-            is SimpleQuestion -> {
-                if (step.inputItem.answerType == AnswerType.INTEGER) {
-                    return NumericQuestionStepFragment()
-                }
-
-                if (step.inputItem is TimeInputItem) {
-                    return TimeQuestionStepFragment()
-                } else if (step.inputItem is KeyboardTextInputItem<*>) {
-                    return TextQuestionStepFragment()
-                }
-                TODO("Not yet supported inputItem type: ${step.inputItem.javaClass.simpleName}")
-            }
-            is ChoiceQuestion -> return ChoiceQuestionStepFragment()
-            is ContentNodeStep -> return InstructionStepFragment()
-            is MultipleInputQuestion -> return MultipleInputQuestionStepFragment()
-            else -> return DebugStepFragment()
+        return when (step) {
+            is Question -> SurveyQuestionStepFragment()
+            is ContentNodeStep -> InstructionStepFragment()
+            else -> DebugStepFragment()
         }
     }
 }

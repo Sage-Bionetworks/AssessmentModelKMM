@@ -166,7 +166,7 @@ private fun IntegerSlider(
 }
 
 @Composable
-private fun IntegerTextField(
+internal fun IntegerTextField(
     numberTextValue: String,
     inputFieldLabel: String?,
     updateAnswer: (String) -> Unit,
