@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
@@ -117,8 +118,8 @@ fun BlackNextButton(
     enabled: Boolean = true) {
     BlackButton(onClick = onClick,
         iconDrawable = R.drawable.ic_right_arrow,
-        enabled = enabled,
-        modifier = Modifier.width(56.dp))
+        text = stringResource(R.string.next),
+        enabled = enabled)
 }
 
 @Composable
