@@ -94,6 +94,7 @@ struct MultilineTextField: View {
                 fontSize: $fontSize,
                 isBold: isBold)
                 .frame(height: keyboard.textFieldHeight)
+                .accentColor(.sageBlack)
             #endif
         }
         .onChange(of: isEditingText) { newValue in
