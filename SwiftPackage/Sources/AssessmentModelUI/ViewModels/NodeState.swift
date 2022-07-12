@@ -68,9 +68,9 @@ open class BranchState : NodeState {
 open class StepState : NodeState {
     public final var step: Step { node as! Step }
     
-    @Published public var forwardEnabled: Bool = true
-    @Published public var progressHidden: Bool = true
-    @Published public var skipStepText: Text? = nil
+    open var forwardEnabled: Bool { true }
+    open var progressHidden: Bool { true }
+    open var skipStepText: Text? { nil }
 
     public init(step: Step, result: ResultData? = nil, parentId: String? = nil) {
         super.init(node: step, result: result ?? step.instantiateResult(), parentId: parentId)
@@ -131,6 +131,8 @@ public final class UnsupportedNodeState : StepState {
 
 /// State object for an instruction.
 public final class InstructionState : ContentNodeState {
+    
+    override public var progressHidden: Bool { node is OverviewStep || node is CompletionStep }
 
     @Published public var image: Image?
     @Published public var title: String?
@@ -145,7 +147,6 @@ public final class InstructionState : ContentNodeState {
             self.image = Image(imageInfo.imageName, bundle: imageInfo.bundle)
         }
         super.init(step: instruction, result: instruction.instantiateResult(), parentId: parentId)
-        self.progressHidden = instruction is OverviewStep || instruction is CompletionStep
     }
 }
 
@@ -153,6 +154,12 @@ public final class InstructionState : ContentNodeState {
 public final class QuestionState : ContentNodeState {
     public var question: QuestionStep { step as! QuestionStep }
     public var answerResult: AnswerResult { result as! AnswerResult }
+
+    override public var forwardEnabled: Bool { question.optional || hasSelectedAnswer }
+    override public var progressHidden: Bool { false }
+    
+    override public var skipStepText: Text? { _skipStepText }
+    private let _skipStepText: Text?
     
     public let inputItem: TextInputItem?
     
@@ -170,14 +177,12 @@ public final class QuestionState : ContentNodeState {
         self.title = question.title ?? question.subtitle ?? question.detail ?? ""
         self.subtitle = question.title == nil ? nil : question.subtitle
         self.detail = question.title == nil && question.subtitle == nil ? nil : question.detail
+        self._skipStepText = skipStepText
         let result = answerResult ?? question.instantiateAnswerResult()
         self.hasSelectedAnswer = result.jsonValue != nil || question.optional
         self.answer = result.jsonValue
         self.inputItem = (question as? SimpleQuestion)?.inputItem
         super.init(step: question, result: result, parentId: parentId)
-        self.skipStepText = skipStepText
-        self.forwardEnabled =  question.optional || hasSelectedAnswer
-        self.progressHidden = false
     }
     
     override public func willSkip() {
