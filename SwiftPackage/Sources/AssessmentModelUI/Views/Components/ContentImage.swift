@@ -82,12 +82,12 @@ public struct ContentImage : View, Identifiable {
     /// - Parameters:
     ///   - iconKey: The key name for the icon to use that is defined within the `AssessmentModel` framework.
     ///   - label: The accessibility label.
-    public init(icon iconKey: SageResourceImage.Name, label: Text? = nil) {
+    public init(icon iconKey: SageResourceImage.Name, label: Text? = nil, isList: Bool = false) {
         self.id = "SageResourceImage.\(iconKey.rawValue)"
-        self.imageName = iconKey.imageName
-        self.label = label ?? Text(iconKey.label)
+        self.imageName = iconKey.imageName(isList: isList)
+        self.label = label ?? iconKey.label
         self.bundle = .module
-        self.layerCount = iconKey.layerCount
+        self.layerCount = iconKey.layerCount(isList: isList)
         self.url = nil
     }
     
@@ -98,12 +98,12 @@ public struct ContentImage : View, Identifiable {
     ///   - placeholder: The key name for the icon to use as a placeholder.
     ///   - label: The accessibility label.
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    public init(url: URL, placeholder iconKey: SageResourceImage.Name = .survey, label: Text? = nil) {
+    public init(url: URL, placeholder iconKey: SageResourceImage.Name = .default, label: Text? = nil, isList: Bool = false) {
         self.id = url.absoluteString
-        self.imageName = iconKey.imageName
-        self.label = label ?? Text(iconKey.label)
+        self.imageName = iconKey.imageName(isList: isList)
+        self.label = label ?? iconKey.label
         self.bundle = .module
-        self.layerCount = iconKey.layerCount
+        self.layerCount = iconKey.layerCount(isList: isList)
         self.url = url
     }
     
@@ -135,12 +135,45 @@ public struct ContentImage : View, Identifiable {
     }
 }
 
-struct ContentImage_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            ContentImage(icon: .survey)
+struct ContentImagePreview : View {
+    var body: some View {
+        ScrollView {
             ContentImage("survey.1", bundle: .module)
             ContentImage(FetchableImage(imageName: "survey.1", bundle: Bundle.module))
+            ForEach(SageResourceImage.Name.allCases) { name in
+                ContentImage(icon: name)
+            }
+        }
+    }
+}
+
+struct ContentImage_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentImagePreview()
+    }
+}
+
+extension SageResourceImage.Name {
+    public var label: Text {
+        Text("Survey", bundle: .module)
+    }
+    
+    public func imageName(isList: Bool = false) -> String {
+        isList ? "list_\(rawValue)" : "title_\(rawValue)"
+    }
+    
+    
+    public func layerCount(isList: Bool = false) -> Int {
+        if isList {
+            return 1
+        }
+        else {
+            switch self {
+            case .exit:
+                return 3
+            default:
+                return 2
+            }
         }
     }
 }

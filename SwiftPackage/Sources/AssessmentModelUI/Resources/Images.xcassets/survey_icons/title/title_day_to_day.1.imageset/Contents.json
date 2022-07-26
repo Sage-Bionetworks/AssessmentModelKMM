@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "title_day_to_day.1.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}
