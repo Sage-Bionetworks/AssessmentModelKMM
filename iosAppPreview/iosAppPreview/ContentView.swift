@@ -102,7 +102,7 @@ fileprivate let countdownAssessment = AssessmentObject(identifier: "Countdown", 
     OverviewStepObject(identifier: "overview",
                        title: "Countdown Example",
                        detail: "Example for testing a countdown step",
-                       imageInfo: SageResourceImage(.survey)),
+                       imageInfo: SageResourceImage(.default)),
     CountdownStepObject(identifier: "countdown", duration: 6),
     CompletionStepObject(identifier: "completion", title: "You're done!")
 ])

@@ -73,11 +73,13 @@ extension Image {
 
 struct LayeredImageView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            CompositedImage("survey", bundle: .module, layers: 4)
-            CompositedImage("survey", bundle: .module, layers: 4)
-                .surveyTintColor(.red)
-            CompositedImage("survey", bundle: .module, layers: 4, isResizable: true)
+        ScrollView {
+            VStack {
+                CompositedImage("survey", bundle: .module, layers: 4)
+                CompositedImage("survey", bundle: .module, layers: 4)
+                    .surveyTintColor(.red)
+                CompositedImage("survey", bundle: .module, layers: 4, isResizable: true)
+            }
         }
     }
 }

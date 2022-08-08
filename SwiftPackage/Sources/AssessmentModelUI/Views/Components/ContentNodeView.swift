@@ -103,4 +103,4 @@ fileprivate let exampleStep = OverviewStepObject(
     identifier: "overview",
     title: "Example Survey A",
     detail: "You will be shown a series of example questions. This survey has no additional instructions.",
-    imageInfo: SageResourceImage(.survey))
+    imageInfo: SageResourceImage(.default))

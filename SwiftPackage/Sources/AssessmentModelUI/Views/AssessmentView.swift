@@ -217,7 +217,7 @@ let surveyA = AssessmentObject(identifier: "surveyA",
 fileprivate let surveyAChildren: [Node] = [
     OverviewStepObject(identifier: "overview",
                        title: "Example Survey A",
-                       detail: "You will be shown a series of example questions. This survey has no additional instructions.", imageInfo: SageResourceImage(.survey)),
+                       detail: "You will be shown a series of example questions. This survey has no additional instructions.", imageInfo: SageResourceImage(.default)),
     
     ChoiceQuestionStepObject(identifier: "choiceQ1",
                              choices: [
