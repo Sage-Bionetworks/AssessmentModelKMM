@@ -311,10 +311,10 @@ open class AbstractContentNodeObject : AbstractNodeObject, ContentNode {
         var relativeIndex: Int { 4 }
     }
     
-    public let title: String?
-    public let subtitle: String?
-    public let detail: String?
-    public let imageInfo: ImageInfo?
+    open private(set) var title: String?
+    open private(set) var subtitle: String?
+    open private(set) var detail: String?
+    open private(set) var imageInfo: ImageInfo?
     
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
