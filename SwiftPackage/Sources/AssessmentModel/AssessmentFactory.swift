@@ -64,4 +64,8 @@ open class AssessmentFactory : MobilePassiveDataFactory {
         self.registerRootObject(AssessmentObject())
         self.registerRootObject(AssessmentResultObject())
     }
+    
+    open override func mapDecodedObject<T>(_ type: T.Type, object: Any, codingPath: [CodingKey]) throws -> T {
+        try super.mapDecodedObject(type, object: (object as? TransformableNode)?.node ?? object, codingPath: codingPath)
+    }
 }
