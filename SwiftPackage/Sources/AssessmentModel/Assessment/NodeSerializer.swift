@@ -107,6 +107,7 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
             PermissionStepObject.examples().first!,
             SectionObject.examples().first!,
             SimpleQuestionStepObject.examples().first!,
+            TransformableNode()
         ]
     }
     
@@ -402,5 +403,58 @@ internal func encodeObject<Key>(object: Any?, to encoder: Encoder, forKey: Key) 
     var container = encoder.container(keyedBy: Key.self)
     let nestedEncoder = container.superEncoder(forKey: forKey)
     try encodable.encode(to: nestedEncoder)
+}
+
+struct TransformableNode : SerializableNode {
+    var serializableType: SerializableNodeType { .init(rawValue: "transform")}
+    let identifier: String
+    let node: Node
+    
+    init() {
+        self.identifier = "example"
+        self.node = InstructionStepObject(identifier: "example")
+    }
+    
+    private enum CodingKeys : String, CodingKey {
+        case identifier, resourceName
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let identifier = try container.decode(String.self, forKey: .identifier)
+        let resourceName = try container.decode(String.self, forKey: .resourceName)
+        guard let bundle = decoder.bundle as? Bundle,
+              let url = bundle.url(forResource: resourceName, withExtension: "json")
+        else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Cannot find file in expected bundle."))
+        }
+        let data = try Data(contentsOf: url)
+        let jsonDecoder = decoder.serializationFactory.createJSONDecoder()
+        let wrapper = try jsonDecoder.decode(NodeWrapper.self, from: data)
+        self.node = ((wrapper.node as? CopyWithIdentifier)?.copy(with: identifier) as? Node) ?? wrapper.node
+        self.identifier = identifier
+    }
+    
+    struct NodeWrapper : Decodable {
+        let node: Node
+        init(from decoder: Decoder) throws {
+            self.node = try decoder.serializationFactory.decodePolymorphicObject(Node.self, from: decoder)
+        }
+    }
+    
+    var comment: String? { nil }
+    
+    func instantiateResult() -> ResultData {
+        ResultObject(identifier: identifier)
+    }
+    
+    func button(_ buttonType: ButtonType, node: Node) -> ButtonActionInfo? {
+        nil
+    }
+    
+    func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool? {
+        nil
+    }
+
 }
 

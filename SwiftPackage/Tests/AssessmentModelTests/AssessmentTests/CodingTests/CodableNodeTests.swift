@@ -946,6 +946,33 @@ class CodableQuestionTests: XCTestCase {
         }
     }
     
+    // Transformable
+    
+    func testTransformableNode_Codable() {
+        
+        let json = """
+        {
+            "identifier": "foo",
+            "type": "transform",
+            "resourceName": "sample_step"
+        }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
+        do {
+
+            let jsonDecoder = AssessmentFactory().createJSONDecoder(resourceInfo: TestResourceInfo())
+            let wrapper = try jsonDecoder.decode(NodeWrapper<InstructionStepObject>.self, from: json)
+            let object = wrapper.node
+            
+            XCTAssertEqual("foo", object.identifier)
+            XCTAssertEqual("Example of a transformable node", object.title)
+
+        } catch let err {
+            XCTFail("Failed to decode/encode object: \(err)")
+            return
+        }
+    }
+    
     // MARK: helpers
     
     func checkResult<T : ResultData>(step: AbstractNodeObject, type: T.Type) {
@@ -1034,5 +1061,11 @@ class CodableQuestionTests: XCTestCase {
             }
             self.node = qStep
         }
+    }
+    
+    struct TestResourceInfo : ResourceInfo {
+        let factoryBundle: ResourceBundle? = Bundle.module
+        let bundleIdentifier: String? = nil
+        let packageName: String? = nil
     }
 }
