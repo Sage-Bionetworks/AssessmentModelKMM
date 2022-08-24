@@ -124,6 +124,11 @@ public struct OverviewIcon : Codable, Equatable, DocumentableStruct {
     public let icon: String
     public let title: String
     
+    public init(icon: String, title: String) {
+        self.icon = icon
+        self.title = title
+    }
+    
     public static func examples() -> [OverviewIcon] {
         [.init(icon: "hello", title: "Hello, World!")]
     }
