@@ -1,6 +1,6 @@
 //
 //  ContentImage.swift
-//  
+//
 //
 //  Copyright © 2022 Sage Bionetworks. All rights reserved.
 //
@@ -45,6 +45,9 @@ public struct ContentImage : View, Identifiable {
     let bundle: Bundle?
     let layerCount: Int
     let url: URL?
+    var animatedImages: [String] = []
+    @State var animatedImageIndex: Int?
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     /// The constructor to use when creating the image using an image info.
     ///
@@ -55,6 +58,9 @@ public struct ContentImage : View, Identifiable {
         let label = label ?? imageInfo.label.map { Text($0) }
         if let iconKey = (imageInfo as? SageResourceImage)?.name {
             self.init(icon: iconKey, label: label)
+        }
+        else if let animatedImageInfo = imageInfo as? AnimatedImage {
+            self.init(animatedImageInfo: animatedImageInfo)
         }
         else {
             self.init(imageInfo.imageName, bundle: imageInfo.bundle, layers: (imageInfo as? CompositeImageInfo)?.layerCount ?? 1, label: label)
@@ -75,6 +81,19 @@ public struct ContentImage : View, Identifiable {
         self.label = label ?? Text(imageName)
         self.layerCount = layers
         self.url = nil
+    }
+    
+    /// The constructor to use with animations.
+    ///
+    /// - Parameters:
+    ///   - animatedImageInfo: The animated image info to use to get the resource.
+    ///   - label: The accessibility label.
+    public init(animatedImageInfo: AnimatedImage, label: Text? = nil) {
+        self.init(animatedImageInfo.imageNames[0], bundle: animatedImageInfo.bundle, label: label)
+        for imageName in animatedImageInfo.imageNames {
+            self.animatedImages.append(imageName)
+        }
+        self.animatedImageIndex = 0
     }
     
     /// The constructor to use when creating the view using a default icon key.
@@ -129,6 +148,15 @@ public struct ContentImage : View, Identifiable {
             CompositedImage(imageName, bundle: bundle, layers: layerCount)
                 .accessibility(label: label)
         }
+        else if let imageIndex = animatedImageIndex {
+            Image(animatedImages[imageIndex], bundle: bundle)
+                .onReceive(timer) { time in
+                    animatedImageIndex = (imageIndex + 1) % animatedImages.count
+                }
+                .onDisappear {
+                    timer.upstream.connect().cancel()
+                }
+        }
         else {
             Image(imageName, bundle: bundle, label: label)
         }
@@ -140,12 +168,15 @@ struct ContentImagePreview : View {
         ScrollView {
             ContentImage("survey.1", bundle: .module)
             ContentImage(FetchableImage(imageName: "survey.1", bundle: Bundle.module))
+            ContentImage(animatedImageExample[0])
             ForEach(SageResourceImage.Name.allCases) { name in
                 ContentImage(icon: name)
             }
         }
     }
 }
+
+let animatedImageExample = AnimatedImage.examples()
 
 struct ContentImage_Previews: PreviewProvider {
     static var previews: some View {
