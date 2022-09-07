@@ -20,6 +20,12 @@ interface ImageInfo : AssetResourceInfo, DrawableLayout {
      */
     val label: String?
 
+    /**
+     * A boolean as to whether or not the icon should be tinted.
+     */
+    val tint: Boolean
+        get() = false
+
     override val resourceAssetType: String?
         get() = StandardResourceAssetType.DRAWABLE
 
