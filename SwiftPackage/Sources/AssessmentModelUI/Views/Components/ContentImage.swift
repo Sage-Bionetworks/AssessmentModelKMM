@@ -86,7 +86,7 @@ public struct ContentImage : View, Identifiable {
     /// - Parameters:
     ///   - animatedImageInfo: The animated image info to use to get the resource.
     ///   - label: The accessibility label.
-    public init(animatedImageInfo: AnimatedImage, bundle: Bundle? = nil, label: Text? = nil, layers: Int = 1) {
+    public init(animatedImageInfo: AnimatedImage, bundle: Bundle? = nil, label: Text? = nil) {
         self.init(animatedImageInfo.imageName, bundle: animatedImageInfo.bundle, label: label)
         self.animatedImageInfo = animatedImageInfo
     }
