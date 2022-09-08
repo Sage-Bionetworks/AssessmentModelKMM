@@ -52,12 +52,36 @@ data class SageResourceImage(
         get() = null
         set(value) {}
 
+    override val resourceName: String
+        get() = "sage_resource_$imageName"
+
+    override val tint: Boolean
+        get() = name?.tint ?: false
+
     val name: Name?
         get() = Name.values().matching(imageName)
 
     enum class Name(val tint:Boolean) : StringEnum {
-        Survey(true),
-        ;
+        Default(true),
+        Cognition(true),
+        Day_to_day(true),
+        Demographics(true),
+        Energy(true),
+        Environment(true),
+        Excercise(true),
+        Exit(true),
+        Finance(true),
+        Food(true),
+        Health(true),
+        Leisure(true),
+        Medicine(true),
+        Mental_health(true),
+        Mood(true),
+        Pain(true),
+        Quality_of_life(true),
+        Social(true),
+        Screening(true),
+        Sleep(true),
     }
 }
 

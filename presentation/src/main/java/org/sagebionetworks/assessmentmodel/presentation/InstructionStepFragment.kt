@@ -33,7 +33,7 @@ open class InstructionStepFragment: StepFragment() {
                               savedInstanceState: Bundle?): View? {
         _binding = ComposeQuestionStepFragmentBinding.inflate(layoutInflater, container, false)
         val drawable = step.imageInfo?.loadDrawable(requireContext())
-        val tint = (step.imageInfo as? SageResourceImage)?.name?.tint ?: false
+        val tint = step.imageInfo?.tint ?: false
         var hideClose = false
         val buttonTextResource = if (step is OverviewStep) {
             R.string.start
