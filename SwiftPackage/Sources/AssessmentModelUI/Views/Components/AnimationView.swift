@@ -61,25 +61,42 @@ public struct AnimationView: View {
                 start()
             }
             .onDisappear{
-                timer?.invalidate()
+                stop()
             }
     }
     
     func start() {
         timer = Timer.scheduledTimer(withTimeInterval: duration / Double(animatedImageNames.count), repeats: true) {_ in
-            animatedImageIndex = (animatedImageIndex + 1) % animatedImageNames.count
-            if animatedImageIndex == 0 {
+            let index = (animatedImageIndex + 1) % animatedImageNames.count
+            if index == 0 {
                 loopCount -= 1
             }
             if loopCount == 0, loops > 0 {
                 stop()
             }
+            else {
+                animatedImageIndex = index
+            }
+        }
+    }
+    
+    func stop() {
+        timer?.invalidate()
+    }
+}
+
+struct AnimationView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            AnimationView(animatedImageInfo: animationExample1)
+            AnimationView(animatedImageInfo: animationExample2)
+                .preferredColorScheme(.dark)
         }
     }
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        AnimationView(animatedImageInfo: animatedImageExample[1])
-    }
-}
+fileprivate let animationExample1 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 3)
+
+fileprivate let animationExample2 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1, animationRepeatCount: 3)
+
+fileprivate let imageNamesExample = ["TapLeft1", "TapLeft2"]
