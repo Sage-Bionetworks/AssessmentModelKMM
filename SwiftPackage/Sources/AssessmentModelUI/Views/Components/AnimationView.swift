@@ -39,15 +39,13 @@ public struct AnimationView: View {
     let bundle: Bundle?
     let duration: TimeInterval
     let loops: Int
-    fileprivate var animatedImageNames: [String] = []
+    let animatedImageNames: [String]
     @State var loopCount: Int
     @State var animatedImageIndex: Int
     @State var timer: Timer?
     
     public init(animatedImageInfo: AnimatedImageInfo) {
-        for imageName in animatedImageInfo.imageNames {
-            self.animatedImageNames.append(imageName)
-        }
+        self.animatedImageNames = animatedImageInfo.imageNames
         self.bundle = animatedImageInfo.bundle
         self.duration = animatedImageInfo.animationDuration
         self.loops = animatedImageInfo.animationRepeatCount ?? 0
@@ -65,18 +63,22 @@ public struct AnimationView: View {
             }
     }
     
+    fileprivate func handleLoop() {
+        let index = (animatedImageIndex + 1) % animatedImageNames.count
+        if index == 0 {
+            loopCount -= 1
+        }
+        if loopCount == 0, loops > 0 {
+            stop()
+        }
+        else {
+            animatedImageIndex = index
+        }
+    }
+    
     func start() {
         timer = Timer.scheduledTimer(withTimeInterval: duration / Double(animatedImageNames.count), repeats: true) {_ in
-            let index = (animatedImageIndex + 1) % animatedImageNames.count
-            if index == 0 {
-                loopCount -= 1
-            }
-            if loopCount == 0, loops > 0 {
-                stop()
-            }
-            else {
-                animatedImageIndex = index
-            }
+            handleLoop()
         }
     }
     
@@ -89,14 +91,13 @@ struct AnimationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             AnimationView(animatedImageInfo: animationExample1)
-            AnimationView(animatedImageInfo: animationExample2)
-                .preferredColorScheme(.dark)
+            AnimationView(animatedImageInfo: animationRepeatExample)
         }
     }
 }
 
-fileprivate let animationExample1 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 3)
+fileprivate let animationExample1 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1)
 
-fileprivate let animationExample2 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1, animationRepeatCount: 3)
+fileprivate let animationRepeatExample = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1, animationRepeatCount: 3)
 
 fileprivate let imageNamesExample = ["TapLeft1", "TapLeft2"]
