@@ -90,14 +90,14 @@ public struct AnimationView: View {
 struct AnimationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            AnimationView(animatedImageInfo: animationExample1)
-            AnimationView(animatedImageInfo: animationRepeatExample)
+            AnimationView(animatedImageInfo: infiniteLoopExample)
+            AnimationView(animatedImageInfo: finiteLoopExample)
         }
     }
 }
 
-fileprivate let animationExample1 = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1)
+fileprivate let infiniteLoopExample = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1)
 
-fileprivate let animationRepeatExample = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1, animationRepeatCount: 3)
+fileprivate let finiteLoopExample = AnimatedImage(imageNames: imageNamesExample, animationDuration: 1, animationRepeatCount: 3)
 
 fileprivate let imageNamesExample = ["TapLeft1", "TapLeft2"]
