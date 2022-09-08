@@ -45,7 +45,7 @@ public struct ContentImage : View, Identifiable {
     let bundle: Bundle?
     let layerCount: Int
     let url: URL?
-    fileprivate var animatedImageInfo: AnimatedImageInfo?
+    private var animatedImageInfo: AnimatedImageInfo?
     
     /// The constructor to use when creating the image using an image info.
     ///
