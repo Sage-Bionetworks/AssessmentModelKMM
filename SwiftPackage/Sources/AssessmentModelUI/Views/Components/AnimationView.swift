@@ -61,7 +61,7 @@ public struct AnimationView: View {
                 start()
             }
             .onDisappear{
-                stop()
+                timer?.invalidate()
             }
     }
     
@@ -75,10 +75,6 @@ public struct AnimationView: View {
                 stop()
             }
         }
-    }
-    
-    func stop() {
-        timer?.invalidate()
     }
 }
 

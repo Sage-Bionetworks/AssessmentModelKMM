@@ -183,7 +183,6 @@ extension SageResourceImage.Name {
         isList ? "list_\(rawValue)" : "title_\(rawValue)"
     }
     
-    
     public func layerCount(isList: Bool = false) -> Int {
         if isList {
             return 1
