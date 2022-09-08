@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		80B9A16828CA58E100552522 /* AnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B9A16728CA58E100552522 /* AnimationView.swift */; };
 		FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */; };
 		FF5733CC28209786009664EC /* TextEntryQuestionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */; };
 		FF5733CE28209937009664EC /* TextEntryQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5733CD28209937009664EC /* TextEntryQuestionViewModel.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		80B9A16728CA58E100552522 /* AnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationView.swift; sourceTree = "<group>"; };
 		FF015E7B281891DF004BD345 /* IntegerQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionStepView.swift; sourceTree = "<group>"; };
 		FF1BA5EE28626BA6008C22FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FF5733CB28209786009664EC /* TextEntryQuestionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEntryQuestionStepView.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 		FFCB534527F6A78900BED4E2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				80B9A16728CA58E100552522 /* AnimationView.swift */,
 				FFF12AE3284A684D00A0CD76 /* ContentImage.swift */,
 				FFF12AE4284A684D00A0CD76 /* TopBarProgressView.swift */,
 				FFC14E24280B6A4800B17551 /* CompositedImage.swift */,
@@ -416,6 +419,7 @@
 				FFF12AE6284A684D00A0CD76 /* TopBarProgressView.swift in Sources */,
 				FFCB535A27F6B60B00BED4E2 /* NodeState.swift in Sources */,
 				FFC14E67281717CD00B17551 /* LikertScaleView.swift in Sources */,
+				80B9A16828CA58E100552522 /* AnimationView.swift in Sources */,
 				FF015E7C281891DF004BD345 /* IntegerQuestionStepView.swift in Sources */,
 				FFC14E2B2811DD0500B17551 /* InstructionStepView.swift in Sources */,
 			);
