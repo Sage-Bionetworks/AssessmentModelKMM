@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 31
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -57,31 +57,27 @@ dependencies {
     //Workaround for compose previews not working
     // https://stackoverflow.com/questions/71812710/can-no-longer-view-jetpack-compose-previews-failed-to-instantiate-one-or-more-c
     debugImplementation("androidx.customview:customview:1.2.0-alpha01")
-    debugImplementation("androidx.customview:customview-poolingcontainer:1.0.0-alpha01")
+    debugImplementation("androidx.customview:customview-poolingcontainer:1.0.0")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation(libs.koin.android)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.viewmodelKtx)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.uiToolingPreview)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.google.accompanist)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("io.insert-koin:koin-android:3.1.5")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
-    implementation("androidx.compose.ui:ui-tooling-preview:${rootProject.extra["compose_version"]}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
-    implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("com.google.accompanist:accompanist-drawablepainter:0.24.6-alpha")
+    coreLibraryDesugaring(libs.android.desugar)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${rootProject.extra["compose_version"]}")
-    debugImplementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
+    testImplementation(libs.junit)
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation(libs.androidx.compose.uiTest)
+    debugImplementation(libs.androidx.compose.uiTooling)
 }
 
 afterEvaluate {

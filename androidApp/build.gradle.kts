@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
         applicationId = "org.sagebionetworks.assessmentmodel.sampleapp"
-        minSdk = 21
-        targetSdk = 31
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
@@ -52,13 +52,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":presentation"))
 
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("io.insert-koin:koin-android:3.1.5")
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.viewmodelKtx)
+    //implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation(libs.koin.android)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring(libs.android.desugar)
 
-    testImplementation("junit:junit:4.12")
+    testImplementation(libs.junit)
 }

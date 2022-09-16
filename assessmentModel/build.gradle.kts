@@ -11,9 +11,9 @@ plugins {
 
 
 android {
-    compileSdkVersion(31)
+    compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
-        minSdkVersion(21)
+        minSdk = libs.versions.minSdk.get().toInt()
         multiDexEnabled = true //Required when setting minSdkVersion to 20 or lower
     }
     buildTypes {
@@ -33,15 +33,15 @@ android {
     }
 }
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring(libs.android.desugar)
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
-    androidTestImplementation("junit:junit:4.12")
+    androidTestImplementation(libs.junit)
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test")
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
@@ -62,9 +62,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
+                api(libs.kotlinx.serialization)
+                api(libs.kotlinx.dateTime)
+                implementation(libs.coroutines.core)
             }
         }
         commonTest {
@@ -74,8 +74,8 @@ kotlin {
             }
         }
         sourceSets["androidLibMain"].dependencies {
-            implementation("androidx.appcompat:appcompat:1.3.0")
-            implementation("androidx.compose.runtime:runtime:${rootProject.extra["compose_version"]}")
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.compose.runtime)
         }
         sourceSets["iosMain"].dependencies {
         }
