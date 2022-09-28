@@ -33,7 +33,7 @@ class FileLoaderAndroid(private val resources: Resources, private val defaultPac
 
 fun ImageInfo.loadDrawable(context: Context): Drawable? {
     val packageName = packageName ?: context.packageName
-    val resourceId = context.resources.getIdentifier(imageName, StandardResourceAssetType.DRAWABLE, packageName)
+    val resourceId = context.resources.getIdentifier(resourceName, StandardResourceAssetType.DRAWABLE, packageName)
     return AppCompatResources.getDrawable(context, resourceId)
 
 }
