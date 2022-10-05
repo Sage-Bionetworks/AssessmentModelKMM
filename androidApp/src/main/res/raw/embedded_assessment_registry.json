@@ -18,6 +18,14 @@
         "subtitle": "Subtitle",
         "detail": "Some text. This is a test.",
         "resourceName": "sample_wrapper_assessment"
+      },
+      {
+        "type": "transformableAssessment",
+        "identifier": "surveyA",
+        "title": "Survey A",
+        "subtitle": "Subtitle",
+        "detail": "Some text. This is a test.",
+        "resourceName": "survey_a"
       }
     ]
   }
