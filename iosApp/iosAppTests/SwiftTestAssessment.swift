@@ -31,9 +31,55 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+import XCTest
 import Foundation
 import AssessmentModel
 import JsonModel
+import ResultModel
+
+class ResultSerializationTestCase: XCTestCase {
+    
+    func checkAssessmentResult(from kmmJson: Data) throws {
+        let factory = AssessmentFactory()
+        let decoder = factory.createJSONDecoder()
+        let decodedResult = try decoder.decode(AssessmentResultObject.self, from: kmmJson)
+        checkResults(swiftResult: swiftAssessmentResult, decodedResult: decodedResult)
+    }
+    
+    func checkResults(swiftResult: ResultData, decodedResult: ResultData) {
+        XCTAssertEqual(swiftResult.typeName, decodedResult.typeName, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.identifier, decodedResult.identifier, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.startDate.timeIntervalSinceReferenceDate, decodedResult.startDate.timeIntervalSinceReferenceDate, accuracy: 0.1, "\(swiftResult.identifier)")
+        XCTAssertEqual(swiftResult.endDate.timeIntervalSinceReferenceDate, decodedResult.endDate.timeIntervalSinceReferenceDate, accuracy: 0.1, "\(swiftResult.identifier)")
+        
+        if let answerResult = swiftResult as? AnswerResultObject {
+            if let decoded = decodedResult as? AnswerResultObject {
+                XCTAssertEqual(answerResult.questionText, decoded.questionText, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.questionData, decoded.questionData, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.jsonValue, decoded.jsonValue, "\(swiftResult.identifier)")
+                XCTAssertEqual(answerResult.jsonAnswerType?.typeName, decoded.jsonAnswerType?.typeName, "\(swiftResult.identifier)")
+            }
+            else {
+                XCTFail("Failed to decode the correct type. expected=\(swiftResult), actual=\(decodedResult)")
+            }
+        }
+        else if let branchResult = swiftResult as? BranchNodeResult {
+            if let decoded = decodedResult as? BranchNodeResult {
+                branchResult.stepHistory.forEach { childResult in
+                    if let decodedChild = decoded.stepHistory.first(where: { $0.identifier == childResult.identifier }) {
+                        checkResults(swiftResult: childResult, decodedResult: decodedChild)
+                    }
+                    else {
+                        XCTFail("Failed to decode the matching child. expected=\(childResult)")
+                    }
+                }
+            }
+            else {
+                XCTFail("Failed to decode the correct type. expected=\(swiftResult), actual=\(decodedResult)")
+            }
+        }
+    }
+}
 
 let swiftFetchableImage = FetchableImage(imageName: "instructionFoo",
                                     label: "labelFoo",
