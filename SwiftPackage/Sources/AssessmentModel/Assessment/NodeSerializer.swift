@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 
 /// `SerializableNode` is the base implementation for `Node` that is serialized using
 /// the `Codable` protocol and the polymorphic serialization defined by this framework.

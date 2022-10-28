@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 import MobilePassiveData
 
 /// A result map element is an element in the ``Assessment`` model that defines the expectations for a

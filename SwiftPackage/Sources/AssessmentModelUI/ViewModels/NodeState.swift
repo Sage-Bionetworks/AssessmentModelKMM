@@ -34,6 +34,7 @@
 import SwiftUI
 import AssessmentModel
 import JsonModel
+import ResultModel
 
 /// The state objects are all simple objects without any business or navigation logic. This is done because
 /// SwiftUI  @EnvironmentObject observables have to be castable using NSClassFromString so the environment

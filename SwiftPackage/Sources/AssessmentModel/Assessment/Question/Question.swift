@@ -32,6 +32,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 
 /// A ``Question`` can be an input of a form or it might be a stand-alone question. It represents
 /// something that, when composited, will result in a single answer. It may compose input fields to do

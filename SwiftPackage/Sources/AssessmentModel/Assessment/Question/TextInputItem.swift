@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 
 /// An ``TextInputItem`` describes input entry that is freeform with ranges and validation. Typically, this is
 /// presented as a text field, but depending upon the requirements of the survey designer, it may use a slider,

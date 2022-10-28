@@ -33,6 +33,7 @@
 import XCTest
 @testable import AssessmentModel
 import JsonModel
+import ResultModel
 
 class CodableQuestionTests: XCTestCase {
     

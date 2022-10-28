@@ -35,6 +35,7 @@ import Foundation
 @testable import AssessmentModelUI
 @testable import AssessmentModel
 import JsonModel
+import ResultModel
 import XCTest
 
 class DurationQuestionViewModelTests: XCTestCase {

@@ -34,6 +34,7 @@
 import SwiftUI
 import AssessmentModel
 import JsonModel
+import ResultModel
 
 class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     

@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 import MobilePassiveData
 
 /// A lightweight protocol for copying objects with a new identifier.
