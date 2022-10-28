@@ -35,6 +35,7 @@ import Foundation
 
 import XCTest
 import JsonModel
+import ResultModel
 @testable import AssessmentModel
 
 class NodeNavigatorTests: XCTestCase {

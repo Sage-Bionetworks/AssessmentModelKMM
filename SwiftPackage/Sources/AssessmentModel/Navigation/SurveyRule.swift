@@ -30,8 +30,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-import JsonModel
 import Foundation
+import JsonModel
+import ResultModel
 
 /// Defines an evaluation rule and returns a step identifier if appropriate.
 public protocol SurveyRule {

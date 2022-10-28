@@ -34,6 +34,7 @@
 import SwiftUI
 import AssessmentModel
 import JsonModel
+import ResultModel
 import SharedMobileUI
 
 struct SlidingScaleView : View {

@@ -35,6 +35,7 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 import JsonModel
+import ResultModel
 
 /// This protocol extends the model and views that are used to display an assessment using views that are not
 /// defined within this library.

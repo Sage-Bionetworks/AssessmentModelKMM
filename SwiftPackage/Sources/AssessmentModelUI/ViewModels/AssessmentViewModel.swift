@@ -35,6 +35,7 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 import JsonModel
+import ResultModel
 
 
 open class AssessmentViewModel : ObservableObject, NavigationState {

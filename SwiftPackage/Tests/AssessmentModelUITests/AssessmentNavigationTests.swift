@@ -34,6 +34,7 @@
 
 import XCTest
 import JsonModel
+import ResultModel
 @testable import AssessmentModel
 @testable import AssessmentModelUI
 

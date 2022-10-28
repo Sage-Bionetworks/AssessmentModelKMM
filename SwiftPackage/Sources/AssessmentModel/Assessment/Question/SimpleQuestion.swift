@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 
 /// A simple question can be represented as text entry of a single value. The UI/UX for presenting the question
 /// might not use a text field, based on the ``QuestionUIHint`` and the requirements of the application

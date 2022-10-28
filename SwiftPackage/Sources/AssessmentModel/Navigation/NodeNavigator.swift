@@ -33,6 +33,7 @@
 
 import Foundation
 import JsonModel
+import ResultModel
 
 /// The navigation rule is used to allow the assessment navigator to check if a node has a navigation rule and
 /// apply as necessary.

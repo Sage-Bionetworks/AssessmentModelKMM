@@ -32,6 +32,7 @@
 
 import XCTest
 @testable import JsonModel
+@testable import ResultModel
 @testable import AssessmentModel
 
 class AssessmentModelTests: XCTestCase {
