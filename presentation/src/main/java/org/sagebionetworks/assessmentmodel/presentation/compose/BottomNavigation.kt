@@ -16,10 +16,8 @@ fun BottomNavigation(
     backVisible: Boolean = true,
     nextEnabled: Boolean = true
 ) {
-    Row(
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .padding(horizontal = 20.dp)
+    Row(modifier = Modifier
+            .padding(top = 10.dp, bottom = 10.dp)
             .fillMaxWidth()) {
         if (backVisible) {
             WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
