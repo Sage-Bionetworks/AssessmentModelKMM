@@ -13,12 +13,15 @@ fun BottomNavigation(
     onNextClicked: () -> Unit,
     nextText: String? = null,
     backEnabled: Boolean = true,
+    backVisible: Boolean = true,
     nextEnabled: Boolean = true
 ) {
     Row(modifier = Modifier
-        .padding(top = 10.dp, bottom = 10.dp)
-        .fillMaxWidth()) {
-        WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
+            .padding(top = 10.dp, bottom = 10.dp)
+            .fillMaxWidth()) {
+        if (backVisible) {
+            WhiteBackButton(onClick = onBackClicked, enabled = backEnabled)
+        }
         Spacer(modifier = Modifier.weight(1f))
         if (nextText != null) {
             BlackButton(onClick = onNextClicked, enabled = nextEnabled, text = nextText)
