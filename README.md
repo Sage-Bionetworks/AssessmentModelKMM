@@ -1,42 +1,18 @@
-# Assesment Model - Kotlin Native
-This repo contains Sage Bionetwork's exploritory work to build a cross-platform assesment model using Kotlin Native.
-The MPP code can be found inside the [assessmentModel/](assessmentModel/) directory while
-sample app implementations can be found inside the [androidApp/](androidApp/) resp. [iosApp/](iosApp/) dir.
+# Assessment Model
 
-More information on Kotlin native can be found in [multiplatform documentation](http://kotlinlang.org/docs/reference/building-mpp-with-gradle.html).
-
-Class documentation can be [here](https://sage-bionetworks.github.io/AssessmentModel-KotlinNative/-modules.html).
+This repo contains Sage Bionetwork's cross-platform architecture for serializing 
+and displaying assessments run on mobile devices and used in scientific research. 
+This repo was originally designed to use Kotlin multiplatform for both the Android 
+and iOS implementations, but has since been restructured to include parallel 
+implementations for both platforms written in the native language for each platform.
 
 ## iOS
 
-To compile the project from Xcode just open `iosApp/iosApp.xcodeproj` and run the application.
-The [swift tests](iosApp/iosAppTests/iosAppTests.swift) also can be executed from Xcode.
+Currently iOS is the only officially supported Apple product. The code is written
+in Swift and uses Swift Package Manager to manage dependencies.
 
-To compile a framework for ios simulator from the command line execute:
-
-```
-  > ./gradlew :assessmentModel:build
-```
-
-To compile the framework for a device use the `device` project property:
-
-```
-  > ./gradlew :assessmentModel:build -Pdevice=true
-```
-
-To run kotlin tests (including the [common ones](greeting/src/commonTest/kotlin/CalculatorTest.kt))
-on an iOS simulator execute:
-
-```
-  > ./gradlew :assessmentModel:iosTest
-```
-
-By default the `iPhone 8` simulator is used. One can change this setting using the `iosDevice` project property:
-
-```
-  > ./gradlew :assessmentModel:iosTest -PiosDevice='iPhone 7'
-```
-
+Examples for using this package are included by opening `iOSWorkspace.xcworkspace`
+in Xcode.
 
 ## Android
 
@@ -46,3 +22,7 @@ One can also compile the application and run tests from the command line:
 ```
    > ./gradlew :androidApp:build
 ```
+
+## License
+
+AssessmentModelKMM is available under the [Commons Clause and BSD 3-clause](LICENSE) licenses.
