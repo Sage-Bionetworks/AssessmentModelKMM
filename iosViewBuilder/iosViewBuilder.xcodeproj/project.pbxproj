@@ -84,7 +84,7 @@
 		FFC14E602817091E00B17551 /* IntegerQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerQuestionViewModel.swift; sourceTree = "<group>"; };
 		FFC14E622817113600B17551 /* ContentNodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentNodeView.swift; sourceTree = "<group>"; };
 		FFC14E66281717CD00B17551 /* LikertScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikertScaleView.swift; sourceTree = "<group>"; };
-		FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosAppPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFCB530727F6A4F800BED4E2 /* iosViewBuilder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosViewBuilder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFCB530A27F6A4F800BED4E2 /* iosAppPreviewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosAppPreviewApp.swift; sourceTree = "<group>"; };
 		FFCB530C27F6A4F800BED4E2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FFCB530E27F6A4FB00BED4E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				FFCB533527F6A6A200BED4E2 /* Packages */,
-				FFCB530927F6A4F800BED4E2 /* iosAppPreview */,
+				FFCB530927F6A4F800BED4E2 /* iosViewBuilder */,
 				FFCB530827F6A4F800BED4E2 /* Products */,
 				FFCB533727F6A6C800BED4E2 /* Frameworks */,
 			);
@@ -169,12 +169,12 @@
 		FFCB530827F6A4F800BED4E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */,
+				FFCB530727F6A4F800BED4E2 /* iosViewBuilder.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FFCB530927F6A4F800BED4E2 /* iosAppPreview */ = {
+		FFCB530927F6A4F800BED4E2 /* iosViewBuilder */ = {
 			isa = PBXGroup;
 			children = (
 				FF1BA5EE28626BA6008C22FF /* Info.plist */,
@@ -185,7 +185,7 @@
 				FFCB530E27F6A4FB00BED4E2 /* Assets.xcassets */,
 				FFCB531027F6A4FB00BED4E2 /* Preview Content */,
 			);
-			path = iosAppPreview;
+			path = iosViewBuilder;
 			sourceTree = "<group>";
 		};
 		FFCB531027F6A4FB00BED4E2 /* Preview Content */ = {
@@ -303,9 +303,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FFCB530627F6A4F800BED4E2 /* iosAppPreview */ = {
+		FFCB530627F6A4F800BED4E2 /* iosViewBuilder */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FFCB532B27F6A4FB00BED4E2 /* Build configuration list for PBXNativeTarget "iosAppPreview" */;
+			buildConfigurationList = FFCB532B27F6A4FB00BED4E2 /* Build configuration list for PBXNativeTarget "iosViewBuilder" */;
 			buildPhases = (
 				FFCB530327F6A4F800BED4E2 /* Sources */,
 				FFCB530427F6A4F800BED4E2 /* Frameworks */,
@@ -315,13 +315,13 @@
 			);
 			dependencies = (
 			);
-			name = iosAppPreview;
+			name = iosViewBuilder;
 			packageProductDependencies = (
 				FFCB533827F6A6C800BED4E2 /* AssessmentModel */,
 				FFCB535727F6B49400BED4E2 /* SharedMobileUI */,
 			);
 			productName = iosAppPreview;
-			productReference = FFCB530727F6A4F800BED4E2 /* iosAppPreview.app */;
+			productReference = FFCB530727F6A4F800BED4E2 /* iosViewBuilder.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -339,7 +339,7 @@
 					};
 				};
 			};
-			buildConfigurationList = FFCB530227F6A4F800BED4E2 /* Build configuration list for PBXProject "iosAppPreview" */;
+			buildConfigurationList = FFCB530227F6A4F800BED4E2 /* Build configuration list for PBXProject "iosViewBuilder" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -356,7 +356,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FFCB530627F6A4F800BED4E2 /* iosAppPreview */,
+				FFCB530627F6A4F800BED4E2 /* iosViewBuilder */,
 			);
 		};
 /* End PBXProject section */
@@ -611,7 +611,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FFCB530227F6A4F800BED4E2 /* Build configuration list for PBXProject "iosAppPreview" */ = {
+		FFCB530227F6A4F800BED4E2 /* Build configuration list for PBXProject "iosViewBuilder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FFCB532927F6A4FB00BED4E2 /* Debug */,
@@ -620,7 +620,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FFCB532B27F6A4FB00BED4E2 /* Build configuration list for PBXNativeTarget "iosAppPreview" */ = {
+		FFCB532B27F6A4FB00BED4E2 /* Build configuration list for PBXNativeTarget "iosViewBuilder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FFCB532C27F6A4FB00BED4E2 /* Debug */,
