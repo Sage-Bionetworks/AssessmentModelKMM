@@ -3,7 +3,7 @@ package org.sagebionetworks.assessmentmodel
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
-import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
+import org.sagebionetworks.assessmentmodel.navigation.Direction
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 /**
@@ -73,7 +73,7 @@ interface BranchNodeResult : CollectionResult {
 }
 
 @Serializable
-data class PathMarker(val identifier: String, val direction: NavigationPoint.Direction)
+data class PathMarker(val identifier: String, val direction: Direction)
 
 /**
  * An [AssessmentResult] is the top-level [Result] for an [Assessment].

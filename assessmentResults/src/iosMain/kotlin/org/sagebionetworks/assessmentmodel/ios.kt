@@ -13,10 +13,6 @@ import platform.posix.uname
 import platform.posix.utsname
 import kotlin.reflect.KClass
 
-actual class Platform actual constructor() {
-    actual val platform: String = "iOS"
-}
-
 actual class Product(actual val user: String) {
     val model: String = memScoped {
         val systemInfo = alloc<utsname>()

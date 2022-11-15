@@ -33,6 +33,7 @@ android {
     }
 }
 dependencies {
+    testImplementation(project(mapOf("path" to ":assessmentResults")))
     coreLibraryDesugaring(libs.android.desugar)
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
@@ -62,6 +63,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(project(":assessmentResults"))
                 api(libs.kotlinx.serialization)
                 api(libs.kotlinx.dateTime)
                 implementation(libs.coroutines.core)

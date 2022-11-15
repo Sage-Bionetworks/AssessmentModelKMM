@@ -3,10 +3,6 @@ package org.sagebionetworks.assessmentmodel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 
-expect class Platform() {
-    val platform: String
-}
-
 expect object UUIDGenerator {
     fun uuidString(): String
 }

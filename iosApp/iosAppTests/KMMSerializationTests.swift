@@ -126,9 +126,9 @@ class KMMSerializationTests: ResultSerializationTestCase {
             print(jsonString)
             
             let loader = KotlinModel.ResultDecoder(jsonString: jsonString)
-            let kmmAssessmentResult = try loader.decodeObject() as? KotlinModel.AssessmentResultObject
+            let kmmAssessmentResult = try loader.decodeObject() as? KotlinModel.AssessmentResultsAssessmentResult
             XCTAssertNotNil(kmmAssessmentResult)
-            
+
             guard let kmmAssessmentResult = kmmAssessmentResult else {
                 XCTFail("Failed to decode assessment result from the kotlin model.")
                 return
