@@ -129,3 +129,47 @@ interface AnswerResult : Result {
      */
     val questionText: String?
 }
+
+/**
+ * A [FileResult] is used to hold a result that is written to a file.
+ */
+interface FileResult : Result {
+
+    /**
+     * The relative path to the file-based result.
+     */
+    val relativePath: String
+
+    /**
+     * The MIME content type of the result.
+     * - example: `"application/json"`
+     */
+    val contentType: String?
+
+    /**
+     * The url for the json schema that defined the content if this file has a content type of "application/json".
+     */
+    val jsonSchema: String?
+}
+
+/**
+ * A [Result] that is to be included as a JSON file in the archive.
+ */
+interface JsonFileArchivableResult : Result {
+
+    /**
+     * The name of the file to be written.
+     */
+    val filename: String
+
+    /**
+     * The JSON string to be included as a file in the result archive.
+     */
+    val json: String
+
+    /**
+     * The url for the json schema that defined the content of this json".
+     */
+    val jsonSchema: String?
+
+}
