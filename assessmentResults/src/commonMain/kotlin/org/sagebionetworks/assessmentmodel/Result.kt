@@ -136,9 +136,9 @@ interface AnswerResult : Result {
 interface FileResult : Result {
 
     /**
-     * The relative path to the file-based result.
+     * The path to the file-based result.
      */
-    val relativePath: String
+    val path: String
 
     /**
      * The MIME content type of the result.
