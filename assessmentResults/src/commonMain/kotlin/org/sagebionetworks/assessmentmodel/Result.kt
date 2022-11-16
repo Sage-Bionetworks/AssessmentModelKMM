@@ -136,9 +136,14 @@ interface AnswerResult : Result {
 interface FileResult : Result {
 
     /**
+     * The name of the file to be written to the archive.
+     */
+    val filename: String
+
+    /**
      * The path to the file-based result.
      */
-    val path: String
+    val path: String?
 
     /**
      * The MIME content type of the result.
@@ -157,19 +162,24 @@ interface FileResult : Result {
  */
 interface JsonFileArchivableResult : Result {
 
+    fun getJsonArchivableFile(stepPath: String) : JsonArchivableFile
+}
+
+data class JsonArchivableFile(
     /**
      * The name of the file to be written.
      */
-    val filename: String
+    val filename: String,
 
     /**
      * The JSON string to be included as a file in the result archive.
      */
-    val json: String
+    val json: String,
+
 
     /**
      * The url for the json schema that defined the content of this json".
      */
     val jsonSchema: String?
+)
 
-}

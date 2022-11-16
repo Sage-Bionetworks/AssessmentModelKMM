@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -133,9 +134,11 @@ data class FileResultObject(
     @SerialName("endDate")
     @Serializable(with = InstantSerializer::class)
     override var endDateTime: Instant? = null,
-    override val relativePath: String,
+    override val filename: String,
+    @Transient
+    override val path: String? = null,
     override val contentType: String? = null,
-    override val jsonSchema: String? = null
+    override val jsonSchema: String? = null,
 ) : FileResult {
 
     override fun copyResult(identifier: String): FileResult = copy(identifier = identifier)
