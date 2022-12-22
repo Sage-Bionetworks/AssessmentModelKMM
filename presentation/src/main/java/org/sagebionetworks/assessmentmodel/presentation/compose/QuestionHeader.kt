@@ -43,7 +43,7 @@ internal fun QuestionHeader(
      * on and off in certain edge cases since scrollState.maxValue changes when subtitle and
      * detail are not displayed
      */
-    val maxScroll = if (scrollState.maxValue > 3000) {
+    val maxScroll = if (scrollState.maxValue > 10000) {
         remember { mutableStateOf(0) }
     } else {
         remember { mutableStateOf(scrollState.maxValue) }
