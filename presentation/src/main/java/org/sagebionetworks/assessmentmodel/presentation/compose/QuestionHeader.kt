@@ -37,12 +37,19 @@ internal fun QuestionHeader(
     val coroutineScope = rememberCoroutineScope()
     val subtitleHeight = remember { mutableStateOf(0) }
     val detailHeight = remember { mutableStateOf(0) }
+
+    /**
+     * This logic is needed to prevent fullHeaderShouldDisplay from continuously toggling
+     * on and off in certain edge cases since scrollState.maxValue changes when subtitle and
+     * detail are not displayed
+     */
     val maxScroll = if (scrollState.maxValue > 3000) {
         remember { mutableStateOf(0) }
     } else {
         remember { mutableStateOf(scrollState.maxValue) }
     }
     maxScroll.value = max(scrollState.maxValue, maxScroll.value)
+
     val fullHeaderShouldDisplay = !headerCanCollapse ||
             scrollState.value == 0 ||
             maxScroll.value < (subtitleHeight.value + detailHeight.value)
