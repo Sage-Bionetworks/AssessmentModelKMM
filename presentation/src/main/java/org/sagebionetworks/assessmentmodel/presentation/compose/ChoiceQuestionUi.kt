@@ -3,15 +3,12 @@ package org.sagebionetworks.assessmentmodel.presentation.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.UiComposable
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -22,10 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.json.JsonPrimitive
-import org.sagebionetworks.assessmentmodel.ButtonAction
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.R
-import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageBlack
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageP1
 import org.sagebionetworks.assessmentmodel.survey.*
@@ -34,7 +29,7 @@ import org.sagebionetworks.assessmentmodel.survey.*
 internal fun ChoiceQuestion(questionState: QuestionState,
                             assessmentViewModel: AssessmentViewModel,
                             modifier: Modifier = Modifier) {
-    QuestionContainer(questionState = questionState, assessmentViewModel = assessmentViewModel) {
+    QuestionContainer(questionState = questionState, assessmentViewModel = assessmentViewModel, headerCanCollapse = true) {
         MultipleChoiceQuestion(
             questionState = questionState,
             modifier = Modifier.fillMaxWidth()
