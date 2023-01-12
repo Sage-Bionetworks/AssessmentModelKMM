@@ -1,0 +1,48 @@
+/* Text("Begin in...", bundle: .module) */
+"Begin in..." = "Begin in...";
+
+/* Text("Continue later", bundle: .module) */
+"Continue later" = "Continue later";
+
+/* Text("Exit", bundle: .module) */
+"Exit" = "Exit";
+
+/* Text("Hello, World") */
+"Hello, World" = "Hello, World";
+
+/* Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.") */
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit." = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
+/* Text("Paused", bundle: .module) */
+"Paused" = "Paused";
+
+/* Text("Resume", bundle: .module) */
+"Resume" = "Resume";
+
+/* Text("Review instructions", bundle: .module) */
+"Review instructions" = "Review instructions";
+
+/* TextEntryQuestionStepView(QuestionState(question, skipStepText: Text("Skip question"))) */
+"Skip question" = "Skip question";
+
+/* return Text("Skip step", bundle: .module) */
+"Skip step" = "Skip step";
+
+/* Text("Skip this activity", bundle: .module) */
+"Skip this activity" = "Skip this activity";
+
+/* Text("Start", bundle: .module) */
+"Start" = "Start";
+
+/* Text("Survey", bundle: .module) */
+"Survey" = "Survey";
+
+/* Text("Tap to respond") */
+"Tap to respond" = "Tap to respond";
+
+/* Text("Thank you for being part of our study.", bundle: .module) */
+"Thank you for being part of our study." = "Thank you for being part of our study.";
+
+/* Text("Well done!", bundle: .module) */
+"Well done!" = "Well done!";
+
