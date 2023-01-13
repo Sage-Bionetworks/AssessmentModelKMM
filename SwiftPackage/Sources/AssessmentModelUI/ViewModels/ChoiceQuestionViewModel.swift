@@ -201,7 +201,7 @@ public final class OtherChoiceViewModel : ObservableObject, Identifiable {
     init(_ inputItem: TextInputItem, value: JsonElement?, selectionToggler: SelectionToggler) {
         self.inputItem = inputItem
         let validator = inputItem.buildTextValidator()
-        self.fieldLabel = inputItem.fieldLabel ?? Localization.localizedString("Other")
+        self.fieldLabel = inputItem.fieldLabel ?? NSLocalizedString("Other", bundle: .module, comment: "")
         self.value = validator.localizedText(for: value) ?? ""
         self.validator = validator
         self.selected = value != nil && value != .null
