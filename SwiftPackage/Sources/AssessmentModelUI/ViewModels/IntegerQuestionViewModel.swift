@@ -36,7 +36,7 @@ class IntegerQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
         
         if model.usesScale, questionState.subtitle == nil {
             let format = NSLocalizedString("On a scale of %1$d to %2$d", bundle: .module, comment: "")
-            questionState.subtitle = String.localizedStringWithFormat(format, model.minValue, model.maxValue)
+            questionState.subtitle = String(format: format, model.minValue, model.maxValue)
         }
         
         // Set the value equal to the current question state answer.

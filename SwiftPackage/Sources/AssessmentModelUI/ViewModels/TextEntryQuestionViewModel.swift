@@ -30,7 +30,7 @@ class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate 
             
         if questionState.detail == nil {
             let format = NSLocalizedString("(Maximum %1$d characters)", bundle: .module, comment: "Maximum characters for test input")
-            questionState.detail = String.localizedStringWithFormat(format, self.inputViewModel!.characterLimit)
+            questionState.detail = String(format: format, self.inputViewModel!.characterLimit)
         }
         
         // Set the value equal to the current question state answer.
