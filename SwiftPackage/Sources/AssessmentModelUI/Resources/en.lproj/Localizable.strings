@@ -66,6 +66,3 @@
 
 /* Text("Well done!", bundle: .module) */
 "Well done!" = "Well done!";
-
-/* Text("[\(characterLimit)]") */
-"[\(characterLimit)]" = "[\(characterLimit)]";
