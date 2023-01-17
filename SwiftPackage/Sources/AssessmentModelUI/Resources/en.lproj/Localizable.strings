@@ -13,14 +13,8 @@
 /* Text("Exit", bundle: .module) */
 "Exit" = "Exit";
 
-/* Text("Hello, World") */
-"Hello, World" = "Hello, World";
-
 /* return NSLocalizedString("Hours", bundle: .module, comment: "Field label for number of hours in a duration question") */
 "Hours" = "Hours";
-
-/* Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.") */
-"Lorem ipsum dolor sit amet, consectetur adipiscing elit." = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
 /* return NSLocalizedString("Mins", bundle: .module, comment: "Field label for number of minutes in a duration question") */
 "Mins" = "Mins";
