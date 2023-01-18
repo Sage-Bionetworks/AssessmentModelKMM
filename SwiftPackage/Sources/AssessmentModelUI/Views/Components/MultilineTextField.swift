@@ -47,7 +47,8 @@ struct MultilineTextField: View {
                 .widthReader(width: $textWidth)
                 .heightReader(height: $fontHeight)
             // This is a hint to the user that they've hit the text limit.
-            Text("[\(characterLimit)]")
+            let charLimitText = "[\(characterLimit)]"
+            Text(charLimitText)
                 .opacity((text?.count ?? 0 == characterLimit) && isEditingText && style == .freeText ? 1 : 0)
                 .foregroundColor(.hex727272)
                 .font(.italicLatoFont(18, relativeTo: nil, weight: .regular))

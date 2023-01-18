@@ -31,11 +31,12 @@ class IntegerQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
         if model.usesScale, questionState.detail == nil,
            let minLabel = model.minLabel,
            let maxLabel = model.maxLabel {
-            questionState.detail = Localization.localizedString("\(model.minValue) = \(minLabel)\n\(model.maxValue) = \(maxLabel)")
+            questionState.detail = "\(model.minValue) = \(minLabel)\n\(model.maxValue) = \(maxLabel)"
         }
         
         if model.usesScale, questionState.subtitle == nil {
-            questionState.subtitle = Localization.localizedString("On a scale of \(model.minValue) to \(model.maxValue)")
+            let format = NSLocalizedString("On a scale of %1$d to %2$d", bundle: .module, comment: "")
+            questionState.subtitle = String(format: format, model.minValue, model.maxValue)
         }
         
         // Set the value equal to the current question state answer.

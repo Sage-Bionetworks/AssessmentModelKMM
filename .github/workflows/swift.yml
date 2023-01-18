@@ -24,6 +24,6 @@ jobs:
     - name: Build Assessment Model
       run: ./gradlew :assessmentModel:assembleKotlinModelDebugXCFramework
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme iosApp -destination "platform=iOS Simulator,OS=15.2,name=iPhone 12" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme iosApp -destination "platform=iOS Simulator,OS=16.0,name=iPhone 14" | xcpretty
     - name: Run tests for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme iosApp -destination "platform=iOS Simulator,OS=15.2,name=iPhone 12" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme iosApp -destination "platform=iOS Simulator,OS=16.0,name=iPhone 14" | xcpretty
