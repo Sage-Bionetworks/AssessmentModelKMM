@@ -7,6 +7,7 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
+@MainActor
 class IntegerQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
     weak var questionState: QuestionState?

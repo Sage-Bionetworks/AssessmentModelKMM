@@ -289,9 +289,13 @@ fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
         }
         
         func updateCursorAtEnd(_ textView: UITextView) {
-            parent.cursorAtEnd.wrappedValue = textView.selectedTextRange.map {
-                $0.end == textView.endOfDocument
-            } ?? false
+            Task {
+                await MainActor.run {
+                    parent.cursorAtEnd.wrappedValue = textView.selectedTextRange.map {
+                        $0.end == textView.endOfDocument
+                    } ?? false
+                }
+            }
         }
 
         @objc func textViewDidChange(_ textView: UITextView) {
