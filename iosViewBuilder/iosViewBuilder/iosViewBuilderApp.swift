@@ -1,12 +1,12 @@
 //
-//  iosAppPreviewApp.swift
-//  iosAppPreview
+//  iosViewBuilderApp.swift
+//  iosViewBuilder
 //
 
 import SwiftUI
 
 @main
-struct iosAppPreviewApp: App {
+struct iosViewBuilderApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

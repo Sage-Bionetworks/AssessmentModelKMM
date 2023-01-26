@@ -7,6 +7,7 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
+@MainActor
 public final class ChoiceQuestionViewModel : ObservableObject {
 
     weak var questionState: QuestionState?
@@ -148,7 +149,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
     public var id: String { jsonChoice.label }
     
     /// Whether or not the choice is selected.
-    @Published public var selected: Bool {
+    @MainActor @Published public var selected: Bool {
         didSet {
             selectionToggler?.updateSelected(changed: self)
         }
@@ -159,7 +160,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
     weak var selectionToggler: SelectionToggler!
     var selectorType: ChoiceSelectorType { jsonChoice.selectorType }
     
-    init(_ jsonChoice: JsonChoice, selected: Bool, selectionToggler: SelectionToggler) {
+    @MainActor init(_ jsonChoice: JsonChoice, selected: Bool, selectionToggler: SelectionToggler) {
         self.jsonChoice = jsonChoice
         self.selected = selected
         self.selectionToggler = selectionToggler
@@ -169,6 +170,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
 extension ChoiceViewModel : ObservableChoice {
 }
 
+@MainActor
 public final class OtherChoiceViewModel : ObservableObject, Identifiable {
     public let id: String = "$OtherTextEntry"
     

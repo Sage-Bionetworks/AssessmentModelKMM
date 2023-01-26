@@ -8,7 +8,8 @@ import AssessmentModel
 import JsonModel
 import ResultModel
 
-class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
+@MainActor
+final class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
     weak var questionState: QuestionState?
     

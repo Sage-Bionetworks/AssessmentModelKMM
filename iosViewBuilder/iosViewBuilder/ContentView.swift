@@ -78,3 +78,9 @@ fileprivate let countdownAssessment = AssessmentObject(identifier: "Countdown", 
     CountdownStepObject(identifier: "countdown", duration: 6),
     CompletionStepObject(identifier: "completion", title: "You're done!")
 ])
+
+extension Bundle {
+    static var module: Bundle {
+        main
+    }
+}

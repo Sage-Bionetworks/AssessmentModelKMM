@@ -7,7 +7,8 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
-class TimeQuestionViewModel : ObservableObject {
+@MainActor
+final class TimeQuestionViewModel : ObservableObject {
     
     weak var questionState: QuestionState?
     

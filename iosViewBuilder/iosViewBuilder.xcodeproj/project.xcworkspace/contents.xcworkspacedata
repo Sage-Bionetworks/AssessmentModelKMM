@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/syoung/Github/AssessmentModelKMM/iosViewBuilder/iosViewBuilder.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>
