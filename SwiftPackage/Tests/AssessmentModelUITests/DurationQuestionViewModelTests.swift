@@ -10,6 +10,7 @@ import JsonModel
 import ResultModel
 import XCTest
 
+@MainActor
 class DurationQuestionViewModelTests: XCTestCase {
     
     override func setUp() {
