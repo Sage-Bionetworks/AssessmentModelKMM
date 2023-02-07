@@ -10,7 +10,7 @@ import JsonModel
 public protocol CompletionStep : Step, ContentNode {
 }
 
-open class AbstractCompletionStepObject : AbstractStepObject, CompletionStep {
+open class AbstractCompletionStepObject : AbstractSpokenInstructionStepObject, CompletionStep {
     open override func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool? {
         buttonType == .navigation(.goBackward) ? true : super.shouldHideButton(buttonType, node: node)
     }
