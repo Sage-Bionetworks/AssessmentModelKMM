@@ -11,16 +11,11 @@ import JsonModel
 public protocol InstructionStep : Step, OptionalNode, ContentNode {
 }
 
-open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
+open class AbstractSpokenInstructionStepObject : AbstractStepObject {
     private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
-        case _fullInstructionsOnly = "fullInstructionsOnly", spokenInstructions
+        case spokenInstructions
         var relativeIndex: Int { 5 }
     }
-    
-    /// Should this step be displayed if and only if the flag has been set for displaying the full
-    /// instructions?
-    public var fullInstructionsOnly: Bool { _fullInstructionsOnly ?? false }
-    private let _fullInstructionsOnly: Bool?
     
     // MARK: spoken instruction handling
     
@@ -51,8 +46,7 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     // MARK: Initializers and serialization
     
-    public init(identifier: String, copyFrom object: AbstractInstructionStepObject) {
-        self._fullInstructionsOnly = object._fullInstructionsOnly
+    public init(identifier: String, copyFrom object: AbstractSpokenInstructionStepObject) {
         self.spokenInstructions = object.spokenInstructions
         super.init(identifier: identifier, copyFrom: object)
     }
@@ -60,8 +54,7 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     public init(identifier: String,
                 title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
                 shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil,
-                fullInstructionsOnly: Bool? = nil, spokenInstructions: [SpokenInstructionKey : String]? = nil) {
-        self._fullInstructionsOnly = fullInstructionsOnly
+                spokenInstructions: [SpokenInstructionKey : String]? = nil) {
         self.spokenInstructions = spokenInstructions
         super.init(identifier: identifier,
                    title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
@@ -70,7 +63,6 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self._fullInstructionsOnly = try container.decodeIfPresent(Bool.self, forKey: ._fullInstructionsOnly)
         if let dictionary = try container.decodeIfPresent([String : String].self, forKey: .spokenInstructions) {
             self.spokenInstructions = try dictionary.reduce(into: [SpokenInstructionKey : String](), { (hashMap, pair) in
                 guard let specialKey = SpokenInstructionKey(rawValue: pair.key) else {
@@ -92,7 +84,6 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
     open override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(self._fullInstructionsOnly, forKey: ._fullInstructionsOnly)
         if let dictionary = self.spokenInstructions {
             var nestedContainer = container.nestedContainer(keyedBy: SpokenInstructionKey.self, forKey: .spokenInstructions)
             try dictionary.forEach { (key, value) in
@@ -118,6 +109,65 @@ open class AbstractInstructionStepObject : AbstractStepObject, InstructionStep {
         case .spokenInstructions:
             return .init(propertyType: .primitiveDictionary(.string), propertyDescription:
                             "A mapping of a localized spoken instruction to a key where the key is either 'start' or 'end'.")
+        }
+    }
+}
+
+open class AbstractInstructionStepObject : AbstractSpokenInstructionStepObject, InstructionStep {
+    private enum CodingKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
+        case _fullInstructionsOnly = "fullInstructionsOnly"
+        var relativeIndex: Int { 6 }
+    }
+    
+    /// Should this step be displayed if and only if the flag has been set for displaying the full
+    /// instructions?
+    public var fullInstructionsOnly: Bool { _fullInstructionsOnly ?? false }
+    private let _fullInstructionsOnly: Bool?
+    
+    
+    // MARK: Initializers and serialization
+    
+    public init(identifier: String, copyFrom object: AbstractInstructionStepObject) {
+        self._fullInstructionsOnly = object._fullInstructionsOnly
+        super.init(identifier: identifier, copyFrom: object)
+    }
+    
+    public init(identifier: String,
+                title: String? = nil, subtitle: String? = nil, detail: String? = nil, imageInfo: ImageInfo? = nil,
+                shouldHideButtons: Set<ButtonType>? = nil, buttonMap: [ButtonType : ButtonActionInfo]? = nil, comment: String? = nil, nextNode: NavigationIdentifier? = nil,
+                fullInstructionsOnly: Bool? = nil, spokenInstructions: [SpokenInstructionKey : String]? = nil) {
+        self._fullInstructionsOnly = fullInstructionsOnly
+        super.init(identifier: identifier,
+                   title: title, subtitle: subtitle, detail: detail, imageInfo: imageInfo,
+                   shouldHideButtons: shouldHideButtons, buttonMap: buttonMap, comment: comment, nextNode: nextNode, spokenInstructions: spokenInstructions)
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self._fullInstructionsOnly = try container.decodeIfPresent(Bool.self, forKey: ._fullInstructionsOnly)
+        try super.init(from: decoder)
+    }
+
+    open override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(self._fullInstructionsOnly, forKey: ._fullInstructionsOnly)
+    }
+
+    // Overrides must be defined in the base implementation
+
+    override open class func codingKeys() -> [CodingKey] {
+        var keys = super.codingKeys()
+        let thisKeys: [CodingKey] = CodingKeys.allCases
+        keys.append(contentsOf: thisKeys)
+        return keys
+    }
+
+    override open class func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        guard let key = codingKey as? CodingKeys else {
+            return try super.documentProperty(for: codingKey)
+        }
+        switch key {
         case ._fullInstructionsOnly:
             return .init(defaultValue: .boolean(false), propertyDescription:
                             "Should this instruction step be displayed when displaying full instructions only?")
