@@ -3,6 +3,7 @@ package org.sagebionetworks.assessmentmodel.presentation
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -76,10 +77,14 @@ open class AssessmentActivity: AppCompatActivity() {
         return
     }
 
+    @IdRes open fun fragmentContainerId(): Int {
+        return android.R.id.content
+    }
+
     private fun handleAssessmentLoaded(rootNodeState: BranchNodeState) {
         rootNodeState.rootNodeController = viewModel
         val fragment = assessmentFragmentProvider?.fragmentFor(rootNodeState.node)?: AssessmentFragment.newFragmentInstance()
-        supportFragmentManager.beginTransaction().add(android.R.id.content, fragment).setReorderingAllowed(true).commit()
+        supportFragmentManager.beginTransaction().add(fragmentContainerId(), fragment).setReorderingAllowed(true).commit()
         viewModel.hasHandledLoad = true
     }
 
