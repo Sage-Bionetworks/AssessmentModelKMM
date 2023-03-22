@@ -7,14 +7,36 @@ import SwiftUI
 import SharedMobileUI
 import AssessmentModel
 
-public struct PauseMenu: View {
+/// Handler for the pause menu set up and actions.
+public protocol PauseMenuHandler {
+    
+    /// Resume running the assessment.
+    func resume()
+    
+    /// Review the instructions.
+    func reviewInstructions()
+    
+    /// Skip performing the assessment.
+    func skipAssessment()
+    
+    /// Exit the assessment.
+    func exitAssessment()
+}
+
+extension AssessmentViewModel : PauseMenuHandler {
+}
+
+/// The pause menu shows the participant the pause menu and allows a handler
+/// to respond to the actions of the pause menu.
+public struct PauseMenu<Handler : PauseMenuHandler>: View {
     @SwiftUI.Environment(\.innerSpacing) var innerSpacing: CGFloat
     @SwiftUI.Environment(\.horizontalPadding) var horizontalPadding: CGFloat
-    @EnvironmentObject var assessmentState: AssessmentState
-    @ObservedObject var viewModel: AssessmentViewModel
+    let viewModel: Handler
+    let interruptionHandling: InterruptionHandling
     
-    public init(viewModel: AssessmentViewModel) {
+    public init(viewModel: Handler, interruptionHandling: InterruptionHandling) {
         self.viewModel = viewModel
+        self.interruptionHandling = interruptionHandling
     }
     
     public var body: some View {
@@ -32,19 +54,19 @@ public struct PauseMenu: View {
             Spacer()
             
             VStack(spacing: innerSpacing) {
-                if assessmentState.interruptionHandling.canResume {
+                if interruptionHandling.canResume {
                     Button(action: viewModel.resume) {
                         Text("Resume", bundle: .module)
                     }
                     .buttonStyle(PrimaryButtonStyle())
                 }
-                if assessmentState.interruptionHandling.reviewIdentifier != nil {
+                if interruptionHandling.reviewIdentifier != nil {
                     Button(action: viewModel.reviewInstructions) {
                         Text("Review instructions", bundle: .module)
                     }
                     .buttonStyle(SecondaryButtonStyle())
                 }
-                if assessmentState.interruptionHandling.canSkip {
+                if interruptionHandling.canSkip {
                     Button(action: viewModel.skipAssessment) {
                         Text("Skip this activity", bundle: .module)
                     }
@@ -90,25 +112,8 @@ public struct PauseMenu: View {
     }
 }
 
-struct PauseMenuPreview : View {
-    @StateObject var viewModel: AssessmentViewModel = .init()
-    @ObservedObject var assessmentState: AssessmentState
-    
-    public init(_ assessmentState: AssessmentState) {
-        self.assessmentState = assessmentState
-    }
-    
-    public var body: some View {
-        PauseMenu(viewModel: viewModel)
-            .environmentObject(assessmentState)
-            .onAppear {
-                viewModel.initialize(assessmentState)
-            }
-    }
-}
-
 struct PauseMenu_Previews: PreviewProvider {
     static var previews: some View {
-        PauseMenuPreview(.init(surveyA))
+        PauseMenu(viewModel: AssessmentViewModel(), interruptionHandling: InterruptionHandlingObject())
     }
 }
