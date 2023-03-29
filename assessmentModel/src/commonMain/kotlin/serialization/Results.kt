@@ -66,7 +66,7 @@ data class AssessmentResultObject(override val identifier: String,
                                   @Serializable(with = InstantSerializer::class)
                                   override var endDateTime: Instant? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
-                                  @SerialName("$schema")
+                                  @SerialName("\$schema")
                                   override val jsonSchema: String? = null
 )
     : AssessmentResult {
