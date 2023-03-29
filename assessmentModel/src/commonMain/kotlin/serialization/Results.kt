@@ -65,7 +65,9 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("endDate")
                                   @Serializable(with = InstantSerializer::class)
                                   override var endDateTime: Instant? = null,
-                                  override val path: MutableList<PathMarker> = mutableListOf())
+                                  override val path: MutableList<PathMarker> = mutableListOf(),
+                                  override val jsonSchema: String? = null
+)
     : AssessmentResult {
     override fun copyResult(identifier: String): AssessmentResult = this.copy(
             identifier = identifier,

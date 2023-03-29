@@ -106,6 +106,11 @@ interface AssessmentResult : BranchNodeResult {
      * [Assessment.versionString].
      */
     val versionString: String?
+
+    /**
+     * The URL for the json schema of the JSON for this [AssessmentResult].
+     */
+    val jsonSchema: String?
 }
 
 /**
