@@ -5,8 +5,8 @@ targetSdk = "31"
 compileSdk = "33"
 
 # Dependencies
-coroutines = "1.6.1-native-mt"
-kotlin = "1.7.0"
+coroutines = "1.6.4"
+kotlin = "1.7.20"
 kotlinxSerialization = "1.3.2"
 kotlinxDateTime = "0.4.0"
 koin = "3.1.5"
