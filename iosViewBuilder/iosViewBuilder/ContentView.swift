@@ -12,7 +12,6 @@ struct ContentView: View {
     let surveys: [AssessmentHolder] = [
         .init(assessment: surveyA),
         .init(assessment: surveyB),
-        .init(assessment: surveyC),
         .init(assessment: countdownAssessment)
     ]
 
