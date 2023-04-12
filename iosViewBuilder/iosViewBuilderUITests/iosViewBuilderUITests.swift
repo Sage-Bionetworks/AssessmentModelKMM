@@ -19,12 +19,10 @@ final class iosViewBuilderUITests: XCTestCase {
     }
 
     func testSurveyA() throws {
-        // UI tests must launch the application that they test.
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
+        // Start Survey A
         app.collectionViews/*@START_MENU_TOKEN@*/.buttons["Example Survey A"]/*[[".cells.buttons[\"Example Survey A\"]",".buttons[\"Example Survey A\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
         app.buttons["Start"].tap()
         
@@ -46,7 +44,7 @@ final class iosViewBuilderUITests: XCTestCase {
         elementsQuery.switches["Yes"].tap()
         nextButton.tap()
         
-        // Select Pizza
+        // Select Sushi
         elementsQuery.switches["Sushi"].tap()
         nextButton.tap()
         
