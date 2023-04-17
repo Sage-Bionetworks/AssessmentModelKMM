@@ -10,11 +10,11 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
 
     override fun nodeAfter(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
         val next = nextNode(currentNode, branchResult, false)
-        var direction = NavigationPoint.Direction.Forward
+        var direction = Direction.Forward
         if (next != null && currentNode != null && node.children.indexOf(next) < node.children.indexOf(currentNode)) {
-            direction = NavigationPoint.Direction.Backward
+            direction = Direction.Backward
         } else if (shouldExitEarly(currentNode, branchResult, false)) {
-            direction = NavigationPoint.Direction.Exit
+            direction = Direction.Exit
         }
         return NavigationPoint(
             node = next,
@@ -25,7 +25,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
 
     override fun nodeBefore(currentNode: Node?, branchResult: BranchNodeResult): NavigationPoint {
         val previous = previousNode(currentNode, branchResult)
-        val direction = NavigationPoint.Direction.Backward
+        val direction = Direction.Backward
         return NavigationPoint(node = previous, branchResult = branchResult, direction = direction)
     }
 
@@ -101,7 +101,7 @@ open class NodeNavigator(val node: NodeContainer) : Navigator {
             }
             else -> {
                 val currentResultIndex = parentResult.path.indexOfLast {
-                    it.identifier == currentNode.identifier && it.direction == NavigationPoint.Direction.Forward
+                    it.identifier == currentNode.identifier && it.direction == Direction.Forward
                 }
                 if (currentResultIndex <= 0) null else {
                     val resultBefore = parentResult.path[currentResultIndex - 1]

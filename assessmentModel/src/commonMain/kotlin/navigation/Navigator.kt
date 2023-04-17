@@ -81,22 +81,7 @@ interface Navigator {
 class NavigationPoint(val node: Node?,
                       val branchResult: BranchNodeResult,
                       val direction: Direction = Direction.Forward) {
-    @Serializable
-    enum class Direction {
-        /**
-         * Move forward through the assessment.
-         */
-        Forward,
-        /**
-         * Move backward through the assessment.
-         */
-        Backward,
-        /**
-         * Exit the assessment early. If this direction indicator is set, then the entire assessment run should end.
-         */
-        Exit,
-        ;
-    }
+
 }
 
 // TODO: syoung 03/22/2022 Delete or move to MobilePassiveData-SDK

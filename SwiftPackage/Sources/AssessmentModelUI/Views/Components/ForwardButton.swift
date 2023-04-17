@@ -24,5 +24,6 @@ public struct ForwardButton <Content: View> : View {
         .buttonStyle(NavigationButtonStyle(.text))
         .padding(.horizontal, horizontalPadding)
         .padding(.vertical, verticalPadding)
+        .buttonEnabled(pagedNavigation.forwardEnabled)
     }
 }

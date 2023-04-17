@@ -5,7 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.Transient
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -23,6 +23,7 @@ val resultSerializersModule = SerializersModule {
         subclass(BranchNodeResultObject::class)
         subclass(CollectionResultObject::class)
         subclass(ResultObject::class)
+        subclass(FileResultObject::class)
     }
     polymorphic(AssessmentResult::class) {
         subclass(AssessmentResultObject::class)
@@ -127,17 +128,39 @@ data class BranchNodeResultObject(override val identifier: String,
             inputResults = inputResults.copyResults())
 }
 
-//Could use this if we want to switch "startDate" and "endDate" to being an Instant
+@Serializable
+data class FileResultObject(
+    override val identifier: String,
+    @SerialName("startDate")
+    @Serializable(with = InstantSerializer::class)
+    override var startDateTime: Instant = Clock.System.now(),
+    @SerialName("endDate")
+    @Serializable(with = InstantSerializer::class)
+    override var endDateTime: Instant? = null,
+    override val filename: String,
+    @Transient
+    override val path: String? = null,
+    override val contentType: String? = null,
+    override val jsonSchema: String? = null,
+) : FileResult {
+
+    override fun copyResult(identifier: String): FileResult = copy(identifier = identifier)
+
+}
+
+/**
+ * Serializer for [Instant] that matches the format expected by Bridge
+ */
 object InstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
 
-    override fun serialize(output: Encoder, obj: Instant) {
-        output.encodeString(DateUtils.bridgeIsoDateTimeString(obj))
+    override fun serialize(encoder: Encoder, value: Instant) {
+        encoder.encodeString(DateUtils.bridgeIsoDateTimeString(value))
     }
 
-    override fun deserialize(input: Decoder): Instant {
-        return DateUtils.instantFromBridgeIsoDateTimeString(input.decodeString())
+    override fun deserialize(decoder: Decoder): Instant {
+        return DateUtils.instantFromBridgeIsoDateTimeString(decoder.decodeString())
     }
 }
 
