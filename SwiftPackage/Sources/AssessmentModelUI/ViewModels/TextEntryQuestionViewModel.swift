@@ -7,7 +7,8 @@ import SwiftUI
 import AssessmentModel
 import JsonModel
 
-class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
+@MainActor
+final class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
     weak var questionState: QuestionState?
     
@@ -29,7 +30,8 @@ class TextEntryQuestionViewModel : ObservableObject, TextInputViewModelDelegate 
         self.inputViewModel!.delegate = self
             
         if questionState.detail == nil {
-            questionState.detail = Localization.localizedString("(Maximum \(self.inputViewModel!.characterLimit) characters)")
+            let format = NSLocalizedString("(Maximum %1$d characters)", bundle: .module, comment: "Maximum characters for test input")
+            questionState.detail = String(format: format, self.inputViewModel!.characterLimit)
         }
         
         // Set the value equal to the current question state answer.

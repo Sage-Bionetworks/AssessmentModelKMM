@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import Combine
 import SharedMobileUI
 import AssessmentModel
 import JsonModel
@@ -101,6 +102,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             return
         }
         
+        self.navigationViewModel.forwardEnabled = false
         self.forwardCount += 1
                 
         // Update the end timestamp for the current result

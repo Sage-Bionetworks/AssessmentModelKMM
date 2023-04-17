@@ -8,9 +8,10 @@ import AssessmentModel
 import JsonModel
 
 protocol TextInputViewModelDelegate : AnyObject {
-    func didUpdateValue(_ newValue: JsonValue?, with identifier: String)
+    @MainActor func didUpdateValue(_ newValue: JsonValue?, with identifier: String)
 }
 
+@MainActor
 class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
     
     weak var delegate: TextInputViewModelDelegate?
@@ -55,10 +56,10 @@ class TextInputViewModel<Value : JsonValue> : ObservableObject, Identifiable {
     }
 }
 
-class StringInputViewModel : TextInputViewModel<String> {
+final class StringInputViewModel : TextInputViewModel<String> {
 }
 
-class IntegerInputViewModel : TextInputViewModel<Int> {
+final class IntegerInputViewModel : TextInputViewModel<Int> {
     
     @Published var viewType: QuestionUIHint.NumberField = .textfield
     @Published var minLabel: String?

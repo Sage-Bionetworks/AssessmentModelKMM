@@ -1,0 +1,62 @@
+/* let format = NSLocalizedString("(Maximum %1$d characters)", bundle: .module, comment: "Maximum characters for test input") */
+"(Maximum %1$d characters)" = "(Maximum %1$d characters)";
+
+/* Text("Begin in...", bundle: .module) */
+"Begin in..." = "Begin in...";
+
+/* Text("Continue later", bundle: .module) */
+"Continue later" = "Continue later";
+
+/* let doneTitle = NSLocalizedString("Done", bundle: .module, comment: "Done button for entering text") */
+"Done" = "Done";
+
+/* Text("Exit", bundle: .module) */
+"Exit" = "Exit";
+
+/* return NSLocalizedString("Hours", bundle: .module, comment: "Field label for number of hours in a duration question") */
+"Hours" = "Hours";
+
+/* return NSLocalizedString("Mins", bundle: .module, comment: "Field label for number of minutes in a duration question") */
+"Mins" = "Mins";
+
+/* let format = NSLocalizedString("On a scale of %1$d to %2$d", bundle: .module, comment: "") */
+"On a scale of %1$d to %2$d" = "On a scale of %1$d to %2$d";
+
+/* self.fieldLabel = inputItem.fieldLabel ?? NSLocalizedString("Other", bundle: .module, comment: "") */
+"Other" = "Other";
+
+/* Text("Paused", bundle: .module) */
+"Paused" = "Paused";
+
+/* Text("Resume", bundle: .module) */
+"Resume" = "Resume";
+
+/* Text("Review instructions", bundle: .module) */
+"Review instructions" = "Review instructions";
+
+/* return NSLocalizedString("S", bundle: .module, comment: "Field label for number of seconds in a duration question") */
+"S" = "S";
+
+/* TextEntryQuestionStepView(QuestionState(question, skipStepText: Text("Skip question"))) */
+"Skip question" = "Skip question";
+
+/* return Text("Skip step", bundle: .module) */
+"Skip step" = "Skip step";
+
+/* Text("Skip this activity", bundle: .module) */
+"Skip this activity" = "Skip this activity";
+
+/* Text("Start", bundle: .module) */
+"Start" = "Start";
+
+/* Text("Survey", bundle: .module) */
+"Survey" = "Survey";
+
+/* Text("Tap to respond") */
+"Tap to respond" = "Tap to respond";
+
+/* Text("Thank you for being part of our study.", bundle: .module) */
+"Thank you for being part of our study." = "Thank you for being part of our study.";
+
+/* Text("Well done!", bundle: .module) */
+"Well done!" = "Well done!";

@@ -47,7 +47,8 @@ struct MultilineTextField: View {
                 .widthReader(width: $textWidth)
                 .heightReader(height: $fontHeight)
             // This is a hint to the user that they've hit the text limit.
-            Text("[\(characterLimit)]")
+            let charLimitText = "[\(characterLimit)]"
+            Text(charLimitText)
                 .opacity((text?.count ?? 0 == characterLimit) && isEditingText && style == .freeText ? 1 : 0)
                 .foregroundColor(.hex727272)
                 .font(.italicLatoFont(18, relativeTo: nil, weight: .regular))
@@ -147,7 +148,7 @@ struct PreviewMultilineTextField_Previews: PreviewProvider {
 
 #if canImport(UIKit)
 
-fileprivate final class MultilineTextFieldContainer: UIViewRepresentable {
+fileprivate struct MultilineTextFieldContainer: UIViewRepresentable {
     private let characterLimit: Int
     private let fieldLabel: String
     private let inputItem: TextInputItem
@@ -159,7 +160,7 @@ fileprivate final class MultilineTextFieldContainer: UIViewRepresentable {
     private let isBold: Bool
     private let fontSize: Binding<CGFloat>
     
-    private var previousFontSize: CGFloat
+    @State private var previousFontSize: CGFloat = .zero
 
     init(_ fieldLabel: String, text: Binding<String?>, isEditingText: Binding<Bool>, isSelected: Binding<Bool>?, inputItem: TextInputItem, characterLimit: Int, textHeight: Binding<CGFloat>, cursorAtEnd: Binding<Bool>, fontSize: Binding<CGFloat>, isBold: Bool) {
         self.fieldLabel = fieldLabel
@@ -288,9 +289,13 @@ fileprivate final class MultilineTextFieldContainer: UIViewRepresentable {
         }
         
         func updateCursorAtEnd(_ textView: UITextView) {
-            parent.cursorAtEnd.wrappedValue = textView.selectedTextRange.map {
-                $0.end == textView.endOfDocument
-            } ?? false
+            Task {
+                await MainActor.run {
+                    parent.cursorAtEnd.wrappedValue = textView.selectedTextRange.map {
+                        $0.end == textView.endOfDocument
+                    } ?? false
+                }
+            }
         }
 
         @objc func textViewDidChange(_ textView: UITextView) {

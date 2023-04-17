@@ -150,7 +150,7 @@ public struct AssessmentWrapperView<StepContent : StepFactoryView> : View {
                 ProgressView()
             }
             TopBarProgressView()
-            PauseMenu(viewModel: viewModel)
+            PauseMenu(viewModel: viewModel, interruptionHandling: assessmentState.interruptionHandling)
                 .opacity(assessmentState.showingPauseActions ? 1 : 0)
                 .animation(.easeInOut, value: assessmentState.showingPauseActions)
         }

@@ -8,7 +8,8 @@ import AssessmentModel
 import JsonModel
 import ResultModel
 
-class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
+@MainActor
+final class DurationQuestionViewModel : ObservableObject, TextInputViewModelDelegate {
     
     weak var questionState: QuestionState?
     
@@ -83,11 +84,11 @@ extension DurationUnit {
     var fieldLabel: String {
         switch self {
         case .hour:
-            return Localization.localizedString("Hours")
+            return NSLocalizedString("Hours", bundle: .module, comment: "Field label for number of hours in a duration question")
         case .minute:
-            return Localization.localizedString("Mins")
+            return NSLocalizedString("Mins", bundle: .module, comment: "Field label for number of minutes in a duration question")
         case .second:
-            return Localization.localizedString("S")
+            return NSLocalizedString("S", bundle: .module, comment: "Field label for number of seconds in a duration question")
         }
     }
 }

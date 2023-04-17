@@ -10,6 +10,7 @@ import JsonModel
 import ResultModel
 import XCTest
 
+@MainActor
 class SlidingScaleViewModelTests: XCTestCase {
     
     override func setUp() {

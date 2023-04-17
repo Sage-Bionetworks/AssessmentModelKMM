@@ -9,6 +9,7 @@ import AssessmentModelUI
 
 struct ContentView: View {
     @StateObject var viewModel: ViewModel = .init()
+    @State var isPresented: Bool = false
     let surveys: [AssessmentHolder] = previewExamples.map { .init(assessment: $0) }
 
     var body: some View {
@@ -17,8 +18,11 @@ struct ContentView: View {
                 viewModel.current = .init(holder.assessment)
             }
         }
-        .fullScreenCover(isPresented: $viewModel.isPresented) {
+        .fullScreenCover(isPresented: $isPresented) {
             AssessmentListener(viewModel)
+        }
+        .onChange(of: viewModel.isPresented) { newValue in
+            isPresented = newValue
         }
     }
     

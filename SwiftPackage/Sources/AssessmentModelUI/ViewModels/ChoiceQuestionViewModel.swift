@@ -4,9 +4,11 @@
 //
 
 import SwiftUI
+import Combine
 import AssessmentModel
 import JsonModel
 
+@MainActor
 public final class ChoiceQuestionViewModel : ObservableObject {
 
     weak var questionState: QuestionState?
@@ -148,7 +150,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
     public var id: String { jsonChoice.label }
     
     /// Whether or not the choice is selected.
-    @Published public var selected: Bool {
+    @MainActor @Published public var selected: Bool {
         didSet {
             selectionToggler?.updateSelected(changed: self)
         }
@@ -159,7 +161,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
     weak var selectionToggler: SelectionToggler!
     var selectorType: ChoiceSelectorType { jsonChoice.selectorType }
     
-    init(_ jsonChoice: JsonChoice, selected: Bool, selectionToggler: SelectionToggler) {
+    @MainActor init(_ jsonChoice: JsonChoice, selected: Bool, selectionToggler: SelectionToggler) {
         self.jsonChoice = jsonChoice
         self.selected = selected
         self.selectionToggler = selectionToggler
@@ -169,6 +171,7 @@ public final class ChoiceViewModel : ObservableObject, Identifiable {
 extension ChoiceViewModel : ObservableChoice {
 }
 
+@MainActor
 public final class OtherChoiceViewModel : ObservableObject, Identifiable {
     public let id: String = "$OtherTextEntry"
     
@@ -201,7 +204,7 @@ public final class OtherChoiceViewModel : ObservableObject, Identifiable {
     init(_ inputItem: TextInputItem, value: JsonElement?, selectionToggler: SelectionToggler) {
         self.inputItem = inputItem
         let validator = inputItem.buildTextValidator()
-        self.fieldLabel = inputItem.fieldLabel ?? Localization.localizedString("Other")
+        self.fieldLabel = inputItem.fieldLabel ?? NSLocalizedString("Other", bundle: .module, comment: "")
         self.value = validator.localizedText(for: value) ?? ""
         self.validator = validator
         self.selected = value != nil && value != .null

@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import Combine
 import AssessmentModel
 import JsonModel
 import ResultModel

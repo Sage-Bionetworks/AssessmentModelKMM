@@ -6,6 +6,21 @@
 import SwiftUI
 import SharedMobileUI
 
+/// A button that shows a pause menu
+public struct PauseButton: View {
+    @Binding var showingPauseActions: Bool
+    
+    public init(_ showingPauseActions: Binding<Bool>) {
+        self._showingPauseActions = showingPauseActions
+    }
+    
+    public var body: some View {
+        Button(action: { showingPauseActions = true }) {
+            Image("pause", bundle: .module)
+        }
+    }
+}
+
 struct ExitButton: View {
     @EnvironmentObject var assessmentState: AssessmentState
     let canPause: Bool
@@ -18,9 +33,7 @@ struct ExitButton: View {
     @ViewBuilder
     func exitButton() -> some View {
         if canPause {
-            Button(action: { assessmentState.showingPauseActions = true }) {
-                Image("pause", bundle: .module)
-            }
+            PauseButton($assessmentState.showingPauseActions)
         }
         else {
             Button(action: { assessmentState.status = .continueLater }) {
