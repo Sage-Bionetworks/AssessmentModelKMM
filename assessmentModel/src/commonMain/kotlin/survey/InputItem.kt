@@ -280,24 +280,3 @@ interface DurationInputItem : InputItem {
     override val answerType: AnswerType
         get() = AnswerType.Duration(displayUnits)
 }
-
-@Serializable
-enum class DurationUnit {
-    @SerialName("hour")
-    Hour,
-    @SerialName("minute")
-    Minute,
-    @SerialName("second")
-    Second;
-
-    val secondsMultiplier: Double
-        get() = when (this) {
-            Hour -> 60.0 * 60.0
-            Minute -> 60.0
-            Second -> 1.0
-        }
-
-    companion object {
-        val defaultUnits = listOf(Hour, Minute)
-    }
-}

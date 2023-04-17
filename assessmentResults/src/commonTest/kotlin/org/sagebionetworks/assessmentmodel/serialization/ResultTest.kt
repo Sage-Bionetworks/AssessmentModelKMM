@@ -4,10 +4,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.ZoneOffset
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import kotlinx.serialization.modules.plus
 import org.sagebionetworks.assessmentmodel.DateUtils
 import org.sagebionetworks.assessmentmodel.Result
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
+import org.sagebionetworks.assessmentmodel.survey.answerTypeSerializersModule
 import kotlin.test.*
 
 open class ResultTest {
@@ -15,7 +17,10 @@ open class ResultTest {
     @Serializable
     data class TestResultWrapper(val result: Result)
 
-    private val jsonCoder = Serialization.JsonCoder.default
+    private val jsonCoder = Json{
+        serializersModule = resultSerializersModule + answerTypeSerializersModule
+        encodeDefaults = true
+    }
 
     @BeforeTest
     fun setUp() {
@@ -201,7 +206,8 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Boolean() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.BOOLEAN, JsonPrimitive(true), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
             { "result":
                     {
@@ -230,7 +236,8 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Decimal() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.Decimal(4), JsonPrimitive(3.2), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.Decimal(4), JsonPrimitive(3.2), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {
@@ -260,7 +267,8 @@ open class ResultTest {
     @Test
     fun testAnswerResult_Int() {
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.INTEGER, JsonPrimitive(3), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
             { "result":
                     {
@@ -290,7 +298,8 @@ open class ResultTest {
     fun testAnswerResult_Map() {
         val originalValue = JsonObject(mapOf("a" to JsonPrimitive(3.2), "b" to JsonPrimitive("boo")))
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.OBJECT, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.OBJECT, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {
@@ -320,7 +329,8 @@ open class ResultTest {
     fun testAnswerResult_String() {
         val originalValue = JsonPrimitive("goo")
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.STRING, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.STRING, originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {
@@ -350,7 +360,8 @@ open class ResultTest {
     fun testAnswerResult_DateYearMonth() {
         val originalValue = JsonPrimitive("2020-02")
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.DateTime("yyyy-MM"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {
@@ -381,7 +392,8 @@ open class ResultTest {
     fun testAnswerResult_ListInt() {
         val originalValue = JsonArray(listOf(JsonPrimitive(2), JsonPrimitive(5)))
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.Array(BaseType.INTEGER), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {
@@ -412,7 +424,8 @@ open class ResultTest {
     fun testAnswerResult_Measurement() {
         val originalValue = JsonPrimitive(10.2)
         val original = TestResultWrapper(
-            AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00")))
+            AnswerResultObject("foo", AnswerType.Measurement("cm"), originalValue, DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:00:00.000-03:00"), DateUtils.instantFromBridgeIsoDateTimeString("2020-01-21T12:05:00.000-03:00"))
+        )
         val inputString = """
                 { "result":
                     {

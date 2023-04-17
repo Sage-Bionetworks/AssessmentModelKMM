@@ -14,6 +14,7 @@ import org.sagebionetworks.assessmentmodel.ContentNodeStep
 import org.sagebionetworks.assessmentmodel.InstructionStep
 import org.sagebionetworks.assessmentmodel.Step
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
+import org.sagebionetworks.assessmentmodel.navigation.Direction
 import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
 import org.sagebionetworks.assessmentmodel.survey.*
 import org.w3c.dom.Text
@@ -87,7 +88,7 @@ open class AssessmentFragment : Fragment() {
 
     open fun showStep(showNodeState: AssessmentViewModel.ShowNodeState) {
         showNodeState.hasBeenHandled = true
-        if (NavigationPoint.Direction.Exit == showNodeState.direction) {
+        if (Direction.Exit == showNodeState.direction) {
             val resultIntent = Intent()
             resultIntent.putExtra(
                 ASSESSMENT_RESULT,

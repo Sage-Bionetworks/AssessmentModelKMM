@@ -19,6 +19,7 @@ internal fun QuestionContainer(
     questionState: QuestionState,
     assessmentViewModel: AssessmentViewModel,
     modifier: Modifier = Modifier,
+    headerCanCollapse: Boolean = false,
     content: @Composable @UiComposable () -> Unit
 ) {
    QuestionContainer(
@@ -29,6 +30,7 @@ internal fun QuestionContainer(
        nextEnabled = questionState.allAnswersValidFlow.collectAsState().value,
        assessmentViewModel = assessmentViewModel,
        modifier = modifier,
+       headerCanCollapse = headerCanCollapse,
        content = content
    )
 }
@@ -41,6 +43,7 @@ internal fun QuestionContainer(
     nextButtonText: String? = null,
     nextEnabled: Boolean,
     assessmentViewModel: AssessmentViewModel,
+    headerCanCollapse: Boolean = false,
     modifier: Modifier = Modifier,
     content: @Composable @UiComposable () -> Unit
 ) {
@@ -48,8 +51,6 @@ internal fun QuestionContainer(
         modifier = modifier
             .fillMaxHeight()
             .background(BackgroundGray)
-
-        ,
     ) {
         val scrollState = rememberScrollState()
         QuestionHeader(
@@ -57,7 +58,8 @@ internal fun QuestionContainer(
             title = title,
             detail = detail,
             assessmentViewModel = assessmentViewModel,
-            scrollState = scrollState
+            scrollState = scrollState,
+            headerCanCollapse = headerCanCollapse
         )
         Column(
             modifier = modifier
