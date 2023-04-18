@@ -40,7 +40,7 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packagingOptions {
         resources {
@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
     api(project(":assessmentModel"))
 
     //Workaround for compose previews not working
@@ -65,6 +64,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodelKtx)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.coreKtx)
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.uiToolingPreview)
@@ -76,6 +77,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.compose.uiTest)
     debugImplementation(libs.androidx.compose.uiTooling)
 }

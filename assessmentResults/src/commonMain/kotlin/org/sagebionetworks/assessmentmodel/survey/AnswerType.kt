@@ -191,7 +191,7 @@ enum class DurationUnit {
  * The base type of the form input field. This is used to indicate what the type is of the value being prompted
  * and will affect the choice of allowed formats.
  */
-@Serializable
+@Serializable(with = BaseType.BaseTypeSerializer::class)
 enum class BaseType : StringEnum {
 
     /**
@@ -245,7 +245,7 @@ enum class BaseType : StringEnum {
         }
 
     @Serializer(forClass = BaseType::class)
-    companion object : KSerializer<BaseType> {
+    object BaseTypeSerializer : KSerializer<BaseType> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("SerialType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): BaseType {

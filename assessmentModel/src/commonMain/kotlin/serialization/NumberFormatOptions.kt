@@ -55,7 +55,7 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
     /**
      * Hint to use for the formatter.
      */
-    @Serializable
+    @Serializable(with = Style.StyleSerializer::class)
     enum class Style(override val serialName: String? = null) : StringEnum {
         None,
         Decimal,
@@ -67,7 +67,7 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
         ;
 
         @Serializer(forClass = Style::class)
-        companion object : KSerializer<Style> {
+        object StyleSerializer : KSerializer<Style> {
             override val descriptor: SerialDescriptor =
                 PrimitiveSerialDescriptor("Style", PrimitiveKind.STRING)
             override fun deserialize(decoder: Decoder): Style {

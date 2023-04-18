@@ -49,7 +49,6 @@ android {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation(project(":presentation"))
 
     implementation(libs.androidx.material)
