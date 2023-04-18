@@ -66,7 +66,10 @@ data class AssessmentResultObject(override val identifier: String,
                                   @SerialName("endDate")
                                   @Serializable(with = InstantSerializer::class)
                                   override var endDateTime: Instant? = null,
-                                  override val path: MutableList<PathMarker> = mutableListOf())
+                                  override val path: MutableList<PathMarker> = mutableListOf(),
+                                  @SerialName("\$schema")
+                                  override val jsonSchema: String? = "https://sage-bionetworks.github.io/mobile-client-json/schemas/v2/AssessmentResultObject.json"
+)
     : AssessmentResult {
     override fun copyResult(identifier: String): AssessmentResult = this.copy(
             identifier = identifier,
