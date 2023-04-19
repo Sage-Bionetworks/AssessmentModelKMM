@@ -247,7 +247,7 @@ enum class BaseType : StringEnum {
     @Serializer(forClass = BaseType::class)
     object BaseTypeSerializer : KSerializer<BaseType> {
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("SerialType", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor("BaseType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): BaseType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")

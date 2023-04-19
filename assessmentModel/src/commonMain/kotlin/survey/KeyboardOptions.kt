@@ -86,7 +86,7 @@ enum class SpellCheckingType : StringEnum {
     @Serializer(forClass = SpellCheckingType::class)
     object SpellCheckingTypeSerializer : KSerializer<SpellCheckingType>{
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor("SpellCheckingType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): SpellCheckingType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
