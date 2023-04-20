@@ -158,22 +158,14 @@ interface CheckboxInputItem : ChoiceInputItem {
             = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
 }
 
-@Serializable(with = ChoiceSelectorType.ChoiceSelectorSerializer::class)
+@Serializable
 enum class ChoiceSelectorType : StringEnum {
-    Default, Exclusive, All;
-
-    @Serializer(forClass = ChoiceSelectorType::class)
-    object ChoiceSelectorSerializer: KSerializer<ChoiceSelectorType> {
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("ChoiceSelectorType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): ChoiceSelectorType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-        }
-        override fun serialize(encoder: Encoder, value: ChoiceSelectorType) {
-            encoder.encodeString(value.name.lowercase())
-        }
-    }
+    @SerialName("default")
+    Default,
+    @SerialName("exclusive")
+    Exclusive,
+    @SerialName("all")
+    All;
 }
 
 /**

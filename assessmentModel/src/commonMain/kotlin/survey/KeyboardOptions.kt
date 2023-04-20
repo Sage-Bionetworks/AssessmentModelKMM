@@ -43,86 +43,64 @@ interface KeyboardOptions {
     val keyboardType: KeyboardType
 }
 
-@Serializable(with = AutoCapitalizationType.AutoCapitalizationTypeSerializer::class)
+@Serializable
 enum class AutoCapitalizationType : StringEnum {
-    None, Words, Sentences, AllCharacters;
-
-    @Serializer(forClass = AutoCapitalizationType::class)
-    object AutoCapitalizationTypeSerializer : KSerializer<AutoCapitalizationType>{
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("AutoCapitalizationType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): AutoCapitalizationType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-        }
-        override fun serialize(encoder: Encoder, value: AutoCapitalizationType) {
-            encoder.encodeString(value.name)
-        }
-    }
+    @SerialName("none")
+    None,
+    @SerialName("words")
+    Words,
+    @SerialName("sentences")
+    Sentences,
+    @SerialName("allCharacters")
+    AllCharacters;
 }
 
-@Serializable(with = AutoCorrectionType.AutoCorrectionTypeSerializer::class)
+@Serializable
 enum class AutoCorrectionType : StringEnum {
-    Default, No, Yes;
-
-    @Serializer(forClass = AutoCorrectionType::class)
-    object AutoCorrectionTypeSerializer : KSerializer<AutoCorrectionType>{
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("AutoCorrectionType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): AutoCorrectionType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-        }
-        override fun serialize(encoder: Encoder, value: AutoCorrectionType) {
-            encoder.encodeString(value.name)
-        }
-    }
-}
-
-@Serializable(with = SpellCheckingType.SpellCheckingTypeSerializer::class)
-enum class SpellCheckingType : StringEnum {
-    Default, No, Yes;
-
-    @Serializer(forClass = SpellCheckingType::class)
-    object SpellCheckingTypeSerializer : KSerializer<SpellCheckingType>{
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): SpellCheckingType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-        }
-        override fun serialize(encoder: Encoder, value: SpellCheckingType) {
-            encoder.encodeString(value.name)
-        }
-    }
-}
-
-@Serializable(with = KeyboardType.KeyboardTypeSerializer::class)
-enum class KeyboardType : StringEnum {
+    @SerialName("default")
     Default,
+    @SerialName("no")
+    No,
+    @SerialName("yes")
+    Yes;
+
+}
+
+@Serializable
+enum class SpellCheckingType : StringEnum {
+    @SerialName("default")
+    Default,
+    @SerialName("no")
+    No,
+    @SerialName("yes")
+    Yes;
+}
+
+@Serializable
+enum class KeyboardType : StringEnum {
+    @SerialName("default")
+    Default,
+    @SerialName("asciiCapable")
     AsciiCapable,
+    @SerialName("numbersAndPunctuation")
     NumbersAndPunctuation,
+    @SerialName("URL")
     URL,
+    @SerialName("numberPad")
     NumberPad,
+    @SerialName("phonePad")
     PhonePad,
+    @SerialName("namePhonePad")
     NamePhonePad,
+    @SerialName("emailAddress")
     EmailAddress,
+    @SerialName("decimalPad")
     DecimalPad,
+    @SerialName("twitter")
     Twitter,
+    @SerialName("webSearch")
     WebSearch,
+    @SerialName("asciiCapableNumberPad")
     AsciiCapableNumberPad,
     ;
-
-    @Serializer(forClass = KeyboardType::class)
-    object KeyboardTypeSerializer : KSerializer<KeyboardType>{
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): KeyboardType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${ values() }")
-        }
-        override fun serialize(encoder: Encoder, value: KeyboardType) {
-            encoder.encodeString(value.name)
-        }
-    }
 }
