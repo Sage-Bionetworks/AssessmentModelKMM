@@ -43,12 +43,12 @@ interface KeyboardOptions {
     val keyboardType: KeyboardType
 }
 
-@Serializable
+@Serializable(with = AutoCapitalizationType.AutoCapitalizationTypeSerializer::class)
 enum class AutoCapitalizationType : StringEnum {
     None, Words, Sentences, AllCharacters;
 
     @Serializer(forClass = AutoCapitalizationType::class)
-    companion object : KSerializer<AutoCapitalizationType>{
+    object AutoCapitalizationTypeSerializer : KSerializer<AutoCapitalizationType>{
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("AutoCapitalizationType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCapitalizationType {
@@ -61,12 +61,12 @@ enum class AutoCapitalizationType : StringEnum {
     }
 }
 
-@Serializable
+@Serializable(with = AutoCorrectionType.AutoCorrectionTypeSerializer::class)
 enum class AutoCorrectionType : StringEnum {
     Default, No, Yes;
 
     @Serializer(forClass = AutoCorrectionType::class)
-    companion object : KSerializer<AutoCorrectionType>{
+    object AutoCorrectionTypeSerializer : KSerializer<AutoCorrectionType>{
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("AutoCorrectionType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): AutoCorrectionType {
@@ -79,14 +79,14 @@ enum class AutoCorrectionType : StringEnum {
     }
 }
 
-@Serializable
+@Serializable(with = SpellCheckingType.SpellCheckingTypeSerializer::class)
 enum class SpellCheckingType : StringEnum {
     Default, No, Yes;
 
     @Serializer(forClass = SpellCheckingType::class)
-    companion object : KSerializer<SpellCheckingType>{
+    object SpellCheckingTypeSerializer : KSerializer<SpellCheckingType>{
         override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
+            PrimitiveSerialDescriptor("SpellCheckingType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): SpellCheckingType {
             val name = decoder.decodeString()
             return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
@@ -97,7 +97,7 @@ enum class SpellCheckingType : StringEnum {
     }
 }
 
-@Serializable
+@Serializable(with = KeyboardType.KeyboardTypeSerializer::class)
 enum class KeyboardType : StringEnum {
     Default,
     AsciiCapable,
@@ -114,7 +114,7 @@ enum class KeyboardType : StringEnum {
     ;
 
     @Serializer(forClass = KeyboardType::class)
-    companion object : KSerializer<KeyboardType>{
+    object KeyboardTypeSerializer : KSerializer<KeyboardType>{
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("KeyboardType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): KeyboardType {

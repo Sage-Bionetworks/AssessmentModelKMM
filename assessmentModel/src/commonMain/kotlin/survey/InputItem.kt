@@ -158,12 +158,12 @@ interface CheckboxInputItem : ChoiceInputItem {
             = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
 }
 
-@Serializable
+@Serializable(with = ChoiceSelectorType.ChoiceSelectorSerializer::class)
 enum class ChoiceSelectorType : StringEnum {
     Default, Exclusive, All;
 
     @Serializer(forClass = ChoiceSelectorType::class)
-    companion object : KSerializer<ChoiceSelectorType> {
+    object ChoiceSelectorSerializer: KSerializer<ChoiceSelectorType> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("ChoiceSelectorType", PrimitiveKind.STRING)
         override fun deserialize(decoder: Decoder): ChoiceSelectorType {

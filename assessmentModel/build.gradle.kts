@@ -29,14 +29,12 @@ android {
     }
     buildFeatures.viewBinding = true
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 dependencies {
     testImplementation(project(mapOf("path" to ":assessmentResults")))
     coreLibraryDesugaring(libs.android.desugar)
-    // Specify Kotlin/JVM stdlib dependency.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -77,6 +75,7 @@ kotlin {
         }
         sourceSets["androidLibMain"].dependencies {
             implementation(libs.androidx.appcompat)
+            implementation(platform("androidx.compose:compose-bom:${libs.versions.androidxComposeBom.get()}"))
             implementation(libs.androidx.compose.runtime)
         }
         sourceSets["iosMain"].dependencies {
