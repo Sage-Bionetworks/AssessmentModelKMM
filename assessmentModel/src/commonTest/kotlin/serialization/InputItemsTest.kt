@@ -488,7 +488,7 @@ open class InputItemsTest {
             "fieldLabel": "Favorite color",
             "placeholder": "Blue, no! Red!",
             "keyboardOptions" : {
-                        "keyboardType" : "NumbersAndPunctuation",
+                        "keyboardType" : "numbersAndPunctuation",
                         "isSecureTextEntry" : true },
             "formatOptions" : {
                         "usesGroupingSeparator" : false,

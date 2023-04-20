@@ -55,30 +55,24 @@ abstract class NumberFormatOptions<T> : NumberRange<T> where T : Comparable<T>, 
     /**
      * Hint to use for the formatter.
      */
-    @Serializable(with = Style.StyleSerializer::class)
+    @Serializable
     enum class Style(override val serialName: String? = null) : StringEnum {
+        @SerialName("none")
         None,
+        @SerialName("decimal")
         Decimal,
+        @SerialName("currency")
         Currency,
+        @SerialName("percent")
         Percent,
+        @SerialName("scientific")
         Scientific,
+        @SerialName("spellOut")
         SpellOut,
-        OrdinalNumber("ordinal"),
+        @SerialName("ordinal")
+        OrdinalNumber,
         ;
 
-        @Serializer(forClass = Style::class)
-        object StyleSerializer : KSerializer<Style> {
-            override val descriptor: SerialDescriptor =
-                PrimitiveSerialDescriptor("Style", PrimitiveKind.STRING)
-            override fun deserialize(decoder: Decoder): Style {
-                val name = decoder.decodeString()
-
-                return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-            }
-            override fun serialize(encoder: Encoder, value: Style) {
-                encoder.encodeString(value.serialName ?: value.name)
-            }
-        }
     }
 }
 

@@ -191,37 +191,43 @@ enum class DurationUnit {
  * The base type of the form input field. This is used to indicate what the type is of the value being prompted
  * and will affect the choice of allowed formats.
  */
-@Serializable(with = BaseType.BaseTypeSerializer::class)
+@Serializable
 enum class BaseType : StringEnum {
 
     /**
      * The Boolean question type asks the participant to enter Yes or No (or the appropriate equivalents).
      */
+    @SerialName("boolean")
     BOOLEAN,
 
     /**
      * The decimal question type asks the participant to enter a decimal number.
      */
+    @SerialName("number")
     NUMBER,
 
     /**
      * The integer question type asks the participant to enter an integer number.
      */
+    @SerialName("integer")
     INTEGER,
 
     /**
      * In a string question, the participant can enter text.
      */
+    @SerialName("string")
     STRING,
 
     /**
      * A serializable array of objects or primitives.
      */
+    @SerialName("array")
     ARRAY,
 
     /**
      * A Serializable object. This is an object that can be represented using a JSON or XML dictionary.
      */
+    @SerialName("object")
     OBJECT,
     ;
 
@@ -244,16 +250,4 @@ enum class BaseType : StringEnum {
             OBJECT -> StructureKind.MAP
         }
 
-    @Serializer(forClass = BaseType::class)
-    object BaseTypeSerializer : KSerializer<BaseType> {
-        override val descriptor: SerialDescriptor =
-            PrimitiveSerialDescriptor("BaseType", PrimitiveKind.STRING)
-        override fun deserialize(decoder: Decoder): BaseType {
-            val name = decoder.decodeString()
-            return values().matching(name) ?: throw SerializationException("Unknown $name for ${descriptor.serialName}. Needs to be one of ${values()}")
-        }
-        override fun serialize(encoder: Encoder, value: BaseType) {
-            encoder.encodeString(value.name.lowercase())
-        }
-    }
 }
