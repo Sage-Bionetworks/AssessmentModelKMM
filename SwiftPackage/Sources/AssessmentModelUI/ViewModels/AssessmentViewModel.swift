@@ -63,6 +63,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         else {
             return
         }
+        state.showFullInstructions = true
         moveTo(nextNode: .init(node: node, direction: .backward), stepState: stepState)
         resume()
     }
