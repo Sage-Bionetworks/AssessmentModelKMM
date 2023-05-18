@@ -22,6 +22,30 @@ class AssessmentNavigationTests: XCTestCase {
         super.tearDown()
     }
     
+    func testNavigation_FullInstructionsOnly() {
+        var steps: [TestStep] = TestStep.steps(from: ["introduction", "step1", "step2", "step3", "completion"])
+        steps[1].fullInstructionsOnly = true
+        
+        let taskController = TestAssessmentController(steps)
+        taskController.assessmentState.showFullInstructions = false
+
+        // Go to step under test
+        let loopCount = taskController.test_stepTo("completion")
+        guard loopCount <= steps.count else {
+            XCTFail("Possible loop of wacky madness. loopCount=\(loopCount)")
+            return
+        }
+
+        // Check expected state
+        
+        XCTAssertTrue(taskController.viewModel.navigationViewModel.backEnabled)
+        
+        let topHistory = taskController.assessmentState.assessmentResult.stepHistory
+        let topIds = topHistory.map { $0.identifier }
+        XCTAssertEqual(topIds, ["introduction", "step2", "step3", "completion"])
+    }
+    
+    
     func testNavigation_ForwardTo5X() {
         var steps: [Node] = []
         let beforeSteps: [Node] = TestStep.steps(from: ["introduction", "step1", "step2", "step3"])
