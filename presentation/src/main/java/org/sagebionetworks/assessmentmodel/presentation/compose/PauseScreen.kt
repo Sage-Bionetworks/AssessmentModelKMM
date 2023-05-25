@@ -86,7 +86,7 @@ internal fun PauseScreen(
             if (interruptionHandling.reviewIdentifier != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 ClearButton(
-                    onClick = { assessmentViewModel.goToNode(interruptionHandling.reviewIdentifier!!) },
+                    onClick = { assessmentViewModel.reviewInstructions() },
                     stringResource(R.string.review_instructions)
                 )
             }

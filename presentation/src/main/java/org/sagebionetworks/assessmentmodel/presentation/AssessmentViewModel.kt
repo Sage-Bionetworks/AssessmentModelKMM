@@ -31,6 +31,12 @@ open class AssessmentViewModel(
         assessmentNodeState.goBackward()
     }
 
+    fun reviewInstructions() {
+        val interruptionHandling = (assessmentNodeState.node as Assessment).interruptionHandling
+        assessmentNodeState.showFullInstructions = true
+        goToNode(interruptionHandling.reviewIdentifier!!)
+    }
+
     fun skip() {
         //Clear current results before going to next node
         (assessmentNodeState.currentChild?.currentResult as? AnswerResult)?.jsonValue = null

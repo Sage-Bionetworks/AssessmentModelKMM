@@ -42,6 +42,7 @@ class ContainerActivity: AppCompatActivity() {
         val inflater = if (theme < 0) layoutInflater else LayoutInflater.from(ContextThemeWrapper(this, theme))
         val row = AssessmentRowBinding.inflate(inflater, binding.assessmentContainer, false)
         row.taskName.text = title
+        row.buttonStartTask.text = assessmentId
         row.buttonStartTask.setOnClickListener {
             val intent = Intent(this, AssessmentActivity::class.java)
             intent.putExtra(AssessmentActivity.ARG_ASSESSMENT_ID_KEY, assessmentId)

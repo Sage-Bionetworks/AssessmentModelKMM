@@ -173,6 +173,11 @@ interface BranchNodeState : NodeState {
     override val currentResult: BranchNodeResult
 
     /**
+     * Flag on whether or not the navigator shows all instruction steps
+     */
+    var showFullInstructions: Boolean
+
+    /**
      * Called from the child node to send the call back up the chain to the parent.
      *
      * WARNING: This method should *only* be called by the [currentChild].
@@ -245,6 +250,8 @@ open class BranchNodeStateImpl(
         get() = parent?.customNodeStateProvider ?: _customNodeStateProvider
         set(value) {_customNodeStateProvider = value}
     private var _customNodeStateProvider: CustomNodeStateProvider? = null
+
+    override var showFullInstructions: Boolean = true
 
     override fun goForward() {
         lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward)
@@ -418,10 +425,21 @@ open class BranchNodeStateImpl(
         appendChildResultIfNeeded()
         val currentNode = currentChild?.node
         return if (inDirection == NavigationPoint.Direction.Forward) {
-            navigator.nodeAfter(currentNode, currentResult)
+            nextNode(currentNode, currentResult)
         } else {
             navigator.nodeBefore(currentNode, currentResult)
         }
+    }
+
+    /**
+     * Recursive function to find next node while accounting for skipping instruction steps
+     */
+    private fun nextNode(node: Node?, currentResult: BranchNodeResult): NavigationPoint? {
+        val ret = navigator.nodeAfter(node, currentResult)
+        if (!showFullInstructions && ret.node is OptionalStep && ret.node.fullInstructionsOnly) {
+            return nextNode(ret.node, currentResult)
+        }
+        return ret
     }
 
     /**
