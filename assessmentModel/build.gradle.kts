@@ -45,16 +45,28 @@ dependencies {
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
+val iosFrameworkName = "KotlinModel"
+
 kotlin {
     android("androidLib") {
        publishAllLibraryVariants()
     }
 
-    val xcf = XCFramework("KotlinModel")
+    val xcframework = XCFramework(iosFrameworkName)
+    // ios() includes x86 sim & arm64 device
     ios {
         binaries.framework {
-            baseName = "KotlinModel"
-            xcf.add(this)
+            baseName = iosFrameworkName
+            embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE)
+            xcframework.add(this)
+        }
+    }
+    // iosSimulatorArm64() adds Apple Silicon simulator support
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = iosFrameworkName
+            embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE)
+            xcframework.add(this)
         }
     }
 
@@ -78,24 +90,12 @@ kotlin {
             implementation(platform("androidx.compose:compose-bom:${libs.versions.androidxComposeBom.get()}"))
             implementation(libs.androidx.compose.runtime)
         }
-        sourceSets["iosMain"].dependencies {
-        }
 
+        // Set up dependencies between the source sets for Mac Silicon
+        val iosMain by getting
+        val iosSimulatorArm64Main by sourceSets.getting
+        iosSimulatorArm64Main.dependsOn(iosMain)
     }
-//
-//    val packForXcode by tasks.creating(Sync::class) {
-//        group = "build"
-//        val mode = System.getenv("CONFIGURATION") ?: project.findProperty("XCODE_CONFIGURATION") as? String ?: "DEBUG"
-//        val sdkName = System.getenv("SDK_NAME") ?: project.findProperty("XCODE_SDK_NAME") as? String ?: "iphonesimulator"
-//        val targetName = "ios"// + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
-//        val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
-//        inputs.property("mode", mode)
-//        dependsOn(framework.linkTask)
-//        val targetDir = File(buildDir, "xcode-frameworks")
-//        from({ framework.outputDirectory })
-//        into(targetDir)
-//    }
-//    tasks.getByName("build").dependsOn(packForXcode)
 }
 
 publishing {
