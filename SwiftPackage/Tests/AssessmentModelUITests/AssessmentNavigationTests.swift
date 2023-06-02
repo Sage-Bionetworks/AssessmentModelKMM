@@ -28,7 +28,7 @@ class AssessmentNavigationTests: XCTestCase {
         
         let taskController = TestAssessmentController(steps)
         taskController.assessmentState.showFullInstructions = false
-
+        
         guard let firstRunIds = goTo(taskController: taskController, stepCount: steps.count, stepTo: "completion")
         else {
             return
@@ -36,7 +36,6 @@ class AssessmentNavigationTests: XCTestCase {
         XCTAssertEqual(firstRunIds, ["introduction", "step2", "step3", "completion"])
 
         taskController.viewModel.reviewInstructions()
-        
         XCTAssertEqual(taskController.assessmentState.currentStep?.node.identifier, "introduction")
         
         guard let secondRunIds = goTo(taskController: taskController, stepCount: steps.count, stepTo: "completion")
