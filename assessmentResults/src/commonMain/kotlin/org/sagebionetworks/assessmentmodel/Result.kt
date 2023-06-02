@@ -3,7 +3,7 @@ package org.sagebionetworks.assessmentmodel
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
-import org.sagebionetworks.assessmentmodel.navigation.NavigationPoint
+import org.sagebionetworks.assessmentmodel.navigation.Direction
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 
 /**
@@ -73,7 +73,7 @@ interface BranchNodeResult : CollectionResult {
 }
 
 @Serializable
-data class PathMarker(val identifier: String, val direction: NavigationPoint.Direction)
+data class PathMarker(val identifier: String, val direction: Direction)
 
 /**
  * An [AssessmentResult] is the top-level [Result] for an [Assessment].
@@ -129,3 +129,57 @@ interface AnswerResult : Result {
      */
     val questionText: String?
 }
+
+/**
+ * A [FileResult] is used to hold a result that is written to a file.
+ */
+interface FileResult : Result {
+
+    /**
+     * The name of the file to be written to the archive.
+     */
+    val filename: String
+
+    /**
+     * The path to the file-based result.
+     */
+    val path: String?
+
+    /**
+     * The MIME content type of the result.
+     * - example: `"application/json"`
+     */
+    val contentType: String?
+
+    /**
+     * The url for the json schema that defined the content if this file has a content type of "application/json".
+     */
+    val jsonSchema: String?
+}
+
+/**
+ * A [Result] that is to be included as a JSON file in the archive.
+ */
+interface JsonFileArchivableResult : Result {
+
+    fun getJsonArchivableFile(stepPath: String) : JsonArchivableFile
+}
+
+data class JsonArchivableFile(
+    /**
+     * The name of the file to be written.
+     */
+    val filename: String,
+
+    /**
+     * The JSON string to be included as a file in the result archive.
+     */
+    val json: String,
+
+
+    /**
+     * The url for the json schema that defined the content of this json".
+     */
+    val jsonSchema: String?
+)
+

@@ -74,7 +74,7 @@ open class AssessmentViewModel(
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
-                NavigationPoint.Direction.Forward
+                Direction.Forward
             )
     }
 
@@ -84,7 +84,7 @@ open class AssessmentViewModel(
         currentNodeStateMutableLiveData.value =
             ShowNodeState(
                 nodeState,
-                NavigationPoint.Direction.Backward
+                Direction.Backward
             )
     }
 
@@ -93,7 +93,7 @@ open class AssessmentViewModel(
      */
     data class ShowNodeState(
         val nodeState: NodeState,
-        val direction: NavigationPoint.Direction,
+        val direction: Direction,
         var hasBeenHandled: Boolean = false
     )
 

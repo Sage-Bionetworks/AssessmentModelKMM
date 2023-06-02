@@ -112,8 +112,8 @@ interface NodeState {
 
 }
 
-fun NodeState.goIn(direction: NavigationPoint.Direction) {
-    if (direction == NavigationPoint.Direction.Forward) {
+fun NodeState.goIn(direction: Direction) {
+    if (direction == Direction.Forward) {
         goForward()
     }
     else {
@@ -182,7 +182,7 @@ interface BranchNodeState : NodeState {
      *
      * WARNING: This method should *only* be called by the [currentChild].
      */
-    fun moveToNextNode(direction: NavigationPoint.Direction)
+    fun moveToNextNode(direction: Direction)
 
     /**
      * Allow for chaining up to the top node state when the navigation should end early.
@@ -207,11 +207,11 @@ interface LeafNodeState : NodeState {
     override val parent: BranchNodeState
 
     override fun goForward() {
-        parent.moveToNextNode(NavigationPoint.Direction.Forward)
+        parent.moveToNextNode(Direction.Forward)
     }
 
     override fun goBackward() {
-        parent.moveToNextNode(NavigationPoint.Direction.Backward)
+        parent.moveToNextNode(Direction.Backward)
     }
 }
 
@@ -254,14 +254,14 @@ open class BranchNodeStateImpl(
     override var showFullInstructions: Boolean = true
 
     override fun goForward() {
-        lowestBranch().moveToNextNode(NavigationPoint.Direction.Forward)
+        lowestBranch().moveToNextNode(Direction.Forward)
     }
 
     override fun goBackward() {
-        lowestBranch().moveToNextNode(NavigationPoint.Direction.Backward)
+        lowestBranch().moveToNextNode(Direction.Backward)
     }
 
-    override fun moveToNextNode(direction: NavigationPoint.Direction) {
+    override fun moveToNextNode(direction: Direction) {
         val next = getNextNode(direction) ?: return
         // Before moving to the next node (or ending the task), mark the end data for the current node.
         currentChild?.currentResult?.endDateTime = Clock.System.now()
@@ -300,7 +300,7 @@ open class BranchNodeStateImpl(
                 if (navigator.isCompleted(nodeState.node, currentResult)) {
                     callUpReadyToSaveChain()
                 }
-                if (navigationPoint.direction == NavigationPoint.Direction.Forward) {
+                if (navigationPoint.direction == Direction.Forward) {
                     controller.handleGoForward(nodeState)
                 } else {
                     controller.handleGoBack(nodeState)
@@ -390,7 +390,7 @@ open class BranchNodeStateImpl(
         // When finishing, mark the end date for the current result.
         markFinalResultIfNeeded()
         when {
-            navigationPoint.direction == NavigationPoint.Direction.Exit ->
+            navigationPoint.direction == Direction.Exit ->
                 exitEarly(FinishedReason.Incomplete(SaveResults.Never, markFinished = false, declined = false))
             parent == null -> {
                 callReadyToSaveIfNeeded(FinishedReason.Complete)
@@ -421,7 +421,7 @@ open class BranchNodeStateImpl(
     /**
      * Get the next node to show after the current node.
      */
-    open fun getNextNode(inDirection: NavigationPoint.Direction): NavigationPoint? {
+    open fun getNextNode(inDirection: Direction): NavigationPoint? {
         appendChildResultIfNeeded()
         val currentNode = currentChild?.node
         return if (inDirection == NavigationPoint.Direction.Forward) {
