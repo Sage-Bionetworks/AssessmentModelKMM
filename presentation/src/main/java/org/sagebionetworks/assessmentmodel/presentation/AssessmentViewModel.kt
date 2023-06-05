@@ -34,7 +34,7 @@ open class AssessmentViewModel(
     fun reviewInstructions() {
         val interruptionHandling = (assessmentNodeState.node as Assessment).interruptionHandling
         assessmentNodeState.showFullInstructions = true
-        goToNode(interruptionHandling.reviewIdentifier!!)
+        interruptionHandling.reviewIdentifier?.let { goToNode(it) }
     }
 
     fun skip() {

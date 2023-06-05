@@ -424,7 +424,7 @@ open class BranchNodeStateImpl(
     open fun getNextNode(inDirection: Direction): NavigationPoint? {
         appendChildResultIfNeeded()
         val currentNode = currentChild?.node
-        return if (inDirection == NavigationPoint.Direction.Forward) {
+        return if (inDirection == Direction.Forward) {
             nextNode(currentNode, currentResult)
         } else {
             navigator.nodeBefore(currentNode, currentResult)

@@ -11,6 +11,7 @@ import junit.framework.TestCase.*
 import org.junit.Rule
 import org.junit.Test
 import org.sagebionetworks.assessmentmodel.navigation.BranchNodeState
+import org.sagebionetworks.assessmentmodel.presentation.R
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentActivity
 import org.sagebionetworks.assessmentmodel.sampleapp.ContainerActivity
 
@@ -39,6 +40,12 @@ class NodeNavigatorUITests {
         "multipleChoice",
         "completion"
     )
+    lateinit var next: String
+    lateinit var start: String
+    lateinit var exit: String
+    lateinit var pause: String
+    lateinit var skipQuestion: String
+    lateinit var reviewInstructions: String
 
     @Test
     fun testFullInstructions_sampleAssessment() {
@@ -59,13 +66,13 @@ class NodeNavigatorUITests {
     }
 
     @Test
-    fun testFullInstructions_surveyA_reviewInstructions() {
+    fun testReviewInstructions_surveyA() {
         onView(withText("survey_a")).perform(click())
         setupActivityAndViewModel(false)
 
-        navigateForward("Start", 1)
-        navigateForward("Next", 0)
-        navigateForward("Skip question", 3)
+        navigateForward(start, 1)
+        navigateForward(next, 0)
+        navigateForward(skipQuestion, 3)
 
         val actualStepHistory = assessmentViewModel.currentResult.pathHistoryResults
         val surveyAExpectedStepHistory = mutableListOf(
@@ -76,14 +83,13 @@ class NodeNavigatorUITests {
         )
         compareStepHistory(actualStepHistory, surveyAExpectedStepHistory)
 
-        // Navigate to step before completion and click "review instructions"
-        composeTestRule.onNodeWithContentDescription("Pause").performClick()
-        composeTestRule.onNodeWithText("Review Instructions").performClick()
+        composeTestRule.onNodeWithContentDescription(pause).performClick()
+        composeTestRule.onNodeWithText(reviewInstructions).performClick()
         assertTrue(assessmentViewModel.showFullInstructions)
 
-        navigateForward("Start", 1)
-        navigateForward("Next", 3)
-        navigateForward("Skip question", 4)
+        navigateForward(start, 1)
+        navigateForward(next, 3)
+        navigateForward(skipQuestion, 4)
 
         insertIntoExpected(
             assessmentViewModel.showFullInstructions,
@@ -94,39 +100,54 @@ class NodeNavigatorUITests {
         compareStepHistory(actualStepHistory, surveyAExpectedStepHistory)
     }
 
+    @Test
+    fun testReviewInstructions_sampleWrapperAssessment() {
+        onView(withText("sampleWrapperId")).perform(click())
+        setupActivityAndViewModel(false)
+
+        navigateForward(next, 1)
+
+        navigateForward(next, 2)
+        navigateForward(skipQuestion, 6)
+
+        composeTestRule.onNodeWithContentDescription(pause).performClick()
+        composeTestRule.onNodeWithText(reviewInstructions).performClick()
+        assertEquals("addedStep1", assessmentViewModel.currentChild?.node?.identifier)
+    }
+
 
     private fun passThroughSampleAssessment(showFullInstructions: Boolean) {
         onView(withText("sampleId")).perform(click())
         setupActivityAndViewModel(showFullInstructions)
 
-        navigateForward("Next", if (assessmentViewModel.showFullInstructions) 2 else 1)
-        navigateForward("Skip question", 7)
+        navigateForward(next, if (assessmentViewModel.showFullInstructions) 2 else 1)
+        navigateForward(skipQuestion, 7)
 
         val actualStepHistory = assessmentViewModel.currentResult.pathHistoryResults
         insertIntoExpected(assessmentViewModel.showFullInstructions, sampleExpectedStepHistory, listOf("step2"), 1)
         compareStepHistory(actualStepHistory, sampleExpectedStepHistory)
 
-        navigateForward("Exit", 1)
+        navigateForward(exit, 1)
     }
 
     private fun passThroughWrapperAssessment(showFullInstructions: Boolean) {
         onView(withText("sampleWrapperId")).perform(click())
         setupActivityAndViewModel(showFullInstructions)
 
-        navigateForward("Next", 1)
+        navigateForward(next, 1)
 
         // Use the child assessment's view model for this wrapped assessment case
         assessmentViewModel = assessmentViewModel.currentChild as BranchNodeState
         assessmentViewModel.showFullInstructions = showFullInstructions
 
-        navigateForward("Next", if (assessmentViewModel.showFullInstructions) 2  else 1)
-        navigateForward("Skip question", 7)
+        navigateForward(next, if (assessmentViewModel.showFullInstructions) 2  else 1)
+        navigateForward(skipQuestion, 7)
 
         val actualStepHistory = assessmentViewModel.currentResult.pathHistoryResults
         insertIntoExpected(assessmentViewModel.showFullInstructions, sampleExpectedStepHistory, listOf("step2"), 1)
         compareStepHistory(actualStepHistory, sampleExpectedStepHistory)
 
-        navigateForward("Exit", 1)
+        navigateForward(exit, 1)
     }
 
     private fun passThroughSurveyA(showFullInstructions: Boolean) {
@@ -134,19 +155,19 @@ class NodeNavigatorUITests {
 
         setupActivityAndViewModel(showFullInstructions)
 
-        navigateForward("Start", 1)
-        navigateForward("Next", if (assessmentViewModel.showFullInstructions) 3 else 0)
-        navigateForward("Skip question", 4)
+        navigateForward(start, 1)
+        navigateForward(next, if (assessmentViewModel.showFullInstructions) 3 else 0)
+        navigateForward(skipQuestion, 4)
 
         val actualStepHistory = assessmentViewModel.currentResult.pathHistoryResults
         insertIntoExpected(assessmentViewModel.showFullInstructions, surveyAExpectedStepHistory, listOf("step2", "step1", "addedStep1"), 1)
         compareStepHistory(actualStepHistory, surveyAExpectedStepHistory)
 
-        navigateForward("Exit", 1)
+        navigateForward(exit, 1)
     }
 
     private fun compareStepHistory(actualStepHistory: MutableList<org.sagebionetworks.assessmentmodel.Result>, expectedStepHistory: MutableList<String>) {
-        assertEquals(actualStepHistory.size, expectedStepHistory.size)
+        assertEquals(expectedStepHistory.size, actualStepHistory.size)
         for (ii in 0 until actualStepHistory.size) {
             assertEquals(expectedStepHistory[ii], actualStepHistory[ii].identifier)
         }
@@ -164,6 +185,18 @@ class NodeNavigatorUITests {
         currentActivity = ActivityGetter.getActivityInstance() as AssessmentActivity
         assessmentViewModel = currentActivity.viewModel.assessmentNodeState as BranchNodeState
         assessmentViewModel.showFullInstructions = showFullInstructions
+
+        // Setup strings after currentActivity is accessed
+        next = getLocalizedString(R.string.next)
+        start = getLocalizedString(R.string.start)
+        exit = getLocalizedString(R.string.exit)
+        pause = getLocalizedString(R.string.pause)
+        skipQuestion = getLocalizedString(R.string.skip_question)
+        reviewInstructions = getLocalizedString(R.string.review_instructions)
+    }
+
+    private fun getLocalizedString(resId: Int): String {
+        return currentActivity.getString(resId)
     }
 
     private fun insertIntoExpected(
