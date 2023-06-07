@@ -121,8 +121,11 @@ open class AbstractInstructionStepObject : AbstractSpokenInstructionStepObject, 
     
     /// Should this step be displayed if and only if the flag has been set for displaying the full
     /// instructions?
-    public var fullInstructionsOnly: Bool { _fullInstructionsOnly ?? false }
-    private let _fullInstructionsOnly: Bool?
+    open var fullInstructionsOnly: Bool {
+        get { _fullInstructionsOnly ?? false }
+        set { _fullInstructionsOnly = newValue }
+    }
+    private var _fullInstructionsOnly: Bool?
     
     
     // MARK: Initializers and serialization

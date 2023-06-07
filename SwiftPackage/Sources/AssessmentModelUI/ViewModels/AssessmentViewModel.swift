@@ -63,6 +63,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
         else {
             return
         }
+        state.showFullInstructions = true
         moveTo(nextNode: .init(node: node, direction: .backward), stepState: stepState)
         resume()
     }
@@ -124,7 +125,7 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
     private func goForward(from previousNode: Node?) {
         
         // Get the next node
-        let nextNode = currentNavigator.nodeAfter(currentNode: previousNode, branchResult: currentBranchResult)
+        let nextNode = nodeAfter(previousNode: previousNode)
         guard let node = nextNode.node,
               let nodeState = nodeState(for: node)
         else {
@@ -150,6 +151,14 @@ open class AssessmentViewModel : ObservableObject, NavigationState {
             assertionFailure("Navigation from this point is undefined for this state machine: \(node)")
             markAsFinished()
         }
+    }
+    
+    private func nodeAfter(previousNode: Node?) -> NavigationPoint {
+        let ret = currentNavigator.nodeAfter(currentNode: previousNode, branchResult: currentBranchResult)
+        if !state.showFullInstructions, let node = ret.node as? OptionalNode, node.fullInstructionsOnly {
+            return nodeAfter(previousNode: node)
+        }
+        return ret
     }
     
     private func moveToNextSection() {

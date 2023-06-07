@@ -254,7 +254,7 @@ data class SectionObject(
 @Serializable
 @SerialName("instruction")
 data class InstructionStepObject(
-    override val identifier: String,
+     override val identifier: String,
      @SerialName("image")
      override var imageInfo: ImageInfo? = null,
      override var fullInstructionsOnly: Boolean = false
@@ -437,7 +437,7 @@ data class ActiveStepObject(
 data class CountdownStepObject(
     override val identifier: String,
     override val duration: Double = 5.0,
-    override val fullInstructionsOnly: Boolean = false
+    override var fullInstructionsOnly: Boolean = false
 ) : BaseActiveStepObject(), CountdownStep {
     override var commands: Set<ActiveStepCommand>
         get() = super.commands union

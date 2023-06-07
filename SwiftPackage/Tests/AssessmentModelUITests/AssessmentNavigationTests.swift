@@ -22,6 +22,46 @@ class AssessmentNavigationTests: XCTestCase {
         super.tearDown()
     }
     
+    func testNavigation_FullInstructionsOnly() {
+        var steps: [TestStep] = TestStep.steps(from: ["introduction", "step1", "step2", "step3", "completion"])
+        steps[1].fullInstructionsOnly = true
+        
+        let taskController = TestAssessmentController(steps)
+        taskController.assessmentState.showFullInstructions = false
+        
+        guard let firstRunIds = goTo(taskController: taskController, stepCount: steps.count, stepTo: "completion")
+        else {
+            return
+        }
+        XCTAssertEqual(firstRunIds, ["introduction", "step2", "step3", "completion"])
+
+        taskController.viewModel.reviewInstructions()
+        XCTAssertEqual(taskController.assessmentState.currentStep?.node.identifier, "introduction")
+        
+        guard let secondRunIds = goTo(taskController: taskController, stepCount: steps.count, stepTo: "completion")
+        else {
+            return
+        }
+        XCTAssertEqual(secondRunIds, ["introduction", "step2", "step3", "completion", "introduction", "step1", "step2", "step3", "completion"])
+    }
+    
+    private func goTo(taskController: TestAssessmentController, stepCount: Int, stepTo: String) -> [String]? {
+        // Go to step under test
+        let loopCount = taskController.test_stepTo(stepTo)
+        guard loopCount <= stepCount else {
+            XCTFail("Possible loop of wacky madness. loopCount=\(loopCount)")
+            return nil
+        }
+
+        // Check expected state
+        
+        XCTAssertTrue(taskController.viewModel.navigationViewModel.backEnabled)
+        
+        let topHistory = taskController.assessmentState.assessmentResult.stepHistory
+        let topIds = topHistory.map { $0.identifier }
+        return topIds
+    }
+    
     func testNavigation_ForwardTo5X() {
         var steps: [Node] = []
         let beforeSteps: [Node] = TestStep.steps(from: ["introduction", "step1", "step2", "step3"])
@@ -197,7 +237,7 @@ class TestAssessmentController {
     
     init(_ children: [Node], restoredResult: AssessmentResult? = nil) {
         let assessment = AssessmentObject(identifier: "test", children: children)
-        let assessmentState = AssessmentState(assessment, restoredResult: restoredResult)
+        let assessmentState = AssessmentState(assessment, restoredResult: restoredResult, interruptionHandling: InterruptionHandlingObject(reviewIdentifier: "introduction"))
         let viewModel = AssessmentViewModel()
         viewModel.initialize(assessmentState)
         

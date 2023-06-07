@@ -29,7 +29,8 @@
           "crf_stair_step_start_3",
           "crf_stair_step_start_4"
         ]
-      }
+      },
+      "fullInstructionsOnly" : true
     },
     {
       "identifier": "step2",
@@ -39,7 +40,8 @@
       "image" : {
         "type" : "sageResource",
         "imageName" : "survey"
-      }
+      },
+      "fullInstructionsOnly" : true
     },
     {
       "identifier": "feeling",
@@ -156,6 +158,11 @@
         {"type" : "string", "placeholder" :  "Enter your last name"},
         {"type" : "string", "placeholder" :  "What are your pronouns?"}
       ]
+    },
+    {
+      "type" : "completion",
+      "identifier" : "completion",
+      "title" : "You're done!"
     }
   ]
 }
