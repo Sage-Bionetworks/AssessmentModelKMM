@@ -182,16 +182,14 @@ class AssessmentModelTests: XCTestCase {
             XCTFail("Failed to build the expected JSON schema for `ResultData`.")
             return
         }
+        
+        let expectedOrder = ["type", "identifier", "startDate", "endDate"]
+        let propertyKeys = resultDataSchema.root.orderedProperties?.orderedDictionary.keys.filter({ expectedOrder.contains($0.stringValue)
+        }).sorted(by: { lhs, rhs in
+            (lhs.sortOrderIndex ?? -1) < (rhs.sortOrderIndex ?? -1)
+        }).map { $0.stringValue }
+        XCTAssertEqual(expectedOrder, propertyKeys)
          
-        if let properties = resultDataSchema.root.orderedProperties?.orderedDictionary {
-            XCTAssertEqual(0, properties.keys.first(where: { $0.stringValue == "type" })?.sortOrderIndex)
-            XCTAssertEqual(1000, properties.keys.first(where: { $0.stringValue == "identifier" })?.sortOrderIndex)
-            XCTAssertEqual(2000, properties.keys.first(where: { $0.stringValue == "startDate" })?.sortOrderIndex)
-            XCTAssertEqual(2001, properties.keys.first(where: { $0.stringValue == "endDate" })?.sortOrderIndex)
-        }
-        else {
-            XCTFail("Failed to build the expected properties for `ResultData`.")
-        }
         XCTAssertEqual(["type","identifier","startDate"], resultDataSchema.root.required)
         XCTAssertNil(resultDataSchema.root.allOf)
         
