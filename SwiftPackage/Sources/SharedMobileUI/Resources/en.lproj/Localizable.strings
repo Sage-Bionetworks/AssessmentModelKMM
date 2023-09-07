@@ -1,0 +1,5 @@
+/* Text("Back", bundle: .module) */
+"Back" = "Back";
+
+/* .environmentObject(PagedNavigationViewModel(pageCount: 5, currentIndex: 1, buttonText: Text("Next"))) */
+"Next" = "Next";

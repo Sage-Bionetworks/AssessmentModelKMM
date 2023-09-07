@@ -17,15 +17,12 @@ let package = Package(
             targets: ["AssessmentModel"]),
         .library(
             name: "AssessmentModelUI",
-            targets: ["AssessmentModelUI"]),
+            targets: ["AssessmentModelUI", "SharedMobileUI"]),
     ],
     dependencies: [
         .package(name: "JsonModel",
                  url: "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
                  "1.6.0"..<"3.0.0"),
-        .package(name: "SharedMobileUI",
-                 url: "https://github.com/Sage-Bionetworks/SharedMobileUI-AppleOS.git",
-                 from: "0.17.0"),
         .package(name: "MobilePassiveData",
                  url: "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
                  from: "1.4.0"),
@@ -69,5 +66,14 @@ let package = Package(
                 "AssessmentModelUI",
             ],
             path: "SwiftPackage/Tests/AssessmentModelUITests"),
+        
+        .target(
+            name: "SharedMobileUI",
+            dependencies: [],
+            path: "SwiftPackage/Sources/SharedMobileUI",
+            resources: [
+                .process("Resources")
+            ]),
+
     ]
 )
