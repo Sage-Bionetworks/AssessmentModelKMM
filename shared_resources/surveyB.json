@@ -1,7 +1,7 @@
 {
   "type" : "assessment",
   "identifier" : "surveyB",
-  "$schema" : "https://sage-bionetworks.github.io/mobile-client-json/schemas/v2/AssessmentObject.json",
+  "$schema" : "https://bridgedigitalhealth.github.io/mobile-client-json/schemas/v2/AssessmentObject.json",
   "title" : "Example Survey B",
   "steps" : [
     {

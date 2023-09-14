@@ -3,20 +3,20 @@
     "pins": [
       {
         "package": "JsonModel",
-        "repositoryURL": "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
+        "repositoryURL": "https://github.com/BridgeDigitalHealth/JsonModel-Swift.git",
         "state": {
           "branch": null,
-          "revision": "cf13a8af6b09c25605f340150bb6392ea9d3c0f8",
-          "version": "2.0.0"
+          "revision": "cfab4b31cf7bdc7b9e8ab0ca9862936e9eac9257",
+          "version": "2.3.0"
         }
       },
       {
         "package": "MobilePassiveData",
-        "repositoryURL": "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
+        "repositoryURL": "https://github.com/BridgeDigitalHealth/MobilePassiveData-SDK.git",
         "state": {
           "branch": null,
-          "revision": "5c1b98eedde37fd6a898798c031f5e7d863404b3",
-          "version": "1.4.0"
+          "revision": "725caa7bc926744796620e3baaa8477a454f27c1",
+          "version": "1.6.0"
         }
       }
     ]

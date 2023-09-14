@@ -21,10 +21,10 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "JsonModel",
-                 url: "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
+                 url: "https://github.com/BridgeDigitalHealth/JsonModel-Swift.git",
                  "1.6.0"..<"3.0.0"),
         .package(name: "MobilePassiveData",
-                 url: "https://github.com/Sage-Bionetworks/MobilePassiveData-SDK.git",
+                 url: "https://github.com/BridgeDigitalHealth/MobilePassiveData-SDK.git",
                  from: "1.4.0"),
     ],
     targets: [

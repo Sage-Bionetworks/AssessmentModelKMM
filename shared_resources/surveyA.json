@@ -1,7 +1,7 @@
 {
   "type" : "assessment",
   "identifier" : "surveyA",
-  "$schema" : "https://sage-bionetworks.github.io/mobile-client-json/schemas/v2/AssessmentObject.json",
+  "$schema" : "https://bridgedigitalhealth.github.io/mobile-client-json/schemas/v2/AssessmentObject.json",
   "versionString" : "1.0.0",
   "estimatedMinutes" : 3,
   "copyright" : "Copyright © 2022 Sage Bionetworks. All rights reserved.",

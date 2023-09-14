@@ -68,7 +68,7 @@ data class AssessmentResultObject(override val identifier: String,
                                   override var endDateTime: Instant? = null,
                                   override val path: MutableList<PathMarker> = mutableListOf(),
                                   @SerialName("\$schema")
-                                  override val jsonSchema: String? = "https://sage-bionetworks.github.io/mobile-client-json/schemas/v2/AssessmentResultObject.json"
+                                  override val jsonSchema: String? = "https://bridgedigitalhealth.github.io/mobile-client-json/schemas/v2/AssessmentResultObject.json"
 )
     : AssessmentResult {
     override fun copyResult(identifier: String): AssessmentResult = this.copy(
