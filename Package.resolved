@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/BridgeDigitalHealth/JsonModel-Swift.git",
         "state": {
           "branch": null,
-          "revision": "cfab4b31cf7bdc7b9e8ab0ca9862936e9eac9257",
-          "version": "2.3.0"
+          "revision": "5d9acc0f5c1779cca3a31ca1913d684406e74f1f",
+          "version": "2.3.1"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/BridgeDigitalHealth/MobilePassiveData-SDK.git",
         "state": {
           "branch": null,
-          "revision": "725caa7bc926744796620e3baaa8477a454f27c1",
-          "version": "1.6.0"
+          "revision": "74a1f99da8f8c017d0a5adbb3584be81bb1cd9a8",
+          "version": "1.6.2"
         }
       }
     ]
