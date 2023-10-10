@@ -55,7 +55,7 @@ interface PermissionInfo {
  * set up the authorization, and in other cases, more information may be required on a subclass of the [PermissionInfo]
  * associated with this permission.
  */
-@Serializable
+@Serializable(PermissionType.Companion::class)
 sealed class PermissionType() : StringEnum {
 
     /**
@@ -82,7 +82,6 @@ sealed class PermissionType() : StringEnum {
     //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the
     //  implementation below.
 
-    @Serializer(forClass = PermissionType::class)
     companion object : KSerializer<PermissionType> {
         override val descriptor: SerialDescriptor
                 = PrimitiveSerialDescriptor("SensorType", PrimitiveKind.STRING)

@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.dokka") version "1.6.21"
+    id("org.jetbrains.dokka") version "1.9.0"
     id("maven-publish")
 }
 
@@ -30,19 +30,20 @@ allprojects {
    }
 }
 
-subprojects {
-    afterEvaluate {
-        if (project.plugins.hasPlugin("com.android.library")) {
-//            val android = this.extensions.getByName("android") as com.android.build.gradle.LibraryExtension
-//            val kotlin =
-//                this.extensions.getByType(org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension::class.java)
-
-            tasks.register<Jar>("javadocJar") {
-                val dokkaJavadoc = tasks.getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaJavadoc")
-                dependsOn(dokkaJavadoc)
-                classifier = "javadoc"
-                from(dokkaJavadoc.outputDirectory)
-            }
-        }
-    }
-}
+// TODO: This block was causing problems with build, need to figure out creating javadoc jar if we want it -nbrown 10/10/2023
+//subprojects {
+//    afterEvaluate {
+//        if (project.plugins.hasPlugin("com.android.library")) {
+////            val android = this.extensions.getByName("android") as com.android.build.gradle.LibraryExtension
+////            val kotlin =
+////                this.extensions.getByType(org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension::class.java)
+//
+//            tasks.register<Jar>("javadocJar") {
+//                val dokkaJavadoc = tasks.getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaJavadoc")
+//                dependsOn(dokkaJavadoc)
+//                //classifier = "javadoc"
+//                from(dokkaJavadoc.outputDirectory)
+//            }
+//        }
+//    }
+//}

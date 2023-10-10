@@ -47,10 +47,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    namespace = "org.sagebionetworks.assessmentmodel.presentation"
 
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     api(project(":assessmentModel"))
 
     //Workaround for compose previews not working
@@ -83,18 +85,11 @@ dependencies {
 }
 
 afterEvaluate {
-
-    tasks.register<Jar>("sourcesJar") {
-        from(android.sourceSets["main"].java.srcDirs)
-        classifier = "sources"
-    }
-
     publishing {
         publications {
             create<MavenPublication>("presentation") {
                 from(components.getByName("release"))
-                artifact(tasks.getByName("releaseSourcesJar"))
-                artifact(tasks.getByName<Jar>("javadocJar"))
+                //artifact(tasks.getByName<Jar>("javadocJar"))
             }
         }
     }

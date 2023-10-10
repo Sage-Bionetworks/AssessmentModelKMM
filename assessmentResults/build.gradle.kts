@@ -9,8 +9,16 @@ plugins {
 }
 
 kotlin {
-    android() {
+
+    jvm()
+
+    androidTarget() {
         publishAllLibraryVariants()
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     }
     
     val xcf = XCFramework()
@@ -37,8 +45,9 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        val jvmMain by getting
         val androidMain by getting
-        val androidTest by getting
+        val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -62,11 +71,17 @@ kotlin {
 
 android {
     namespace = "org.sagebionetworks.assessmentmodel.results"
-    compileSdk = 32
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
+    compileOptions {
+        sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+        targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+    }
+
 }
 
 publishing {

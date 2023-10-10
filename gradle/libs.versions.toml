@@ -2,33 +2,33 @@
 ## SDK Versions
 minSdk = "21"
 targetSdk = "31"
-compileSdk = "33"
+compileSdk = "34"
 
 # Dependencies
-coroutines = "1.6.4"
-kotlin = "1.8.20"
-kotlinxSerialization = "1.5.0"
-kotlinxDateTime = "0.4.0"
+coroutines = "1.7.2"
+kotlin = "1.9.10"
+kotlinxSerialization = "1.6.0"
+kotlinxDateTime = "0.4.1"
 koin = "3.1.5"
 kermit = "1.0.0"
 
 androidxComposeBom = "2023.04.00"
-composeCompiler = "1.4.5"
+composeCompiler = "1.5.3"
 googleAccompanist = "0.25.1"
-androidxLifecycle = "2.5.1"
+androidxLifecycle = "2.6.2"
 
 [libraries]
 
-android-desugar = "com.android.tools:desugar_jdk_libs:1.1.5"
+android-desugar = "com.android.tools:desugar_jdk_libs:2.0.3"
 
-androidx-appcompat = "androidx.appcompat:appcompat:1.5.1"
-androidx-coreKtx = "androidx.core:core-ktx:1.9.0"
+androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
+androidx-coreKtx = "androidx.core:core-ktx:1.12.0"
 androidx-lifecycle-viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-androidx-material = "com.google.android.material:material:1.6.1"
+androidx-material = "com.google.android.material:material:1.10.0"
 
-androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
+androidx-activity-compose = "androidx.activity:activity-compose:1.8.0"
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
@@ -42,7 +42,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradlePlugin-android = "com.android.tools.build:gradle:7.4.2"
+gradlePlugin-android = "com.android.tools.build:gradle:8.1.2"
 gradlePlugin-kotlinSerialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 
 junit = { module = "junit:junit", version = "4.13.2" }
@@ -56,7 +56,7 @@ kotlinx-dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
-touchlab-stately = { module = "co.touchlab:stately-common", version = "1.1.1" }
+touchlab-stately = { module = "co.touchlab:stately-common", version = "1.2.3" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 

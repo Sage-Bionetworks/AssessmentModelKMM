@@ -144,7 +144,7 @@ interface NavigationButtonActionInfo : ButtonActionInfo {
  * The [ButtonAction] is used to wrap a string keyword (extendable enum) that can be used to describe a mapping of
  * UI buttons to the image and/or text that should be displayed on the button.
  */
-@Serializable
+@Serializable(ButtonAction.Companion::class)
 sealed class ButtonAction() : StringEnum {
 
     /**
@@ -178,7 +178,6 @@ sealed class ButtonAction() : StringEnum {
     //  does not appear to have an equivalent to `RawRepresentable` which results in a lot of boiler plate like the
     //  implementation below.
 
-    @Serializer(forClass = ButtonAction::class)
     companion object : KSerializer<ButtonAction> {
         override val descriptor: SerialDescriptor
                 = PrimitiveSerialDescriptor("ButtonAction", PrimitiveKind.STRING)

@@ -29,10 +29,8 @@ class ContainerActivity: AppCompatActivity() {
 
         for (moduleInfo in assessmentRegistryProvider.modules) {
             (moduleInfo as ModuleInfoObject)?.let {
-                var theme = R.style.RoyalTheme
                 for (assessment in it.assessments) {
-                    addAssessment(assessment.title?:assessment.identifier, assessment.identifier, theme)
-                    theme = R.style.BlueberryTheme
+                    addAssessment(assessment.title?:assessment.identifier, assessment.identifier)
                 }
             }
         }

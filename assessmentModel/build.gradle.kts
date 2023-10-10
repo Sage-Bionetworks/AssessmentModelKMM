@@ -31,10 +31,13 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
+    namespace = "org.sagebionetworks.assessmentmodel"
 }
 dependencies {
     testImplementation(project(mapOf("path" to ":assessmentResults")))
     coreLibraryDesugaring(libs.android.desugar)
+    // Specify Kotlin/JVM stdlib dependency.
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -48,22 +51,26 @@ dependencies {
 val iosFrameworkName = "KotlinModel"
 
 kotlin {
-    android("androidLib") {
+    targetHierarchy.default()
+
+    jvm()
+
+    androidTarget("androidLib") {
        publishAllLibraryVariants()
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     }
 
     val xcframework = XCFramework(iosFrameworkName)
-    // ios() includes x86 sim & arm64 device
-    ios {
-        binaries.framework {
-            baseName = iosFrameworkName
-            embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE)
-            xcframework.add(this)
-        }
-    }
-    // iosSimulatorArm64() adds Apple Silicon simulator support
-    iosSimulatorArm64 {
-        binaries.framework {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
             baseName = iosFrameworkName
             embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE)
             xcframework.add(this)
@@ -85,6 +92,9 @@ kotlin {
                 implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
             }
         }
+        sourceSets["jvmMain"].dependencies {
+            implementation("org.jetbrains.kotlin:kotlin-test-junit")
+        }
         sourceSets["androidLibMain"].dependencies {
             implementation(libs.androidx.appcompat)
             implementation(platform("androidx.compose:compose-bom:${libs.versions.androidxComposeBom.get()}"))
@@ -92,9 +102,9 @@ kotlin {
         }
 
         // Set up dependencies between the source sets for Mac Silicon
-        val iosMain by getting
-        val iosSimulatorArm64Main by sourceSets.getting
-        iosSimulatorArm64Main.dependsOn(iosMain)
+//        val iosMain by getting
+//        val iosSimulatorArm64Main by sourceSets.getting
+//        iosSimulatorArm64Main.dependsOn(iosMain)
     }
 }
 

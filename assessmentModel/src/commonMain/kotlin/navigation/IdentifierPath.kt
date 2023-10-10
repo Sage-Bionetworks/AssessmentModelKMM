@@ -11,7 +11,7 @@ import kotlinx.serialization.encoding.Encoder
  * The [IdentifierPath] is intended as a light-weight serializable linked list for describing a path to a node or
  * result.
  */
-@Serializable
+@Serializable(IdentifierPath.Companion::class)
 data class IdentifierPath(val path: String) {
     @Transient val pathParts by lazy {
         path.split("/", limit = 2)
@@ -24,7 +24,6 @@ data class IdentifierPath(val path: String) {
     }
 
     // TODO: syoung 05/08/2020 Keep an eye out for inline class serialization to reduce this type of boilerplate.
-    @Serializer(forClass = IdentifierPath::class)
     companion object : KSerializer<IdentifierPath> {
         override val descriptor: SerialDescriptor
                 = PrimitiveSerialDescriptor("NodeIdentifierPath", PrimitiveKind.STRING)

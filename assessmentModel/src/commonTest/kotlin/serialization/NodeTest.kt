@@ -26,6 +26,7 @@ open class NodeTest : NodeSerializationTestHelper() {
                 }
             })
         encodeDefaults = true
+        decodeEnumsCaseInsensitive = true
     }
 
     /**

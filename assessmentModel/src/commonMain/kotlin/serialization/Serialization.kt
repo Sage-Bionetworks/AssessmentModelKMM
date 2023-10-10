@@ -24,6 +24,7 @@ object Serialization {
         val default = Json{
                 serializersModule = SerializersModule.default
                 encodeDefaults = true
+                decodeEnumsCaseInsensitive = true
         }
     }
 }

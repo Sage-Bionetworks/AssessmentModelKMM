@@ -40,11 +40,10 @@ data class FormattedValue<T>(val result: T? = null, val invalidMessage: InvalidM
  * TODO: syoung 02/12/2020 Figure out interface for Android which requires the context to access resources and locale.
  * Not certain what is the best way to describe and implement the serialization for this.
  */
-@Serializable
+@Serializable(InvalidMessageObject.Companion::class)
 data class InvalidMessageObject(val string: String) : InvalidMessage {
     override fun toString(): String = Localization.localizeString(string)
 
-    @Serializer(forClass = InvalidMessageObject::class)
     companion object : KSerializer<InvalidMessageObject> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("InvalidMessageObject", PrimitiveKind.STRING)

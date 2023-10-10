@@ -20,6 +20,7 @@ open class ResultTest {
     private val jsonCoder = Json{
         serializersModule = resultSerializersModule + answerTypeSerializersModule
         encodeDefaults = true
+        decodeEnumsCaseInsensitive = true
     }
 
     @BeforeTest
