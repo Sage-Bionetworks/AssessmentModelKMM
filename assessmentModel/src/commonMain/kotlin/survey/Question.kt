@@ -55,7 +55,7 @@ interface Question : ContentNode {
     /**
      * Override [createResult] to return an [AnswerResult] by default.
      */
-    override fun createResult(): AnswerResult = AnswerResultObject(resultId(), answerType)
+    override fun createResult(): AnswerResult = AnswerResultObject(resultId(), answerType, questionText = this.title)
 }
 
 /**
