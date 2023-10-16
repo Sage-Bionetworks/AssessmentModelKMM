@@ -610,7 +610,8 @@ enum class ActiveStepCommand : StringEnum {
 /**
  * The [SpokenInstructionTiming] is a serializable class used to describe the timing of spoken instructions.
  */
-@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable(SpokenInstructionTiming.Companion::class)
 sealed class SpokenInstructionTiming : StringEnum {
 
     /**
@@ -639,7 +640,6 @@ sealed class SpokenInstructionTiming : StringEnum {
     }
 
     @ExperimentalSerializationApi
-    @Serializer(forClass = SpokenInstructionTiming::class)
     companion object : KSerializer<SpokenInstructionTiming> {
         override val descriptor: SerialDescriptor =
             PrimitiveSerialDescriptor("SpokenInstructionTiming", PrimitiveKind.STRING)

@@ -31,12 +31,3 @@ expect object DateUtils {
     fun instantFromBridgeIsoDateTimeString(dateString: String) : Instant
 
 }
-
-expect class Product {
-    val user: String
-}
-
-expect object Factory {
-    fun create(config: Map<String, String>): Product
-    val platform: String
-}

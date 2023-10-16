@@ -45,6 +45,7 @@ android {
     }
 
     testOptions.unitTests.isIncludeAndroidResources = true
+    namespace = "org.sagebionetworks.assessmentmodel.sampleapp"
 }
 
 

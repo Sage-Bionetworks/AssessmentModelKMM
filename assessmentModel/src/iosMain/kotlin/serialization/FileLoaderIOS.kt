@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -24,6 +25,7 @@ class FileLoaderIOS() : FileLoader {
 fun ResourceInfo.bundle() : NSBundle
         = this.bundleIdentifier?.let { NSBundle.bundleWithIdentifier(it) } ?: (this.decoderBundle as? NSBundle) ?: NSBundle.mainBundle()
 
+@OptIn(ExperimentalForeignApi::class)
 internal fun NSBundle.loadString(filename: String, ext: String = "json") : String {
     val url = this.URLForResource(filename, ext) ?: throw NullPointerException("Could not load '$filename' from '${this.bundleIdentifier ?: "null"}'")
     return NSString.stringWithContentsOfURL(url, NSUTF8StringEncoding, null) ?: throw NullPointerException("Could not load string from $filename")

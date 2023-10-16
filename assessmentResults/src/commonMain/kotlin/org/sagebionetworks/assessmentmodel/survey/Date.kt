@@ -84,13 +84,3 @@ data class DateTimeComponents(val year: Int? = null,
 @Serializable
 data class DateTimeReference(val dateTimeString: String, val timezoneIdentifier: String? = null)
 
-
-expect class DateTime : Comparable<DateTime> {
-    constructor(dateTimeReference: DateTimeReference)
-    constructor(iso8601Format: String, includeTimeZoneIdentifier: Boolean = false)
-    constructor(parts: List<DateTimePart>)
-    val iso8601Format: String
-    fun getDateTimeParts(): List<DateTimePart>
-    fun getDateTimeReference(): DateTimeReference
-    fun getDateTimeComponents(): DateTimeComponents
-}
