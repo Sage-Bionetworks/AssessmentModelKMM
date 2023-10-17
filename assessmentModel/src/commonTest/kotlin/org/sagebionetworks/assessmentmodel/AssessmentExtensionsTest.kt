@@ -2,7 +2,6 @@ package org.sagebionetworks.assessmentmodel
 
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.navigation.Direction
@@ -14,6 +13,7 @@ import org.sagebionetworks.assessmentmodel.survey.Question
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class AssessmentExtensionsTest {
 
@@ -207,7 +207,7 @@ class AssessmentExtensionsTest {
             val node = children.first { it.resultId() == column.columnName } as Question
             val result = node.createResult() as AnswerResult
             // Check that the column type matches the baseType of the result
-            assertEquals(result.answerType, column.type)
+            assertEquals(result.answerType, column.answerType)
             assertEquals(node.title, column.questionTitle)
         }
     }
@@ -246,19 +246,19 @@ class AssessmentExtensionsTest {
             val childResult = child.createResult()
             if (childResult is AnswerResult) {
                 childResult.jsonValue = when (childResult.answerType!!) {
-                    is AnswerType.Measurement -> JsonPrimitive(2.0)
+                    is AnswerType.Measurement -> fail("Not currently tested.")
                     is AnswerType.Time -> JsonPrimitive("10:15")
-                    is AnswerType.DateTime -> JsonPrimitive("2020-01-21T12:00:00.000-03:00")
+                    is AnswerType.DateTime -> fail("Not currently tested.")
                     is AnswerType.Duration -> JsonPrimitive(8.0)
                     is AnswerType.INTEGER -> JsonPrimitive(1)
-                    is AnswerType.Decimal -> JsonPrimitive(1.0)
-                    is AnswerType.BOOLEAN -> JsonPrimitive(true)
+                    is AnswerType.Decimal -> fail("Not currently tested.")
+                    is AnswerType.BOOLEAN -> fail("Not currently tested.")
                     is AnswerType.STRING -> JsonPrimitive("Test String")
                     is AnswerType.Array -> {
                         if ((childResult.answerType as AnswerType.Array).baseType == BaseType.INTEGER) {
-                            JsonArray(listOf(JsonPrimitive(1), JsonPrimitive(2)))
+                            fail("Not currently tested.")
                         } else {
-                            JsonArray(listOf(JsonPrimitive("Choice 1"), JsonPrimitive("Choice 2")))
+                            JsonArray(listOf(JsonPrimitive("Choice A"), JsonPrimitive("Choice B")))
                         }
                     }
                     is AnswerType.OBJECT -> JsonObject(mapOf(Pair("Test Key", JsonPrimitive("Test value"))))

@@ -1,10 +1,12 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
 import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
+import org.sagebionetworks.assessmentmodel.survey.ChoiceSelectorType
 
 
 /**
@@ -19,9 +21,9 @@ fun Assessment.toFlatAnswersDefinition(): List<AnswerColumn> {
 
 data class AnswerColumn(
     val columnName: String,
-    val type: AnswerType,
+    val answerType: AnswerType,
     val questionTitle: String?,
-    val choices: Map<JsonPrimitive, String>? = null,
+    val choices: Map<String, String>? = null,
 )
 
 private class FlatAnswersDefinitionGenerator(private val assessment: Assessment) {
@@ -47,11 +49,16 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
         }
 
         if (result is AnswerResult && result.answerType != null) {
-            var choices: Map<JsonPrimitive, String>? = null
+            var choices: Map<String, String>? = null
             if (node is ChoiceQuestion) {
-                choices = node.choices.associate { Pair(it.jsonValue(true)!!, it.label) }
+                choices = node.choices.mapNotNull {
+                    val value = it.jsonValue(true)
+                    if (it.selectorType == ChoiceSelectorType.Default && value != null && value !is JsonNull) {
+                        Pair(value.content, it.label)
+                    } else null
+                }.toMap()
             }
-            val colName = path?: result.identifier
+            val colName = path ?: result.identifier
             columns.add(AnswerColumn(colName, result.answerType!!, result.questionText, choices))
         }
 
@@ -112,7 +119,7 @@ private class FlatAnswersGenerator(private val result: Result) {
             stringValue = when (jsonType) {
                 BaseType.ARRAY -> {
                     jsonValue.jsonArray.let { array ->
-                        val answers = array.map { (it as? JsonPrimitive)?.content }
+                        val answers = array.map { (it as? JsonPrimitive)?.content?.replace(",", "_") }
                         answers.joinToString(",")
                     }
                 }
