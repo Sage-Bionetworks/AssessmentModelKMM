@@ -41,11 +41,11 @@ val answerTypeSerializersModule = SerializersModule {
  */
 @Serializable
 abstract class AnswerType {
-    abstract val baseType: BaseType
+    abstract val jsonType: BaseType
     open val serialKind: SerialKind
-        get() = baseType.serialKind
+        get() = jsonType.serialKind
 
-    open fun jsonElementFor(value: Any): JsonElement = baseType.jsonElementFor(value)
+    open fun jsonElementFor(value: Any): JsonElement = jsonType.jsonElementFor(value)
 
     /**
      * Convenience method for use with iOS apps that cannot use default values in the initializer.
@@ -57,21 +57,21 @@ abstract class AnswerType {
     @Serializable
     @SerialName("measurement")
     data class Measurement(val unit: String? = null) : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.NUMBER
     }
 
     @Serializable
     @SerialName("date-time")
     data class DateTime(val codingFormat: String = ISO8601Format.Timestamp.formatString) : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.STRING
     }
 
     @Serializable
     @SerialName("time")
     data class Time(val codingFormat: String = ISO8601Format.TimeOnly.formatString) : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.STRING
     }
 
@@ -81,14 +81,18 @@ abstract class AnswerType {
         val displayUnits: List<DurationUnit> = DurationUnit.defaultUnits,
         val significantDigits: Int = 0
     ) : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.NUMBER
     }
 
     @Serializable
     @SerialName("array")
-    data class Array(override val baseType: BaseType = BaseType.STRING,
+    data class Array(val baseType: BaseType = BaseType.STRING,
                     val sequenceSeparator: String? = null) : AnswerType() {
+
+        override val jsonType: BaseType
+            get() = BaseType.ARRAY
+
         override val serialKind: SerialKind
             get() = StructureKind.LIST
         override fun jsonElementFor(value: Any): JsonElement {
@@ -108,35 +112,35 @@ abstract class AnswerType {
     @Serializable
     @SerialName("object")
     object OBJECT : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.OBJECT
     }
 
     @Serializable
     @SerialName("string")
     object STRING : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.STRING
     }
 
     @Serializable
     @SerialName("integer")
     object INTEGER : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.INTEGER
     }
 
     @Serializable
     @SerialName("number")
     data class Decimal(val significantDigits: Int? = null) : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.NUMBER
     }
 
     @Serializable
     @SerialName("boolean")
     object BOOLEAN : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.BOOLEAN
     }
 
@@ -147,7 +151,7 @@ abstract class AnswerType {
     @Serializable
     @SerialName("null")
     object NULL : AnswerType() {
-        override val baseType: BaseType
+        override val jsonType: BaseType
             get() = BaseType.STRING
         override fun jsonElementFor(value: Any): JsonElement = JsonNull
     }

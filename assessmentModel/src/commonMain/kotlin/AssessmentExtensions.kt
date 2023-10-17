@@ -1,11 +1,10 @@
 package org.sagebionetworks.assessmentmodel
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
-import org.sagebionetworks.assessmentmodel.serialization.Serialization
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
+import org.sagebionetworks.assessmentmodel.survey.ChoiceQuestion
 
 
 /**
@@ -20,8 +19,9 @@ fun Assessment.toFlatAnswersDefinition(): List<AnswerColumn> {
 
 data class AnswerColumn(
     val columnName: String,
-    val type: BaseType,
-    val questionTitle: String?
+    val type: AnswerType,
+    val questionTitle: String?,
+    val choices: Map<JsonPrimitive, String>? = null,
 )
 
 private class FlatAnswersDefinitionGenerator(private val assessment: Assessment) {
@@ -39,11 +39,7 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
         val result = node.createResult()
         val pathSuffix = stepPath?.let { "${it}_" } ?: ""
         val identifier = result.identifier
-        var path : String? = "$pathSuffix$identifier"
-        if (node is Assessment && stepPath == null) {
-            // This is to prevent the assessment identifier from being included
-            path = null
-        }
+        val path : String? = if (node is Assessment && stepPath == null) null else "$pathSuffix$identifier"
         if (node is NodeContainer) {
             for(child in node.children) {
                 recursiveAdd(child, path)
@@ -51,9 +47,12 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
         }
 
         if (result is AnswerResult && result.answerType != null) {
+            var choices: Map<JsonPrimitive, String>? = null
+            if (node is ChoiceQuestion) {
+                choices = node.choices.associate { Pair(it.jsonValue(true)!!, it.label) }
+            }
             val colName = path?: result.identifier
-            val type = result.answerType!!.baseType
-            columns.add(AnswerColumn(colName, type, result.questionText))
+            columns.add(AnswerColumn(colName, result.answerType!!, result.questionText, choices))
         }
 
     }
@@ -66,24 +65,15 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
  */
 fun AssessmentResult.toFlatAnswers(): Map<String, String> {
     return FlatAnswersGenerator(this).build().mapValues{
-        Serialization.JsonCoder.default.encodeToString(it.value)
+        return FlatAnswersGenerator(this).build()
     }
-}
-
-/**
- * Get a flattened map of result identifier to result value as a [JsonElement]. The key is defined
- * as <SectionID>_<NodeID>, for most surveys it will just be the identifier of the question.
- * The keys match the column names returned by [Assessment.toFlatAnswersDefinition]
- */
-fun AssessmentResult.toFlatAnswersJson(): Map<String, JsonElement> {
-    return FlatAnswersGenerator(this).build()
 }
 
 private class FlatAnswersGenerator(private val result: Result) {
 
-    private val answers: MutableMap<String, JsonElement> = mutableMapOf()
+    private val answers: MutableMap<String, String> = mutableMapOf()
 
-    fun build(): Map<String, JsonElement> {
+    fun build(): Map<String, String> {
         if (answers.isEmpty()) {
             recursiveAdd(result)
         }
@@ -93,11 +83,7 @@ private class FlatAnswersGenerator(private val result: Result) {
     private fun recursiveAdd(result: Result, stepPath: String? = null) {
         val pathSuffix = stepPath?.let { "${it}_" } ?: ""
         val identifier = result.identifier
-        var path : String? = "$pathSuffix$identifier"
-        if (result is AssessmentResult && stepPath == null) {
-            // This is to prevent the assessment identifier from being included
-            path = null
-        }
+        val path : String? = if (result is AssessmentResult && stepPath == null) null else "$pathSuffix$identifier"
 
         if (result is BranchNodeResult) {
             recursiveAddResults(result.pathHistoryResults, path)
@@ -105,6 +91,7 @@ private class FlatAnswersGenerator(private val result: Result) {
         } else if (result is CollectionResult) {
             recursiveAddResults(result.inputResults, path)
         }
+        // In theory a BranchNodeResult or CollectionResult could also implement AnswerResult
         if (result is AnswerResult) {
             addAnswerResult(result, path)
         }
@@ -117,18 +104,29 @@ private class FlatAnswersGenerator(private val result: Result) {
     }
 
     private fun addAnswerResult(result: AnswerResult, path: String?) {
-        var baseType = result.answerType?.baseType ?: return
+        val jsonType = result.answerType?.jsonType ?: return
         val key = path ?: result.identifier
-        var jsonValue = result.jsonValue
-        if (baseType == BaseType.ARRAY) {
-            baseType = BaseType.STRING
-            jsonValue = jsonValue?.jsonArray?.let { array ->
-                val answers = array.map { it.toString() }
-                JsonPrimitive(answers.joinToString(","))
+        val jsonValue = result.jsonValue
+        var stringValue: String? = null
+        if (jsonValue != null) {
+            stringValue = when (jsonType) {
+                BaseType.ARRAY -> {
+                    jsonValue.jsonArray.let { array ->
+                        val answers = array.map { (it as? JsonPrimitive)?.content }
+                        answers.joinToString(",")
+                    }
+                }
+                BaseType.OBJECT -> {
+                    jsonValue.toString()
+                }
+                else -> {
+                    // Using content field so as to get string without quotes
+                    (jsonValue as? JsonPrimitive)?.content
+                }
             }
         }
-        if (jsonValue != null) {
-            answers[key] = jsonValue
+        if (stringValue != null) {
+            answers[key] = stringValue
         }
     }
 

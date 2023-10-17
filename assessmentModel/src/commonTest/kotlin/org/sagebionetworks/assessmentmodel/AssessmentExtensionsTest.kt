@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel
 
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -7,6 +8,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import org.sagebionetworks.assessmentmodel.navigation.Direction
 import org.sagebionetworks.assessmentmodel.serialization.AssessmentObject
 import org.sagebionetworks.assessmentmodel.serialization.Serialization
+import org.sagebionetworks.assessmentmodel.survey.AnswerType
 import org.sagebionetworks.assessmentmodel.survey.BaseType
 import org.sagebionetworks.assessmentmodel.survey.Question
 import kotlin.test.Test
@@ -194,7 +196,8 @@ class AssessmentExtensionsTest {
 
     @Test
     fun testToFlatAnswersDefinition() {
-        val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(assessmentJson)
+        val serializer = PolymorphicSerializer(Assessment::class)
+        val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(serializer, assessmentJson)
         val columns = assessment.toFlatAnswersDefinition()
         val children = (assessment as AssessmentObject).children
         assertEquals(9, columns.size)
@@ -204,16 +207,17 @@ class AssessmentExtensionsTest {
             val node = children.first { it.resultId() == column.columnName } as Question
             val result = node.createResult() as AnswerResult
             // Check that the column type matches the baseType of the result
-            assertEquals(result.answerType!!.baseType, column.type)
+            assertEquals(result.answerType, column.type)
             assertEquals(node.title, column.questionTitle)
         }
     }
 
     @Test
     fun testToFlatAnswersJson() {
-        val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(assessmentJson)
+        val serializer = PolymorphicSerializer(Assessment::class)
+        val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(serializer, assessmentJson)
         val result = buildResults(assessment as AssessmentObject)
-        val answers = result.toFlatAnswersJson()
+        val answers = result.toFlatAnswers()
         assertEquals(9, answers.size)
         val columns = assessment.toFlatAnswersDefinition()
         assertEquals(9, columns.size)
@@ -221,16 +225,16 @@ class AssessmentExtensionsTest {
             // Verify that the keys to the answers match the column names in the definition
             assertTrue(answers.containsKey(column.columnName))
         }
-        val expectedAnswers = mapOf<String, JsonElement>(
-            "time_xmx" to JsonPrimitive("Test String"),
-            "duration_nwr" to JsonPrimitive(1.0),
-            "likert_scale_bjj" to JsonPrimitive(1),
-            "sliderQ_dfjwnf" to JsonPrimitive(1),
-            "numericQ_rqmrrj" to JsonPrimitive(1),
-            "yearQ_rwphsn" to JsonPrimitive(1),
-            "free_text_qfj" to JsonPrimitive("Test String"),
-            "single_select_xnn" to JsonPrimitive("Test String"),
-            "multiple_select_rqk" to JsonPrimitive("Test String")
+        val expectedAnswers = mapOf(
+            "time_xmx" to "10:15",
+            "duration_nwr" to "8.0",
+            "likert_scale_bjj" to "1",
+            "sliderQ_dfjwnf" to "1",
+            "numericQ_rqmrrj" to "1",
+            "yearQ_rwphsn" to "1",
+            "free_text_qfj" to "Test String",
+            "single_select_xnn" to "Test String",
+            "multiple_select_rqk" to "Choice 1,Choice 2"
         )
         assertEquals(expectedAnswers, answers)
 
@@ -241,13 +245,24 @@ class AssessmentExtensionsTest {
         for (child in assessmentObject.children) {
             val childResult = child.createResult()
             if (childResult is AnswerResult) {
-                childResult.jsonValue = when (childResult.answerType!!.baseType) {
-                    BaseType.BOOLEAN -> JsonPrimitive(false)
-                    BaseType.NUMBER -> JsonPrimitive(1.0)
-                    BaseType.INTEGER -> JsonPrimitive(1)
-                    BaseType.STRING -> JsonPrimitive("Test String")
-                    BaseType.ARRAY -> JsonArray(listOf(JsonPrimitive("Choice 1"), JsonPrimitive("Choice 2")))
-                    BaseType.OBJECT -> JsonObject(mapOf(Pair("Test Key", JsonPrimitive("Test value"))))
+                childResult.jsonValue = when (childResult.answerType!!) {
+                    is AnswerType.Measurement -> JsonPrimitive(2.0)
+                    is AnswerType.Time -> JsonPrimitive("10:15")
+                    is AnswerType.DateTime -> JsonPrimitive("2020-01-21T12:00:00.000-03:00")
+                    is AnswerType.Duration -> JsonPrimitive(8.0)
+                    is AnswerType.INTEGER -> JsonPrimitive(1)
+                    is AnswerType.Decimal -> JsonPrimitive(1.0)
+                    is AnswerType.BOOLEAN -> JsonPrimitive(true)
+                    is AnswerType.STRING -> JsonPrimitive("Test String")
+                    is AnswerType.Array -> {
+                        if ((childResult.answerType as AnswerType.Array).baseType == BaseType.INTEGER) {
+                            JsonArray(listOf(JsonPrimitive(1), JsonPrimitive(2)))
+                        } else {
+                            JsonArray(listOf(JsonPrimitive("Choice 1"), JsonPrimitive("Choice 2")))
+                        }
+                    }
+                    is AnswerType.OBJECT -> JsonObject(mapOf(Pair("Test Key", JsonPrimitive("Test value"))))
+                    else -> throw UnsupportedOperationException("Unknown AnswerType")
                 }
             }
             result.pathHistoryResults.add(childResult)
