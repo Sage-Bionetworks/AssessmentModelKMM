@@ -26,7 +26,23 @@ data class AnswerColumn(
     val choices: Map<String, String>? = null,
 )
 
-private class FlatAnswersDefinitionGenerator(private val assessment: Assessment) {
+/**
+ * Use a shared base class so that the column name and path are built using the same rules for
+ * both the answers and the column headers.
+ */
+internal abstract class BaseFlatAnswersGenerator {
+    protected fun appendedPath(isAssessment: Boolean, result: Result, stepPath: String? = null): String? {
+        val pathSuffix = stepPath?.let { "${it}_" } ?: ""
+        val identifier = result.identifier
+        return if (isAssessment && stepPath == null) null else "$pathSuffix$identifier"
+    }
+
+    protected fun columnName(result: Result, path: String? = null): String {
+        return path ?: result.identifier
+    }
+}
+
+private class FlatAnswersDefinitionGenerator(private val assessment: Assessment) : BaseFlatAnswersGenerator() {
 
     private val columns: MutableList<AnswerColumn> = mutableListOf()
 
@@ -39,9 +55,7 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
 
     private fun recursiveAdd(node: ResultMapElement, stepPath: String? = null) {
         val result = node.createResult()
-        val pathSuffix = stepPath?.let { "${it}_" } ?: ""
-        val identifier = result.identifier
-        val path : String? = if (node is Assessment && stepPath == null) null else "$pathSuffix$identifier"
+        val path : String? = appendedPath(node is Assessment, result, stepPath)
         if (node is NodeContainer) {
             for(child in node.children) {
                 recursiveAdd(child, path)
@@ -58,7 +72,7 @@ private class FlatAnswersDefinitionGenerator(private val assessment: Assessment)
                     } else null
                 }.toMap()
             }
-            val colName = path ?: result.identifier
+            val colName = columnName(result, path)
             columns.add(AnswerColumn(colName, result.answerType!!, result.questionText, choices))
         }
 
@@ -76,7 +90,7 @@ fun AssessmentResult.toFlatAnswers(): Map<String, String> {
     }
 }
 
-private class FlatAnswersGenerator(private val result: Result) {
+private class FlatAnswersGenerator(private val result: Result)  : BaseFlatAnswersGenerator() {
 
     private val answers: MutableMap<String, String> = mutableMapOf()
 
@@ -88,9 +102,7 @@ private class FlatAnswersGenerator(private val result: Result) {
     }
 
     private fun recursiveAdd(result: Result, stepPath: String? = null) {
-        val pathSuffix = stepPath?.let { "${it}_" } ?: ""
-        val identifier = result.identifier
-        val path : String? = if (result is AssessmentResult && stepPath == null) null else "$pathSuffix$identifier"
+        val path = appendedPath(result is AssessmentResult, result, stepPath)
 
         if (result is BranchNodeResult) {
             recursiveAddResults(result.pathHistoryResults, path)
@@ -112,7 +124,7 @@ private class FlatAnswersGenerator(private val result: Result) {
 
     private fun addAnswerResult(result: AnswerResult, path: String?) {
         val jsonType = result.answerType?.jsonType ?: return
-        val key = path ?: result.identifier
+        val key = columnName(result, path)
         val jsonValue = result.jsonValue
         var stringValue: String? = null
         if (jsonValue != null) {
