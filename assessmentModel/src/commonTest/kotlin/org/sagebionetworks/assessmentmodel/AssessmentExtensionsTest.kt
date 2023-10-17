@@ -234,7 +234,7 @@ class AssessmentExtensionsTest {
             "yearQ_rwphsn" to "1",
             "free_text_qfj" to "Test String",
             "single_select_xnn" to "Test String",
-            "multiple_select_rqk" to "Choice 1,Choice 2"
+            "multiple_select_rqk" to "Choice A,Choice B"
         )
         assertEquals(expectedAnswers, answers)
 
