@@ -12,6 +12,7 @@ import org.sagebionetworks.assessmentmodel.survey.BaseType
 import org.sagebionetworks.assessmentmodel.survey.Question
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -29,6 +30,28 @@ class AssessmentExtensionsTest {
             "canSaveForLater": true
           },
           "steps": [
+          {
+                "identifier": "foobar",
+                "type": "section",
+                "title": "Hello World!",
+                "subtitle": "Subtitle",
+                "detail": "Some text. This is a test.",
+                "icon": "fooIcon",
+                "footnote": "This is a footnote.",
+                "shouldHideActions": ["goBackward"],
+                "progressMarkers": ["step1","step2"],
+                "steps": [
+                    {
+                      "type": "simpleQuestion",
+                      "identifier": "integer_question",
+                      "title": "Integer",
+                      "uiHint": "textfield",
+                      "inputItem": {
+                        "type": "integer"
+                      }
+                    }
+                ]
+            },
             {
               "type": "overview",
               "identifier": "overview",
@@ -200,11 +223,12 @@ class AssessmentExtensionsTest {
         val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(serializer, assessmentJson)
         val columns = assessment.toFlatAnswersDefinition()
         val children = (assessment as AssessmentObject).children
-        assertEquals(9, columns.size)
-        assertEquals(12, children.size) // Includes instruction steps
+        assertEquals(10, columns.size)
+        assertEquals(13, children.size) // Includes instruction steps
         for (column in columns) {
             // Check that columnName matches the identifier of a node in the assessment
-            val node = children.first { it.resultId() == column.columnName } as Question
+            val node = findNode(assessment, column) as? Question
+            assertNotNull(node)
             val result = node.createResult() as AnswerResult
             // Check that the column type matches the baseType of the result
             assertEquals(result.answerType, column.answerType)
@@ -212,20 +236,39 @@ class AssessmentExtensionsTest {
         }
     }
 
+    private fun findNode(node: NodeContainer, column: AnswerColumn, stepPath: String? = null) : Node? {
+        for (child in node.children) {
+            val pathSuffix = stepPath?.let { "${it}_" } ?: ""
+            val identifier = child.resultId()
+            val path =  "$pathSuffix$identifier"
+            if (path == column.columnName) {
+                return child
+            }
+            if (child is NodeContainer) {
+                val foundNode = findNode(child, column, path)
+                if (foundNode != null) {
+                    return foundNode
+                }
+            }
+        }
+        return null
+    }
+
     @Test
     fun testToFlatAnswersJson() {
         val serializer = PolymorphicSerializer(Assessment::class)
         val assessment: Assessment = Serialization.JsonCoder.default.decodeFromString(serializer, assessmentJson)
         val result = buildResults(assessment as AssessmentObject)
-        val answers = result.toFlatAnswers()
-        assertEquals(9, answers.size)
+        val answers = (result as AssessmentResult).toFlatAnswers()
+        assertEquals(10, answers.size)
         val columns = assessment.toFlatAnswersDefinition()
-        assertEquals(9, columns.size)
+        assertEquals(10, columns.size)
         for (column in columns) {
             // Verify that the keys to the answers match the column names in the definition
             assertTrue(answers.containsKey(column.columnName))
         }
         val expectedAnswers = mapOf(
+            "foobar_integer_question" to "1",
             "time_xmx" to "10:15",
             "duration_nwr" to "8.0",
             "likert_scale_bjj" to "1",
@@ -240,9 +283,14 @@ class AssessmentExtensionsTest {
 
     }
 
-    private fun buildResults(assessmentObject: AssessmentObject) : AssessmentResult {
+    private fun buildResults(assessmentObject: NodeContainer) : BranchNodeResult {
         val result = assessmentObject.createResult()
         for (child in assessmentObject.children) {
+            if (child is NodeContainer) {
+                val childResult = buildResults(child)
+                result.pathHistoryResults.add(childResult)
+                result.path.add(PathMarker(child.identifier, Direction.Forward))
+            }
             val childResult = child.createResult()
             if (childResult is AnswerResult) {
                 childResult.jsonValue = when (childResult.answerType!!) {
