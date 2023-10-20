@@ -112,7 +112,7 @@ interface ChoiceOption {
      * While Kotlin does not allow for extending a final class to allow implementing an interface, it is assumed that
      * the returned value is something that the associated result can encode to JSON.
      */
-    fun jsonValue(selected: Boolean): JsonElement?
+    fun jsonValue(selected: Boolean): JsonPrimitive?
 
     /**
      * A localized label (ie. title or text) to display for this choice.
@@ -154,7 +154,7 @@ interface CheckboxInputItem : ChoiceInputItem {
         get() = AnswerType.BOOLEAN
     override val iconName: String?
         get() = null
-    override fun jsonValue(selected: Boolean): JsonElement?
+    override fun jsonValue(selected: Boolean): JsonPrimitive?
             = if (selected) JsonPrimitive(true) else JsonPrimitive(false)
 }
 

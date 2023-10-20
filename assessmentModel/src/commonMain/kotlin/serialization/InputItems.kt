@@ -174,7 +174,7 @@ data class CheckboxInputItemObject(@SerialName("identifier")
                                    override val label: String) : CheckboxInputItem
 
 @Serializable
-data class JsonChoiceObject(val value: JsonElement = JsonNull,
+data class JsonChoiceObject(val value: JsonPrimitive = JsonNull,
                             val text: String? = null,
                             @SerialName("icon")
                             override val iconName: String? = null,
@@ -182,7 +182,7 @@ data class JsonChoiceObject(val value: JsonElement = JsonNull,
                             override val detail: String? = null) : ChoiceOption {
     override val label: String
         get() = text ?: value.toString()
-    override fun jsonValue(selected: Boolean): JsonElement? = if (selected) value else null
+    override fun jsonValue(selected: Boolean): JsonPrimitive? = if (selected) value else null
 }
 
 /**

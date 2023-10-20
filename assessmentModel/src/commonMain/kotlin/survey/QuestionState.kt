@@ -140,7 +140,7 @@ abstract class AbstractQuestionFieldStateImpl : QuestionFieldState {
             question is ChoiceQuestion -> {
                 val choiceAnswers = question.choices.map { it.jsonValue(true) }
                 if (question.singleAnswer) {
-                    if (choiceAnswers.contains(answer)) null else answer
+                    if (choiceAnswers.contains(answer as? JsonPrimitive)) null else answer
                 } else if (answer is JsonArray) {
                     answer.minus(choiceAnswers).firstOrNull()
                 } else {

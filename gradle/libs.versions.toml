@@ -12,7 +12,7 @@ kotlinxDateTime = "0.4.1"
 koin = "3.1.5"
 kermit = "1.0.0"
 
-androidxComposeBom = "2023.04.00"
+androidxComposeBom = "2023.10.00"
 composeCompiler = "1.5.3"
 googleAccompanist = "0.25.1"
 androidxLifecycle = "2.6.2"
