@@ -31,7 +31,7 @@ class AssessmentExtensionsTest {
           },
           "steps": [
           {
-                "identifier": "foobar",
+                "identifier": "testSection",
                 "type": "section",
                 "title": "Hello World!",
                 "subtitle": "Subtitle",
@@ -268,7 +268,7 @@ class AssessmentExtensionsTest {
             assertTrue(answers.containsKey(column.columnName))
         }
         val expectedAnswers = mapOf(
-            "foobar_integer_question" to "1",
+            "testSection_integer_question" to "1",
             "time_xmx" to "10:15",
             "duration_nwr" to "8.0",
             "likert_scale_bjj" to "1",
