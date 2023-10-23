@@ -16,12 +16,12 @@ jobs:
       with:
         java-version: 17
     - name: Build Assessment Model
-      run: ./gradlew :assessmentModel:build
+      run: ./gradlew :assessmentmodel:build
     - name: Upload debug aar
       uses: actions/upload-artifact@v1
       with:
           name: androidAssessmentModel-debug-aar
-          path: assessmentModel/build/outputs/aar/assessmentModel-debug.aar
+          path: assessmentmodel/build/outputs/aar/assessmentmodel-debug.aar
     - name: Build debug APK
       run: bash ./gradlew assembleDebug --stacktrace
     - name: Upload APK
