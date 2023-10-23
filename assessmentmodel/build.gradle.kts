@@ -34,7 +34,7 @@ android {
     namespace = "org.sagebionetworks.assessmentmodel"
 }
 dependencies {
-    testImplementation(project(mapOf("path" to ":assessmentResults")))
+    testImplementation(project(mapOf("path" to ":assessmentresults")))
     coreLibraryDesugaring(libs.android.desugar)
     // Specify Kotlin/JVM stdlib dependency.
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
@@ -80,7 +80,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":assessmentResults"))
+                api(project(":assessmentresults"))
                 api(libs.kotlinx.serialization)
                 api(libs.kotlinx.dateTime)
                 implementation(libs.coroutines.core)

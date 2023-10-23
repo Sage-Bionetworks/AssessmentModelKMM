@@ -53,7 +53,7 @@ android {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    api(project(":assessmentModel"))
+    api(project(":assessmentmodel"))
 
     //Workaround for compose previews not working
     // https://stackoverflow.com/questions/71812710/can-no-longer-view-jetpack-compose-previews-failed-to-instantiate-one-or-more-c
