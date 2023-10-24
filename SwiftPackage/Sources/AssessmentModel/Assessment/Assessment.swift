@@ -101,6 +101,11 @@ open class AbstractNodeContainerObject : AbstractContentNodeObject, AsyncActionC
                             "A list of elements used to describe the configuration for background actions.")
         }
     }
+    
+    open override func shouldHideButton(_ buttonType: ButtonType, node: Node) -> Bool? {
+        guard shouldHideButtons.contains(buttonType) else { return nil }
+        return children.contains(where: { $0.identifier == node.identifier })
+    }
 }
 
 open class AbstractSectionObject : AbstractNodeContainerObject, BranchNode, NavigationRule {

@@ -195,8 +195,12 @@ class TestAssessmentController {
     let assessmentState: AssessmentState
     let viewModel: AssessmentViewModel
     
-    init(_ children: [Node], restoredResult: AssessmentResult? = nil) {
+    convenience init(_ children: [Node], restoredResult: AssessmentResult? = nil) {
         let assessment = AssessmentObject(identifier: "test", children: children)
+        self.init(assessment, restoredResult: restoredResult)
+    }
+    
+    init(_ assessment: AssessmentObject, restoredResult: AssessmentResult? = nil) {
         let assessmentState = AssessmentState(assessment, restoredResult: restoredResult)
         let viewModel = AssessmentViewModel()
         viewModel.initialize(assessmentState)

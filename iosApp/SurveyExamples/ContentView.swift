@@ -37,23 +37,25 @@ struct ContentView: View {
     
     struct AssessmentListener : View {
         @ObservedObject var viewModel: ViewModel
-        @ObservedObject var state: AssessmentState
         
         init(_ viewModel: ViewModel) {
             self.viewModel = viewModel
-            self.state = viewModel.current!
         }
         
         var body: some View {
-            AssessmentView(state)
-                .onChange(of: state.status) { newValue in
-                    print("assessment status = \(newValue)")
-                    guard newValue >= .finished else { return }
-                    print("\(try! state.result.jsonDictionary())")
-                    // In a real use-case this is where you might save and upload data
-                    viewModel.isPresented = false
-                    viewModel.current = nil
-                }
+            if let state = viewModel.current {
+                AssessmentView(state)
+                    .onChange(of: state.status) { newValue in
+                        print("assessment status = \(newValue)")
+                        guard newValue >= .finished else { return }
+                        print("\(try! state.result.jsonDictionary())")
+                        // In a real use-case this is where you might save and upload data
+                        viewModel.isPresented = false
+                        viewModel.current = nil
+                    }
+            } else {
+                EmptyView()
+            }
         }
     }
 }
