@@ -21,7 +21,7 @@ tasks.dokkaHtmlMultiModule {
 allprojects {
     group = "org.sagebionetworks.assessmentmodel"
 
-    version = "1.1.0"
+    version = "1.1.2"
 
     repositories {
         google()
