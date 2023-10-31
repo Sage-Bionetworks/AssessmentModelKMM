@@ -10,7 +10,13 @@ plugins {
 
 kotlin {
 
-    jvm()
+    jvm() {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
 
     androidTarget() {
         publishAllLibraryVariants()
@@ -78,8 +84,13 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+    }
+
+    dependencies {
+        coreLibraryDesugaring(libs.android.desugar)
     }
 
 }
