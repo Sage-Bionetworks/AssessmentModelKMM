@@ -1,4 +1,4 @@
-include(":assessmentModel")
+include(":assessmentmodel")
 include(":androidApp")
 include(":presentation")
-include(":assessmentResults")
+include(":assessmentresults")

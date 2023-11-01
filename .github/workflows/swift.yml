@@ -22,7 +22,7 @@ jobs:
       with:
         java-version: 17
     - name: Build Assessment Model
-      run: ./gradlew :assessmentModel:assembleKotlinModelDebugXCFramework
+      run: ./gradlew :assessmentmodel:assembleKotlinModelDebugXCFramework
     - name: Build for iOS
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme iosApp -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14" | xcpretty
     - name: Run tests for iOS
