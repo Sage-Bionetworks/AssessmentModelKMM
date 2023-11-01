@@ -53,7 +53,13 @@ val iosFrameworkName = "KotlinModel"
 kotlin {
     targetHierarchy.default()
 
-    jvm()
+    jvm() {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
 
     androidTarget("androidLib") {
        publishAllLibraryVariants()

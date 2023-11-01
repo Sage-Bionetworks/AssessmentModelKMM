@@ -1,5 +1,6 @@
 package org.sagebionetworks.assessmentmodel.serialization
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
@@ -21,6 +22,7 @@ object Serialization {
                 SerializersModule {}    // Marker for the end of the list. Used to make github read more cleanly.
     }
     object JsonCoder {
+        @OptIn(ExperimentalSerializationApi::class)
         val default = Json{
                 serializersModule = SerializersModule.default
                 encodeDefaults = true
