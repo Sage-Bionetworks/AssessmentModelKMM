@@ -287,8 +287,15 @@ let surveyCJson = """
 {
   "identifier": "daily",
   "type": "assessment",
+  "shouldHideActions": [
+    "skip",
+    "goBackward"
+  ],
   "interruptionHandling": {
-    "reviewIdentifier": null
+    "canResume": true,
+    "reviewIdentifier": "beginning",
+    "canSkip": false,
+    "canSaveForLater": false
   },
   "steps": [
     {
