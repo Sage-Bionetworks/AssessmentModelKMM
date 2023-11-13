@@ -395,6 +395,8 @@ abstract class BaseActiveStepObject : StepObject(), ActiveStep {
     override var shouldEndOnInterrupt: Boolean = false
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
+    // commandStrings can't be private or we get weird compiler error when trying to extend
+    // BaseActiveStepObject in other projects such as MotorControl-Android -nbrown 11/13/23
     @SerialName("commands")
     var commandStrings: Set<String> = setOf()
 
