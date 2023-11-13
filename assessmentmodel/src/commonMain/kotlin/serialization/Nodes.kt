@@ -5,21 +5,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.modules.*
-import kotlinx.serialization.modules.subclass
 import org.sagebionetworks.assessmentmodel.*
 import org.sagebionetworks.assessmentmodel.navigation.*
-import org.sagebionetworks.assessmentmodel.resourcemanagement.copyResourceInfo
 import org.sagebionetworks.assessmentmodel.survey.*
-import org.sagebionetworks.assessmentmodel.survey.BaseType
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mapOf
 import kotlin.collections.set
-import kotlin.collections.toMutableMap
 
 val nodeSerializersModule = SerializersModule {
     polymorphic(Node::class) {
@@ -406,7 +396,7 @@ abstract class BaseActiveStepObject : StepObject(), ActiveStep {
     @SerialName("image")
     override var imageInfo: ImageInfo? = null
     @SerialName("commands")
-    private var commandStrings: Set<String> = setOf()
+    var commandStrings: Set<String> = setOf()
 
     override var commands: Set<ActiveStepCommand>
         get() = ActiveStepCommand.fromStrings(commandStrings)
