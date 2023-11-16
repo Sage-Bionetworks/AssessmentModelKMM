@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.sagebionetworks.assessmentmodel.ButtonAction
+import org.sagebionetworks.assessmentmodel.navigation.hideButton
 import org.sagebionetworks.assessmentmodel.presentation.AssessmentViewModel
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.BackgroundGray
 import org.sagebionetworks.assessmentmodel.presentation.ui.theme.sageH1
@@ -76,7 +78,10 @@ internal fun QuestionHeader(
             }
             PauseTopBar(
                 onPauseClicked = { openDialog.value = true },
-                onSkipClicked = { assessmentViewModel.skip() })
+                onSkipClicked = { assessmentViewModel.skip() },
+                hideSkip = assessmentViewModel.assessmentNodeState.currentChild?.hideButton(
+                    ButtonAction.Navigation.Skip) ?: false
+                )
             Column(
                 modifier = modifier
                     .padding(start = 20.dp, end = 20.dp)

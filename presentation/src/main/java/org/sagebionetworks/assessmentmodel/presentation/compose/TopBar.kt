@@ -17,12 +17,12 @@ import org.sagebionetworks.assessmentmodel.presentation.ui.theme.SageSurveyTheme
 fun PauseTopBar(
     onPauseClicked: () -> Unit,
     onSkipClicked: () -> Unit,
-    showSkip: Boolean = true
+    hideSkip: Boolean
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
         PauseButton(onClick = onPauseClicked)
         Spacer(modifier = Modifier.weight(1f))
-        if (showSkip) {
+        if (!hideSkip) {
             TextButton(
                 onClick = onSkipClicked,
             ) {
@@ -86,8 +86,8 @@ fun ProgressBar(
 private fun TopBarPreview() {
     SageSurveyTheme {
         Column() {
-            PauseTopBar({}, {})
             PauseTopBar({}, {}, false)
+            PauseTopBar({}, {}, true)
             CloseTopBar({})
         }
     }

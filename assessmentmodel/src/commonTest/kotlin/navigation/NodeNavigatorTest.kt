@@ -918,6 +918,45 @@ class NodeNavigatorTest : NavigationTestHelper() {
         val actualPath = nodeState.currentResult.pathHistoryResults.map { it.identifier }
         assertEquals(listOf("step1"), actualPath)
     }
+
+    @Test
+    fun testHideSkipButton_SetOnAssessment() {
+        val assessmentObject = AssessmentObject("foo", buildNodeList(3, 1, "step").toList())
+        assessmentObject.hideButtons = listOf(ButtonAction.Navigation.Skip)
+        val rootNodeController = TestRootNodeController(expectedCount = 999)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+        nodeState.rootNodeController = rootNodeController
+        nodeState.nodeUIController = rootNodeController
+        nodeState.goForward()
+        assertNotNull(nodeState.currentChild)
+        assertEquals("step1", nodeState.currentChild?.node?.identifier)
+        assertTrue(nodeState.currentChild?.hideButton(ButtonAction.Navigation.Skip) ?: false)
+        nodeState.goForward()
+        assertNotNull(nodeState.currentChild)
+        assertEquals("step2", nodeState.currentChild?.node?.identifier)
+        assertTrue(nodeState.currentChild?.hideButton(ButtonAction.Navigation.Skip) ?: false)
+    }
+
+    @Test
+    fun testHideSkipButton_SetOnNode() {
+        val nodeList = buildNodeList(3, 1, "step").toList()
+        nodeList[0].hideButtons = listOf(ButtonAction.Navigation.Skip)
+        val assessmentObject = AssessmentObject("foo", nodeList)
+        val rootNodeController = TestRootNodeController(expectedCount = 999)
+        val nodeState = BranchNodeStateImpl(assessmentObject)
+        nodeState.rootNodeController = rootNodeController
+        nodeState.nodeUIController = rootNodeController
+        nodeState.goForward()
+        assertNotNull(nodeState.currentChild)
+        assertEquals("step1", nodeState.currentChild?.node?.identifier)
+        assertTrue(nodeState.currentChild?.hideButton(ButtonAction.Navigation.Skip) ?: false)
+        nodeState.goForward()
+        assertNotNull(nodeState.currentChild)
+        assertEquals("step2", nodeState.currentChild?.node?.identifier)
+        assertFalse(nodeState.currentChild?.hideButton(ButtonAction.Navigation.Skip) ?: true)
+    }
+
+
 }
 
 private data class TestCompletionStep(override val identifier: String,
