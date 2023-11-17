@@ -129,6 +129,14 @@ fun NodeState.root() :  NodeState {
     return thisPath
 }
 
+fun NodeState.hideButton(buttonAction: ButtonAction) : Boolean {
+    return if (node.hideButtons.contains(buttonAction)) {
+        true
+    } else {
+        parent?.hideButton(buttonAction) ?: false
+    }
+}
+
 fun NodeState.previousResult() : Result?
         = parent?.currentResult?.pathHistoryResults?.lastOrNull { it.identifier == node.resultId() }?.copyResult()
 
