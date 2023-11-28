@@ -213,32 +213,23 @@ public final class ChoiceQuestionStepObject : AbstractChoiceQuestionStepObject, 
     }
 }
 
+@Serializable
 public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case matchingValue = "value", label = "text", detail, iconName = "icon", _selectorType = "selectorType", _exclusive = "exclusive"
-    }
-    
-    public let matchingValue: JsonElement?
-    public let label: String
-    public let detail: String?
+
+    @SerialName("value") public let matchingValue: JsonElement?
+    @SerialName("text") public let label: String
+    @SerialName("icon") public let detail: String?
     public let iconName: String?
-    public var selectorType: ChoiceSelectorType {
-        _selectorType ?? (_exclusive == true ? .exclusive : .default)
-    }
-    private let _selectorType: ChoiceSelectorType?
-    
-    // TODO: Deprecated. Included to support older json files that do not support "all of the above". syoung 03/10/2022
-    private let _exclusive: Bool?
+    public private(set) var selectorType: ChoiceSelectorType = .default
     
     public init(value: JsonElement? = nil,
                 text: String,
                 detail: String? = nil,
-                selectorType: ChoiceSelectorType? = nil) {
+                selectorType: ChoiceSelectorType = .default) {
         self.matchingValue = value
         self.label = text
         self.detail = detail
-        self._selectorType = selectorType
-        self._exclusive = nil
+        self.selectorType = selectorType
         self.iconName = nil
     }
     
@@ -246,8 +237,7 @@ public struct JsonChoice : ChoiceInputItem, Codable, Hashable {
         self.label = text
         self.matchingValue = .string(text)
         self.detail = nil
-        self._selectorType = nil
-        self._exclusive = nil
+        self.selectorType = .default
         self.iconName = nil
     }
     
@@ -272,7 +262,7 @@ extension JsonChoice : ExpressibleByStringLiteral {
 
 extension JsonChoice : DocumentableStruct {
     public static func codingKeys() -> [CodingKey] {
-        CodingKeys.allCases.filter { $0 != ._exclusive }
+        return CodingKeys.allCases
     }
     
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
@@ -296,7 +286,7 @@ extension JsonChoice : DocumentableStruct {
         case .detail:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "Additional detail to display below the primary label.")
-        case ._selectorType:
+        case .selectorType:
             return .init(propertyType: .reference(ChoiceSelectorType.documentableType()), propertyDescription:
                             """
                             Does selecting this choice mean that the other options should be deselected or selected as well?
@@ -305,9 +295,6 @@ extension JsonChoice : DocumentableStruct {
                             choice that is `exclusive` to the other items or an 'all of the above' choice that should
                             select `all` other choices as well (except those that are marked as `exclusive`).
                             """.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "  ", with: "\n"))
-        case ._exclusive:
-            return .init(defaultValue: .boolean(false), propertyDescription:
-                            "Deprecated.")
         case .iconName:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "An image associated with this choice.")
