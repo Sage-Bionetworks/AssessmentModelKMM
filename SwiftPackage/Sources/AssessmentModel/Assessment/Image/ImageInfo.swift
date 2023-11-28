@@ -54,6 +54,7 @@ public protocol CompositeImageInfo : ImageInfo {
 
 /// The type of the image theme. This is used to decode an `ImageInfo` using an `AssessmentFactory`. It can also be used
 /// to customize the UI.
+@available(*, deprecated, message: "Use @SerialName")
 public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
     public let rawValue: String
     
@@ -74,12 +75,14 @@ public struct ImageInfoType : TypeRepresentable, Codable, Equatable, Hashable {
     }
 }
 
+@available(*, deprecated, message: "Use @SerialName")
 extension ImageInfoType : ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
 
+@available(*, deprecated, message: "Use @SerialName")
 extension ImageInfoType : DocumentableStringLiteral {
     public static func examples() -> [String] {
         return allStandardTypes().map{ $0.rawValue }
@@ -106,32 +109,26 @@ public final class ImageInfoSerializer : GenericPolymorphicSerializer<ImageInfo>
     }
 }
 
-public protocol SerializableImageInfo : ImageInfo, PolymorphicTyped, Codable {
-    var serializableType: ImageInfoType { get }
-}
-
-public extension SerializableImageInfo {
-    var typeName: String { return serializableType.rawValue }
+public protocol SerializableImageInfo : ImageInfo, PolymorphicTyped, PolymorphicSerializableTyped, Codable {
 }
 
 public protocol EmbeddedImageInfo : ImagePlacementInfo, DecodableBundleInfo {
 }
 
 /// `FetchableImage` is a `Codable` concrete implementation of `ImageInfo`.
-public struct FetchableImage : SerializableImageInfo, EmbeddedImageInfo {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case serializableType = "type", imageName, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size"
-    }
-    public private(set) var serializableType: ImageInfoType = .Standard.fetchable.imageInfoType
-    
+@Serializable
+@SerialName("fetchable")
+public struct FetchableImage : SerializableImageInfo, EmbeddedImageInfo, Codable {
+
     public let imageName: String
     public let label: String?
-    public let rawFileExtension: String?
-    public var factoryBundle: ResourceBundle?
+    @SerialName("placementType") public let placementHint: String?
+    @SerialName("size") public let imageSize: ImageSize?
+    
+    @Transient public var factoryBundle: ResourceBundle?
     public let bundleIdentifier: String?
     public var packageName: String?
-    public let placementHint: String?
-    public let imageSize: ImageSize?
+    @SerialName("fileExtension") public let rawFileExtension: String?
     
     public var resourceName: String {
         imageName
@@ -161,7 +158,7 @@ extension FetchableImage : DocumentableStruct {
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
         switch key {
-        case .serializableType, .imageName:
+        case .typeName, .imageName:
             return true
         default:
             return false
@@ -173,8 +170,8 @@ extension FetchableImage : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case .serializableType:
-            return .init(constValue: ImageInfoType.Standard.fetchable.imageInfoType)
+        case .typeName:
+            return .init(constValue: serialTypeName)
         case .imageName:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "The image name for the image to draw.")
@@ -210,25 +207,23 @@ extension FetchableImage : DocumentableStruct {
 }
 
 /// `AnimatedImage` is a `Codable` concrete implementation of `AnimatedImageInfo`.
-public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo, EmbeddedImageInfo {
-    private enum CodingKeys: String, OrderedEnumCodingKey {
-        case serializableType = "type", imageNames, animationDuration, animationRepeatCount, label, bundleIdentifier, packageName, rawFileExtension = "fileExtension", placementHint = "placementType", imageSize = "size", _imageIdentifier = "imageIdentifier"
-    }
-    public private(set) var serializableType: ImageInfoType = .Standard.animated.imageInfoType
-    
+@Serializable
+@SerialName("animated")
+public struct AnimatedImage : AnimatedImageInfo, SerializableImageInfo, EmbeddedImageInfo, Codable {
+
     public let imageNames: [String]
     public let label: String?
     public let animationDuration: TimeInterval
     public let animationRepeatCount: Int?
     public let bundleIdentifier: String?
-    public var factoryBundle: ResourceBundle? = nil
+    @Transient public var factoryBundle: ResourceBundle? = nil
     public var packageName: String?
-    public let rawFileExtension: String?
-    public let placementHint: String?
-    public let imageSize: ImageSize?
+    @SerialName("fileExtension") public let rawFileExtension: String?
+    @SerialName("placementType") public let placementHint: String?
+    @SerialName("size") public let imageSize: ImageSize?
     
     public var imageIdentifier: String { _imageIdentifier ?? imageNames.first ?? "null" }
-    private let _imageIdentifier: String?
+    @SerialName("imageIdentifier") private let _imageIdentifier: String?
 
     /// Default initializer.
     public init(imageNames: [String], animationDuration: TimeInterval, bundleIdentifier: String? = nil, animationRepeatCount: Int = 0, label: String? = nil, placementHint: String? = nil, imageSize: ImageSize? = nil) {
@@ -252,7 +247,7 @@ extension AnimatedImage : DocumentableStruct {
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
         switch key {
-        case .serializableType, .imageNames, .animationDuration:
+        case .typeName, .imageNames, .animationDuration:
             return true
         default:
             return false
@@ -264,8 +259,8 @@ extension AnimatedImage : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case .serializableType:
-            return .init(constValue: ImageInfoType.Standard.animated.imageInfoType)
+        case .typeName:
+            return .init(constValue: serialTypeName)
         case .imageNames:
             return .init(propertyType: .primitiveArray(.string), propertyDescription:
                             "The list of the names of the images to animate through in order.")
@@ -307,10 +302,9 @@ extension AnimatedImage : DocumentableStruct {
 }
 
 /// `ImageSize` is a codable struct for defining the size of a drawable.
+@Serializable
 public struct ImageSize : Codable {
-    private enum CodingKeys : String, CodingKey, CaseIterable {
-        case width, height
-    }
+
     public let width: Double
     public let height: Double
     
