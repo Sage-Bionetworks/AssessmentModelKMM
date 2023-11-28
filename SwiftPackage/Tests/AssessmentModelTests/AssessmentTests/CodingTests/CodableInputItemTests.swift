@@ -46,7 +46,7 @@ class CodableInputItemTests: XCTestCase {
             let object = wrapper.inputItem
             
             XCTAssertEqual("foo", object.resultIdentifier)
-            XCTAssertEqual(.number, object.textInputType)
+            XCTAssertEqual("number", object.typeName)
             XCTAssertEqual("Favorite color", object.fieldLabel)
             XCTAssertEqual("Blue, no! Red!", object.placeholder)
             if let range = object.formatOptions {
@@ -108,7 +108,7 @@ class CodableInputItemTests: XCTestCase {
             let original = DoubleTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<DoubleTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
@@ -151,7 +151,7 @@ class CodableInputItemTests: XCTestCase {
             let object = wrapper.inputItem
             
             XCTAssertEqual("foo", object.resultIdentifier)
-            XCTAssertEqual(.integer, object.textInputType)
+            XCTAssertEqual("integer", object.typeName)
             XCTAssertEqual("Favorite color", object.fieldLabel)
             XCTAssertEqual("Blue, no! Red!", object.placeholder)
             if let range = object.formatOptions {
@@ -211,7 +211,7 @@ class CodableInputItemTests: XCTestCase {
             let original = IntegerTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<IntegerTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
@@ -252,7 +252,7 @@ class CodableInputItemTests: XCTestCase {
             let object = wrapper.inputItem
             
             XCTAssertEqual("foo", object.resultIdentifier)
-            XCTAssertEqual(.year, object.textInputType)
+            XCTAssertEqual("year", object.typeName)
             XCTAssertEqual("Favorite color", object.fieldLabel)
             XCTAssertEqual("Blue, no! Red!", object.placeholder)
             if let range = object.formatOptions {
@@ -312,7 +312,7 @@ class CodableInputItemTests: XCTestCase {
             let wrapper = try decoder.decode(InputItemWrapper<DurationTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
             
-            XCTAssertEqual(.duration, object.textInputType)
+            XCTAssertEqual("duration", object.typeName)
             XCTAssertEqual([.minute, .second], object.displayUnits)
             
             let jsonData = try encoder.encode(object)
@@ -344,7 +344,7 @@ class CodableInputItemTests: XCTestCase {
             let original = DurationTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<DurationTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
@@ -377,7 +377,7 @@ class CodableInputItemTests: XCTestCase {
             let wrapper = try decoder.decode(InputItemWrapper<TimeTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
             
-            XCTAssertEqual(.time, object.textInputType)
+            XCTAssertEqual("time", object.typeName)
             if let range = object.formatOptions {
                 XCTAssertEqual(false, range.allowPast)
             }
@@ -420,7 +420,7 @@ class CodableInputItemTests: XCTestCase {
             let original = TimeTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<TimeTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
@@ -454,7 +454,7 @@ class CodableInputItemTests: XCTestCase {
             let wrapper = try decoder.decode(InputItemWrapper<YearTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
             
-            XCTAssertEqual(.year, object.textInputType)
+            XCTAssertEqual("year", object.typeName)
             if let range = object.formatOptions {
                 XCTAssertEqual(3000, range.maximumValue)
                 XCTAssertNotNil(range.minimumValue)
@@ -502,7 +502,7 @@ class CodableInputItemTests: XCTestCase {
             let original = YearTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<YearTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
@@ -544,7 +544,7 @@ class CodableInputItemTests: XCTestCase {
             let object = wrapper.inputItem
             
             XCTAssertEqual("foo", object.resultIdentifier)
-            XCTAssertEqual(.string, object.textInputType)
+            XCTAssertEqual("string", object.typeName)
             XCTAssertEqual("Favorite color", object.fieldLabel)
             XCTAssertEqual("Blue, no! Red!", object.placeholder)
             if let keyboardOptions = object.keyboardOptions as? KeyboardOptionsObject {
@@ -611,7 +611,7 @@ class CodableInputItemTests: XCTestCase {
             let original = StringTextInputItemObject()
             let wrapper = try decoder.decode(InputItemWrapper<StringTextInputItemObject>.self, from: json)
             let object = wrapper.inputItem
-            XCTAssertEqual(original.textInputType, object.textInputType)
+            XCTAssertEqual(original.typeName, object.typeName)
             
             let jsonData = try encoder.encode(original)
             guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String : Any]
