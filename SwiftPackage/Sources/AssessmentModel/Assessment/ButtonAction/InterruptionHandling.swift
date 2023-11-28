@@ -28,34 +28,26 @@ public extension InterruptionHandling {
     }
 }
 
+@Serializable
 public struct InterruptionHandlingObject : InterruptionHandling, Codable, Hashable {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case _canResume = "canResume", reviewIdentifier, _canSkip = "canSkip", _canSaveForLater = "canSaveForLater"
-    }
-    
-    public var canResume: Bool { _canResume ?? true }
-    private let _canResume: Bool?
-    
-    public var canSaveForLater: Bool { _canSaveForLater ?? true }
-    private let _canSaveForLater: Bool?
-    
-    public var canSkip: Bool { _canSkip ?? true }
-    private let _canSkip: Bool?
-    
+
     public let reviewIdentifier: NavigationIdentifier?
-    
-    public init(reviewIdentifier: NavigationIdentifier? = nil, canResume: Bool? = nil, canSaveForLater: Bool? = nil, canSkip: Bool? = nil) {
+    public private(set) var canResume: Bool = true
+    public private(set) var canSaveForLater: Bool = true
+    public private(set) var canSkip: Bool = true
+
+    public init(reviewIdentifier: NavigationIdentifier? = nil, canResume: Bool = true, canSaveForLater: Bool = true, canSkip: Bool = true) {
         self.reviewIdentifier = reviewIdentifier
-        self._canResume = canResume
-        self._canSaveForLater = canSaveForLater
-        self._canSkip = canSkip
+        self.canResume = canResume
+        self.canSaveForLater = canSaveForLater
+        self.canSkip = canSkip
     }
     
     public init(_ overrideHandling: InterruptionHandling, _ defaultHandling: InterruptionHandling) {
         self.reviewIdentifier = overrideHandling.reviewIdentifier ?? defaultHandling.reviewIdentifier
-        self._canResume = overrideHandling.canResume && defaultHandling.canResume
-        self._canSaveForLater = overrideHandling.canSaveForLater && defaultHandling.canSaveForLater
-        self._canSkip = overrideHandling.canSkip && defaultHandling.canSkip
+        self.canResume = overrideHandling.canResume && defaultHandling.canResume
+        self.canSaveForLater = overrideHandling.canSaveForLater && defaultHandling.canSaveForLater
+        self.canSkip = overrideHandling.canSkip && defaultHandling.canSkip
     }
 }
 
@@ -77,13 +69,13 @@ extension InterruptionHandlingObject : DocumentableStruct {
         case .reviewIdentifier:
             return .init(propertyType: .primitive(.string), propertyDescription:
                             "An assessment might be designed to allow reviewing the instructions for that assessment with direct navigation to the first instruction node.")
-        case ._canSkip:
+        case .canSkip:
             return .init(defaultValue: .boolean(true), propertyDescription:
                             "Can this assessment be skipped (ie. declined) without affecting subsequent assessments?")
-        case ._canSaveForLater:
+        case .canSaveForLater:
             return .init(defaultValue: .boolean(true), propertyDescription:
                             "Can partial results of this assessment be restored if the assessment is ended and continued later?")
-        case ._canResume:
+        case .canResume:
             return .init(defaultValue: .boolean(true), propertyDescription:
                             "Can this assessment be resumed following an interruption?")
         }

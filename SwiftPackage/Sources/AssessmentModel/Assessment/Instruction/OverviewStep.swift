@@ -88,10 +88,8 @@ public final class OverviewStepObject : AbstractOverviewStepObject, Encodable, D
     }
 }
 
-public struct OverviewIcon : Codable, Equatable, DocumentableStruct {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case icon, title
-    }
+@Serializable
+public struct OverviewIcon : Codable, Equatable {
     
     public let icon: String
     public let title: String
@@ -100,6 +98,9 @@ public struct OverviewIcon : Codable, Equatable, DocumentableStruct {
         self.icon = icon
         self.title = title
     }
+}
+
+extension OverviewIcon : DocumentableStruct {
     
     public static func examples() -> [OverviewIcon] {
         [.init(icon: "hello", title: "Hello, World!")]
