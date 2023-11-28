@@ -23,12 +23,10 @@ jobs:
         java-version: 17
     - name: Build Assessment Model
       run: ./gradlew :assessmentmodel:assembleKotlinModelDebugXCFramework
-#    - name: Build for iOS
-#      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme iosApp -destination "platform=iOS Simulator,OS=latest,name=iPhone 15" | xcpretty
-#    - name: Run tests for iOS
-#      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme iosApp -destination "platform=iOS Simulator,OS=latest,name=iPhone 14" | xcpretty
+    - name: Build for iOS
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme iosApp -destination "platform=iOS Simulator,OS=latest,name=iPhone 15" -skipMacroValidation | xcpretty
     - name: Run tests for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test -scheme iosApp -destination "platform=iOS Simulator,OS=latest,name=iPhone 15" -skipMacroValidation | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme iosApp -destination "platform=iOS Simulator,OS=latest,name=iPhone 15" -skipMacroValidation | xcpretty
     - name: Set up Swift toolchain 5.9
       uses: swift-actions/setup-swift@v1
       with:
