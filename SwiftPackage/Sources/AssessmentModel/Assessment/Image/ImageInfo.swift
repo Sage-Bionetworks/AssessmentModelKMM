@@ -86,7 +86,7 @@ extension ImageInfoType : DocumentableStringLiteral {
     }
 }
 
-public final class ImageInfoSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
+public final class ImageInfoSerializer : GenericPolymorphicSerializer<ImageInfo>, DocumentableInterface {
     public var documentDescription: String? {
         """
         `ImageInfo` extends the UI step to include an image."
@@ -94,33 +94,19 @@ public final class ImageInfoSerializer : AbstractPolymorphicSerializer, Polymorp
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        examples = [
+        super.init([
             FetchableImage.examples().first!,
             AnimatedImage.examples().first!,
             SageResourceImage.examples().first!,
-        ]
-    }
-    
-    public private(set) var examples: [ImageInfo]
-    
-    public override class func typeDocumentProperty() -> DocumentProperty {
-        .init(propertyType: .reference(ImageInfoType.documentableType()))
-    }
-    
-    public func add(_ example: SerializableImageInfo) {
-        if let idx = examples.firstIndex(where: {
-            ($0 as! PolymorphicRepresentable).typeName == example.typeName }) {
-            examples.remove(at: idx)
-        }
-        examples.append(example)
+        ])
     }
 }
 
-public protocol SerializableImageInfo : ImageInfo, PolymorphicRepresentable, Encodable {
+public protocol SerializableImageInfo : ImageInfo, PolymorphicTyped, Codable {
     var serializableType: ImageInfoType { get }
 }
 

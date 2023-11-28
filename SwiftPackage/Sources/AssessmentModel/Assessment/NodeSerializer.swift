@@ -10,7 +10,7 @@ import ResultModel
 /// `SerializableNode` is the base implementation for `Node` that is serialized using
 /// the `Codable` protocol and the polymorphic serialization defined by this framework.
 ///
-public protocol SerializableNode : Node, PolymorphicRepresentable {
+public protocol SerializableNode : Node, Decodable {
     var serializableType: SerializableNodeType { get }
 }
 
@@ -57,7 +57,7 @@ extension SerializableNodeType : DocumentableStringLiteral {
     }
 }
 
-public final class NodeSerializer : IdentifiableInterfaceSerializer, PolymorphicSerializer {
+public final class NodeSerializer : GenericPolymorphicSerializer<Node>, DocumentableInterface {
     public var documentDescription: String? {
         """
         The interface for any `Node` that is serialized using the `Codable` protocol and the
@@ -66,11 +66,11 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(self.interfaceName).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(self.interfaceName).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        self.examples = [
+        super.init([
             AssessmentObject.examples().first!,
             ChoiceQuestionStepObject.examples().first!,
             CompletionStepObject.examples().first!,
@@ -81,28 +81,27 @@ public final class NodeSerializer : IdentifiableInterfaceSerializer, Polymorphic
             SectionObject.examples().first!,
             SimpleQuestionStepObject.examples().first!,
             TransformableNode()
-        ]
+        ])
     }
     
-    public private(set) var examples: [Node]
-    
-    public override class func typeDocumentProperty() -> DocumentProperty {
-        .init(propertyType: .reference(SerializableNodeType.documentableType()))
+    private enum InterfaceKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
+        case identifier
+        var relativeIndex: Int { 1 }
     }
     
-    /// Insert the given example into the example array, replacing any existing example with the
-    /// same `typeName` as one of the new example.
-    public func add(_ example: Node) {
-        examples.removeAll(where: { $0.typeName == example.typeName })
-        examples.append(example)
+    public override class func codingKeys() -> [CodingKey] {
+        var keys = super.codingKeys()
+        keys.append(contentsOf: InterfaceKeys.allCases)
+        return keys
     }
     
-    /// Insert the given examples into the example array, replacing any existing examples with the
-    /// same `typeName` as one of the new examples.
-    public func add(contentsOf newExamples: [Node]) {
-        let newNames = newExamples.map { $0.typeName }
-        self.examples.removeAll(where: { newNames.contains($0.typeName) })
-        self.examples.append(contentsOf: newExamples)
+    public override class func isRequired(_ codingKey: CodingKey) -> Bool {
+        return (codingKey is InterfaceKeys) || super.isRequired(codingKey)
+    }
+    
+    public override class func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
+        return .init(propertyType: .primitive(.string), propertyDescription:
+                        "The identifier for the node. This will map to the identifier for the result")
     }
 }
 

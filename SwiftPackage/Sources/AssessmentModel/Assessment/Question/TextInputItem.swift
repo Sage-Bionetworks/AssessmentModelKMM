@@ -49,7 +49,7 @@ public protocol TimeTextInputItem : TextInputItem {
     var range: TimeRange  { get }
 }
 
-public final class TextInputItemSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
+public final class TextInputItemSerializer : GenericPolymorphicSerializer<TextInputItem>, DocumentableInterface {
     public var documentDescription: String? {
         """
         A `TextInputItem` describes input entry that is freeform with ranges and validation.
@@ -60,33 +60,18 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        let examples: [SerializableTextInputItem] = [
+        super.init([
             DoubleTextInputItemObject(),
             DurationTextInputItemObject(),
             IntegerTextInputItemObject(),
             StringTextInputItemObject(),
             TimeTextInputItemObject(),
             YearTextInputItemObject(),
-        ]
-        self.examples = examples
-    }
-    
-    public private(set) var examples: [TextInputItem]
-    
-    public override class func typeDocumentProperty() -> DocumentProperty {
-        .init(propertyType: .reference(TextInputType.documentableType()))
-    }
-    
-    public func add(_ example: SerializableTextInputItem) {
-        if let idx = examples.firstIndex(where: {
-            ($0 as! PolymorphicRepresentable).typeName == example.typeName }) {
-            examples.remove(at: idx)
-        }
-        examples.append(example)
+        ])
     }
     
     private enum InterfaceKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
@@ -122,7 +107,7 @@ public final class TextInputItemSerializer : AbstractPolymorphicSerializer, Poly
     }
 }
 
-public protocol SerializableTextInputItem : TextInputItem, PolymorphicRepresentable, Encodable {
+public protocol SerializableTextInputItem : TextInputItem, PolymorphicTyped, Codable {
     var textInputType: TextInputType { get }
 }
 

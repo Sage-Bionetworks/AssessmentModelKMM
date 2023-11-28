@@ -48,7 +48,7 @@ extension ButtonActionInfoType : DocumentableStringLiteral {
     }
 }
 
-public final class ButtonActionSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
+public final class ButtonActionSerializer : GenericPolymorphicSerializer<ButtonActionInfo>, DocumentableInterface {
     public var documentDescription: String? {
         """
         `ButtonActionInfo` protocol can be used to customize the title and image displayed for a given
@@ -57,25 +57,14 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        examples = [
+        super.init([
             ButtonActionInfoObject.examples().first!,
             NavigationButtonActionInfoObject.examples().first!,
-        ]
-    }
-    
-    public private(set) var examples: [ButtonActionInfo]
-    
-    public override class func typeDocumentProperty() -> DocumentProperty {
-        .init(propertyType: .reference(ButtonActionInfoType.documentableType()))
-    }
-    
-    public func add(_ example: SerializableButtonActionInfo) {
-        examples.removeAll(where: { $0.typeName == example.typeName })
-        examples.append(example)
+        ])
     }
     
     private enum InterfaceKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
@@ -114,7 +103,7 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     }
 }
 
-public protocol SerializableButtonActionInfo : ButtonActionInfo, DecodableBundleInfo, PolymorphicRepresentable, Encodable {
+public protocol SerializableButtonActionInfo : ButtonActionInfo, DecodableBundleInfo, PolymorphicTyped, Codable {
     var serializableType: ButtonActionInfoType { get }
 }
 
