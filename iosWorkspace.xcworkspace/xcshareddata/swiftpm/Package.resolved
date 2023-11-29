@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/BridgeDigitalHealth/JsonModel-Swift.git",
         "state": {
           "branch": null,
-          "revision": "5d9acc0f5c1779cca3a31ca1913d684406e74f1f",
-          "version": "2.3.1"
+          "revision": "a335a33e653329c7bfdcb52740e26ccc01dd2dd0",
+          "version": "2.4.3"
         }
       },
       {
@@ -17,6 +17,15 @@
           "branch": null,
           "revision": "74a1f99da8f8c017d0a5adbb3584be81bb1cd9a8",
           "version": "1.6.2"
+        }
+      },
+      {
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/apple/swift-syntax.git",
+        "state": {
+          "branch": null,
+          "revision": "6ad4ea24b01559dde0773e3d091f1b9e36175036",
+          "version": "509.0.2"
         }
       }
     ]
