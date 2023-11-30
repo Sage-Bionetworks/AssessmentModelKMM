@@ -22,7 +22,7 @@ let package = Package(
     dependencies: [
         .package(name: "JsonModel",
                  url: "https://github.com/BridgeDigitalHealth/JsonModel-Swift.git",
-                 from: "2.4.3"),
+                 from: "2.4.4"),
         .package(name: "MobilePassiveData",
                  url: "https://github.com/BridgeDigitalHealth/MobilePassiveData-SDK.git",
                  from: "1.6.2"),
