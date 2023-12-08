@@ -806,6 +806,28 @@ class CodableQuestionTests: XCTestCase {
             }
         """.data(using: .utf8)! // our data in native (JSON) format
         
+        let expectedJson = """
+            {
+                "identifier": "foo",
+                "type": "choiceQuestion",
+                "choices": [{
+                        "text": "one",
+                        "value": "one",
+                        "selectorType": "default"
+                    },
+                    {
+                        "text": "two",
+                        "value": "two",
+                        "selectorType": "default"
+                    },
+                    {
+                        "text": "none",
+                        "selectorType": "exclusive"
+                    }
+                ]
+            }
+        """.data(using: .utf8)! // our data in native (JSON) format
+        
         XCTAssertEqual(.StandardTypes.choiceQuestion.nodeType, ChoiceQuestionStepObject.defaultType())
         checkDefaultSharedKeys(step: ChoiceQuestionStepObject(identifier: "foo", choices: [.init(text: "bar")]))
         checkResult(step: ChoiceQuestionStepObject(identifier: "foo", choices: [.init(text: "bar")]), type: AnswerResultObject.self)
@@ -828,7 +850,7 @@ class CodableQuestionTests: XCTestCase {
             XCTAssertEqual(choices, object.choices)
             
             let actualEncoding = try encoder.encode(object)
-            try checkEncodedJson(expected: json, actual: actualEncoding)
+            try checkEncodedJson(expected: expectedJson, actual: actualEncoding)
 
         } catch let err {
             XCTFail("Failed to decode/encode object: \(err)")
@@ -845,11 +867,13 @@ class CodableQuestionTests: XCTestCase {
             "baseType": "integer",
             "choices": [{
                     "text": "one",
-                    "value": 1
+                    "value": 1,
+                    "selectorType": "default"
                 },
                 {
                     "text": "two",
-                    "value": 2
+                    "value": 2,
+                    "selectorType": "default"
                 },
                 {
                     "text": "none",

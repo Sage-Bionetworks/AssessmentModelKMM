@@ -17,22 +17,20 @@ public protocol NavigationButtonActionInfo : ButtonActionInfo {
 
 /// ``NavigationButtonActionInfoObject`` is a concrete implementation of ``NavigationButtonActionInfo`` that
 /// can be used to customize the title and image displayed for a given action of the UI.
-public struct NavigationButtonActionInfoObject : SerializableButtonActionInfo, Equatable {
-    private enum CodingKeys : String, CodingKey, CaseIterable {
-        case serializableType = "type", skipToIdentifier, buttonTitle, iconName, bundleIdentifier, packageName
-    }
-    public private(set) var serializableType: ButtonActionInfoType = .navigation
-    
+@Serializable
+@SerialName("navigation")
+public struct NavigationButtonActionInfoObject : SerializableButtonActionInfo, Equatable, Codable {
+  
     public let skipToIdentifier: NavigationIdentifier
     public private(set) var buttonTitle: String?
     public private(set) var iconName: String?
     
     public private(set) var bundleIdentifier: String?
     public var packageName: String?
-    public var factoryBundle: ResourceBundle? = nil
+    @Transient public var factoryBundle: ResourceBundle? = nil
     
     public static func == (lhs: NavigationButtonActionInfoObject, rhs: NavigationButtonActionInfoObject) -> Bool {
-        lhs.serializableType == rhs.serializableType &&
+        lhs.typeName == rhs.typeName &&
         lhs.buttonTitle == rhs.buttonTitle &&
         lhs.iconName == rhs.iconName &&
         lhs.bundleIdentifier == rhs.bundleIdentifier &&
@@ -79,7 +77,7 @@ extension NavigationButtonActionInfoObject : DocumentableStruct {
     
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
-        return key == .serializableType
+        return key == .typeName || key == .skipToIdentifier
     }
     
     public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
@@ -87,8 +85,8 @@ extension NavigationButtonActionInfoObject : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case .serializableType:
-            return .init(constValue: ButtonActionInfoType.navigation)
+        case .typeName:
+            return .init(constValue: serialTypeName)
         case .buttonTitle, .iconName, .bundleIdentifier, .packageName:
             return .init(propertyType: .primitive(.string))
         case .skipToIdentifier:

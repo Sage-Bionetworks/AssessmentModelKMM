@@ -6,16 +6,14 @@ import Foundation
 import JsonModel
 
 /// This allows customized image compositing that is required on iOS only.
-public struct SageResourceImage : SerializableImageInfo {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case serializableType = "type", _name = "imageName", label
-    }
-    public private(set) var serializableType: ImageInfoType = .Standard.sageResource.imageInfoType
+@Serializable
+@SerialName("sageResource")
+public struct SageResourceImage : SerializableImageInfo, Codable {
     
     public var imageName: String {
         self.name.map { "title_\($0.rawValue)" } ?? _name
     }
-    private let _name: String
+    @SerialName("imageName") private let _name: String
     
     public var label: String?
     
@@ -78,7 +76,7 @@ extension SageResourceImage : DocumentableStruct {
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
         guard let key = codingKey as? CodingKeys else { return false }
         switch key {
-        case .serializableType, ._name:
+        case .typeName, ._name:
             return true
         default:
             return false
@@ -90,8 +88,8 @@ extension SageResourceImage : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case .serializableType:
-            return .init(constValue: ImageInfoType.Standard.sageResource.imageInfoType)
+        case .typeName:
+            return .init(constValue: serialTypeName)
         case ._name:
             return .init(propertyType: .reference(Name.documentableType()), propertyDescription:
                             "The image name for the image to draw.")

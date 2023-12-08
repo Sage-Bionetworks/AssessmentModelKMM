@@ -278,7 +278,7 @@ extension AssessmentObject : DocumentableRootObject {
     }
 }
 
-public final class AssessmentSerializer : IdentifiableInterfaceSerializer, PolymorphicSerializer {
+public final class AssessmentSerializer : GenericPolymorphicSerializer<Assessment>, DocumentableInterface {
     public var documentDescription: String? {
         """
         The interface for any `Assessment` that is serialized using the `Codable` protocol and the
@@ -287,23 +287,13 @@ public final class AssessmentSerializer : IdentifiableInterfaceSerializer, Polym
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(self.interfaceName).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(self.interfaceName).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        self.examples = [
+        super.init([
             AssessmentObject.examples().first!,
-        ]
-    }
-    
-    public private(set) var examples: [Assessment]
-    
-    /// Insert the given example into the example array, replacing any existing example with the
-    /// same `typeName` as one of the new example.
-    public func add<T : Assessment>(_ example: T) where T : SerializableNode {
-        examples.removeAll(where: { $0.typeName == example.typeName })
-        examples.append(example)
+        ])
     }
 }
-
 

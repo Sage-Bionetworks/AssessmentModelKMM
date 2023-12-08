@@ -17,6 +17,7 @@ public protocol ButtonActionInfo : PolymorphicTyped, ResourceInfo {
 }
 
 /// This is used to decode a `ButtonActionInfo` using a polymorphic serializer.
+@available(*, deprecated, message: "Use @SerialName")
 public struct ButtonActionInfoType : TypeRepresentable, Codable, Hashable {
     
     public let rawValue: String
@@ -36,19 +37,21 @@ public struct ButtonActionInfoType : TypeRepresentable, Codable, Hashable {
     }
 }
 
+@available(*, deprecated, message: "Use @SerialName")
 extension ButtonActionInfoType : ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
 
+@available(*, deprecated, message: "Use @SerialName")
 extension ButtonActionInfoType : DocumentableStringLiteral {
     public static func examples() -> [String] {
         return allStandardTypes().map{ $0.rawValue }
     }
 }
 
-public final class ButtonActionSerializer : AbstractPolymorphicSerializer, PolymorphicSerializer {
+public final class ButtonActionSerializer : GenericPolymorphicSerializer<ButtonActionInfo>, DocumentableInterface {
     public var documentDescription: String? {
         """
         `ButtonActionInfo` protocol can be used to customize the title and image displayed for a given
@@ -57,25 +60,14 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     }
     
     public var jsonSchema: URL {
-        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kSageJsonSchemaBaseURL)!
+        URL(string: "\(AssessmentFactory.defaultFactory.modelName(for: self.interfaceName)).json", relativeTo: kBDHJsonSchemaBaseURL)!
     }
     
     override init() {
-        examples = [
+        super.init([
             ButtonActionInfoObject.examples().first!,
             NavigationButtonActionInfoObject.examples().first!,
-        ]
-    }
-    
-    public private(set) var examples: [ButtonActionInfo]
-    
-    public override class func typeDocumentProperty() -> DocumentProperty {
-        .init(propertyType: .reference(ButtonActionInfoType.documentableType()))
-    }
-    
-    public func add(_ example: SerializableButtonActionInfo) {
-        examples.removeAll(where: { $0.typeName == example.typeName })
-        examples.append(example)
+        ])
     }
     
     private enum InterfaceKeys : String, OrderedEnumCodingKey, OpenOrderedCodingKey {
@@ -114,30 +106,23 @@ public final class ButtonActionSerializer : AbstractPolymorphicSerializer, Polym
     }
 }
 
-public protocol SerializableButtonActionInfo : ButtonActionInfo, DecodableBundleInfo, PolymorphicRepresentable, Encodable {
-    var serializableType: ButtonActionInfoType { get }
-}
-
-public extension SerializableButtonActionInfo {
-    var typeName: String { return serializableType.rawValue }
+public protocol SerializableButtonActionInfo : ButtonActionInfo, DecodableBundleInfo, PolymorphicSerializableTyped, Codable {
 }
 
 /// ``ButtonActionInfoObject`` is a concrete implementation of ``ButtonActionInfo`` that can be used to
 /// customize the title and image displayed for a given action of the UI.
-public struct ButtonActionInfoObject : SerializableButtonActionInfo, Equatable {
-    private enum CodingKeys : String, CodingKey, CaseIterable {
-        case serializableType = "type", buttonTitle, iconName, bundleIdentifier, packageName
-    }
-    public private(set) var serializableType: ButtonActionInfoType = .default
+@Serializable
+@SerialName("default")
+public struct ButtonActionInfoObject : SerializableButtonActionInfo, Equatable, Codable {
     
     public private(set) var buttonTitle: String?
     public private(set) var iconName: String?
     public private(set) var bundleIdentifier: String?
     public var packageName: String?
-    public var factoryBundle: ResourceBundle? = nil
+    @Transient public var factoryBundle: ResourceBundle? = nil
     
     public static func == (lhs: ButtonActionInfoObject, rhs: ButtonActionInfoObject) -> Bool {
-        lhs.serializableType == rhs.serializableType &&
+        lhs.typeName == rhs.typeName &&
         lhs.buttonTitle == rhs.buttonTitle &&
         lhs.iconName == rhs.iconName &&
         lhs.bundleIdentifier == rhs.bundleIdentifier &&
@@ -179,8 +164,7 @@ extension ButtonActionInfoObject : DocumentableStruct {
     }
     
     public static func isRequired(_ codingKey: CodingKey) -> Bool {
-        guard let key = codingKey as? CodingKeys else { return false }
-        return key == .serializableType
+        return codingKey.stringValue == "type"
     }
     
     public static func documentProperty(for codingKey: CodingKey) throws -> DocumentProperty {
@@ -188,8 +172,8 @@ extension ButtonActionInfoObject : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case .serializableType:
-            return .init(constValue: ButtonActionInfoType.default)
+        case .typeName:
+            return .init(constValue: serialTypeName)
         case .buttonTitle, .iconName, .bundleIdentifier, .packageName:
             return .init(propertyType: .primitive(.string))
         }

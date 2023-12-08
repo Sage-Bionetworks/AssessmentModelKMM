@@ -6,26 +6,13 @@
 import Foundation
 import JsonModel
 
+@Serializable
 public struct JsonSurveyRuleObject : Codable, Hashable, JsonSurveyRule {
-    private enum CodingKeys: String, OrderedEnumCodingKey {
-        case matchingValue = "matchingAnswer", skipToIdentifier, ruleOperator
-    }
-    
-    public var skipToIdentifier: NavigationIdentifier
+
+    public var skipToIdentifier: NavigationIdentifier = .reserved(.exit)
+    @SerialName("matchingAnswer") public var matchingValue: JsonElement?
     public var ruleOperator: SurveyRuleOperator?
-    public var matchingValue: JsonElement?
     
-    public init(skipToIdentifier: String? = nil, matchingValue: JsonElement? = nil, ruleOperator: SurveyRuleOperator? = nil) {
-        self.skipToIdentifier = skipToIdentifier.map { .init(rawValue: $0) } ?? .reserved(.exit)
-        self.matchingValue = matchingValue
-        self.ruleOperator = ruleOperator
-    }
-    
-    public init(skipToIdentifier: NavigationIdentifier, matchingValue: JsonElement? = nil, ruleOperator: SurveyRuleOperator? = nil) {
-        self.skipToIdentifier = skipToIdentifier
-        self.matchingValue = matchingValue
-        self.ruleOperator = ruleOperator
-    }
 }
 
 extension JsonSurveyRuleObject : DocumentableStruct {

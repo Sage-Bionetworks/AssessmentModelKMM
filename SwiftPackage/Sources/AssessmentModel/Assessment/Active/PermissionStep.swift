@@ -20,20 +20,19 @@ public protocol PermissionInfo {
     var optional: Bool { get }
 }
 
+@Serializable
 public struct PermissionInfoObject : Codable, Hashable, PermissionInfo {
-    private enum CodingKeys : String, OrderedEnumCodingKey {
-        case permissionType, _optional = "optional", restrictedMessage, deniedMessage
-    }
     
     public let permissionType: AsyncActionType
+    
+    public var optional: Bool { _optional ?? true }
+    @SerialName("optional") let _optional: Bool?
+    
     public let restrictedMessage: String?
     public let deniedMessage: String?
     
-    public var optional: Bool { _optional ?? true }
-    public let _optional: Bool?
-    
-    public init(permission permissionType: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil) {
-        self.permissionType = permissionType
+    public init(permission: AsyncActionType, optional: Bool? = nil, restrictedMessage: String? = nil, deniedMessage: String? = nil) {
+        self.permissionType = permission
         self._optional = optional
         self.restrictedMessage = restrictedMessage
         self.deniedMessage = deniedMessage

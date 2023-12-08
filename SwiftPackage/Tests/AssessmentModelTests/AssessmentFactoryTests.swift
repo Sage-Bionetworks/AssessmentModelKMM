@@ -252,7 +252,7 @@ class AssessmentModelTests: XCTestCase {
             
             if let serializationType = defProperties.first(where: { $0.key.stringValue == "type" }) {
                 XCTAssertEqual(
-                    .const(.init(const: expectedType, ref: .init(expectedSerializableType), description: nil)),
+                    .const(.init(const: expectedType, description: nil)),
                     serializationType.value,
                     "\(className) does not match expected type."
                 )
@@ -261,23 +261,24 @@ class AssessmentModelTests: XCTestCase {
                 XCTFail("\(className) does not have required 'type' key.")
             }
             
-            defProperties.values.forEach { prop in
+            defProperties.forEach { (key, prop) in
+                if (key.stringValue == "type") { return }
                 switch prop {
                 case .primitive(let defProp):
-                    XCTAssertNotNil(defProp.description, "\(className) property \(prop) has a nil description")
+                    XCTAssertNotNil(defProp.description, "\(className) property \(key.stringValue) has a nil description")
                 case .array(let defProp):
-                    XCTAssertNotNil(defProp.description, "\(className) property \(prop) has a nil description")
+                    XCTAssertNotNil(defProp.description, "\(className) property \(key.stringValue) has a nil description")
                 case .dictionary(let defProp):
-                    XCTAssertNotNil(defProp.description, "\(className) property \(prop) has a nil description")
+                    XCTAssertNotNil(defProp.description, "\(className) property \(key.stringValue) has a nil description")
                 case .reference(let defProp):
-                    XCTAssertNotNil(defProp.description, "\(className) property \(prop) has a nil description")
+                    XCTAssertNotNil(defProp.description, "\(className) property \(key.stringValue) has a nil description")
                 default:
                     break
                 }
             }
         }
         else {
-            XCTFail("Failed to build the expected properties for `ResultData`.")
+            XCTFail("Failed to build the expected properties for `\(className)`.")
         }
         
         return schema
@@ -324,12 +325,12 @@ class AssessmentModelTests: XCTestCase {
                         success = success && isSameType
                         
                         // Check that the decoded type name is the same as the original type name
-                        guard let decodedTypeName = (decodedObject as? PolymorphicRepresentable)?.typeName
+                        guard let decodedTypeName = (decodedObject as? PolymorphicTyped)?.typeName
                             else {
                                 XCTFail("Decoded object does not conform to PolymorphicRepresentable. \(decodedObject)")
                                 return
                         }
-                        guard let originalTypeName = (original as? PolymorphicRepresentable)?.typeName
+                        guard let originalTypeName = (original as? PolymorphicTyped)?.typeName
                             else {
                                 XCTFail("Example object does not conform to PolymorphicRepresentable. \(original)")
                                 return

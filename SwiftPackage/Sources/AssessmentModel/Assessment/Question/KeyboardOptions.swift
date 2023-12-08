@@ -48,41 +48,16 @@ public enum KeyboardType  : String, Codable, StringEnumSet, DocumentableStringEn
     case `default`, asciiCapable, numbersAndPunctuation, URL, numberPad, phonePad, namePhonePad, emailAddress, decimalPad, twitter, webSearch, asciiCapableNumberPad
 }
 
+@Serializable
 public struct KeyboardOptionsObject : KeyboardOptions, Codable, Equatable {
-    private enum CodingKeys : String, CodingKey, CaseIterable {
-        case _isSecureTextEntry = "isSecureTextEntry"
-        case _autocapitalizationType = "autocapitalizationType"
-        case _autocorrectionType = "autocorrectionType"
-        case _spellCheckingType = "spellCheckingType"
-        case _keyboardType = "keyboardType"
-    }
-    
-    public var isSecureTextEntry: Bool { _isSecureTextEntry ?? false }
-    private var _isSecureTextEntry: Bool?
-    
-    public var autocapitalizationType: TextAutoCapitalizationType { _autocapitalizationType ?? .none }
-    private var _autocapitalizationType: TextAutoCapitalizationType?
-    
-    public var autocorrectionType: TextAutoCorrectionType { _autocorrectionType ?? .no }
-    private var _autocorrectionType: TextAutoCorrectionType?
-    
-    public var spellCheckingType: TextSpellCheckingType { _spellCheckingType ?? .no }
-    private var _spellCheckingType: TextSpellCheckingType?
-    
-    public var keyboardType: KeyboardType { _keyboardType ?? .default }
-    private var _keyboardType: KeyboardType?
-    
-    public init(isSecureTextEntry: Bool? = nil,
-                autocapitalizationType: TextAutoCapitalizationType? = nil,
-                autocorrectionType: TextAutoCorrectionType? = nil,
-                spellCheckingType: TextSpellCheckingType? = nil,
-                keyboardType: KeyboardType? = nil) {
-        _isSecureTextEntry = isSecureTextEntry
-        _autocapitalizationType = autocapitalizationType
-        _autocorrectionType = autocorrectionType
-        _spellCheckingType = spellCheckingType
-        _keyboardType = keyboardType
-    }
+    public private(set) var isSecureTextEntry: Bool = false
+    public private(set) var autocapitalizationType: TextAutoCapitalizationType = .none
+    public private(set) var autocorrectionType: TextAutoCorrectionType = .no
+    public private(set) var spellCheckingType: TextSpellCheckingType = .no
+    public private(set) var keyboardType: KeyboardType = .default
+}
+
+extension KeyboardOptionsObject {
     
     public static let integerEntryOptions = KeyboardOptionsObject(isSecureTextEntry: false,
                                                                   autocapitalizationType: TextAutoCapitalizationType.none,
@@ -121,15 +96,15 @@ extension KeyboardOptionsObject : DocumentableStruct {
             throw DocumentableError.invalidCodingKey(codingKey, "\(codingKey) is not recognized for this class")
         }
         switch key {
-        case ._isSecureTextEntry:
+        case .isSecureTextEntry:
             return .init(defaultValue: .boolean(false))
-        case ._autocapitalizationType:
+        case .autocapitalizationType:
             return .init(propertyType: .reference(TextAutoCapitalizationType.documentableType()))
-        case ._autocorrectionType:
+        case .autocorrectionType:
             return .init(propertyType: .reference(TextAutoCorrectionType.documentableType()))
-        case ._spellCheckingType:
+        case .spellCheckingType:
             return .init(propertyType: .reference(TextSpellCheckingType.documentableType()))
-        case ._keyboardType:
+        case .keyboardType:
             return .init(propertyType: .reference(KeyboardType.documentableType()))
         }
     }
